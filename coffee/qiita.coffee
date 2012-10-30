@@ -80,6 +80,12 @@ class Qiita
   getFeed:(callback) ->
     param = @parameter.feed
     @._request(param,callback)
+  getNextFeed:(url,callback) ->
+    param =
+      "url": url
+      "method":'GET'
+    @._request(param,callback)
+
   getMyStocks:(callback) ->
     token = Ti.App.Properties.getString('QiitaToken')
     if token is null
@@ -99,6 +105,4 @@ class Qiita
     Ti.API.info(param.url)
     @._request(param,callback)
 module.exports = Qiita
-
-
 

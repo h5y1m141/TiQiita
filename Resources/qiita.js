@@ -106,6 +106,15 @@ Qiita = (function() {
     return this._request(param, callback);
   };
 
+  Qiita.prototype.getNextFeed = function(url, callback) {
+    var param;
+    param = {
+      "url": url,
+      "method": 'GET'
+    };
+    return this._request(param, callback);
+  };
+
   Qiita.prototype.getMyStocks = function(callback) {
     var param, token;
     token = Ti.App.Properties.getString('QiitaToken');

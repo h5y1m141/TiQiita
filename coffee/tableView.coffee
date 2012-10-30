@@ -1,17 +1,16 @@
 class tableView
   constructor: () ->
+    @table = Ti.UI.createTableView
+      backgroundColor:'#ededed'
+      separatorColor: '#999'
+      zIndex:2
+      width:320
+      left:0
+      top:0
     
   getTable: ()->
-    table = Ti.UI.createTableView
-        backgroundColor:'#ededed'
-        separatorColor: '#999'
-        zIndex:2
-        width:320
-        left:0
-        top:0
 
-    table.addEventListener('click',(e)->
-
+    @table.addEventListener('click',(e)->
       # TableViewの一番下に、過去投稿を読み込むためのボタンを
       # 配置しており、そのrowだけは投稿詳細画面に遷移させない
       # 詳細画面にいくかどうかはrowのclassNameの値をチェックする
@@ -27,15 +26,33 @@ class tableView
         tab.open(webWindow)
        else
         Ti.API.info 'load old entry'
-        Ti.API.info e.rowData.url
-        entryCount = table.data[0].rows.length -1
-
+        url = e.rowData.url
         actInd.backgroundColor = '#222'
         actInd.opacity = 0.8
         actInd.show()
+        
+        q.getNextFeed(url,(result,link) ->
+          for json in result
+            r = t.createRow(json)
+            lastIndex = t.lastRowIndex()
+            Ti.API.info lastIndex
+            t.insertRow(lastIndex,r)
+          actInd.hide()
+          
+        )
   
     )
-    return table
+    return @table
+  insertRow: (index,row)->
+    @table.insertRowAfter(index,row,{animated:true})
+    return true
+  lastRowIndex: () ->
+    # TableViewの行から2を引くことで最後のRowのindexを取得してるが
+    # 理由は下記２点のため
+    # 1.Rowの一番下にボタンとなるものを配置しているのでその分のRowを無視するためマイナス１する
+    # 2.Rowの先頭は0から始まっているので、そのためにマイナス１する。
+
+    return @table.data[0].rows.length-2
   createRow: (json) ->
     row = Ti.UI.createTableViewRow
       width:320

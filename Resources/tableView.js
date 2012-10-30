@@ -2,11 +2,8 @@ var tableView;
 
 tableView = (function() {
 
-  function tableView() {}
-
-  tableView.prototype.getTable = function() {
-    var table;
-    table = Ti.UI.createTableView({
+  function tableView() {
+    this.table = Ti.UI.createTableView({
       backgroundColor: '#ededed',
       separatorColor: '#999',
       zIndex: 2,
@@ -14,8 +11,11 @@ tableView = (function() {
       left: 0,
       top: 0
     });
-    table.addEventListener('click', function(e) {
-      var c, container, entryCount, w, webView, webWindow, _i, _len;
+  }
+
+  tableView.prototype.getTable = function() {
+    this.table.addEventListener('click', function(e) {
+      var c, container, url, w, webView, webWindow, _i, _len;
       if (e.rowData.className === 'entry') {
         webWindow = Ti.UI.createWindow({
           barColor: '#59BB0C'
@@ -30,14 +30,35 @@ tableView = (function() {
         return tab.open(webWindow);
       } else {
         Ti.API.info('load old entry');
-        Ti.API.info(e.rowData.url);
-        entryCount = table.data[0].rows.length(-1);
+        url = e.rowData.url;
         actInd.backgroundColor = '#222';
         actInd.opacity = 0.8;
-        return actInd.show();
+        actInd.show();
+        return q.getNextFeed(url, function(result, link) {
+          var json, lastIndex, r, _j, _len1;
+          for (_j = 0, _len1 = result.length; _j < _len1; _j++) {
+            json = result[_j];
+            r = t.createRow(json);
+            lastIndex = t.lastRowIndex();
+            Ti.API.info(lastIndex);
+            t.insertRow(lastIndex, r);
+          }
+          return actInd.hide();
+        });
       }
     });
-    return table;
+    return this.table;
+  };
+
+  tableView.prototype.insertRow = function(index, row) {
+    this.table.insertRowAfter(index, row, {
+      animated: true
+    });
+    return true;
+  };
+
+  tableView.prototype.lastRowIndex = function() {
+    return this.table.data[0].rows.length - 2;
   };
 
   tableView.prototype.createRow = function(json) {
