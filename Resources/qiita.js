@@ -4,7 +4,6 @@ Qiita = (function() {
 
   function Qiita(name) {
     this.name = name;
-    this.version = 1.0;
     this.user_name = 'h5y1m141@github';
     this.parameter = {
       stocks: {
@@ -29,10 +28,6 @@ Qiita = (function() {
       }
     };
   }
-
-  Qiita.prototype.getVersion = function() {
-    return this.version;
-  };
 
   Qiita.prototype._auth = function() {
     var config, xhr;

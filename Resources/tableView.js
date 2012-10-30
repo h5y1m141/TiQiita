@@ -30,14 +30,21 @@ tableView = (function() {
         return tab.open(webWindow);
       } else {
         Ti.API.info('load old entry');
-        url = e.rowData.url;
+        url = Ti.App.Properties.getString('nextPageURL');
+        Ti.API.info("NEXTPAGE:" + url);
         actInd.backgroundColor = '#222';
         actInd.opacity = 0.8;
         actInd.show();
-        return q.getNextFeed(url, function(result, link) {
-          var json, lastIndex, r, _j, _len1;
-          for (_j = 0, _len1 = result.length; _j < _len1; _j++) {
-            json = result[_j];
+        return q.getNextFeed(url, function(result, links) {
+          var json, lastIndex, link, r, _j, _k, _len1, _len2;
+          for (_j = 0, _len1 = links.length; _j < _len1; _j++) {
+            link = links[_j];
+            if (link["rel"] === 'next') {
+              Ti.App.Properties.setString('nextPageURL', link["url"]);
+            }
+          }
+          for (_k = 0, _len2 = result.length; _k < _len2; _k++) {
+            json = result[_k];
             r = t.createRow(json);
             lastIndex = t.lastRowIndex();
             Ti.API.info(lastIndex);
@@ -134,8 +141,10 @@ tableView = (function() {
     return row;
   };
 
-  tableView.prototype.createRowForLoadOldEntry = function(url) {
-    var row, textLabel;
+  tableView.prototype.createRowForLoadOldEntry = function() {
+    var nextPage, row, textLabel;
+    nextPage = Ti.App.Properties.getString('nextPageURL');
+    Ti.API.info(nextPage);
     row = Ti.UI.createTableViewRow({
       touchEnabled: false,
       width: 320,
@@ -160,7 +169,7 @@ tableView = (function() {
     });
     row.add(textLabel);
     row.className = 'loadOldEntry';
-    row.url = url;
+    row.url = nextPage;
     return row;
   };
 

@@ -1,6 +1,6 @@
 class Qiita
   constructor: (@name) ->
-    @version = 1.0
+
     @user_name = 'h5y1m141@github'
     @parameter =
       stocks:
@@ -19,8 +19,6 @@ class Qiita
         url:"https://qiita.com/api/v1/items"
         method:'GET'
 
-  getVersion: ->
-    return @version
   _auth:() ->
     xhr = Ti.Network.createHTTPClient()
     config = 

@@ -26,18 +26,24 @@ class tableView
         tab.open(webWindow)
        else
         Ti.API.info 'load old entry'
-        url = e.rowData.url
+        url = Ti.App.Properties.getString('nextPageURL')
+        Ti.API.info "NEXTPAGE:#{url}"
         actInd.backgroundColor = '#222'
         actInd.opacity = 0.8
         actInd.show()
         
-        q.getNextFeed(url,(result,link) ->
+        q.getNextFeed(url,(result,links) ->
+          for link in links
+            if link["rel"] == 'next'
+              Ti.App.Properties.setString('nextPageURL',link["url"])
+
           for json in result
             r = t.createRow(json)
             lastIndex = t.lastRowIndex()
             Ti.API.info lastIndex
             t.insertRow(lastIndex,r)
           actInd.hide()
+
           
         )
   
@@ -119,7 +125,9 @@ class tableView
     row.className = 'entry'
 
     return row
-  createRowForLoadOldEntry: (url) ->
+  createRowForLoadOldEntry: () ->
+    nextPage =  Ti.App.Properties.getString('nextPageURL')
+    Ti.API.info nextPage
     row = Ti.UI.createTableViewRow
       touchEnabled:false
       width:320
@@ -141,7 +149,7 @@ class tableView
       textAlign:1
     row.add(textLabel)
     row.className = 'loadOldEntry'
-    row.url = url
+    row.url = nextPage
     return row
 module.exports = tableView
 

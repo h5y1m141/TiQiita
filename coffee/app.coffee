@@ -39,12 +39,8 @@ q.getFeed( (result,links) ->
     if link["rel"] == 'next'
       Ti.App.Properties.setString('nextPageURL',link["url"])
     
-  nextPage =  Ti.App.Properties.getString('nextPageURL')
-
-  Ti.API.info nextPage
-    
   rows.push(t.createRow(json)) for json in result
-  rows.push(t.createRowForLoadOldEntry(nextPage))
+  rows.push(t.createRowForLoadOldEntry())
   mainTable.setData(rows)
   actInd.hide()
   win1.add(mainTable)

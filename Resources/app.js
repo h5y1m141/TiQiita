@@ -49,20 +49,18 @@ mainTable = t.getTable();
 rows = [];
 
 q.getFeed(function(result, links) {
-  var json, link, nextPage, _i, _j, _len, _len1;
+  var json, link, _i, _j, _len, _len1;
   for (_i = 0, _len = links.length; _i < _len; _i++) {
     link = links[_i];
     if (link["rel"] === 'next') {
       Ti.App.Properties.setString('nextPageURL', link["url"]);
     }
   }
-  nextPage = Ti.App.Properties.getString('nextPageURL');
-  Ti.API.info(nextPage);
   for (_j = 0, _len1 = result.length; _j < _len1; _j++) {
     json = result[_j];
     rows.push(t.createRow(json));
   }
-  rows.push(t.createRowForLoadOldEntry(nextPage));
+  rows.push(t.createRowForLoadOldEntry());
   mainTable.setData(rows);
   actInd.hide();
   win1.add(mainTable);
