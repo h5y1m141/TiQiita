@@ -2,9 +2,12 @@ var Qiita;
 
 Qiita = (function() {
 
-  function Qiita(name) {
-    this.name = name;
-    this.user_name = 'h5y1m141@github';
+  function Qiita() {
+    var configJSON, file;
+    configJSON = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'config.json');
+    file = configJSON.read().toString();
+    this.config = JSON.parse(file);
+    this.user_name = this.config.url_name;
     this.parameter = {
       stocks: {
         url: "https://qiita.com/api/v1/users/" + this.user_name + "/stocks",
@@ -30,11 +33,11 @@ Qiita = (function() {
   }
 
   Qiita.prototype._auth = function() {
-    var config, xhr;
+    var param, xhr;
     xhr = Ti.Network.createHTTPClient();
-    config = {
-      url_name: this.user_name,
-      password: 'orih6254'
+    param = {
+      url_name: this.config.user_name,
+      password: this.config.password
     };
     xhr.open('POST', 'https://qiita.com/api/v1/auth');
     xhr.onload = function() {
@@ -42,7 +45,7 @@ Qiita = (function() {
       body = JSON.parse(xhr.responseText);
       return Ti.App.Properties.setString('QiitaToken', body.token);
     };
-    xhr.send(config);
+    xhr.send(param);
     return true;
   };
 

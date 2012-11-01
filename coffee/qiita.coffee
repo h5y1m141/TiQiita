@@ -1,7 +1,11 @@
 class Qiita
-  constructor: (@name) ->
-
-    @user_name = 'h5y1m141@github'
+  constructor: () ->
+    configJSON = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'config.json')
+    file = configJSON.read().toString()
+    
+    @config = JSON.parse(file)
+    
+    @user_name = @config.url_name
     @parameter =
       stocks:
         url:"https://qiita.com/api/v1/users/#{@user_name}/stocks"
@@ -22,14 +26,14 @@ class Qiita
 
   _auth:() ->
     xhr = Ti.Network.createHTTPClient()
-    config = 
-      url_name: @user_name
-      password:'orih6254'
+    param = 
+      url_name: @config.user_name
+      password: @config.password
     xhr.open('POST','https://qiita.com/api/v1/auth')
     xhr.onload = ->
       body = JSON.parse(xhr.responseText)
       Ti.App.Properties.setString('QiitaToken', body.token)
-    xhr.send(config)
+    xhr.send(param)
     return true
 
   # オフラインやQiitaAPIに対するlimitがあるため
