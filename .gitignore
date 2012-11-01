@@ -19,3 +19,6 @@ tmp
 /Resources/.DS_Store
 /Resources/ui/.DS_Store
 /.DS_Store
+/Resources/test/following_tags.json
+/Resources/test/items.json
+/Resources/test/relLink.json
