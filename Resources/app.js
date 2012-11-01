@@ -1,4 +1,4 @@
-var Qiita, actInd, mainTable, moment, momentja, q, rows, t, tab, tableView, tg, token, win1;
+var Qiita, actInd, mainTable, mainWindow, menuWindow, moment, momentja, q, rows, t, tab, tabGroup, tableView, token;
 
 Qiita = require('qiita');
 
@@ -20,10 +20,12 @@ if (token === null) {
 
 Ti.API.info('Token is' + token);
 
-win1 = Ti.UI.createWindow({
+mainWindow = Ti.UI.createWindow({
   title: 'Qiita',
   barColor: '#59BB0C'
 });
+
+menuWindow = Ti.UI.createWindow;
 
 actInd = Ti.UI.createActivityIndicator({
   zIndex: 10,
@@ -42,7 +44,7 @@ actInd = Ti.UI.createActivityIndicator({
 
 actInd.show();
 
-win1.add(actInd);
+mainWindow.add(actInd);
 
 mainTable = t.getTable();
 
@@ -63,16 +65,16 @@ q.getFeed(function(result, links) {
   rows.push(t.createRowForLoadOldEntry());
   mainTable.setData(rows);
   actInd.hide();
-  win1.add(mainTable);
+  mainWindow.add(mainTable);
   return true;
 });
 
-tg = Ti.UI.createTabGroup();
+tabGroup = Ti.UI.createTabGroup();
 
 tab = Ti.UI.createTab({
-  window: win1
+  window: mainWindow
 });
 
-tg.addTab(tab);
+tabGroup.addTab(tab);
 
-tg.open();
+tabGroup.open();

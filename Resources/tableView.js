@@ -18,6 +18,7 @@ tableView = (function() {
       var c, container, url, w, webView, webWindow, _i, _len;
       if (e.rowData.className === 'entry') {
         webWindow = Ti.UI.createWindow({
+          backButtonTitle: '戻る',
           barColor: '#59BB0C'
         });
         webView = require('webView');

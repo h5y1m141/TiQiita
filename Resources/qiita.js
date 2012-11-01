@@ -14,16 +14,16 @@ Qiita = (function() {
         url: "https://qiita.com/api/v1/stocks",
         method: 'GET'
       },
+      feed: {
+        url: "https://qiita.com/api/v1/items",
+        method: 'GET'
+      },
       followingUsers: {
         url: "https://qiita.com/api/v1/users/" + this.user_name + "/following_users",
         method: 'GET'
       },
       followingTags: {
         url: "https://qiita.com/api/v1/users/" + this.user_name + "/following_tags",
-        method: 'GET'
-      },
-      feed: {
-        url: "https://qiita.com/api/v1/items",
         method: 'GET'
       }
     };
@@ -50,12 +50,21 @@ Qiita = (function() {
     var self, xhr;
     self = this;
     xhr = Ti.Network.createHTTPClient();
+    xhr.setRequestHeader('User-Agent', 'Mozilla/5.0 (iPhone; U; CPU like Mac OS X; en) AppleWebKit/420+ (KHTML, like Gecko) Version/3.0 Mobile/1A537a Safari/419.3');
+    Ti.API.info(parameter.method + ":" + parameter.url);
     xhr.open(parameter.method, parameter.url);
     xhr.onload = function() {
       var json, relLink, responseHeaders;
+      Ti.API.info("_request method start");
       responseHeaders = xhr.responseHeaders;
-      relLink = self._convertLinkHeaderToJSON(responseHeaders.Link);
+      Ti.API.info("" + xhr.responseText);
+      if (responseHeaders) {
+        relLink = self._convertLinkHeaderToJSON(responseHeaders.Link);
+      } else {
+        relLink = null;
+      }
       json = JSON.parse(xhr.responseText);
+      Ti.API.info("start callback function");
       return callback(json, relLink);
     };
     return xhr.send();

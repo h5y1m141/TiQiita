@@ -16,6 +16,7 @@ class tableView
       # 詳細画面にいくかどうかはrowのclassNameの値をチェックする
       if e.rowData.className == 'entry'
         webWindow = Ti.UI.createWindow
+          backButtonTitle:'戻る',
           barColor:'#59BB0C'
 
         webView = require('webView')

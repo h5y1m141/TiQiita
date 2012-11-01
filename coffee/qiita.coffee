@@ -8,16 +8,17 @@ class Qiita
         method:'GET'
       myStocks:
         url:"https://qiita.com/api/v1/stocks"
-        method:'GET'        
+        method:'GET'
+      feed:
+        url:"https://qiita.com/api/v1/items"
+        method:'GET'
       followingUsers:
         url:"https://qiita.com/api/v1/users/#{@user_name}/following_users"
         method:'GET'
       followingTags:
         url:"https://qiita.com/api/v1/users/#{@user_name}/following_tags"
         method:'GET'
-      feed:
-        url:"https://qiita.com/api/v1/items"
-        method:'GET'
+
 
   _auth:() ->
     xhr = Ti.Network.createHTTPClient()
@@ -33,13 +34,20 @@ class Qiita
   _request:(parameter,callback) ->
     self = @
     xhr = Ti.Network.createHTTPClient()
+    xhr.setRequestHeader('User-Agent','Mozilla/5.0 (iPhone; U; CPU like Mac OS X; en) AppleWebKit/420+ (KHTML, like Gecko) Version/3.0 Mobile/1A537a Safari/419.3')
+
+    Ti.API.info parameter.method + ":" + parameter.url
     xhr.open(parameter.method,parameter.url)
     xhr.onload = ->
+      Ti.API.info "_request method start"
       responseHeaders = xhr.responseHeaders
-      
-      relLink = self._convertLinkHeaderToJSON(responseHeaders.Link)
+      Ti.API.info "#{xhr.responseText}"
+      if responseHeaders
+        relLink = self._convertLinkHeaderToJSON(responseHeaders.Link)
+      else
+        relLink = null
       json = JSON.parse(xhr.responseText)
-        
+      Ti.API.info "start callback function"
       callback(json,relLink)
       
     xhr.send()
@@ -82,6 +90,7 @@ class Qiita
     param =
       "url": url
       "method":'GET'
+
     @._request(param,callback)
 
   getMyStocks:(callback) ->
