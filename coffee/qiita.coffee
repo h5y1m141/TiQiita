@@ -31,18 +31,36 @@ class Qiita
       Ti.App.Properties.setString('QiitaToken', body.token)
     xhr.send(config)
     return true
+
+  # オフラインやQiitaAPIに対するlimitがあるため
+  # 本番までは以下のメソッドを通じてモックオブジェクトを
+  # 呼び出す
+  _mockObject:(value,callback) ->
+    followingTagsJSON = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory,"test/following_tags.json")
+    itemsJSON = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory,"test/items.json")
+    relLinkJSON = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory,"test/relLink.json")
+
+    followingTags = JSON.parse(followingTagsJSON.read().toString())
+    items = JSON.parse(itemsJSON.read().toString())
+    relLink = JSON.parse(relLinkJSON.read().toString())
+
+    if value is "items"
+      callback(items,relLink)
+    else
+      callback(followingTags,relLink)
+    
+    return true 
   _request:(parameter,callback) ->
     self = @
     xhr = Ti.Network.createHTTPClient()
-    xhr.setRequestHeader('User-Agent','Mozilla/5.0 (iPhone; U; CPU like Mac OS X; en) AppleWebKit/420+ (KHTML, like Gecko) Version/3.0 Mobile/1A537a Safari/419.3')
 
     Ti.API.info parameter.method + ":" + parameter.url
     xhr.open(parameter.method,parameter.url)
     xhr.onload = ->
       Ti.API.info "_request method start"
       responseHeaders = xhr.responseHeaders
-      Ti.API.info "#{xhr.responseText}"
-      if responseHeaders
+      
+      if responseHeaders.Link
         relLink = self._convertLinkHeaderToJSON(responseHeaders.Link)
       else
         relLink = null
@@ -82,16 +100,20 @@ class Qiita
 
   getFollowingTags: (callback) ->
     param = @parameter.followingTags
-    @._request(param,callback)
+    # @._request(param,callback)
+    @._mockObject("followingTags",callback)
   getFeed:(callback) ->
     param = @parameter.feed
-    @._request(param,callback)
+    # @._request(param,callback)
+    @._mockObject("items",callback)
+    
   getNextFeed:(url,callback) ->
     param =
       "url": url
       "method":'GET'
 
-    @._request(param,callback)
+    # @._request(param,callback)
+    @._mockObject("items",callback)
 
   getMyStocks:(callback) ->
     token = Ti.App.Properties.getString('QiitaToken')

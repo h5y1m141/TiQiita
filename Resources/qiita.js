@@ -46,19 +46,33 @@ Qiita = (function() {
     return true;
   };
 
+  Qiita.prototype._mockObject = function(value, callback) {
+    var followingTags, followingTagsJSON, items, itemsJSON, relLink, relLinkJSON;
+    followingTagsJSON = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, "test/following_tags.json");
+    itemsJSON = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, "test/items.json");
+    relLinkJSON = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, "test/relLink.json");
+    followingTags = JSON.parse(followingTagsJSON.read().toString());
+    items = JSON.parse(itemsJSON.read().toString());
+    relLink = JSON.parse(relLinkJSON.read().toString());
+    if (value === "items") {
+      callback(items, relLink);
+    } else {
+      callback(followingTags, relLink);
+    }
+    return true;
+  };
+
   Qiita.prototype._request = function(parameter, callback) {
     var self, xhr;
     self = this;
     xhr = Ti.Network.createHTTPClient();
-    xhr.setRequestHeader('User-Agent', 'Mozilla/5.0 (iPhone; U; CPU like Mac OS X; en) AppleWebKit/420+ (KHTML, like Gecko) Version/3.0 Mobile/1A537a Safari/419.3');
     Ti.API.info(parameter.method + ":" + parameter.url);
     xhr.open(parameter.method, parameter.url);
     xhr.onload = function() {
       var json, relLink, responseHeaders;
       Ti.API.info("_request method start");
       responseHeaders = xhr.responseHeaders;
-      Ti.API.info("" + xhr.responseText);
-      if (responseHeaders) {
+      if (responseHeaders.Link) {
         relLink = self._convertLinkHeaderToJSON(responseHeaders.Link);
       } else {
         relLink = null;
@@ -101,13 +115,13 @@ Qiita = (function() {
   Qiita.prototype.getFollowingTags = function(callback) {
     var param;
     param = this.parameter.followingTags;
-    return this._request(param, callback);
+    return this._mockObject("followingTags", callback);
   };
 
   Qiita.prototype.getFeed = function(callback) {
     var param;
     param = this.parameter.feed;
-    return this._request(param, callback);
+    return this._mockObject("items", callback);
   };
 
   Qiita.prototype.getNextFeed = function(url, callback) {
@@ -116,7 +130,7 @@ Qiita = (function() {
       "url": url,
       "method": 'GET'
     };
-    return this._request(param, callback);
+    return this._mockObject("items", callback);
   };
 
   Qiita.prototype.getMyStocks = function(callback) {

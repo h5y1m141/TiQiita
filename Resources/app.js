@@ -1,4 +1,4 @@
-var Qiita, actInd, mainTable, mainWindow, menuWindow, moment, momentja, q, rows, t, tab, tabGroup, tableView, token;
+var Qiita, actInd, btn, mainTable, mainWindow, menuRows, menuTable, moment, momentja, q, rows, t, tab, tabGroup, tableView, token;
 
 Qiita = require('qiita');
 
@@ -24,8 +24,6 @@ mainWindow = Ti.UI.createWindow({
   title: 'Qiita',
   barColor: '#59BB0C'
 });
-
-menuWindow = Ti.UI.createWindow;
 
 actInd = Ti.UI.createActivityIndicator({
   zIndex: 10,
@@ -68,6 +66,60 @@ q.getFeed(function(result, links) {
   mainWindow.add(mainTable);
   return true;
 });
+
+menuTable = Ti.UI.createTableView({
+  backgroundColor: '#222',
+  zIndex: 10,
+  width: 80,
+  left: 0,
+  top: 0
+});
+
+menuRows = [];
+
+q.getFollowingTags(function(result, links) {
+  var json, row, textLabel, _i, _len;
+  Ti.API.info(result);
+  for (_i = 0, _len = result.length; _i < _len; _i++) {
+    json = result[_i];
+    row = Ti.UI.createTableViewRow({
+      width: 80,
+      opacity: 0.8,
+      backgroundColor: '#222',
+      borderColor: '#ededed',
+      height: 30
+    });
+    textLabel = Ti.UI.createLabel({
+      width: 120,
+      height: 30,
+      top: 0,
+      left: 0,
+      color: '#fff',
+      font: {
+        fontSize: 12,
+        fontWeight: 'bold'
+      },
+      text: json.url_name
+    });
+    row.add(textLabel);
+    menuRows.push(row);
+  }
+  menuTable.setData(menuRows);
+  return mainWindow.add(menuTable);
+});
+
+btn = Ti.UI.createButton({
+  systemButton: Titanium.UI.iPhone.SystemButton.BOOKMARKS
+});
+
+btn.addEventListener('click', function(e) {
+  return mainTable.animate({
+    duration: 180,
+    left: 150
+  });
+});
+
+mainWindow.leftNavButton = btn;
 
 tabGroup = Ti.UI.createTabGroup();
 

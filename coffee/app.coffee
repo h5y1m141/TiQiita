@@ -16,8 +16,6 @@ mainWindow = Ti.UI.createWindow
   title:'Qiita'
   barColor:'#59BB0C'
 
-menuWindow = Ti.UI.createWindow
-
 
 actInd = Ti.UI.createActivityIndicator
   zIndex:10
@@ -34,8 +32,8 @@ actInd = Ti.UI.createActivityIndicator
 actInd.show()
 mainWindow.add(actInd)
 
+# 投稿一覧情報を取得
 mainTable = t.getTable()
-
 rows = []
 q.getFeed( (result,links) ->
 
@@ -45,12 +43,57 @@ q.getFeed( (result,links) ->
     
   rows.push(t.createRow(json)) for json in result
   rows.push(t.createRowForLoadOldEntry())
-  mainTable.setData(rows)
+  mainTable.setData rows
   actInd.hide()
-  mainWindow.add(mainTable)
+  mainWindow.add mainTable
   return true
 )  
 
+# 自分がチェックしてるタグを取得して、左側にサブメニューとして配置
+menuTable = Ti.UI.createTableView
+  backgroundColor:'#222'
+  zIndex:10
+  width:80
+  left:0
+  top:0
+menuRows = []
+q.getFollowingTags( (result,links)->
+  Ti.API.info result
+  for json in result
+    row = Ti.UI.createTableViewRow
+      width:80
+      opacity:0.8
+      backgroundColor:'#222'
+      borderColor:'#ededed'
+      height:30
+    textLabel = Ti.UI.createLabel
+      width:120
+      height:30
+      top:0
+      left:0
+      color:'#fff'
+      font:
+        fontSize:12
+        fontWeight:'bold'
+      text:json.url_name
+    row.add textLabel
+    menuRows.push row
+  
+  
+  menuTable.setData menuRows
+  mainWindow.add menuTable
+)
+
+btn = Ti.UI.createButton
+  systemButton: Titanium.UI.iPhone.SystemButton.BOOKMARKS
+
+btn.addEventListener('click',(e)->
+  mainTable.animate(
+    duration:180
+    left:150
+  )
+)
+mainWindow.leftNavButton = btn
 
 
 
