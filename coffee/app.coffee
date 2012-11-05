@@ -6,6 +6,10 @@ momentja = require('lib/momentja')
 t = new tableView()
 q = new Qiita()
 
+# クリックイベント時の状態管理のために以下利用
+Ti.App.Properties.setString('stateMainTableSlide',false)
+
+
 
 token = Ti.App.Properties.getString('QiitaToken')
 if token is null
@@ -52,22 +56,44 @@ q.getFeed( (result,links) ->
 # 自分がチェックしてるタグを取得して、左側にサブメニューとして配置
 menuTable = Ti.UI.createTableView
   backgroundColor:'#222'
+  separatorStyle:0
   zIndex:10
   width:80
   left:0
   top:0
+  
+menuTable.addEventListener('click',(e)->
+  
+  curretRowIndex = e.index
+  
+  # すべてのrowの背景色をデフォルト値に設定
+  rows = menuTable.data[0].rows
+  for row in rows
+    if row.backgroundColor isnt '#222'
+      row.backgroundColor = '#222'
+  
+  # その上でクリックされたrowの色を'#59BB0C'に設定
+  menuTable.data[0].rows[curretRowIndex].backgroundColor = '#59BB0C'
+
+)
+  
 menuRows = []
 q.getFollowingTags( (result,links)->
-  Ti.API.info result
-  for json in result
+  
+  for json,i in result
     row = Ti.UI.createTableViewRow
       width:80
       opacity:0.8
       backgroundColor:'#222'
+      selectedBackgroundColor:'#59BB0C'
       borderColor:'#ededed'
       height:30
+    row.addEventListener('click',(e)->
+      
+      e.row.backgroundColor = '#59BB0C'
+    )
     textLabel = Ti.UI.createLabel
-      width:120
+      width:80
       height:30
       top:0
       left:0
@@ -77,6 +103,8 @@ q.getFollowingTags( (result,links)->
         fontWeight:'bold'
       text:json.url_name
     row.add textLabel
+    row.rowid = i
+    
     menuRows.push row
   
   
@@ -88,10 +116,20 @@ btn = Ti.UI.createButton
   systemButton: Titanium.UI.iPhone.SystemButton.BOOKMARKS
 
 btn.addEventListener('click',(e)->
-  mainTable.animate(
-    duration:180
-    left:150
-  )
+  state = Ti.App.Properties.getString("stateMainTableSlide")
+
+  if state is false
+    Ti.App.Properties.setString('stateMainTableSlide',true)
+    mainTable.animate(
+      duration:200
+      left:-80
+    )
+  else
+    Ti.App.Properties.setString('stateMainTableSlide',false)
+    mainTable.animate(
+      duration:200
+      left:80
+    )
 )
 mainWindow.leftNavButton = btn
 
@@ -102,5 +140,3 @@ tab = Ti.UI.createTab
   window: mainWindow
 tabGroup.addTab(tab)
 tabGroup.open()
-
-

@@ -12,6 +12,8 @@ t = new tableView();
 
 q = new Qiita();
 
+Ti.App.Properties.setString('stateMainTableSlide', false);
+
 token = Ti.App.Properties.getString('QiitaToken');
 
 if (token === null) {
@@ -69,28 +71,45 @@ q.getFeed(function(result, links) {
 
 menuTable = Ti.UI.createTableView({
   backgroundColor: '#222',
+  separatorStyle: 0,
   zIndex: 10,
   width: 80,
   left: 0,
   top: 0
 });
 
+menuTable.addEventListener('click', function(e) {
+  var curretRowIndex, row, _i, _len;
+  curretRowIndex = e.index;
+  rows = menuTable.data[0].rows;
+  for (_i = 0, _len = rows.length; _i < _len; _i++) {
+    row = rows[_i];
+    if (row.backgroundColor !== '#222') {
+      row.backgroundColor = '#222';
+    }
+  }
+  return menuTable.data[0].rows[curretRowIndex].backgroundColor = '#59BB0C';
+});
+
 menuRows = [];
 
 q.getFollowingTags(function(result, links) {
-  var json, row, textLabel, _i, _len;
-  Ti.API.info(result);
-  for (_i = 0, _len = result.length; _i < _len; _i++) {
-    json = result[_i];
+  var i, json, row, textLabel, _i, _len;
+  for (i = _i = 0, _len = result.length; _i < _len; i = ++_i) {
+    json = result[i];
     row = Ti.UI.createTableViewRow({
       width: 80,
       opacity: 0.8,
       backgroundColor: '#222',
+      selectedBackgroundColor: '#59BB0C',
       borderColor: '#ededed',
       height: 30
     });
+    row.addEventListener('click', function(e) {
+      return e.row.backgroundColor = '#59BB0C';
+    });
     textLabel = Ti.UI.createLabel({
-      width: 120,
+      width: 80,
       height: 30,
       top: 0,
       left: 0,
@@ -102,6 +121,7 @@ q.getFollowingTags(function(result, links) {
       text: json.url_name
     });
     row.add(textLabel);
+    row.rowid = i;
     menuRows.push(row);
   }
   menuTable.setData(menuRows);
@@ -113,10 +133,21 @@ btn = Ti.UI.createButton({
 });
 
 btn.addEventListener('click', function(e) {
-  return mainTable.animate({
-    duration: 180,
-    left: 150
-  });
+  var state;
+  state = Ti.App.Properties.getString("stateMainTableSlide");
+  if (state === false) {
+    Ti.App.Properties.setString('stateMainTableSlide', true);
+    return mainTable.animate({
+      duration: 200,
+      left: -80
+    });
+  } else {
+    Ti.App.Properties.setString('stateMainTableSlide', false);
+    return mainTable.animate({
+      duration: 200,
+      left: 80
+    });
+  }
 });
 
 mainWindow.leftNavButton = btn;
