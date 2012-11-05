@@ -12,7 +12,7 @@ t = new tableView();
 
 q = new Qiita();
 
-Ti.App.Properties.setString('stateMainTableSlide', false);
+Ti.App.Properties.setBool('stateMainTableSlide', false);
 
 token = Ti.App.Properties.getString('QiitaToken');
 
@@ -72,7 +72,7 @@ q.getFeed(function(result, links) {
 menuTable = Ti.UI.createTableView({
   backgroundColor: '#222',
   separatorStyle: 0,
-  zIndex: 10,
+  zIndex: 1,
   width: 80,
   left: 0,
   top: 0
@@ -133,19 +133,19 @@ btn = Ti.UI.createButton({
 });
 
 btn.addEventListener('click', function(e) {
-  var state;
-  state = Ti.App.Properties.getString("stateMainTableSlide");
-  if (state === false) {
-    Ti.App.Properties.setString('stateMainTableSlide', true);
-    return mainTable.animate({
-      duration: 200,
-      left: -80
-    });
-  } else {
-    Ti.App.Properties.setString('stateMainTableSlide', false);
+  if (Ti.App.Properties.getBool("stateMainTableSlide") === false) {
     return mainTable.animate({
       duration: 200,
       left: 80
+    }, function() {
+      return Ti.App.Properties.setBool("stateMainTableSlide", true);
+    });
+  } else {
+    return mainTable.animate({
+      duration: 200,
+      left: 0
+    }, function() {
+      return Ti.App.Properties.setBool("stateMainTableSlide", false);
     });
   }
 });

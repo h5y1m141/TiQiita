@@ -7,8 +7,7 @@ t = new tableView()
 q = new Qiita()
 
 # クリックイベント時の状態管理のために以下利用
-Ti.App.Properties.setString('stateMainTableSlide',false)
-
+Ti.App.Properties.setBool('stateMainTableSlide',false)
 
 
 token = Ti.App.Properties.getString('QiitaToken')
@@ -57,7 +56,7 @@ q.getFeed( (result,links) ->
 menuTable = Ti.UI.createTableView
   backgroundColor:'#222'
   separatorStyle:0
-  zIndex:10
+  zIndex:1
   width:80
   left:0
   top:0
@@ -116,20 +115,19 @@ btn = Ti.UI.createButton
   systemButton: Titanium.UI.iPhone.SystemButton.BOOKMARKS
 
 btn.addEventListener('click',(e)->
-  state = Ti.App.Properties.getString("stateMainTableSlide")
-
-  if state is false
-    Ti.App.Properties.setString('stateMainTableSlide',true)
-    mainTable.animate(
-      duration:200
-      left:-80
-    )
-  else
-    Ti.App.Properties.setString('stateMainTableSlide',false)
-    mainTable.animate(
-      duration:200
+  
+  if Ti.App.Properties.getBool("stateMainTableSlide") is false
+    mainTable.animate({
+      duration:200,
       left:80
-    )
+    },()-> Ti.App.Properties.setBool("stateMainTableSlide",true))
+
+  else
+    mainTable.animate({
+      duration:200
+      left:0
+    }, ()-> Ti.App.Properties.setBool("stateMainTableSlide",false))
+    
 )
 mainWindow.leftNavButton = btn
 
