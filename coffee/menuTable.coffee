@@ -11,15 +11,17 @@ class menuTable
     table.addEventListener('click',(e)->
       
       curretRowIndex = e.index
-      Ti.API.info e.rowData.className  
+
+      Ti.API.info e.rowData.className
+
       # すべてのrowの背景色をデフォルト値に設定
-      menuRows = @table.data[0].rows
+      menuRows = table.data[0].rows
       for menuRow in menuRows
         if menuRow.backgroundColor isnt '#222'
           menuRow.backgroundColor = '#222'
       
       # その上でクリックされたrowの色を'#59BB0C'に設定
-      @table.data[0].rows[curretRowIndex].backgroundColor = '#59BB0C'
+      table.data[0].rows[curretRowIndex].backgroundColor = '#59BB0C'
 
     )
       
@@ -35,7 +37,7 @@ class menuTable
           height:60
         menuRow.addEventListener('click',(e)->
           
-          e.menuRow.backgroundColor = '#59BB0C'
+          e.row.backgroundColor = '#59BB0C'
         )
         textLabel = Ti.UI.createLabel
           width:80

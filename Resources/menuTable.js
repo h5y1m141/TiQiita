@@ -16,14 +16,14 @@ menuTable = (function() {
       var curretRowIndex, menuRow, menuRows, _i, _len;
       curretRowIndex = e.index;
       Ti.API.info(e.rowData.className);
-      menuRows = this.table.data[0].rows;
+      menuRows = table.data[0].rows;
       for (_i = 0, _len = menuRows.length; _i < _len; _i++) {
         menuRow = menuRows[_i];
         if (menuRow.backgroundColor !== '#222') {
           menuRow.backgroundColor = '#222';
         }
       }
-      return this.table.data[0].rows[curretRowIndex].backgroundColor = '#59BB0C';
+      return table.data[0].rows[curretRowIndex].backgroundColor = '#59BB0C';
     });
     q.getFollowingTags(function(result, links) {
       var json, menuRow, menuRows, textLabel, _i, _len;
@@ -39,7 +39,7 @@ menuTable = (function() {
           height: 60
         });
         menuRow.addEventListener('click', function(e) {
-          return e.menuRow.backgroundColor = '#59BB0C';
+          return e.row.backgroundColor = '#59BB0C';
         });
         textLabel = Ti.UI.createLabel({
           width: 80,
