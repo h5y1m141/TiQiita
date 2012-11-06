@@ -118,13 +118,13 @@ Qiita = (function() {
   Qiita.prototype.getFollowingTags = function(callback) {
     var param;
     param = this.parameter.followingTags;
-    return this._mockObject("followingTags", callback);
+    return this._request(param, callback);
   };
 
   Qiita.prototype.getFeed = function(callback) {
     var param;
     param = this.parameter.feed;
-    return this._mockObject("items", callback);
+    return this._request(param, callback);
   };
 
   Qiita.prototype.getNextFeed = function(url, callback) {
@@ -133,7 +133,7 @@ Qiita = (function() {
       "url": url,
       "method": 'GET'
     };
-    return this._mockObject("items", callback);
+    return this._request(param, callback);
   };
 
   Qiita.prototype.getMyStocks = function(callback) {

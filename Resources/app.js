@@ -1,8 +1,10 @@
-var Qiita, actInd, btn, mainTable, mainWindow, menuRows, menuTable, moment, momentja, q, rows, t, tab, tabGroup, tableView, token;
+var Qiita, actInd, btn, mainTable, mainWindow, menuTable, moment, momentja, q, rows, t, tab, tabGroup, tableView, token;
 
 Qiita = require('qiita');
 
 tableView = require('tableView');
+
+menuTable = require('menuTable');
 
 moment = require('lib/moment.min');
 
@@ -51,7 +53,7 @@ mainTable = t.getTable();
 rows = [];
 
 q.getFeed(function(result, links) {
-  var json, link, _i, _j, _len, _len1;
+  var json, link, menu, _i, _j, _len, _len1;
   for (_i = 0, _len = links.length; _i < _len; _i++) {
     link = links[_i];
     if (link["rel"] === 'next') {
@@ -66,66 +68,9 @@ q.getFeed(function(result, links) {
   mainTable.setData(rows);
   actInd.hide();
   mainWindow.add(mainTable);
+  menu = new menuTable();
+  mainWindow.add(menu);
   return true;
-});
-
-menuTable = Ti.UI.createTableView({
-  backgroundColor: '#222',
-  separatorStyle: 0,
-  zIndex: 1,
-  width: 80,
-  left: 0,
-  top: 0
-});
-
-menuTable.addEventListener('click', function(e) {
-  var curretRowIndex, row, _i, _len;
-  curretRowIndex = e.index;
-  rows = menuTable.data[0].rows;
-  for (_i = 0, _len = rows.length; _i < _len; _i++) {
-    row = rows[_i];
-    if (row.backgroundColor !== '#222') {
-      row.backgroundColor = '#222';
-    }
-  }
-  return menuTable.data[0].rows[curretRowIndex].backgroundColor = '#59BB0C';
-});
-
-menuRows = [];
-
-q.getFollowingTags(function(result, links) {
-  var i, json, row, textLabel, _i, _len;
-  for (i = _i = 0, _len = result.length; _i < _len; i = ++_i) {
-    json = result[i];
-    row = Ti.UI.createTableViewRow({
-      width: 80,
-      opacity: 0.8,
-      backgroundColor: '#222',
-      selectedBackgroundColor: '#59BB0C',
-      borderColor: '#ededed',
-      height: 30
-    });
-    row.addEventListener('click', function(e) {
-      return e.row.backgroundColor = '#59BB0C';
-    });
-    textLabel = Ti.UI.createLabel({
-      width: 80,
-      height: 30,
-      top: 0,
-      left: 0,
-      color: '#fff',
-      font: {
-        fontSize: 12,
-        fontWeight: 'bold'
-      },
-      text: json.url_name
-    });
-    row.add(textLabel);
-    row.rowid = i;
-    menuRows.push(row);
-  }
-  menuTable.setData(menuRows);
-  return mainWindow.add(menuTable);
 });
 
 btn = Ti.UI.createButton({

@@ -104,20 +104,20 @@ class Qiita
 
   getFollowingTags: (callback) ->
     param = @parameter.followingTags
-    # @._request(param,callback)
-    @._mockObject("followingTags",callback)
+    @._request(param,callback)
+    # @._mockObject("followingTags",callback)
   getFeed:(callback) ->
     param = @parameter.feed
-    # @._request(param,callback)
-    @._mockObject("items",callback)
+    @._request(param,callback)
+    # @._mockObject("items",callback)
     
   getNextFeed:(url,callback) ->
     param =
       "url": url
       "method":'GET'
 
-    # @._request(param,callback)
-    @._mockObject("items",callback)
+    @._request(param,callback)
+    # @._mockObject("items",callback)
 
   getMyStocks:(callback) ->
     token = Ti.App.Properties.getString('QiitaToken')
