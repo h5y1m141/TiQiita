@@ -25,7 +25,7 @@ menuTable = (function() {
       }
       return table.data[0].rows[curretRowIndex].backgroundColor = '#59BB0C';
     });
-    q.getFollowingTags(function(result, links) {
+    qiita.getFollowingTags(function(result, links) {
       var json, menuRow, menuRows, textLabel, _i, _len;
       menuRows = [];
       for (_i = 0, _len = result.length; _i < _len; _i++) {

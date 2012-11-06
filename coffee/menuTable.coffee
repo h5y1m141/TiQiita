@@ -25,7 +25,7 @@ class menuTable
 
     )
       
-    q.getFollowingTags( (result,links)->
+    qiita.getFollowingTags( (result,links)->
       menuRows = []
       for json in result
         menuRow = Ti.UI.createTableViewRow

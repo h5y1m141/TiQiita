@@ -36,7 +36,7 @@ tableView = (function() {
         actInd.backgroundColor = '#222';
         actInd.opacity = 0.8;
         actInd.show();
-        return q.getNextFeed(url, function(result, links) {
+        return qiita.getNextFeed(url, function(result, links) {
           var json, lastIndex, link, r, _j, _k, _len1, _len2;
           for (_j = 0, _len1 = links.length; _j < _len1; _j++) {
             link = links[_j];
@@ -145,7 +145,6 @@ tableView = (function() {
   tableView.prototype.createRowForLoadOldEntry = function() {
     var nextPage, row, textLabel;
     nextPage = Ti.App.Properties.getString('nextPageURL');
-    Ti.API.info(nextPage);
     row = Ti.UI.createTableViewRow({
       touchEnabled: false,
       width: 320,

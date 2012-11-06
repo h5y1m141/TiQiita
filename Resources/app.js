@@ -1,4 +1,4 @@
-var Qiita, actInd, btn, mainTable, mainWindow, menuTable, moment, momentja, q, rows, t, tab, tabGroup, tableView, token;
+var Qiita, actInd, btn, mainTable, mainWindow, menuTable, moment, momentja, qiita, rows, t, tab, tabGroup, tableView, token;
 
 Qiita = require('qiita');
 
@@ -12,14 +12,14 @@ momentja = require('lib/momentja');
 
 t = new tableView();
 
-q = new Qiita();
+qiita = new Qiita();
 
 Ti.App.Properties.setBool('stateMainTableSlide', false);
 
 token = Ti.App.Properties.getString('QiitaToken');
 
 if (token === null) {
-  q._auth();
+  qiita._auth();
 }
 
 Ti.API.info('Token is' + token);
@@ -52,7 +52,7 @@ mainTable = t.getTable();
 
 rows = [];
 
-q.getFeed(function(result, links) {
+qiita.getFeed(function(result, links) {
   var json, link, menu, _i, _j, _len, _len1;
   for (_i = 0, _len = links.length; _i < _len; _i++) {
     link = links[_i];

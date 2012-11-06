@@ -33,7 +33,7 @@ class tableView
         actInd.opacity = 0.8
         actInd.show()
         
-        q.getNextFeed(url,(result,links) ->
+        qiita.getNextFeed(url,(result,links) ->
           for link in links
             if link["rel"] == 'next'
               Ti.App.Properties.setString('nextPageURL',link["url"])
@@ -128,7 +128,7 @@ class tableView
     return row
   createRowForLoadOldEntry: () ->
     nextPage =  Ti.App.Properties.getString('nextPageURL')
-    Ti.API.info nextPage
+
     row = Ti.UI.createTableViewRow
       touchEnabled:false
       width:320

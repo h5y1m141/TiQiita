@@ -5,7 +5,7 @@ moment = require('lib/moment.min')
 momentja = require('lib/momentja')
 
 t = new tableView()
-q = new Qiita()
+qiita = new Qiita()
 
 # クリックイベント時の状態管理のために以下利用
 Ti.App.Properties.setBool('stateMainTableSlide',false)
@@ -13,7 +13,7 @@ Ti.App.Properties.setBool('stateMainTableSlide',false)
 
 token = Ti.App.Properties.getString('QiitaToken')
 if token is null
-  q._auth()
+  qiita._auth()
 Ti.API.info('Token is' + token)
 
 mainWindow = Ti.UI.createWindow
@@ -39,7 +39,7 @@ mainWindow.add(actInd)
 # 投稿一覧情報を取得
 mainTable = t.getTable()
 rows = []
-q.getFeed( (result,links) ->
+qiita.getFeed( (result,links) ->
 
   for link in links
     if link["rel"] == 'next'
