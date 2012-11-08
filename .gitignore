@@ -19,7 +19,10 @@ tmp
 /Resources/.DS_Store
 /Resources/ui/.DS_Store
 /.DS_Store
-/Resources/test/following_tags.json
-/Resources/test/items.json
-/Resources/test/relLink.json
+/Resources/test/*
+/Resources/test/**
 /Resources/config.json
+/Resources/KS_nav_ui.png
+/Resources/KS_nav_views.png
+/Resources/bootstrap.min.css
+/Resources/eventManagement.js
