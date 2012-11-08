@@ -13,9 +13,8 @@ menuTable = (function() {
       top: 0
     });
     table.addEventListener('click', function(e) {
-      var curretRowIndex, menuRow, menuRows, _i, _len;
+      var curretRowIndex, i, menuRow, menuRows, numberOfRows, result, tagName, tags, value, _, _i, _j, _len;
       curretRowIndex = e.index;
-      Ti.API.info(e.rowData.className);
       menuRows = table.data[0].rows;
       for (_i = 0, _len = menuRows.length; _i < _len; _i++) {
         menuRow = menuRows[_i];
@@ -23,7 +22,21 @@ menuTable = (function() {
           menuRow.backgroundColor = '#222';
         }
       }
-      return table.data[0].rows[curretRowIndex].backgroundColor = '#59BB0C';
+      table.data[0].rows[curretRowIndex].backgroundColor = '#59BB0C';
+      numberOfRows = mainTable.data[0].rows.length - 1;
+      result = [];
+      for (i = _j = 0; 0 <= numberOfRows ? _j <= numberOfRows : _j >= numberOfRows; i = 0 <= numberOfRows ? ++_j : --_j) {
+        tags = mainTable.data[0].rows[i].tags;
+        _ = require("lib/underscore-min");
+        tagName = e.rowData.className;
+        value = _.where(tags, {
+          "url_name": tagName
+        });
+        if (value.length !== 0) {
+          result.push(value);
+        }
+      }
+      return Ti.API.info("#value is:" + result);
     });
     qiita.getFollowingTags(function(result, links) {
       var json, menuRow, menuRows, textLabel, _i, _len;

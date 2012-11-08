@@ -139,6 +139,7 @@ tableView = (function() {
     row.add(bodySummary);
     row.data = json;
     row.className = 'entry';
+    row.tags = json.tags;
     return row;
   };
 

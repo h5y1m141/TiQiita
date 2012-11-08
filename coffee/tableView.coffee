@@ -124,6 +124,7 @@ class tableView
     row.add(bodySummary)
     row.data = json
     row.className = 'entry'
+    row.tags = json.tags
 
     return row
   createRowForLoadOldEntry: () ->
@@ -152,6 +153,8 @@ class tableView
     row.className = 'loadOldEntry'
     row.url = nextPage
     return row
+    
+    
 module.exports = tableView
 
 

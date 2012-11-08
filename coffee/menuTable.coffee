@@ -11,9 +11,6 @@ class menuTable
     table.addEventListener('click',(e)->
       
       curretRowIndex = e.index
-
-      Ti.API.info e.rowData.className
-
       # すべてのrowの背景色をデフォルト値に設定
       menuRows = table.data[0].rows
       for menuRow in menuRows
@@ -22,6 +19,36 @@ class menuTable
       
       # その上でクリックされたrowの色を'#59BB0C'に設定
       table.data[0].rows[curretRowIndex].backgroundColor = '#59BB0C'
+      
+      # サブメニューで選択されたタグにマッチする
+      # 投稿を非表示にする
+
+      numberOfRows = mainTable.data[0].rows.length-1
+      result = []
+      for i in [0..numberOfRows]
+        tags = mainTable.data[0].rows[i].tags
+        _ = require("lib/underscore-min")
+        tagName = e.rowData.className
+        value = _.where(tags,{"url_name":tagName})
+        if value.length isnt 0
+          result.push value
+        
+      Ti.API.info "#value is:#{result}"
+        
+        # if value isnt null
+        #   Ti.API.info "start push"
+        #   result.push value
+          
+        # Ti.API.info result
+        
+        # for tag in tags
+        #   tagName = e.rowData.className
+        #   if tag.name is tagName
+        #     Ti.API.info "row should be hide.row number is #{i}"
+            # mainTable.deleteRow(i)
+            # mainTable.data[0].rows[i].backgroundColor = '#000'
+
+
 
     )
       
