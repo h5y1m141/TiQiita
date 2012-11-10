@@ -18,10 +18,26 @@ class eventManagement
 
         t.insertRow(lastIndex,r)
         actInd.hide()
-
+    )
+    return true
 
   stockItemToQiita: (uuid) ->
-    Ti.API.info uuid
+    uuid = Ti.App.Properties.getString('stockUUID')
+    actInd.backgroundColor = '#222'
+    actInd.zIndex = 20
+    actInd.show()  
+
+    qiita.putStock(uuid)
+    
     return true
+    
+  sessionItem: (json) ->
+    Ti.API.info "start sessionItem. url is #{json.url}. uuid is #{json.uuid}"
+    if json
+      Ti.App.Properties.setString('stockURL',json.url)
+      Ti.App.Properties.setString('stockUUID',json.uuid)
+      Ti.App.Properties.setString('stockID',json.id)    
+    
+    
 
 module.exports = eventManagement

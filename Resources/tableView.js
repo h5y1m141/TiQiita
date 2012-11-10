@@ -15,8 +15,9 @@ tableView = (function() {
 
   tableView.prototype.getTable = function() {
     this.table.addEventListener('click', function(e) {
-      var c, configBtn, container, url, w, webView, webWindow, _i, _len;
+      var c, configBtn, container, stockInd, w, webView, webWindow, _i, _len;
       if (e.rowData.className === 'entry') {
+        em.sessionItem(e.rowData.data);
         webWindow = Ti.UI.createWindow({
           backButtonTitle: '戻る',
           barColor: '#59BB0C'
@@ -28,10 +29,26 @@ tableView = (function() {
           c = container[_i];
           webWindow.add(c);
         }
+        stockInd = Ti.UI.createActivityIndicator({
+          zIndex: 10,
+          top: 100,
+          left: 120,
+          height: 40,
+          width: 'auto',
+          backgroundColor: '#222',
+          font: {
+            fontFamily: 'Helvetica Neue',
+            fontSize: 15,
+            fontWeight: 'bold'
+          },
+          color: '#fff',
+          message: 'loading...'
+        });
+        webWindow.add(actInd);
         configBtn = Ti.UI.createButton({
           systemButton: Titanium.UI.iPhone.SystemButton.COMPOSE
         });
-        configBtn.addEventListener('click', function(e) {
+        configBtn.addEventListener('click', function() {
           var dialog;
           dialog = Ti.UI.createOptionDialog();
           dialog.setTitle("どの処理を実行しますか？");
@@ -39,36 +56,14 @@ tableView = (function() {
           dialog.setCancel(2);
           dialog.addEventListener('click', function(event) {
             Ti.API.info("start dialog action.Event is " + event.index);
-            return em.stockItemToQiita(uuid);
+            return em.stockItemToQiita();
           });
           return dialog.show();
         });
         webWindow.rightNavButton = configBtn;
         return tab.open(webWindow);
       } else {
-        Ti.API.info('load old entry');
-        url = Ti.App.Properties.getString('nextPageURL');
-        Ti.API.info("NEXTPAGE:" + url);
-        actInd.backgroundColor = '#222';
-        actInd.opacity = 0.8;
-        actInd.show();
-        return qiita.getNextFeed(url, function(result, links) {
-          var json, lastIndex, link, r, _j, _k, _len1, _len2;
-          for (_j = 0, _len1 = links.length; _j < _len1; _j++) {
-            link = links[_j];
-            if (link["rel"] === 'next') {
-              Ti.App.Properties.setString('nextPageURL', link["url"]);
-            }
-          }
-          for (_k = 0, _len2 = result.length; _k < _len2; _k++) {
-            json = result[_k];
-            r = t.createRow(json);
-            lastIndex = t.lastRowIndex();
-            Ti.API.info(lastIndex);
-            t.insertRow(lastIndex, r);
-          }
-          return actInd.hide();
-        });
+        return em.loadOldEntry();
       }
     });
     return this.table;

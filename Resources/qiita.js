@@ -164,6 +164,28 @@ Qiita = (function() {
     return this._request(param, callback);
   };
 
+  Qiita.prototype.putStock = function(uuid) {
+    var method, token, url, xhr;
+    token = Ti.App.Properties.getString('QiitaToken');
+    if (token === null) {
+      this._auth();
+    }
+    xhr = Ti.Network.createHTTPClient();
+    method = 'PUT';
+    xhr.setRequestHeader('X-HTTP-Method-Override', method);
+    url = "https://qiita.com/api/v1/items/" + uuid + "/stock";
+    xhr.open(method, url);
+    xhr.send({
+      token: Ti.App.Properties.getString('QiitaToken')
+    });
+    return xhr.onload = function() {
+      var body;
+      Ti.API.info('start stock xhr');
+      body = JSON.parse(xhr.responseText);
+      return actInd.hide();
+    };
+  };
+
   return Qiita;
 
 })();

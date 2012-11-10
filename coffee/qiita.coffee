@@ -137,5 +137,25 @@ class Qiita
       method:@parameter.myFeed.method
     Ti.API.info(param.url)
     @._request(param,callback)
+  putStock:(uuid) ->
+    token = Ti.App.Properties.getString('QiitaToken')
+    if token is null
+      @._auth()
+      
+    xhr = Ti.Network.createHTTPClient()
+    method = 'PUT'
+    xhr.setRequestHeader('X-HTTP-Method-Override',method)
+
+    url = "https://qiita.com/api/v1/items/#{uuid}/stock"
+    xhr.open(method,url)
+    xhr.send({
+      token:Ti.App.Properties.getString('QiitaToken')
+    })
+    xhr.onload = ->
+      Ti.API.info 'start stock xhr'
+      body = JSON.parse(xhr.responseText)
+
+      actInd.hide()
+        
 module.exports = Qiita
 
