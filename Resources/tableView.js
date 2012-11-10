@@ -15,7 +15,7 @@ tableView = (function() {
 
   tableView.prototype.getTable = function() {
     this.table.addEventListener('click', function(e) {
-      var c, container, url, w, webView, webWindow, _i, _len;
+      var c, configBtn, container, url, w, webView, webWindow, _i, _len;
       if (e.rowData.className === 'entry') {
         webWindow = Ti.UI.createWindow({
           backButtonTitle: '戻る',
@@ -28,6 +28,22 @@ tableView = (function() {
           c = container[_i];
           webWindow.add(c);
         }
+        configBtn = Ti.UI.createButton({
+          systemButton: Titanium.UI.iPhone.SystemButton.COMPOSE
+        });
+        configBtn.addEventListener('click', function(e) {
+          var dialog;
+          dialog = Ti.UI.createOptionDialog();
+          dialog.setTitle("どの処理を実行しますか？");
+          dialog.setOptions(["Stock", "はてなブックマークに送る", "キャンセル"]);
+          dialog.setCancel(2);
+          dialog.addEventListener('click', function(event) {
+            Ti.API.info("start dialog action.Event is " + event.index);
+            return em.stockItemToQiita(uuid);
+          });
+          return dialog.show();
+        });
+        webWindow.rightNavButton = configBtn;
         return tab.open(webWindow);
       } else {
         Ti.API.info('load old entry');

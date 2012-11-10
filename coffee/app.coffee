@@ -3,9 +3,12 @@ tableView = require('tableView')
 menuTable = require('menuTable')
 moment = require('lib/moment.min')
 momentja = require('lib/momentja')
+eventManagement = require('eventManagement')
 
 t = new tableView()
 qiita = new Qiita()
+
+em = new eventManagement()
 
 # クリックイベント時の状態管理のために以下利用
 Ti.App.Properties.setBool('stateMainTableSlide',false)

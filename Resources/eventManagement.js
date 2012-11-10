@@ -10,6 +10,11 @@ eventManagement = (function() {
     });
   };
 
+  eventManagement.prototype.stockItemToQiita = function(uuid) {
+    Ti.API.info(uuid);
+    return true;
+  };
+
   return eventManagement;
 
 })();

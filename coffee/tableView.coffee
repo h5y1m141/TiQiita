@@ -24,26 +24,26 @@ class tableView
         container = w.create(e.rowData.data)  
         webWindow.add(c) for c in container
         
+        configBtn = Ti.UI.createButton
+          systemButton: Titanium.UI.iPhone.SystemButton.COMPOSE
+
+        configBtn.addEventListener('click',(e)->
+          dialog = Ti.UI.createOptionDialog()
+          dialog.setTitle "どの処理を実行しますか？"
+          dialog.setOptions(["Stock","はてなブックマークに送る","キャンセル"])
+          dialog.setCancel(2)
+          dialog.addEventListener('click',(event) ->
+            Ti.API.info "start dialog action.Event is #{event.index}"
+            em.stockItemToQiita(uuid)
+          )
+          dialog.show()
+        )
+        webWindow.rightNavButton = configBtn
+
+        
         tab.open(webWindow)
        else
-        Ti.API.info 'load old entry'
-        url = Ti.App.Properties.getString('nextPageURL')
-        Ti.API.info "NEXTPAGE:#{url}"
-        actInd.backgroundColor = '#222'
-        actInd.opacity = 0.8
-        actInd.show()
-        
-        qiita.getNextFeed(url,(result,links) ->
-          for link in links
-            if link["rel"] == 'next'
-              Ti.App.Properties.setString('nextPageURL',link["url"])
-
-          for json in result
-            r = t.createRow(json)
-            lastIndex = t.lastRowIndex()
-            Ti.API.info lastIndex
-            t.insertRow(lastIndex,r)
-          actInd.hide()
+        em.loadOldEntry()
 
           
         )
