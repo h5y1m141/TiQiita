@@ -61,10 +61,15 @@ qiita.getFeed( (result,links) ->
 
 
 
-btn = Ti.UI.createButton
-  systemButton: Titanium.UI.iPhone.SystemButton.BOOKMARKS
+actionBtn = Ti.UI.createButton
+  systemButton: Titanium.UI.iPhone.SystemButton.ACTION
 
-btn.addEventListener('click',(e)->
+mainWindow.rightNavButton = actionBtn
+
+listBtn = Ti.UI.createButton
+  systemButton: Titanium.UI.iPhone.SystemButton.BOOKMARKS
+  
+listBtn.addEventListener('click',(e)->
   
   if Ti.App.Properties.getBool("stateMainTableSlide") is false
     mainTable.animate({
@@ -79,7 +84,7 @@ btn.addEventListener('click',(e)->
     }, ()-> Ti.App.Properties.setBool("stateMainTableSlide",false))
     
 )
-mainWindow.leftNavButton = btn
+mainWindow.leftNavButton  = listBtn
 
 
 

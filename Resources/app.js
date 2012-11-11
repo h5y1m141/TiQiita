@@ -1,4 +1,4 @@
-var Qiita, actInd, btn, controller, mainTable, mainWindow, menuTable, moment, momentja, qiita, qiitaController, rows, t, tab, tabGroup, tableView, token;
+var Qiita, actInd, actionBtn, controller, listBtn, mainTable, mainWindow, menuTable, moment, momentja, qiita, qiitaController, rows, t, tab, tabGroup, tableView, token;
 
 Qiita = require('qiita');
 
@@ -77,11 +77,17 @@ qiita.getFeed(function(result, links) {
   return true;
 });
 
-btn = Ti.UI.createButton({
+actionBtn = Ti.UI.createButton({
+  systemButton: Titanium.UI.iPhone.SystemButton.ACTION
+});
+
+mainWindow.rightNavButton = actionBtn;
+
+listBtn = Ti.UI.createButton({
   systemButton: Titanium.UI.iPhone.SystemButton.BOOKMARKS
 });
 
-btn.addEventListener('click', function(e) {
+listBtn.addEventListener('click', function(e) {
   if (Ti.App.Properties.getBool("stateMainTableSlide") === false) {
     return mainTable.animate({
       duration: 200,
@@ -99,7 +105,7 @@ btn.addEventListener('click', function(e) {
   }
 });
 
-mainWindow.leftNavButton = btn;
+mainWindow.leftNavButton = listBtn;
 
 tabGroup = Ti.UI.createTabGroup();
 
