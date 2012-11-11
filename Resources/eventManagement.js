@@ -35,6 +35,7 @@ eventManagement = (function() {
   eventManagement.prototype.stockItemToQiita = function(uuid) {
     uuid = Ti.App.Properties.getString('stockUUID');
     actInd.backgroundColor = '#222';
+    actInd.message = 'Posting...';
     actInd.zIndex = 20;
     actInd.show();
     qiita.putStock(uuid);

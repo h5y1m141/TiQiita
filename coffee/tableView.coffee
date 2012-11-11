@@ -58,8 +58,8 @@ class tableView
 
           dialog.addEventListener('click',(event) ->
             Ti.API.info "start dialog action.Event is #{event.index}"
-            
-            em.stockItemToQiita()
+            if event.index is 0
+              em.stockItemToQiita()
           )
           dialog.show()
         )

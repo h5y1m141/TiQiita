@@ -180,7 +180,6 @@ Qiita = (function() {
     });
     return xhr.onload = function() {
       var body;
-      Ti.API.info('start stock xhr');
       body = JSON.parse(xhr.responseText);
       return actInd.hide();
     };

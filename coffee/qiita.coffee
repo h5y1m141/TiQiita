@@ -152,7 +152,6 @@ class Qiita
       token:Ti.App.Properties.getString('QiitaToken')
     })
     xhr.onload = ->
-      Ti.API.info 'start stock xhr'
       body = JSON.parse(xhr.responseText)
 
       actInd.hide()
