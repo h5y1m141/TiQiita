@@ -17,7 +17,7 @@ tableView = (function() {
     this.table.addEventListener('click', function(e) {
       var c, configBtn, container, stockInd, w, webView, webWindow, _i, _len;
       if (e.rowData.className === 'entry') {
-        em.sessionItem(e.rowData.data);
+        controller.sessionItem(e.rowData.data);
         webWindow = Ti.UI.createWindow({
           backButtonTitle: '戻る',
           barColor: '#59BB0C'
@@ -57,7 +57,7 @@ tableView = (function() {
           dialog.addEventListener('click', function(event) {
             Ti.API.info("start dialog action.Event is " + event.index);
             if (event.index === 0) {
-              return em.stockItemToQiita();
+              return controller.stockItemToQiita();
             }
           });
           return dialog.show();
@@ -65,7 +65,7 @@ tableView = (function() {
         webWindow.rightNavButton = configBtn;
         return tab.open(webWindow);
       } else {
-        return em.loadOldEntry();
+        return controller.loadOldEntry();
       }
     });
     return this.table;

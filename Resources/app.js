@@ -1,4 +1,4 @@
-var Qiita, actInd, btn, em, eventManagement, mainTable, mainWindow, menuTable, moment, momentja, qiita, rows, t, tab, tabGroup, tableView, token;
+var Qiita, actInd, btn, controller, mainTable, mainWindow, menuTable, moment, momentja, qiita, qiitaController, rows, t, tab, tabGroup, tableView, token;
 
 Qiita = require('qiita');
 
@@ -10,13 +10,13 @@ moment = require('lib/moment.min');
 
 momentja = require('lib/momentja');
 
-eventManagement = require('eventManagement');
+qiitaController = require('qiitaController');
 
 t = new tableView();
 
 qiita = new Qiita();
 
-em = new eventManagement();
+controller = new qiitaController();
 
 Ti.App.Properties.setBool('stateMainTableSlide', false);
 

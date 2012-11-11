@@ -18,7 +18,7 @@ class tableView
         
         # 一覧画面から詳細画面に遷移する際に、URLやuuidの情報が
         # 必要になるためにem.sessionItem()を利用する
-        em.sessionItem e.rowData.data
+        controller.sessionItem e.rowData.data
         
         webWindow = Ti.UI.createWindow
           backButtonTitle:'戻る',
@@ -59,14 +59,14 @@ class tableView
           dialog.addEventListener('click',(event) ->
             Ti.API.info "start dialog action.Event is #{event.index}"
             if event.index is 0
-              em.stockItemToQiita()
+              controller.stockItemToQiita()
           )
           dialog.show()
         )
         webWindow.rightNavButton = configBtn
         tab.open(webWindow)
        else
-        em.loadOldEntry()
+        controller.loadOldEntry()
     )
     return @table
   insertRow: (index,row)->
