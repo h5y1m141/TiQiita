@@ -4,7 +4,7 @@ Qiita = (function() {
 
   function Qiita() {
     var configJSON, file;
-    configJSON = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'config.json');
+    configJSON = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'config/login.json');
     file = configJSON.read().toString();
     this.config = JSON.parse(file);
     this.user_name = this.config.url_name;

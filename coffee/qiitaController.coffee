@@ -37,8 +37,45 @@ class qiitaController
     if json
       Ti.App.Properties.setString('stockURL',json.url)
       Ti.App.Properties.setString('stockUUID',json.uuid)
-      Ti.App.Properties.setString('stockID',json.id)    
+      Ti.App.Properties.setString('stockID',json.id)
+        
+  postItemToHatena: () ->
+    Ti.API.info(Ti.App.Properties.getString('stockURL'))
+    configJSON = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'config/hatena.json')
+    file = configJSON.read().toString()
+    hatenaKey = JSON.parse(file)
+    hatena = require('lib/hatena').Hatena({
+      consumerKey: hatenaKey.consumerKey,
+  		consumerSecret: hatenaKey.consumerSecret,
+  		accessTokenKey: Ti.App.Properties.getString("hatenaAccessTokenKey", ""),
+  		accessTokenSecret: Ti.App.Properties.getString("hatenaAccessTokenSecret", ""),
+  		scope: "read_public,write_public,write_private",
+    })
+
+    hatena.addEventListener('login', (e)->
+      Ti.API.info "start hanate login"
+
+      
+      if e.success
+        Ti.App.Properties.setString('hatenaAccessTokenKey', e.accessTokenKey)
+        Ti.App.Properties.setString('hatenaAccessTokenSecret', e.accessTokenSecret)
+        hatena.request('applications/my.json',{}, {}, 'POST',(req)->
+          Ti.API.info req
+          if req.success
+            Ti.API.info "start hatena API request"
+            data = JSON.parse req.result.text
+            Ti.API.info data
+          # if e.success
+          #   Ti.API.info e.result.text
+        )
+
+    )
+
+    hatena.authorize()
     
-    
+    return true
+    # 
+		# 
+
 
 module.exports = qiitaController

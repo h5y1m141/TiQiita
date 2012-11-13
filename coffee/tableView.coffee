@@ -58,8 +58,11 @@ class tableView
 
           dialog.addEventListener('click',(event) ->
             Ti.API.info "start dialog action.Event is #{event.index}"
-            if event.index is 0
-              controller.stockItemToQiita()
+            switch event.index
+              when 0
+                controller.stockItemToQiita()
+              when 1
+                controller.postItemToHatena()
           )
           dialog.show()
         )

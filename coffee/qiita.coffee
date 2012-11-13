@@ -1,6 +1,6 @@
 class Qiita
   constructor: () ->
-    configJSON = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'config.json')
+    configJSON = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'config/login.json')
     file = configJSON.read().toString()
     
     @config = JSON.parse(file)

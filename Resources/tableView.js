@@ -56,8 +56,11 @@ tableView = (function() {
           dialog.setCancel(2);
           dialog.addEventListener('click', function(event) {
             Ti.API.info("start dialog action.Event is " + event.index);
-            if (event.index === 0) {
-              return controller.stockItemToQiita();
+            switch (event.index) {
+              case 0:
+                return controller.stockItemToQiita();
+              case 1:
+                return controller.postItemToHatena();
             }
           });
           return dialog.show();
