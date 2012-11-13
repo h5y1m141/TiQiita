@@ -63,7 +63,7 @@ qiita.getFeed( (result,links) ->
 
 composeBtn = Ti.UI.createButton
   systemButton: Titanium.UI.iPhone.SystemButton.INFO
-  title:'setting'
+  title:'設定'
 
 mainWindow.rightNavButton = composeBtn
 
