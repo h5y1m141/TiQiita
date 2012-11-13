@@ -45,10 +45,10 @@ class tableView
         webWindow.add actInd
 
         
-        configBtn = Ti.UI.createButton
-          systemButton: Titanium.UI.iPhone.SystemButton.COMPOSE
+        actionBtn = Ti.UI.createButton
+          systemButton: Titanium.UI.iPhone.SystemButton.ACTION
 
-        configBtn.addEventListener('click',()->
+        actionBtn.addEventListener('click',()->
 
           dialog = Ti.UI.createOptionDialog()
           dialog.setTitle "どの処理を実行しますか？"
@@ -66,7 +66,7 @@ class tableView
           )
           dialog.show()
         )
-        webWindow.rightNavButton = configBtn
+        webWindow.rightNavButton = actionBtn
         tab.open(webWindow)
        else
         controller.loadOldEntry()

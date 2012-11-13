@@ -15,7 +15,7 @@ tableView = (function() {
 
   tableView.prototype.getTable = function() {
     this.table.addEventListener('click', function(e) {
-      var c, configBtn, container, stockInd, w, webView, webWindow, _i, _len;
+      var actionBtn, c, container, stockInd, w, webView, webWindow, _i, _len;
       if (e.rowData.className === 'entry') {
         controller.sessionItem(e.rowData.data);
         webWindow = Ti.UI.createWindow({
@@ -45,10 +45,10 @@ tableView = (function() {
           message: 'loading...'
         });
         webWindow.add(actInd);
-        configBtn = Ti.UI.createButton({
-          systemButton: Titanium.UI.iPhone.SystemButton.COMPOSE
+        actionBtn = Ti.UI.createButton({
+          systemButton: Titanium.UI.iPhone.SystemButton.ACTION
         });
-        configBtn.addEventListener('click', function() {
+        actionBtn.addEventListener('click', function() {
           var dialog;
           dialog = Ti.UI.createOptionDialog();
           dialog.setTitle("どの処理を実行しますか？");
@@ -65,7 +65,7 @@ tableView = (function() {
           });
           return dialog.show();
         });
-        webWindow.rightNavButton = configBtn;
+        webWindow.rightNavButton = actionBtn;
         return tab.open(webWindow);
       } else {
         return controller.loadOldEntry();
