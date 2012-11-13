@@ -179,9 +179,12 @@ Qiita = (function() {
       token: Ti.App.Properties.getString('QiitaToken')
     });
     return xhr.onload = function() {
-      var body;
+      var alertDialog, body;
       body = JSON.parse(xhr.responseText);
-      return actInd.hide();
+      actInd.hide();
+      alertDialog = Ti.UI.createAlertDialog();
+      alertDialog.setTitle("Qiitaへのストックが完了しました");
+      return alertDialog.show();
     };
   };
 

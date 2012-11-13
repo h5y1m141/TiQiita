@@ -153,8 +153,10 @@ class Qiita
     })
     xhr.onload = ->
       body = JSON.parse(xhr.responseText)
-
       actInd.hide()
+      alertDialog = Ti.UI.createAlertDialog()
+      alertDialog.setTitle "Qiitaへのストックが完了しました"
+      alertDialog.show()
         
 module.exports = Qiita
 
