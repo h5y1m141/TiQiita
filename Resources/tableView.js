@@ -52,15 +52,13 @@ tableView = (function() {
           var dialog;
           dialog = Ti.UI.createOptionDialog();
           dialog.setTitle("どの処理を実行しますか？");
-          dialog.setOptions(["Stock", "はてなブックマークに送る", "キャンセル"]);
-          dialog.setCancel(2);
+          dialog.setOptions(["ストックする", "キャンセル"]);
+          dialog.setCancel(1);
           dialog.addEventListener('click', function(event) {
             Ti.API.info("start dialog action.Event is " + event.index);
             switch (event.index) {
               case 0:
                 return controller.stockItemToQiita();
-              case 1:
-                return controller.postItemToHatena();
             }
           });
           return dialog.show();

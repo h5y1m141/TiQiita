@@ -52,8 +52,8 @@ class tableView
 
           dialog = Ti.UI.createOptionDialog()
           dialog.setTitle "どの処理を実行しますか？"
-          dialog.setOptions(["Stock","はてなブックマークに送る","キャンセル"])
-          dialog.setCancel(2)
+          dialog.setOptions(["ストックする","キャンセル"])
+          dialog.setCancel(1)
           
 
           dialog.addEventListener('click',(event) ->
@@ -61,8 +61,6 @@ class tableView
             switch event.index
               when 0
                 controller.stockItemToQiita()
-              when 1
-                controller.postItemToHatena()
           )
           dialog.show()
         )
