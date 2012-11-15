@@ -53,8 +53,32 @@ class Qiita
     else
       callback(followingTags,relLink)
     
-    return true 
-  _request:(parameter,callback) ->
+    return true
+    
+  _storedStocks:(strItems)->
+    # JSONが含まれた配列をそのままTi.App.Properties.setList()
+    # することが出来ないようなので、setStringを利用してキャッシュする
+
+    stocks = JSON.parse(Ti.App.Properties.getString('storedStocks'))
+    if stocks is null
+      Ti.App.Properties.setString('storedStocks',strItems)
+
+    else
+      # merge two json objects
+      # http://developer.appcelerator.com/question/136239/merge-two-json-objects-dynamicallyandroid
+      obj1 = strItems.substring(0, strItems.length - 1)
+      stocks = Ti.App.Properties.getString('storedStocks')
+      obj2 = stocks.substring(1,stocks.length)
+      Ti.API.info obj1
+      merge = "#{obj1},#{obj2}"
+      Ti.App.Properties.setString('storedStocks',merge)
+
+    result = JSON.parse(Ti.App.Properties.getString('storedStocks'))
+    Ti.API.info "_storedStocks finish. result is : #{result.length}"
+
+    return true
+    
+  _request:(parameter,storedStocksFlag,callback) ->
     self = @
     xhr = Ti.Network.createHTTPClient()
 
@@ -68,8 +92,17 @@ class Qiita
         relLink = self._convertLinkHeaderToJSON(responseHeaders.Link)
       else
         relLink = null
+
       json = JSON.parse(xhr.responseText)
-      Ti.API.info "start callback function"
+      
+      # QiitaAPIから取得した投稿情報をTi.App.Propertiesに都度突っ込み
+      # これをローカルDB的に活用する
+      # Ti.App.Properties.setList("storedStocks",json)
+      if storedStocksFlag is true
+
+        self._storedStocks(xhr.responseText)
+
+
       callback(json,relLink)
       
     xhr.send()
@@ -97,18 +130,20 @@ class Qiita
     
   getStocks:(callback) ->
     param = @parameter.stocks
-    @._request(param,callback)
+    @._request(param,true,callback)
   getFollowingUsers: (callback) ->
     param = @parameter.followingUsers
-    @._request(param,callback)
+    @._request(param,false,callback)
 
   getFollowingTags: (callback) ->
     param = @parameter.followingTags
-    @._request(param,callback)
+    # 自分がフォローしてるタグの情報はAppPropertiesでキャッシュしたくないので
+    # ２番めの引数をfalseにして対応
+    @._request(param,false,callback)
     # @._mockObject("followingTags",callback)
   getFeed:(callback) ->
     param = @parameter.feed
-    @._request(param,callback)
+    @._request(param,true,callback)
     # @._mockObject("items",callback)
     
   getNextFeed:(url,callback) ->
@@ -116,7 +151,7 @@ class Qiita
       "url": url
       "method":'GET'
 
-    @._request(param,callback)
+    @._request(param,true,callback)
     # @._mockObject("items",callback)
 
   getMyStocks:(callback) ->
@@ -136,7 +171,7 @@ class Qiita
       url:@parameter.myFeed.url + "?token=#{token}"
       method:@parameter.myFeed.method
     Ti.API.info(param.url)
-    @._request(param,callback)
+    @._request(param,false,callback)
   putStock:(uuid) ->
     token = Ti.App.Properties.getString('QiitaToken')
     if token is null

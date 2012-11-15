@@ -34,19 +34,6 @@ class menuTable
           result.push value
         
       Ti.API.info "#value is:#{result}"
-        
-        # if value isnt null
-        #   Ti.API.info "start push"
-        #   result.push value
-          
-        # Ti.API.info result
-        
-        # for tag in tags
-        #   tagName = e.rowData.className
-        #   if tag.name is tagName
-        #     Ti.API.info "row should be hide.row number is #{i}"
-            # mainTable.deleteRow(i)
-            # mainTable.data[0].rows[i].backgroundColor = '#000'
 
 
 

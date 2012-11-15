@@ -65,7 +65,25 @@ Qiita = (function() {
     return true;
   };
 
-  Qiita.prototype._request = function(parameter, callback) {
+  Qiita.prototype._storedStocks = function(strItems) {
+    var merge, obj1, obj2, result, stocks;
+    stocks = JSON.parse(Ti.App.Properties.getString('storedStocks'));
+    if (stocks === null) {
+      Ti.App.Properties.setString('storedStocks', strItems);
+    } else {
+      obj1 = strItems.substring(0, strItems.length - 1);
+      stocks = Ti.App.Properties.getString('storedStocks');
+      obj2 = stocks.substring(1, stocks.length);
+      Ti.API.info(obj1);
+      merge = "" + obj1 + "," + obj2;
+      Ti.App.Properties.setString('storedStocks', merge);
+    }
+    result = JSON.parse(Ti.App.Properties.getString('storedStocks'));
+    Ti.API.info("_storedStocks finish. result is : " + result.length);
+    return true;
+  };
+
+  Qiita.prototype._request = function(parameter, storedStocksFlag, callback) {
     var self, xhr;
     self = this;
     xhr = Ti.Network.createHTTPClient();
@@ -81,7 +99,9 @@ Qiita = (function() {
         relLink = null;
       }
       json = JSON.parse(xhr.responseText);
-      Ti.API.info("start callback function");
+      if (storedStocksFlag === true) {
+        self._storedStocks(xhr.responseText);
+      }
       return callback(json, relLink);
     };
     return xhr.send();
@@ -106,25 +126,25 @@ Qiita = (function() {
   Qiita.prototype.getStocks = function(callback) {
     var param;
     param = this.parameter.stocks;
-    return this._request(param, callback);
+    return this._request(param, true, callback);
   };
 
   Qiita.prototype.getFollowingUsers = function(callback) {
     var param;
     param = this.parameter.followingUsers;
-    return this._request(param, callback);
+    return this._request(param, false, callback);
   };
 
   Qiita.prototype.getFollowingTags = function(callback) {
     var param;
     param = this.parameter.followingTags;
-    return this._request(param, callback);
+    return this._request(param, false, callback);
   };
 
   Qiita.prototype.getFeed = function(callback) {
     var param;
     param = this.parameter.feed;
-    return this._request(param, callback);
+    return this._request(param, true, callback);
   };
 
   Qiita.prototype.getNextFeed = function(url, callback) {
@@ -133,7 +153,7 @@ Qiita = (function() {
       "url": url,
       "method": 'GET'
     };
-    return this._request(param, callback);
+    return this._request(param, true, callback);
   };
 
   Qiita.prototype.getMyStocks = function(callback) {
@@ -161,7 +181,7 @@ Qiita = (function() {
       method: this.parameter.myFeed.method
     };
     Ti.API.info(param.url);
-    return this._request(param, callback);
+    return this._request(param, false, callback);
   };
 
   Qiita.prototype.putStock = function(uuid) {

@@ -12,6 +12,8 @@ controller = new qiitaController()
 # クリックイベント時の状態管理のために以下利用
 Ti.App.Properties.setBool('stateMainTableSlide',false)
 
+# storedStocks毎起動時に初期化
+Ti.App.Properties.setString("storedStocks",null)
 
 token = Ti.App.Properties.getString('QiitaToken')
 if token is null
@@ -55,7 +57,6 @@ qiita.getFeed( (result,links) ->
   # 自分がチェックしてるタグを取得して、左側にサブメニューとして配置
   menu = new menuTable()
   mainWindow.add menu
-
   return true
 )  
 

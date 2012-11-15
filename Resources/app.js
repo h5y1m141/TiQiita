@@ -20,6 +20,8 @@ controller = new qiitaController();
 
 Ti.App.Properties.setBool('stateMainTableSlide', false);
 
+Ti.App.Properties.setString("storedStocks", null);
+
 token = Ti.App.Properties.getString('QiitaToken');
 
 if (token === null) {
