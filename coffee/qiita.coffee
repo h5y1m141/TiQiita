@@ -145,20 +145,21 @@ class Qiita
     param = @parameter.followingTags
     # 自分がフォローしてるタグの情報はAppPropertiesでキャッシュしたくないので
     # ２番めの引数をfalseにして対応
-    # @._request(param,false,callback)
-    @._mockObject("followingTags",false,callback)
+
+    @._request(param,false,callback)
+    # @._mockObject("followingTags",false,callback)
   getFeed:(callback) ->
     param = @parameter.feed
-    # @._request(param,true,callback)
-    @._mockObject("items",true,callback)
+    @._request(param,true,callback)
+    # @._mockObject("items",true,callback)
     
   getNextFeed:(url,callback) ->
     param =
       "url": url
       "method":'GET'
 
-    # @._request(param,true,callback)
-    @._mockObject("items",true,callback)
+    @._request(param,true,callback)
+    # @._mockObject("items",true,callback)
 
   getMyStocks:(callback) ->
     token = Ti.App.Properties.getString('QiitaToken')
