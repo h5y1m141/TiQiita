@@ -39,7 +39,7 @@ class Qiita
   # オフラインやQiitaAPIに対するlimitがあるため
   # 本番までは以下のメソッドを通じてモックオブジェクトを
   # 呼び出す
-  _mockObject:(value,callback) ->
+  _mockObject:(value,storedStocksFlag,callback) ->
     followingTagsJSON = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory,"test/following_tags.json")
     itemsJSON = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory,"test/items.json")
     relLinkJSON = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory,"test/relLink.json")
@@ -47,6 +47,12 @@ class Qiita
     followingTags = JSON.parse(followingTagsJSON.read().toString())
     items = JSON.parse(itemsJSON.read().toString())
     relLink = JSON.parse(relLinkJSON.read().toString())
+    
+    # QiitaAPIから取得した投稿情報をTi.App.Propertiesに都度突っ込み
+    # これをローカルDB的に活用する
+    # Ti.App.Properties.setList("storedStocks",json)
+    if storedStocksFlag is true
+      @._storedStocks(itemsJSON.read().toString())
 
     if value is "items"
       callback(items,relLink)
@@ -139,20 +145,20 @@ class Qiita
     param = @parameter.followingTags
     # 自分がフォローしてるタグの情報はAppPropertiesでキャッシュしたくないので
     # ２番めの引数をfalseにして対応
-    @._request(param,false,callback)
-    # @._mockObject("followingTags",callback)
+    # @._request(param,false,callback)
+    @._mockObject("followingTags",false,callback)
   getFeed:(callback) ->
     param = @parameter.feed
-    @._request(param,true,callback)
-    # @._mockObject("items",callback)
+    # @._request(param,true,callback)
+    @._mockObject("items",true,callback)
     
   getNextFeed:(url,callback) ->
     param =
       "url": url
       "method":'GET'
 
-    @._request(param,true,callback)
-    # @._mockObject("items",callback)
+    # @._request(param,true,callback)
+    @._mockObject("items",true,callback)
 
   getMyStocks:(callback) ->
     token = Ti.App.Properties.getString('QiitaToken')

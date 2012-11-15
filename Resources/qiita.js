@@ -49,7 +49,7 @@ Qiita = (function() {
     return true;
   };
 
-  Qiita.prototype._mockObject = function(value, callback) {
+  Qiita.prototype._mockObject = function(value, storedStocksFlag, callback) {
     var followingTags, followingTagsJSON, items, itemsJSON, relLink, relLinkJSON;
     followingTagsJSON = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, "test/following_tags.json");
     itemsJSON = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, "test/items.json");
@@ -57,6 +57,9 @@ Qiita = (function() {
     followingTags = JSON.parse(followingTagsJSON.read().toString());
     items = JSON.parse(itemsJSON.read().toString());
     relLink = JSON.parse(relLinkJSON.read().toString());
+    if (storedStocksFlag === true) {
+      this._storedStocks(itemsJSON.read().toString());
+    }
     if (value === "items") {
       callback(items, relLink);
     } else {
@@ -138,13 +141,13 @@ Qiita = (function() {
   Qiita.prototype.getFollowingTags = function(callback) {
     var param;
     param = this.parameter.followingTags;
-    return this._request(param, false, callback);
+    return this._mockObject("followingTags", false, callback);
   };
 
   Qiita.prototype.getFeed = function(callback) {
     var param;
     param = this.parameter.feed;
-    return this._request(param, true, callback);
+    return this._mockObject("items", true, callback);
   };
 
   Qiita.prototype.getNextFeed = function(url, callback) {
@@ -153,7 +156,7 @@ Qiita = (function() {
       "url": url,
       "method": 'GET'
     };
-    return this._request(param, true, callback);
+    return this._mockObject("items", true, callback);
   };
 
   Qiita.prototype.getMyStocks = function(callback) {

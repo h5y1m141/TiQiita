@@ -22,25 +22,54 @@ class menuTable
       
       # サブメニューで選択されたタグにマッチする
       # 投稿を非表示にする
+      
 
-      numberOfRows = mainTable.data[0].rows.length-1
+      items = JSON.parse(Ti.App.Properties.getString('storedStocks'))
       result = []
-      for i in [0..numberOfRows]
-        tags = mainTable.data[0].rows[i].tags
-        _ = require("lib/underscore-min")
-        tagName = e.rowData.className
-        value = _.where(tags,{"url_name":tagName})
-        if value.length isnt 0
-          result.push value
-        
-      Ti.API.info "#value is:#{result}"
+      
+      if curretRowIndex is 0
+        result.push(t.createRow(json)) for json in items
+      else
+        for i in [0..items.length-1]
+          tags = items[i].tags
+          _ = require("lib/underscore-min")
+          tagName = e.rowData.className
 
+          value = _.where(tags,{"url_name":tagName})
+
+          if value.length isnt 0
+            result.push(t.createRow(items[i]))
+            
+      result.push(t.createRowForLoadOldEntry())
+      mainTable.setData result
 
 
     )
       
     qiita.getFollowingTags( (result,links)->
       menuRows = []
+      allLabelRow = Ti.UI.createTableViewRow
+        width:80
+        opacity:0.8
+        backgroundColor:'#59BB0C'
+        selectedBackgroundColor:'#222'
+        borderColor:'#ededed'
+        height:60
+        
+      allLabel = Ti.UI.createLabel
+        width:80
+        height:60
+        top:0
+        left:0
+        wordWrap:true
+        color:'#fff'
+        font:
+          fontSize:12
+          fontWeight:'bold'
+        text:"ALL"
+      allLabelRow.add allLabel  
+      menuRows.push allLabelRow
+        
       for json in result
         menuRow = Ti.UI.createTableViewRow
           width:80
