@@ -1,4 +1,4 @@
-var Qiita, actInd, composeBtn, controller, listBtn, mainTable, mainWindow, menuTable, moment, momentja, qiita, qiitaController, rows, t, tab, tabGroup, tableView, token;
+var Qiita, actInd, composeBtn, controller, listBtn, mainTable, mainWindow, menuTable, moment, momentja, qiita, qiitaController, rows, t, tab, tabGroup, tableView, testsEnabled, token;
 
 Qiita = require('qiita');
 
@@ -21,6 +21,12 @@ controller = new qiitaController();
 Ti.App.Properties.setBool('stateMainTableSlide', false);
 
 Ti.App.Properties.setString("storedStocks", null);
+
+testsEnabled = true;
+
+if (testsEnabled === true) {
+  require('test/tests');
+}
 
 token = Ti.App.Properties.getString('QiitaToken');
 
