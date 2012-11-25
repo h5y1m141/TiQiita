@@ -1,4 +1,4 @@
-var Qiita, actInd, composeBtn, controller, listBtn, mainTable, mainWindow, menuTable, moment, momentja, qiita, qiitaController, rows, t, tab, tabGroup, tableView, testsEnabled, token;
+var Qiita, actInd, composeBtn, controller, defaultState, listBtn, mainTable, mainWindow, menuTable, moment, momentja, qiita, qiitaController, rows, slideState, t, tab, tabGroup, tableView, testsEnabled, token;
 
 Qiita = require('qiita');
 
@@ -11,6 +11,10 @@ moment = require('lib/moment.min');
 momentja = require('lib/momentja');
 
 qiitaController = require('qiitaController');
+
+defaultState = require("defaultState");
+
+slideState = require("slideState");
 
 t = new tableView();
 
@@ -97,21 +101,7 @@ listBtn = Ti.UI.createButton({
 });
 
 listBtn.addEventListener('click', function(e) {
-  if (Ti.App.Properties.getBool("stateMainTableSlide") === false) {
-    return mainTable.animate({
-      duration: 200,
-      left: 80
-    }, function() {
-      return Ti.App.Properties.setBool("stateMainTableSlide", true);
-    });
-  } else {
-    return mainTable.animate({
-      duration: 200,
-      left: 0
-    }, function() {
-      return Ti.App.Properties.setBool("stateMainTableSlide", false);
-    });
-  }
+  return controller.slideMainTable();
 });
 
 mainWindow.leftNavButton = listBtn;

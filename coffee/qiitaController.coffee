@@ -1,5 +1,8 @@
 class qiitaController
   constructor: () ->
+    @state = new defaultState()
+    
+    
   loadOldEntry: () ->
     url = Ti.App.Properties.getString('nextPageURL')
     Ti.API.info "NEXTPAGE:#{url}"
@@ -38,7 +41,13 @@ class qiitaController
       Ti.App.Properties.setString('stockURL',json.url)
       Ti.App.Properties.setString('stockUUID',json.uuid)
       Ti.App.Properties.setString('stockID',json.id)
-        
+
+  slideMainTable: () ->
+    if Ti.App.Properties.getBool("stateMainTableSlide") is false
+      @state = @state.moveForward()
+    else
+      @state = @state.moveBackward()
+      
   postItemToHatena: () ->
     Ti.API.info(Ti.App.Properties.getString('stockURL'))
     configJSON = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'config/hatena.json')

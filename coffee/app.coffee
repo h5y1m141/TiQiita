@@ -4,6 +4,8 @@ menuTable = require('menuTable')
 moment = require('lib/moment.min')
 momentja = require('lib/momentja')
 qiitaController = require('qiitaController')
+defaultState = require("defaultState")
+slideState = require("slideState")
 
 t = new tableView()
 qiita = new Qiita()
@@ -80,18 +82,7 @@ listBtn = Ti.UI.createButton
   systemButton: Titanium.UI.iPhone.SystemButton.BOOKMARKS
   
 listBtn.addEventListener('click',(e)->
-  
-  if Ti.App.Properties.getBool("stateMainTableSlide") is false
-    mainTable.animate({
-      duration:200,
-      left:80
-    },()-> Ti.App.Properties.setBool("stateMainTableSlide",true))
-
-  else
-    mainTable.animate({
-      duration:200
-      left:0
-    }, ()-> Ti.App.Properties.setBool("stateMainTableSlide",false))
+  controller.slideMainTable()
     
 )
 mainWindow.leftNavButton  = listBtn

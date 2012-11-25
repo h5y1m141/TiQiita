@@ -2,7 +2,9 @@ var qiitaController;
 
 qiitaController = (function() {
 
-  function qiitaController() {}
+  function qiitaController() {
+    this.state = new defaultState();
+  }
 
   qiitaController.prototype.loadOldEntry = function() {
     var url;
@@ -48,6 +50,14 @@ qiitaController = (function() {
       Ti.App.Properties.setString('stockURL', json.url);
       Ti.App.Properties.setString('stockUUID', json.uuid);
       return Ti.App.Properties.setString('stockID', json.id);
+    }
+  };
+
+  qiitaController.prototype.slideMainTable = function() {
+    if (Ti.App.Properties.getBool("stateMainTableSlide") === false) {
+      return this.state = this.state.moveForward();
+    } else {
+      return this.state = this.state.moveBackward();
     }
   };
 
