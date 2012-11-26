@@ -3,6 +3,7 @@ class qiitaController
     @state = new defaultState()
     
     
+    
   loadOldEntry: () ->
     url = Ti.App.Properties.getString('nextPageURL')
     Ti.API.info "NEXTPAGE:#{url}"
@@ -43,10 +44,54 @@ class qiitaController
       Ti.App.Properties.setString('stockID',json.id)
 
   slideMainTable: () ->
+    Ti.API.info "slideMainTable start. state is #{@state.sayState()}"
     if Ti.App.Properties.getBool("stateMainTableSlide") is false
       @state = @state.moveForward()
     else
       @state = @state.moveBackward()
+      
+  makeWebView: (json) ->
+    Ti.API.info "call makeWebView"
+    webview = new webView()
+    container = webview.create(json)  
+    webWindow.add(c) for c in container
+    stockInd = Ti.UI.createActivityIndicator
+      zIndex:10
+      top:100
+      left: 120
+      height: 40
+      width: 'auto'
+      backgroundColor:'#222'
+      font: 
+        fontFamily:'Helvetica Neue'
+        fontSize:15
+        fontWeight:'bold'
+      color: '#fff'
+      message: 'loading...'
+
+    webWindow.add actInd
+
+        
+    actionBtn = Ti.UI.createButton
+      systemButton: Titanium.UI.iPhone.SystemButton.ACTION
+
+    actionBtn.addEventListener('click',()->
+
+      dialog = Ti.UI.createOptionDialog()
+      dialog.setTitle "どの処理を実行しますか？"
+      dialog.setOptions(["ストックする","キャンセル"])
+      dialog.setCancel(1)
+      dialog.addEventListener('click',(event) ->
+        Ti.API.info "start dialog action.Event is #{event.index}"
+        switch event.index
+          when 0
+            controller.stockItemToQiita()
+      )
+      dialog.show()
+    )
+    webWindow.rightNavButton = actionBtn
+    return tab.open(webWindow)
+    
       
   postItemToHatena: () ->
     Ti.API.info(Ti.App.Properties.getString('stockURL'))

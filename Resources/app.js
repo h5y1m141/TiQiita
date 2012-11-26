@@ -1,4 +1,4 @@
-var Qiita, actInd, composeBtn, controller, defaultState, listBtn, mainTable, mainWindow, menuTable, moment, momentja, qiita, qiitaController, rows, slideState, t, tab, tabGroup, tableView, testsEnabled, token;
+var Qiita, actInd, composeBtn, controller, defaultState, listBtn, mainTable, mainWindow, menuTable, moment, momentja, qiita, qiitaController, rows, slideState, t, tab, tabGroup, tableView, testsEnabled, token, webView, webWindow;
 
 Qiita = require('qiita');
 
@@ -16,6 +16,8 @@ defaultState = require("defaultState");
 
 slideState = require("slideState");
 
+webView = require('webView');
+
 t = new tableView();
 
 qiita = new Qiita();
@@ -32,6 +34,8 @@ if (testsEnabled === true) {
   require('test/tests');
 }
 
+mainTable = t.getTable();
+
 token = Ti.App.Properties.getString('QiitaToken');
 
 if (token === null) {
@@ -42,6 +46,11 @@ Ti.API.info('Token is' + token);
 
 mainWindow = Ti.UI.createWindow({
   title: 'Qiita',
+  barColor: '#59BB0C'
+});
+
+webWindow = Ti.UI.createWindow({
+  backButtonTitle: '戻る',
   barColor: '#59BB0C'
 });
 
@@ -63,8 +72,6 @@ actInd = Ti.UI.createActivityIndicator({
 actInd.show();
 
 mainWindow.add(actInd);
-
-mainTable = t.getTable();
 
 rows = [];
 
@@ -100,7 +107,7 @@ listBtn = Ti.UI.createButton({
   systemButton: Titanium.UI.iPhone.SystemButton.BOOKMARKS
 });
 
-listBtn.addEventListener('click', function(e) {
+listBtn.addEventListener('click', function() {
   return controller.slideMainTable();
 });
 

@@ -11,64 +11,17 @@ tableView = (function() {
       left: 0,
       top: 0
     });
-  }
-
-  tableView.prototype.getTable = function() {
     this.table.addEventListener('click', function(e) {
-      var actionBtn, c, container, stockInd, w, webView, webWindow, _i, _len;
       if (e.rowData.className === 'entry') {
         controller.sessionItem(e.rowData.data);
-        webWindow = Ti.UI.createWindow({
-          backButtonTitle: '戻る',
-          barColor: '#59BB0C'
-        });
-        webView = require('webView');
-        w = new webView();
-        container = w.create(e.rowData.data);
-        for (_i = 0, _len = container.length; _i < _len; _i++) {
-          c = container[_i];
-          webWindow.add(c);
-        }
-        stockInd = Ti.UI.createActivityIndicator({
-          zIndex: 10,
-          top: 100,
-          left: 120,
-          height: 40,
-          width: 'auto',
-          backgroundColor: '#222',
-          font: {
-            fontFamily: 'Helvetica Neue',
-            fontSize: 15,
-            fontWeight: 'bold'
-          },
-          color: '#fff',
-          message: 'loading...'
-        });
-        webWindow.add(actInd);
-        actionBtn = Ti.UI.createButton({
-          systemButton: Titanium.UI.iPhone.SystemButton.ACTION
-        });
-        actionBtn.addEventListener('click', function() {
-          var dialog;
-          dialog = Ti.UI.createOptionDialog();
-          dialog.setTitle("どの処理を実行しますか？");
-          dialog.setOptions(["ストックする", "キャンセル"]);
-          dialog.setCancel(1);
-          dialog.addEventListener('click', function(event) {
-            Ti.API.info("start dialog action.Event is " + event.index);
-            switch (event.index) {
-              case 0:
-                return controller.stockItemToQiita();
-            }
-          });
-          return dialog.show();
-        });
-        webWindow.rightNavButton = actionBtn;
-        return tab.open(webWindow);
+        return controller.makeWebView(e.rowData.data);
       } else {
         return controller.loadOldEntry();
       }
     });
+  }
+
+  tableView.prototype.getTable = function() {
     return this.table;
   };
 

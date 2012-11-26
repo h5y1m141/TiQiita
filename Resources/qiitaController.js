@@ -54,11 +54,59 @@ qiitaController = (function() {
   };
 
   qiitaController.prototype.slideMainTable = function() {
+    Ti.API.info("slideMainTable start. state is " + (this.state.sayState()));
     if (Ti.App.Properties.getBool("stateMainTableSlide") === false) {
       return this.state = this.state.moveForward();
     } else {
       return this.state = this.state.moveBackward();
     }
+  };
+
+  qiitaController.prototype.makeWebView = function(json) {
+    var actionBtn, c, container, stockInd, webview, _i, _len;
+    Ti.API.info("call makeWebView");
+    webview = new webView();
+    container = webview.create(json);
+    for (_i = 0, _len = container.length; _i < _len; _i++) {
+      c = container[_i];
+      webWindow.add(c);
+    }
+    stockInd = Ti.UI.createActivityIndicator({
+      zIndex: 10,
+      top: 100,
+      left: 120,
+      height: 40,
+      width: 'auto',
+      backgroundColor: '#222',
+      font: {
+        fontFamily: 'Helvetica Neue',
+        fontSize: 15,
+        fontWeight: 'bold'
+      },
+      color: '#fff',
+      message: 'loading...'
+    });
+    webWindow.add(actInd);
+    actionBtn = Ti.UI.createButton({
+      systemButton: Titanium.UI.iPhone.SystemButton.ACTION
+    });
+    actionBtn.addEventListener('click', function() {
+      var dialog;
+      dialog = Ti.UI.createOptionDialog();
+      dialog.setTitle("どの処理を実行しますか？");
+      dialog.setOptions(["ストックする", "キャンセル"]);
+      dialog.setCancel(1);
+      dialog.addEventListener('click', function(event) {
+        Ti.API.info("start dialog action.Event is " + event.index);
+        switch (event.index) {
+          case 0:
+            return controller.stockItemToQiita();
+        }
+      });
+      return dialog.show();
+    });
+    webWindow.rightNavButton = actionBtn;
+    return tab.open(webWindow);
   };
 
   qiitaController.prototype.postItemToHatena = function() {

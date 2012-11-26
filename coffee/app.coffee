@@ -6,10 +6,13 @@ momentja = require('lib/momentja')
 qiitaController = require('qiitaController')
 defaultState = require("defaultState")
 slideState = require("slideState")
+webView = require('webView')
+
 
 t = new tableView()
 qiita = new Qiita()
 controller = new qiitaController()
+
 
 # クリックイベント時の状態管理のために以下利用
 Ti.App.Properties.setBool('stateMainTableSlide',false)
@@ -21,8 +24,13 @@ Ti.App.Properties.setString("storedStocks",null)
 # 
 testsEnabled = true
 
+
+
 if testsEnabled is true
   require('test/tests')
+
+# 投稿一覧情報を取得
+mainTable = t.getTable()
 
 
 token = Ti.App.Properties.getString('QiitaToken')
@@ -33,6 +41,11 @@ Ti.API.info('Token is' + token)
 mainWindow = Ti.UI.createWindow
   title:'Qiita'
   barColor:'#59BB0C'
+
+webWindow = Ti.UI.createWindow
+  backButtonTitle:'戻る',
+  barColor:'#59BB0C'
+
 
 
 actInd = Ti.UI.createActivityIndicator
@@ -50,8 +63,6 @@ actInd = Ti.UI.createActivityIndicator
 actInd.show()
 mainWindow.add(actInd)
 
-# 投稿一覧情報を取得
-mainTable = t.getTable()
 rows = []
 qiita.getFeed( (result,links) ->
 
@@ -81,7 +92,7 @@ mainWindow.rightNavButton = composeBtn
 listBtn = Ti.UI.createButton
   systemButton: Titanium.UI.iPhone.SystemButton.BOOKMARKS
   
-listBtn.addEventListener('click',(e)->
+listBtn.addEventListener('click',()->
   controller.slideMainTable()
     
 )

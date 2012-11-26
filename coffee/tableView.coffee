@@ -7,68 +7,23 @@ class tableView
       width:320
       left:0
       top:0
-    
-  getTable: ()->
-
     @table.addEventListener('click',(e)->
       # TableViewの一番下に、過去投稿を読み込むためのボタンを
       # 配置しており、そのrowだけは投稿詳細画面に遷移させない
       # 詳細画面にいくかどうかはrowのclassNameの値をチェックする
       if e.rowData.className == 'entry'
         
-        # 一覧画面から詳細画面に遷移する際に、URLやuuidの情報が
-        # 必要になるためにem.sessionItem()を利用する
+        # 一覧画面から詳細画面に遷移した後、該当の投稿情報を
+        # ストックする際にURLやuuidの情報が必要になるために
+        # sessionItem()を利用する
         controller.sessionItem e.rowData.data
-        
-        webWindow = Ti.UI.createWindow
-          backButtonTitle:'戻る',
-          barColor:'#59BB0C'
-
-        webView = require('webView')
-        w = new webView()
-        container = w.create(e.rowData.data)  
-        webWindow.add(c) for c in container
-        stockInd = Ti.UI.createActivityIndicator
-          zIndex:10
-          top:100
-          left: 120
-          height: 40
-          width: 'auto'
-          backgroundColor:'#222'
-          font: 
-            fontFamily:'Helvetica Neue'
-            fontSize:15
-            fontWeight:'bold'
-          color: '#fff'
-          message: 'loading...'
-
-        webWindow.add actInd
-
-        
-        actionBtn = Ti.UI.createButton
-          systemButton: Titanium.UI.iPhone.SystemButton.ACTION
-
-        actionBtn.addEventListener('click',()->
-
-          dialog = Ti.UI.createOptionDialog()
-          dialog.setTitle "どの処理を実行しますか？"
-          dialog.setOptions(["ストックする","キャンセル"])
-          dialog.setCancel(1)
-          
-
-          dialog.addEventListener('click',(event) ->
-            Ti.API.info "start dialog action.Event is #{event.index}"
-            switch event.index
-              when 0
-                controller.stockItemToQiita()
-          )
-          dialog.show()
-        )
-        webWindow.rightNavButton = actionBtn
-        tab.open(webWindow)
+        controller.makeWebView e.rowData.data
        else
         controller.loadOldEntry()
     )
+    
+  getTable: ()->
+
     return @table
   insertRow: (index,row)->
     @table.insertRowAfter(index,row,{animated:true})
