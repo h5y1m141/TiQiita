@@ -109,6 +109,14 @@ qiitaController = (function() {
     return tab.open(webWindow);
   };
 
+  qiitaController.prototype.configWindow = function() {
+    var configWin, configWindow;
+    configWindow = require("qiitaWindow");
+    configWin = new configWindow();
+    configWin.show();
+    return true;
+  };
+
   qiitaController.prototype.postItemToHatena = function() {
     var configJSON, file, hatena, hatenaKey;
     Ti.API.info(Ti.App.Properties.getString('stockURL'));

@@ -91,7 +91,13 @@ class qiitaController
     )
     webWindow.rightNavButton = actionBtn
     return tab.open(webWindow)
+
+  configWindow: () ->
+    configWindow = require("qiitaWindow")
+    configWin = new configWindow()
+    configWin.show()
     
+    return true
       
   postItemToHatena: () ->
     Ti.API.info(Ti.App.Properties.getString('stockURL'))

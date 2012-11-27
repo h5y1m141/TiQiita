@@ -1,4 +1,4 @@
-var Qiita, actInd, composeBtn, controller, defaultState, listBtn, mainTable, mainWindow, menuTable, moment, momentja, qiita, qiitaController, rows, slideState, t, tab, tabGroup, tableView, testsEnabled, token, webView, webWindow;
+var Qiita, actInd, configBtn, controller, defaultState, listBtn, mainTable, mainWindow, menuTable, moment, momentja, qiita, qiitaController, rows, slideState, t, tab, tabGroup, tableView, testsEnabled, token, webView, webWindow;
 
 Qiita = require('qiita');
 
@@ -96,12 +96,16 @@ qiita.getFeed(function(result, links) {
   return true;
 });
 
-composeBtn = Ti.UI.createButton({
+configBtn = Ti.UI.createButton({
   systemButton: Titanium.UI.iPhone.SystemButton.INFO,
   title: '設定'
 });
 
-mainWindow.rightNavButton = composeBtn;
+configBtn.addEventListener('click', function() {
+  return controller.configWindow();
+});
+
+mainWindow.rightNavButton = configBtn;
 
 listBtn = Ti.UI.createButton({
   systemButton: Titanium.UI.iPhone.SystemButton.BOOKMARKS

@@ -83,11 +83,15 @@ qiita.getFeed( (result,links) ->
 
 
 
-composeBtn = Ti.UI.createButton
+configBtn = Ti.UI.createButton
   systemButton: Titanium.UI.iPhone.SystemButton.INFO
   title:'設定'
 
-mainWindow.rightNavButton = composeBtn
+configBtn.addEventListener('click', () ->
+  controller.configWindow()
+)
+
+mainWindow.rightNavButton = configBtn
 
 listBtn = Ti.UI.createButton
   systemButton: Titanium.UI.iPhone.SystemButton.BOOKMARKS
