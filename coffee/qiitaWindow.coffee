@@ -8,9 +8,13 @@ class qiitaWindow
     @baseWindow = Ti.UI.createWindow
       title:titleName
       barColor:'#59BB0C'
-      
+  add: (element) ->
+    @baseWindow.add element
+    return true
+    
   show: ->
     @baseWindow.zIndex = 10
+
     @baseWindow.backgroundColor = "#222"
     return @baseWindow.open({transition:Titanium.UI.iPhone.AnimationStyle.CURL_UP})
 

@@ -17,6 +17,11 @@ qiitaWindow = (function() {
     });
   }
 
+  qiitaWindow.prototype.add = function(element) {
+    this.baseWindow.add(element);
+    return true;
+  };
+
   qiitaWindow.prototype.show = function() {
     this.baseWindow.zIndex = 10;
     this.baseWindow.backgroundColor = "#222";

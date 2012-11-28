@@ -96,9 +96,12 @@ qiitaController = (function() {
   };
 
   qiitaController.prototype.configWindow = function() {
-    var configWin, configWindow;
+    var configMenu, configWin, configWindow, menu;
     configWindow = require("qiitaWindow");
     configWin = new configWindow();
+    configMenu = require("ui/configMenu");
+    menu = new configMenu();
+    configWin.add(menu);
     configWin.show();
     return true;
   };
