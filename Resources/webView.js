@@ -2,21 +2,26 @@ var webView;
 
 webView = (function() {
 
-  function webView() {}
-
-  webView.prototype.create = function(json) {
-    var container, css, dateLabel, file, htmlHeaderElement, iconIamge, titleLabel, web, webViewHeaderContainer;
+  function webView() {
+    var file;
+    this.webViewHeaderContainer = Ti.UI.createLabel({
+      top: 0,
+      left: 0,
+      width: 320,
+      height: 80,
+      backgroundColor: '#141414'
+    });
     file = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'bootstrap.min.css');
-    css = file.read();
-    htmlHeaderElement = '<html><head><meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1"><style type="text/css">#{css}</style></head>';
-    web = Ti.UI.createWebView({
+    this.css = file.read();
+    this.htmlHeaderElement = '<html><head><meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1"><style type="text/css">#{css}</style></head>';
+    this.web = Ti.UI.createWebView({
       top: 80,
       left: 0,
       zIndex: 5,
       width: 320,
-      html: "" + htmlHeaderElement + json.body + "</body></html>"
+      html: "init"
     });
-    titleLabel = Ti.UI.createLabel({
+    this.titleLabel = Ti.UI.createLabel({
       font: {
         fontWeight: 'bold',
         fontSize: 16
@@ -26,9 +31,9 @@ webView = (function() {
       left: 80,
       width: 220,
       height: 50,
-      text: json.title
+      text: "no title"
     });
-    dateLabel = Ti.UI.createLabel({
+    this.dateLabel = Ti.UI.createLabel({
       font: {
         fontSize: 12
       },
@@ -38,9 +43,9 @@ webView = (function() {
       left: 80,
       width: 220,
       height: 15,
-      text: '投稿日：' + moment(json.created_at, "YYYY-MM-DD HH:mm:ss Z").fromNow()
+      text: "no date"
     });
-    iconIamge = Ti.UI.createImageView({
+    this.iconIamge = Ti.UI.createImageView({
       left: 5,
       top: 10,
       borderWidth: 1,
@@ -48,23 +53,37 @@ webView = (function() {
       borderRadius: 5,
       width: 50,
       height: 50,
-      image: json.user.profile_image_url,
-      backgroundColor: '#cbcbcb'
+      backgroundColor: '#cbcbcb',
+      image: ""
     });
-    webViewHeaderContainer = Ti.UI.createLabel({
-      top: 0,
-      left: 0,
-      width: 320,
-      height: 80,
-      backgroundColor: '#141414'
-    });
-    webViewHeaderContainer.add(iconIamge);
-    webViewHeaderContainer.add(titleLabel);
-    webViewHeaderContainer.add(dateLabel);
-    container = [];
-    container.push(webViewHeaderContainer);
-    container.push(web);
-    return container;
+    this.web.hide();
+  }
+
+  webView.prototype.retreiveWebView = function() {
+    return this.web;
+  };
+
+  webView.prototype.retreiveWebViewHeader = function() {
+    return this.webViewHeaderContainer;
+  };
+
+  webView.prototype.headerUpdate = function(json) {
+    this.titleLabel.text = json.title;
+    this.dateLabel.text = '投稿日：' + moment(json.created_at, "YYYY-MM-DD HH:mm:ss Z").fromNow();
+    this.iconIamge.image = json.user.profile_image_url;
+    this.webViewHeaderContainer.add(this.iconIamge);
+    this.webViewHeaderContainer.add(this.titleLabel);
+    this.webViewHeaderContainer.add(this.dateLabel);
+    return true;
+  };
+
+  webView.prototype.contentsUpdate = function(body) {
+    this.web.html = "" + this.htmlHeaderElement + body + "</body></html>";
+    return true;
+  };
+
+  webView.prototype.show = function() {
+    return this.web.show();
   };
 
   return webView;

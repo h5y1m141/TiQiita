@@ -17,7 +17,9 @@ class tableView
         # ストックする際にURLやuuidの情報が必要になるために
         # sessionItem()を利用する
         controller.sessionItem e.rowData.data
-        controller.makeWebView e.rowData.data
+        controller.webViewContentsUpdate e.rowData.data.body
+        controller.webViewHeaderUpdate e.rowData.data
+        controller.moveToWebViewWindow()
        else
         controller.loadOldEntry()
     )

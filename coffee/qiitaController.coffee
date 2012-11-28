@@ -50,28 +50,14 @@ class qiitaController
     else
       @state = @state.moveBackward()
       
-  makeWebView: (json) ->
-    Ti.API.info "call makeWebView"
-    webview = new webView()
-    container = webview.create(json)  
-    webWindow.add(c) for c in container
-    stockInd = Ti.UI.createActivityIndicator
-      zIndex:10
-      top:100
-      left: 120
-      height: 40
-      width: 'auto'
-      backgroundColor:'#222'
-      font: 
-        fontFamily:'Helvetica Neue'
-        fontSize:15
-        fontWeight:'bold'
-      color: '#fff'
-      message: 'loading...'
+  webViewContentsUpdate: (body) ->
+    return webview.contentsUpdate(body)
+    
+  webViewHeaderUpdate: (json) ->
 
-    webWindow.add actInd
-
-        
+    return webview.headerUpdate(json)
+    
+  moveToWebViewWindow: () ->    
     actionBtn = Ti.UI.createButton
       systemButton: Titanium.UI.iPhone.SystemButton.ACTION
 
@@ -89,6 +75,7 @@ class qiitaController
       )
       dialog.show()
     )
+    webview.show()
     webWindow.rightNavButton = actionBtn
     return tab.open(webWindow)
 

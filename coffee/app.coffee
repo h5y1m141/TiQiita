@@ -42,9 +42,6 @@ mainWindow = Ti.UI.createWindow
   title:'Qiita'
   barColor:'#59BB0C'
 
-webWindow = Ti.UI.createWindow
-  backButtonTitle:'戻る',
-  barColor:'#59BB0C'
 
 
 
@@ -102,7 +99,15 @@ listBtn.addEventListener('click',()->
 )
 mainWindow.leftNavButton  = listBtn
 
-
+webWindow = Ti.UI.createWindow
+  backButtonTitle:'戻る',
+  barColor:'#59BB0C'
+webview = new webView()
+webViewHeader = webview.retreiveWebViewHeader()
+webViewContents = webview.retreiveWebView()
+webWindow.add webViewHeader
+webWindow.add webViewContents
+webWindow.add actInd
 
 tabGroup = Ti.UI.createTabGroup()
 tab = Ti.UI.createTab

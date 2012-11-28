@@ -1,4 +1,4 @@
-var Qiita, actInd, configBtn, controller, defaultState, listBtn, mainTable, mainWindow, menuTable, moment, momentja, qiita, qiitaController, rows, slideState, t, tab, tabGroup, tableView, testsEnabled, token, webView, webWindow;
+var Qiita, actInd, configBtn, controller, defaultState, listBtn, mainTable, mainWindow, menuTable, moment, momentja, qiita, qiitaController, rows, slideState, t, tab, tabGroup, tableView, testsEnabled, token, webView, webViewContents, webViewHeader, webWindow, webview;
 
 Qiita = require('qiita');
 
@@ -46,11 +46,6 @@ Ti.API.info('Token is' + token);
 
 mainWindow = Ti.UI.createWindow({
   title: 'Qiita',
-  barColor: '#59BB0C'
-});
-
-webWindow = Ti.UI.createWindow({
-  backButtonTitle: '戻る',
   barColor: '#59BB0C'
 });
 
@@ -116,6 +111,23 @@ listBtn.addEventListener('click', function() {
 });
 
 mainWindow.leftNavButton = listBtn;
+
+webWindow = Ti.UI.createWindow({
+  backButtonTitle: '戻る',
+  barColor: '#59BB0C'
+});
+
+webview = new webView();
+
+webViewHeader = webview.retreiveWebViewHeader();
+
+webViewContents = webview.retreiveWebView();
+
+webWindow.add(webViewHeader);
+
+webWindow.add(webViewContents);
+
+webWindow.add(actInd);
 
 tabGroup = Ti.UI.createTabGroup();
 

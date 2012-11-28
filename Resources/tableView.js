@@ -14,7 +14,9 @@ tableView = (function() {
     this.table.addEventListener('click', function(e) {
       if (e.rowData.className === 'entry') {
         controller.sessionItem(e.rowData.data);
-        return controller.makeWebView(e.rowData.data);
+        controller.webViewContentsUpdate(e.rowData.data.body);
+        controller.webViewHeaderUpdate(e.rowData.data);
+        return controller.moveToWebViewWindow();
       } else {
         return controller.loadOldEntry();
       }

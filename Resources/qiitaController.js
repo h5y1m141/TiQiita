@@ -62,31 +62,16 @@ qiitaController = (function() {
     }
   };
 
-  qiitaController.prototype.makeWebView = function(json) {
-    var actionBtn, c, container, stockInd, webview, _i, _len;
-    Ti.API.info("call makeWebView");
-    webview = new webView();
-    container = webview.create(json);
-    for (_i = 0, _len = container.length; _i < _len; _i++) {
-      c = container[_i];
-      webWindow.add(c);
-    }
-    stockInd = Ti.UI.createActivityIndicator({
-      zIndex: 10,
-      top: 100,
-      left: 120,
-      height: 40,
-      width: 'auto',
-      backgroundColor: '#222',
-      font: {
-        fontFamily: 'Helvetica Neue',
-        fontSize: 15,
-        fontWeight: 'bold'
-      },
-      color: '#fff',
-      message: 'loading...'
-    });
-    webWindow.add(actInd);
+  qiitaController.prototype.webViewContentsUpdate = function(body) {
+    return webview.contentsUpdate(body);
+  };
+
+  qiitaController.prototype.webViewHeaderUpdate = function(json) {
+    return webview.headerUpdate(json);
+  };
+
+  qiitaController.prototype.moveToWebViewWindow = function() {
+    var actionBtn;
     actionBtn = Ti.UI.createButton({
       systemButton: Titanium.UI.iPhone.SystemButton.ACTION
     });
@@ -105,6 +90,7 @@ qiitaController = (function() {
       });
       return dialog.show();
     });
+    webview.show();
     webWindow.rightNavButton = actionBtn;
     return tab.open(webWindow);
   };
