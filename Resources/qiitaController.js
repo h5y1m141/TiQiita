@@ -106,6 +106,10 @@ qiitaController = (function() {
     return true;
   };
 
+  qiitaController.prototype.show = function() {
+    return alert("start contoroller show");
+  };
+
   qiitaController.prototype.postItemToHatena = function() {
     var configJSON, file, hatena, hatenaKey;
     Ti.API.info(Ti.App.Properties.getString('stockURL'));

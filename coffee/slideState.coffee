@@ -11,12 +11,12 @@ class slideState
     Ti.App.Properties.setBool("stateMainTableSlide",false)
     mainTable.touchEnabled = true
     
-
+    mainTable.setOpacity(1.0)
     mainTable.animate({
       duration:200,
       left:0
     },()->
-      mainTable.setOpacity(1.0)
+      Ti.API.info "アニメーション終了"
     
     )
     return new defaultState()

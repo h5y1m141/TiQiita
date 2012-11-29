@@ -90,7 +90,11 @@ class qiitaController
     
     
     return true
-      
+
+  show: () ->
+    alert "start contoroller show"
+
+                  
   postItemToHatena: () ->
     Ti.API.info(Ti.App.Properties.getString('stockURL'))
     configJSON = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'config/hatena.json')

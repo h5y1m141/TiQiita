@@ -7,9 +7,15 @@ class menuTable
       width:80
       left:0
       top:0
+
+    slideEvent = ->
+      Ti.App.Properties.setBool("stateMainTableSlide",true)
+      # controller.slideMainTableを呼び出して
+      # スライド状態から標準状態に画面を戻す
+      controller.slideMainTable()
       
-    table.addEventListener('click',(e)->
-      
+    table.addEventListener('click',(e) ->
+
       curretRowIndex = e.index
       # すべてのrowの背景色をデフォルト値に設定
       menuRows = table.data[0].rows
@@ -61,7 +67,10 @@ class menuTable
         selectedBackgroundColor:'#222'
         borderColor:'#ededed'
         height:60
-        
+
+      allLabelRow.addEventListener('click',(e)->
+        slideEvent()
+      )        
       allLabel = Ti.UI.createLabel
         width:80
         height:60
@@ -86,9 +95,12 @@ class menuTable
           selectedBackgroundColor:'#59BB0C'
           borderColor:'#ededed'
           height:60
-        menuRow.addEventListener('click',(e)->
           
+        # 該当するタグが選択された時には背景色を変更しつつ
+        # 標準状態に戻す
+        menuRow.addEventListener('click',(e)->
           e.row.backgroundColor = '#59BB0C'
+          slideEvent()
         )
         textLabel = Ti.UI.createLabel
           width:80
@@ -109,5 +121,6 @@ class menuTable
       
     )
     return table
+    
     
 module.exports = menuTable

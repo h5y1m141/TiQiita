@@ -3,7 +3,7 @@ var menuTable;
 menuTable = (function() {
 
   function menuTable() {
-    var table;
+    var slideEvent, table;
     table = Ti.UI.createTableView({
       backgroundColor: '#222',
       separatorStyle: 0,
@@ -12,6 +12,10 @@ menuTable = (function() {
       left: 0,
       top: 0
     });
+    slideEvent = function() {
+      Ti.App.Properties.setBool("stateMainTableSlide", true);
+      return controller.slideMainTable();
+    };
     table.addEventListener('click', function(e) {
       var curretRowIndex, i, items, json, menuRow, menuRows, result, tagName, tags, value, _, _i, _j, _k, _len, _len1, _ref;
       curretRowIndex = e.index;
@@ -59,6 +63,9 @@ menuTable = (function() {
         borderColor: '#ededed',
         height: 60
       });
+      allLabelRow.addEventListener('click', function(e) {
+        return slideEvent();
+      });
       allLabel = Ti.UI.createLabel({
         width: 80,
         height: 60,
@@ -86,7 +93,8 @@ menuTable = (function() {
           height: 60
         });
         menuRow.addEventListener('click', function(e) {
-          return e.row.backgroundColor = '#59BB0C';
+          e.row.backgroundColor = '#59BB0C';
+          return slideEvent();
         });
         textLabel = Ti.UI.createLabel({
           width: 80,

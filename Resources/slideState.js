@@ -14,11 +14,12 @@ slideState = (function() {
     Ti.API.info("ACTION: スライドから標準状態に戻る");
     Ti.App.Properties.setBool("stateMainTableSlide", false);
     mainTable.touchEnabled = true;
+    mainTable.setOpacity(1.0);
     mainTable.animate({
       duration: 200,
       left: 0
     }, function() {
-      return mainTable.setOpacity(1.0);
+      return Ti.API.info("アニメーション終了");
     });
     return new defaultState();
   };
