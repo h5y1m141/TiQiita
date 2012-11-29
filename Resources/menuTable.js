@@ -43,7 +43,9 @@ menuTable = (function() {
           }
         }
       }
-      result.push(t.createRowForLoadOldEntry());
+      if (table.data[0].rows[curretRowIndex].className === "allLabel") {
+        result.push(t.createRowForLoadOldEntry());
+      }
       return mainTable.setData(result);
     });
     qiita.getFollowingTags(function(result, links) {
@@ -70,6 +72,7 @@ menuTable = (function() {
         },
         text: "ALL"
       });
+      allLabelRow.className = "allLabel";
       allLabelRow.add(allLabel);
       menuRows.push(allLabelRow);
       for (_i = 0, _len = result.length; _i < _len; _i++) {

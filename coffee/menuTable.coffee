@@ -40,7 +40,13 @@ class menuTable
           if value.length isnt 0
             result.push(t.createRow(items[i]))
             
-      result.push(t.createRowForLoadOldEntry())
+      # row.classの値が allLabel の場合にのみ過去の投稿を
+      # 読み込むためのラベルを配置する
+      # 理由としては該当のタグにマッチする投稿情報のみ
+      # 表示にした状態で loadOldEntry実行すると処理が煩雑になるため
+      if table.data[0].rows[curretRowIndex].className is "allLabel"
+        result.push(t.createRowForLoadOldEntry())  
+      
       mainTable.setData result
 
 
@@ -67,6 +73,8 @@ class menuTable
           fontSize:12
           fontWeight:'bold'
         text:"ALL"
+        
+      allLabelRow.className = "allLabel"
       allLabelRow.add allLabel  
       menuRows.push allLabelRow
         
