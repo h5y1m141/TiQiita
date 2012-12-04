@@ -3,15 +3,49 @@ var menuTable;
 menuTable = (function() {
 
   function menuTable() {
-    var slideEvent, table;
+    var backgroundColorBase, backgroundColorSub, fontThemeWhite, makeConfigSection, slideEvent, table;
+    backgroundColorBase = '#222';
+    backgroundColorSub = '#333';
+    fontThemeWhite = {
+      top: 5,
+      left: 5,
+      color: "#fff",
+      font: {
+        fontSize: 12,
+        fontWeight: "bold"
+      }
+    };
     table = Ti.UI.createTableView({
-      backgroundColor: '#222',
+      backgroundColor: backgroundColorBase,
       separatorStyle: 0,
       zIndex: 1,
-      width: 80,
+      width: 160,
       left: 0,
       top: 0
     });
+    makeConfigSection = function() {
+      var configAccountLabel, configBtn, configRows, configTitleRow;
+      configRows = [];
+      configBtn = Ti.UI.createImageView({
+        image: "ui/image/light_gear.png",
+        left: 5,
+        top: 5,
+        backgroundColor: "transparent"
+      });
+      configAccountLabel = Ti.UI.createLabel(fontThemeWhite);
+      configAccountLabel.text = "アカウント設定";
+      configAccountLabel.top = 8;
+      configAccountLabel.left = 35;
+      configTitleRow = Ti.UI.createTableViewRow({
+        width: 320,
+        height: 30,
+        backgroundColor: backgroundColorSub
+      });
+      configTitleRow.add(configBtn);
+      configTitleRow.add(configAccountLabel);
+      configRows.push(configTitleRow);
+      return configRows;
+    };
     slideEvent = function() {
       Ti.App.Properties.setBool("stateMainTableSlide", true);
       return controller.slideMainTable();
@@ -53,22 +87,26 @@ menuTable = (function() {
       return mainTable.setData(result);
     });
     qiita.getFollowingTags(function(result, links) {
-      var allLabel, allLabelRow, json, menuRow, menuRows, textLabel, _i, _len;
-      menuRows = [];
+      var allLabel, allLabelRow, configRows, json, menuRow, tagsSection, textLabel, _i, _len;
+      configRows = makeConfigSection();
+      tagsSection = Ti.UI.createTableViewSection({
+        headerTitle: "タグ一覧",
+        color: "#fff"
+      });
       allLabelRow = Ti.UI.createTableViewRow({
-        width: 80,
+        width: 160,
         opacity: 0.8,
         backgroundColor: '#59BB0C',
         selectedBackgroundColor: '#222',
         borderColor: '#ededed',
-        height: 60
+        height: 40
       });
       allLabelRow.addEventListener('click', function(e) {
         return slideEvent();
       });
       allLabel = Ti.UI.createLabel({
-        width: 80,
-        height: 60,
+        width: 160,
+        height: 40,
         top: 0,
         left: 0,
         wordWrap: true,
@@ -81,24 +119,24 @@ menuTable = (function() {
       });
       allLabelRow.className = "allLabel";
       allLabelRow.add(allLabel);
-      menuRows.push(allLabelRow);
+      tagsSection.add(allLabelRow);
       for (_i = 0, _len = result.length; _i < _len; _i++) {
         json = result[_i];
         menuRow = Ti.UI.createTableViewRow({
-          width: 80,
+          width: 160,
           opacity: 0.8,
-          backgroundColor: '#222',
+          backgroundColor: '#333',
           selectedBackgroundColor: '#59BB0C',
           borderColor: '#ededed',
-          height: 60
+          height: 40
         });
         menuRow.addEventListener('click', function(e) {
           e.row.backgroundColor = '#59BB0C';
           return slideEvent();
         });
         textLabel = Ti.UI.createLabel({
-          width: 80,
-          height: 60,
+          width: 160,
+          height: 40,
           top: 0,
           left: 0,
           wordWrap: true,
@@ -111,9 +149,9 @@ menuTable = (function() {
         });
         menuRow.add(textLabel);
         menuRow.className = json.url_name;
-        menuRows.push(menuRow);
+        tagsSection.add(menuRow);
       }
-      return table.setData(menuRows);
+      return table.data = configRows;
     });
     return table;
   }

@@ -15,7 +15,7 @@ class defaultState
     mainTable.touchEnabled = false
     mainTable.animate({
       duration:200
-      left:80
+      left:160
     }, ()->
       mainTable.setOpacity(0.5)
     )

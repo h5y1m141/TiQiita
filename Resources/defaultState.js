@@ -18,7 +18,7 @@ defaultState = (function() {
     mainTable.touchEnabled = false;
     mainTable.animate({
       duration: 200,
-      left: 80
+      left: 160
     }, function() {
       return mainTable.setOpacity(0.5);
     });
