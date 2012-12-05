@@ -3,9 +3,10 @@ var menuTable;
 menuTable = (function() {
 
   function menuTable() {
-    var backgroundColorBase, backgroundColorSub, fontThemeWhite, makeConfigSection, slideEvent, table;
+    var backgroundColorBase, backgroundColorForTags, backgroundColorSub, fontThemeWhite, makeConfigSection, matchTag, resetBackGroundColor, slideEvent, table;
     backgroundColorBase = '#222';
     backgroundColorSub = '#333';
+    backgroundColorForTags = '#444';
     fontThemeWhite = {
       top: 5,
       left: 5,
@@ -17,7 +18,8 @@ menuTable = (function() {
     };
     table = Ti.UI.createTableView({
       backgroundColor: backgroundColorBase,
-      separatorStyle: 0,
+      separatorStyle: 1,
+      separatorColor: backgroundColorBase,
       zIndex: 1,
       width: 160,
       left: 0,
@@ -37,8 +39,9 @@ menuTable = (function() {
       configAccountLabel.top = 8;
       configAccountLabel.left = 35;
       configTitleRow = Ti.UI.createTableViewRow({
-        width: 320,
-        height: 30,
+        width: 158,
+        height: 40,
+        left: 1,
         backgroundColor: backgroundColorSub
       });
       configTitleRow.add(configBtn);
@@ -46,40 +49,52 @@ menuTable = (function() {
       configRows.push(configTitleRow);
       return configRows;
     };
+    matchTag = function(items, tagName) {
+      var i, tags, value, _, _i, _ref;
+      for (i = _i = 0, _ref = items.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+        tags = items[i].tags;
+        _ = require("lib/underscore-min");
+        value = _.where(tags, {
+          "url_name": tagName
+        });
+        if (value.length !== 0) {
+          return t.createRow(items[i]);
+        }
+      }
+    };
     slideEvent = function() {
       Ti.App.Properties.setBool("stateMainTableSlide", true);
       return controller.slideMainTable();
     };
-    table.addEventListener('click', function(e) {
-      var curretRowIndex, i, items, json, menuRow, menuRows, result, tagName, tags, value, _, _i, _j, _k, _len, _len1, _ref;
-      curretRowIndex = e.index;
+    resetBackGroundColor = function(menuRows) {
+      var menuRow, _i, _len, _results;
       menuRows = table.data[0].rows;
+      _results = [];
       for (_i = 0, _len = menuRows.length; _i < _len; _i++) {
         menuRow = menuRows[_i];
-        if (menuRow.backgroundColor !== '#222') {
-          menuRow.backgroundColor = '#222';
+        if (menuRow.backgroundColor !== backgroundColorSub) {
+          _results.push(menuRow.backgroundColor = backgroundColorSub);
+        } else {
+          _results.push(void 0);
         }
       }
+      return _results;
+    };
+    table.addEventListener('click', function(e) {
+      var allLabelIndexPosition, curretRowIndex, items, json, result, _i, _len;
+      curretRowIndex = e.index;
+      resetBackGroundColor(table.data[0].rows);
       table.data[0].rows[curretRowIndex].backgroundColor = '#59BB0C';
       items = JSON.parse(Ti.App.Properties.getString('storedStocks'));
       result = [];
-      if (curretRowIndex === 0) {
-        for (_j = 0, _len1 = items.length; _j < _len1; _j++) {
-          json = items[_j];
+      allLabelIndexPosition = 3;
+      if (curretRowIndex === allLabelIndexPosition) {
+        for (_i = 0, _len = items.length; _i < _len; _i++) {
+          json = items[_i];
           result.push(t.createRow(json));
         }
       } else {
-        for (i = _k = 0, _ref = items.length - 1; 0 <= _ref ? _k <= _ref : _k >= _ref; i = 0 <= _ref ? ++_k : --_k) {
-          tags = items[i].tags;
-          _ = require("lib/underscore-min");
-          tagName = e.rowData.className;
-          value = _.where(tags, {
-            "url_name": tagName
-          });
-          if (value.length !== 0) {
-            result.push(t.createRow(items[i]));
-          }
-        }
+        result.push(matchTag(items, e.rowData.className));
       }
       if (table.data[0].rows[curretRowIndex].className === "allLabel") {
         result.push(t.createRowForLoadOldEntry());
@@ -87,17 +102,52 @@ menuTable = (function() {
       return mainTable.setData(result);
     });
     qiita.getFollowingTags(function(result, links) {
-      var allLabel, allLabelRow, configRows, json, menuRow, tagsSection, textLabel, _i, _len;
+      var allLabel, allLabelRow, configRows, json, menuRow, stockBtn, stockLabel, stockRow, tagBtn, tagLabel, tagRow, textLabel, _i, _len;
       configRows = makeConfigSection();
-      tagsSection = Ti.UI.createTableViewSection({
-        headerTitle: "タグ一覧",
-        color: "#fff"
+      stockBtn = Ti.UI.createImageView({
+        image: "ui/image/light_list.png",
+        left: 5,
+        top: 5,
+        backgroundColor: "transparent"
       });
+      stockLabel = Ti.UI.createLabel(fontThemeWhite);
+      stockLabel.text = "ストック投稿を見る";
+      stockLabel.top = 8;
+      stockLabel.left = 35;
+      stockRow = Ti.UI.createTableViewRow({
+        width: 158,
+        height: 40,
+        left: 1,
+        backgroundColor: backgroundColorSub
+      });
+      stockRow.add(stockBtn);
+      stockRow.add(stockLabel);
+      configRows.push(stockRow);
+      tagRow = Ti.UI.createTableViewRow({
+        width: 158,
+        height: 40,
+        left: 1,
+        backgroundColor: backgroundColorSub
+      });
+      tagLabel = Ti.UI.createLabel(fontThemeWhite);
+      tagLabel.text = "タグを見る";
+      tagLabel.top = 8;
+      tagLabel.left = 35;
+      tagBtn = Ti.UI.createImageView({
+        image: "ui/image/light_tag.png",
+        left: 5,
+        top: 10,
+        backgroundColor: "transparent"
+      });
+      tagRow.add(tagLabel);
+      tagRow.add(tagBtn);
+      configRows.push(tagRow);
       allLabelRow = Ti.UI.createTableViewRow({
-        width: 160,
+        width: 158,
+        left: 1,
         opacity: 0.8,
         backgroundColor: '#59BB0C',
-        selectedBackgroundColor: '#222',
+        selectedBackgroundColor: backgroundColorSub,
         borderColor: '#ededed',
         height: 40
       });
@@ -105,7 +155,7 @@ menuTable = (function() {
         return slideEvent();
       });
       allLabel = Ti.UI.createLabel({
-        width: 160,
+        width: 158,
         height: 40,
         top: 0,
         left: 0,
@@ -119,13 +169,14 @@ menuTable = (function() {
       });
       allLabelRow.className = "allLabel";
       allLabelRow.add(allLabel);
-      tagsSection.add(allLabelRow);
+      configRows.push(allLabelRow);
       for (_i = 0, _len = result.length; _i < _len; _i++) {
         json = result[_i];
         menuRow = Ti.UI.createTableViewRow({
-          width: 160,
+          width: 158,
+          left: 1,
           opacity: 0.8,
-          backgroundColor: '#333',
+          backgroundColor: backgroundColorSub,
           selectedBackgroundColor: '#59BB0C',
           borderColor: '#ededed',
           height: 40
@@ -135,9 +186,9 @@ menuTable = (function() {
           return slideEvent();
         });
         textLabel = Ti.UI.createLabel({
-          width: 160,
+          width: 150,
           height: 40,
-          top: 0,
+          top: 1,
           left: 0,
           wordWrap: true,
           color: '#fff',
@@ -149,7 +200,7 @@ menuTable = (function() {
         });
         menuRow.add(textLabel);
         menuRow.className = json.url_name;
-        tagsSection.add(menuRow);
+        configRows.push(menuRow);
       }
       return table.data = configRows;
     });
