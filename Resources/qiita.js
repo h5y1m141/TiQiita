@@ -77,7 +77,6 @@ Qiita = (function() {
       obj1 = strItems.substring(0, strItems.length - 1);
       stocks = Ti.App.Properties.getString('storedStocks');
       obj2 = stocks.substring(1, stocks.length);
-      Ti.API.info(obj1);
       merge = "" + obj1 + "," + obj2;
       Ti.App.Properties.setString('storedStocks', merge);
     }

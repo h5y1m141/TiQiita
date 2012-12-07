@@ -3,6 +3,7 @@ class menuTable
     backgroundColorBase = '#222'
     backgroundColorSub = '#333'
     backgroundColorForTags = '#444'
+    qiitaColor = '#59BB0C'
     fontThemeWhite =
       top: 5
       left: 5
@@ -18,7 +19,7 @@ class menuTable
       borderColor:'#ededed'
       height:40
       backgroundColor:backgroundColorSub
-      selectedBackgroundColor:'#59BB0C'
+      selectedBackgroundColor:qiitaColor
     
     table = Ti.UI.createTableView
       backgroundColor:backgroundColorBase
@@ -45,12 +46,10 @@ class menuTable
       configRow = Ti.UI.createTableViewRow(rowColorTheme)
         
       configRow.addEventListener('click',(e) ->
-
         slideEvent()
-        controller.moveToConfigWindow()
       )
     
-      
+      configRow.className = "config"
       configRow.add configBtn
       configRow.add configAccountLabel
       return configRow
@@ -69,7 +68,10 @@ class menuTable
       stockLabel.left = 35
 
       stockRow = Ti.UI.createTableViewRow(rowColorTheme)
-
+      stockRow.addEventListener('click',(e) ->
+        slideEvent()
+      )
+      stockRow.className = "stock"
       stockRow.add stockBtn
       stockRow.add stockLabel
 
@@ -99,7 +101,6 @@ class menuTable
       for i in [0..items.length-1]
         tags = items[i].tags
         _ = require("lib/underscore-min")
-        # tagName = e.rowData.className
 
         value = _.where(tags,{"url_name":tagName})
 
@@ -124,26 +125,41 @@ class menuTable
       curretRowIndex = e.index
       resetBackGroundColor(table.data[0].rows)
       # クリックされたrowの色を'#59BB0C'に設定
-      table.data[0].rows[curretRowIndex].backgroundColor = '#59BB0C'
+      table.data[0].rows[curretRowIndex].backgroundColor = qiitaColor
 
       items = JSON.parse(Ti.App.Properties.getString('storedStocks'))
       result = []
 
+      configIndexPosition   = 0
+      stockIndexPosition    = 1
       allLabelIndexPosition = 3
-      if curretRowIndex is allLabelIndexPosition
-        result.push(t.createRow(json)) for json in items
-      else
-        tagName = e.rowData.className
-        result.push(matchTag(items,tagName))
+      
+      switch table.data[0].rows[curretRowIndex].className
+        when "config"
+          Ti.API.info "CONDITION CONFIG"
+          configTableRow = require("configTableRow")
+          configRow = new configTableRow
+          result = configRow
+        when "stock"
+          Ti.API.info "CONDITION STOCK"
+          result.push(t.createRow(json)) for json in items
+        when "allLabel"
+          Ti.API.info "CONDITION ALL"
+          result.push(t.createRow(json)) for json in items
+          # row.classの値が allLabel の場合にのみ過去の投稿を
+          # 読み込むためのラベルを配置する
+          # 理由としては該当のタグにマッチする投稿情報のみ
+          # 表示にした状態で loadOldEntry実行すると処理が煩雑になるため
+          result.push(t.createRowForLoadOldEntry())
+        else
+          tagName = e.rowData.className
+          result.push(matchTag(items,tagName))
       
 
             
-      # row.classの値が allLabel の場合にのみ過去の投稿を
-      # 読み込むためのラベルを配置する
-      # 理由としては該当のタグにマッチする投稿情報のみ
-      # 表示にした状態で loadOldEntry実行すると処理が煩雑になるため
-      if table.data[0].rows[curretRowIndex].className is "allLabel"
-        result.push(t.createRowForLoadOldEntry())  
+      
+
+          
       
       mainTable.setData result
     )
@@ -152,7 +168,7 @@ class menuTable
       rows = [makeConfigRow(),makeStockRow(),makeTagRow()]
       
       allLabelRow = Ti.UI.createTableViewRow(rowColorTheme)
-      allLabelRow.backgroundColor = '#59BB0C'
+      allLabelRow.backgroundColor = qiitaColor
       allLabelRow.selectedBackgroundColor = backgroundColorSub
 
       allLabelRow.addEventListener('click',(e)->
@@ -178,12 +194,11 @@ class menuTable
         
       for json in result
         menuRow = Ti.UI.createTableViewRow(rowColorTheme)
-
           
         # 該当するタグが選択された時には背景色を変更しつつ
         # 標準状態に戻す
         menuRow.addEventListener('click',(e)->
-          e.row.backgroundColor = '#59BB0C'
+          e.row.backgroundColor = qiitaColor
           slideEvent()
         )
         textLabel = Ti.UI.createLabel

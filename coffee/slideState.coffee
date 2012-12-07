@@ -13,7 +13,7 @@ class slideState
     
     mainTable.setOpacity(1.0)
     mainTable.animate({
-      duration:200,
+      duration:200
       left:0
     },()->
       Ti.API.info "アニメーション終了"
@@ -23,5 +23,6 @@ class slideState
     
   moveForward: () ->
     Ti.API.info "この状態では何もしない"
-
+    
+    
 module.exports = slideState

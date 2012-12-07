@@ -1,11 +1,13 @@
 Qiita = require('qiita')
 tableView = require('tableView')
 menuTable = require('menuTable')
+
 moment = require('lib/moment.min')
 momentja = require('lib/momentja')
 qiitaController = require('qiitaController')
 defaultState = require("defaultState")
 slideState = require("slideState")
+
 webView = require('webView')
 
 
@@ -13,7 +15,7 @@ t = new tableView()
 qiita = new Qiita()
 controller = new qiitaController()
 
-
+  
 # クリックイベント時の状態管理のために以下利用
 Ti.App.Properties.setBool('stateMainTableSlide',false)
 
@@ -75,33 +77,25 @@ qiita.getFeed( (result,links) ->
   # 自分がチェックしてるタグを取得して、左側にサブメニューとして配置
   menu = new menuTable()
   mainWindow.add menu
+  
   return true
 )  
 
-
-
-configBtn = Ti.UI.createButton
-  systemButton: Titanium.UI.iPhone.SystemButton.INFO
-  title:'設定'
-
-configBtn.addEventListener('click', () ->
-  controller.configWindow()
-)
-
-mainWindow.rightNavButton = configBtn
 
 listBtn = Ti.UI.createButton
   systemButton: Titanium.UI.iPhone.SystemButton.BOOKMARKS
   
 listBtn.addEventListener('click',()->
   controller.slideMainTable()
-    
 )
 mainWindow.leftNavButton  = listBtn
+
+
 
 webWindow = Ti.UI.createWindow
   backButtonTitle:'戻る',
   barColor:'#59BB0C'
+  
 webview = new webView()
 webViewHeader = webview.retreiveWebViewHeader()
 webViewContents = webview.retreiveWebView()

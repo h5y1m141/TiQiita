@@ -95,17 +95,6 @@ qiitaController = (function() {
     return tab.open(webWindow);
   };
 
-  qiitaController.prototype.configWindow = function() {
-    var configMenu, configWin, configWindow, menu;
-    configWindow = require("qiitaWindow");
-    configWin = new configWindow();
-    configMenu = require("ui/configMenu");
-    menu = new configMenu();
-    configWin.add(menu);
-    configWin.show();
-    return true;
-  };
-
   qiitaController.prototype.show = function() {
     return alert("start contoroller show");
   };

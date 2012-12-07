@@ -42,7 +42,7 @@ class qiitaController
       Ti.App.Properties.setString('stockURL',json.url)
       Ti.App.Properties.setString('stockUUID',json.uuid)
       Ti.App.Properties.setString('stockID',json.id)
-
+  
   slideMainTable: () ->
     Ti.API.info "slideMainTable start. state is #{@state.sayState()}"
     if Ti.App.Properties.getBool("stateMainTableSlide") is false
@@ -50,12 +50,14 @@ class qiitaController
     else
       @state = @state.moveBackward()
       
+      
   webViewContentsUpdate: (body) ->
     return webview.contentsUpdate(body)
     
   webViewHeaderUpdate: (json) ->
 
     return webview.headerUpdate(json)
+
     
   moveToWebViewWindow: () ->    
     actionBtn = Ti.UI.createButton
@@ -79,17 +81,6 @@ class qiitaController
     webWindow.rightNavButton = actionBtn
     return tab.open(webWindow)
 
-  configWindow: () ->
-    configWindow = require("qiitaWindow")
-    configWin = new configWindow()
-    configMenu = require("ui/configMenu")
-    menu = new configMenu()
-
-    configWin.add menu
-    configWin.show()
-    
-    
-    return true
 
   show: () ->
     alert "start contoroller show"

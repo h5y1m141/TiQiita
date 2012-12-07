@@ -8,6 +8,7 @@ class tableView
       left:0
       top:0
     @table.addEventListener('click',(e)->
+
       # TableViewの一番下に、過去投稿を読み込むためのボタンを
       # 配置しており、そのrowだけは投稿詳細画面に遷移させない
       # 詳細画面にいくかどうかはrowのclassNameの値をチェックする

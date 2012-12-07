@@ -22,4 +22,6 @@ class defaultState
     
     return new slideState()
 
+
+
 module.exports = defaultState 

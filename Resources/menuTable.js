@@ -3,10 +3,11 @@ var menuTable;
 menuTable = (function() {
 
   function menuTable() {
-    var backgroundColorBase, backgroundColorForTags, backgroundColorSub, fontThemeWhite, makeConfigSection, matchTag, resetBackGroundColor, slideEvent, table;
+    var backgroundColorBase, backgroundColorForTags, backgroundColorSub, fontThemeWhite, makeConfigRow, makeStockRow, makeTagRow, matchTag, qiitaColor, resetBackGroundColor, rowColorTheme, slideEvent, table;
     backgroundColorBase = '#222';
     backgroundColorSub = '#333';
     backgroundColorForTags = '#444';
+    qiitaColor = '#59BB0C';
     fontThemeWhite = {
       top: 5,
       left: 5,
@@ -15,6 +16,15 @@ menuTable = (function() {
         fontSize: 12,
         fontWeight: "bold"
       }
+    };
+    rowColorTheme = {
+      width: 158,
+      left: 1,
+      opacity: 0.8,
+      borderColor: '#ededed',
+      height: 40,
+      backgroundColor: backgroundColorSub,
+      selectedBackgroundColor: qiitaColor
     };
     table = Ti.UI.createTableView({
       backgroundColor: backgroundColorBase,
@@ -25,9 +35,8 @@ menuTable = (function() {
       left: 0,
       top: 0
     });
-    makeConfigSection = function() {
-      var configAccountLabel, configBtn, configRows, configTitleRow;
-      configRows = [];
+    makeConfigRow = function() {
+      var configAccountLabel, configBtn, configRow;
       configBtn = Ti.UI.createImageView({
         image: "ui/image/light_gear.png",
         left: 5,
@@ -38,16 +47,52 @@ menuTable = (function() {
       configAccountLabel.text = "アカウント設定";
       configAccountLabel.top = 8;
       configAccountLabel.left = 35;
-      configTitleRow = Ti.UI.createTableViewRow({
-        width: 158,
-        height: 40,
-        left: 1,
-        backgroundColor: backgroundColorSub
+      configRow = Ti.UI.createTableViewRow(rowColorTheme);
+      configRow.addEventListener('click', function(e) {
+        return slideEvent();
       });
-      configTitleRow.add(configBtn);
-      configTitleRow.add(configAccountLabel);
-      configRows.push(configTitleRow);
-      return configRows;
+      configRow.className = "config";
+      configRow.add(configBtn);
+      configRow.add(configAccountLabel);
+      return configRow;
+    };
+    makeStockRow = function() {
+      var stockBtn, stockLabel, stockRow;
+      stockBtn = Ti.UI.createImageView({
+        image: "ui/image/light_list.png",
+        left: 5,
+        top: 5,
+        backgroundColor: "transparent"
+      });
+      stockLabel = Ti.UI.createLabel(fontThemeWhite);
+      stockLabel.text = "ストック投稿を見る";
+      stockLabel.top = 8;
+      stockLabel.left = 35;
+      stockRow = Ti.UI.createTableViewRow(rowColorTheme);
+      stockRow.addEventListener('click', function(e) {
+        return slideEvent();
+      });
+      stockRow.className = "stock";
+      stockRow.add(stockBtn);
+      stockRow.add(stockLabel);
+      return stockRow;
+    };
+    makeTagRow = function() {
+      var tagBtn, tagLabel, tagRow;
+      tagRow = Ti.UI.createTableViewRow(rowColorTheme);
+      tagLabel = Ti.UI.createLabel(fontThemeWhite);
+      tagLabel.text = "タグを見る";
+      tagLabel.top = 8;
+      tagLabel.left = 35;
+      tagBtn = Ti.UI.createImageView({
+        image: "ui/image/light_tag.png",
+        left: 5,
+        top: 10,
+        backgroundColor: "transparent"
+      });
+      tagRow.add(tagLabel);
+      tagRow.add(tagBtn);
+      return tagRow;
     };
     matchTag = function(items, tagName) {
       var i, tags, value, _, _i, _ref;
@@ -81,76 +126,49 @@ menuTable = (function() {
       return _results;
     };
     table.addEventListener('click', function(e) {
-      var allLabelIndexPosition, curretRowIndex, items, json, result, _i, _len;
+      var allLabelIndexPosition, configIndexPosition, configRow, configTableRow, curretRowIndex, items, json, result, stockIndexPosition, tagName, _i, _j, _len, _len1;
       curretRowIndex = e.index;
       resetBackGroundColor(table.data[0].rows);
-      table.data[0].rows[curretRowIndex].backgroundColor = '#59BB0C';
+      table.data[0].rows[curretRowIndex].backgroundColor = qiitaColor;
       items = JSON.parse(Ti.App.Properties.getString('storedStocks'));
       result = [];
+      configIndexPosition = 0;
+      stockIndexPosition = 1;
       allLabelIndexPosition = 3;
-      if (curretRowIndex === allLabelIndexPosition) {
-        for (_i = 0, _len = items.length; _i < _len; _i++) {
-          json = items[_i];
-          result.push(t.createRow(json));
-        }
-      } else {
-        result.push(matchTag(items, e.rowData.className));
-      }
-      if (table.data[0].rows[curretRowIndex].className === "allLabel") {
-        result.push(t.createRowForLoadOldEntry());
+      switch (table.data[0].rows[curretRowIndex].className) {
+        case "config":
+          Ti.API.info("CONDITION CONFIG");
+          configTableRow = require("configTableRow");
+          configRow = new configTableRow;
+          result = configRow;
+          break;
+        case "stock":
+          Ti.API.info("CONDITION STOCK");
+          for (_i = 0, _len = items.length; _i < _len; _i++) {
+            json = items[_i];
+            result.push(t.createRow(json));
+          }
+          break;
+        case "allLabel":
+          Ti.API.info("CONDITION ALL");
+          for (_j = 0, _len1 = items.length; _j < _len1; _j++) {
+            json = items[_j];
+            result.push(t.createRow(json));
+          }
+          result.push(t.createRowForLoadOldEntry());
+          break;
+        default:
+          tagName = e.rowData.className;
+          result.push(matchTag(items, tagName));
       }
       return mainTable.setData(result);
     });
     qiita.getFollowingTags(function(result, links) {
-      var allLabel, allLabelRow, configRows, json, menuRow, stockBtn, stockLabel, stockRow, tagBtn, tagLabel, tagRow, textLabel, _i, _len;
-      configRows = makeConfigSection();
-      stockBtn = Ti.UI.createImageView({
-        image: "ui/image/light_list.png",
-        left: 5,
-        top: 5,
-        backgroundColor: "transparent"
-      });
-      stockLabel = Ti.UI.createLabel(fontThemeWhite);
-      stockLabel.text = "ストック投稿を見る";
-      stockLabel.top = 8;
-      stockLabel.left = 35;
-      stockRow = Ti.UI.createTableViewRow({
-        width: 158,
-        height: 40,
-        left: 1,
-        backgroundColor: backgroundColorSub
-      });
-      stockRow.add(stockBtn);
-      stockRow.add(stockLabel);
-      configRows.push(stockRow);
-      tagRow = Ti.UI.createTableViewRow({
-        width: 158,
-        height: 40,
-        left: 1,
-        backgroundColor: backgroundColorSub
-      });
-      tagLabel = Ti.UI.createLabel(fontThemeWhite);
-      tagLabel.text = "タグを見る";
-      tagLabel.top = 8;
-      tagLabel.left = 35;
-      tagBtn = Ti.UI.createImageView({
-        image: "ui/image/light_tag.png",
-        left: 5,
-        top: 10,
-        backgroundColor: "transparent"
-      });
-      tagRow.add(tagLabel);
-      tagRow.add(tagBtn);
-      configRows.push(tagRow);
-      allLabelRow = Ti.UI.createTableViewRow({
-        width: 158,
-        left: 1,
-        opacity: 0.8,
-        backgroundColor: '#59BB0C',
-        selectedBackgroundColor: backgroundColorSub,
-        borderColor: '#ededed',
-        height: 40
-      });
+      var allLabel, allLabelRow, json, menuRow, rows, textLabel, _i, _len;
+      rows = [makeConfigRow(), makeStockRow(), makeTagRow()];
+      allLabelRow = Ti.UI.createTableViewRow(rowColorTheme);
+      allLabelRow.backgroundColor = qiitaColor;
+      allLabelRow.selectedBackgroundColor = backgroundColorSub;
       allLabelRow.addEventListener('click', function(e) {
         return slideEvent();
       });
@@ -169,20 +187,12 @@ menuTable = (function() {
       });
       allLabelRow.className = "allLabel";
       allLabelRow.add(allLabel);
-      configRows.push(allLabelRow);
+      rows.push(allLabelRow);
       for (_i = 0, _len = result.length; _i < _len; _i++) {
         json = result[_i];
-        menuRow = Ti.UI.createTableViewRow({
-          width: 158,
-          left: 1,
-          opacity: 0.8,
-          backgroundColor: backgroundColorSub,
-          selectedBackgroundColor: '#59BB0C',
-          borderColor: '#ededed',
-          height: 40
-        });
+        menuRow = Ti.UI.createTableViewRow(rowColorTheme);
         menuRow.addEventListener('click', function(e) {
-          e.row.backgroundColor = '#59BB0C';
+          e.row.backgroundColor = qiitaColor;
           return slideEvent();
         });
         textLabel = Ti.UI.createLabel({
@@ -200,9 +210,9 @@ menuTable = (function() {
         });
         menuRow.add(textLabel);
         menuRow.className = json.url_name;
-        configRows.push(menuRow);
+        rows.push(menuRow);
       }
-      return table.data = configRows;
+      return table.setData(rows);
     });
     return table;
   }
