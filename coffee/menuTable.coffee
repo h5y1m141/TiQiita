@@ -21,8 +21,7 @@ class menuTable
       left:0
       top:0
 
-    makeConfigSection = ->
-      configRows = []
+    makeConfigRow = ->
       configBtn = Ti.UI.createImageView
         image:"ui/image/light_gear.png"
         left:5
@@ -35,17 +34,70 @@ class menuTable
       configAccountLabel.top = 8
       configAccountLabel.left = 35
 
-      configTitleRow = Ti.UI.createTableViewRow
+      configRow = Ti.UI.createTableViewRow
+        width: 158
+        height:40
+        left:1
+        backgroundColor:backgroundColorSub
+        
+      configRow.addEventListener('click',(e) ->
+
+        slideEvent()
+        controller.moveToConfigWindow()
+      )
+    
+      
+      configRow.add configBtn
+      configRow.add configAccountLabel
+      return configRow
+
+    makeStockRow = ->
+      stockBtn = Ti.UI.createImageView
+        image:"ui/image/light_list.png"
+        left:5
+        top:5
+        backgroundColor:"transparent"
+        
+      stockLabel = Ti.UI.createLabel(fontThemeWhite)
+        
+      stockLabel.text = "ストック投稿を見る"
+      stockLabel.top = 8
+      stockLabel.left = 35
+
+      stockRow = Ti.UI.createTableViewRow
         width: 158
         height:40
         left:1
         backgroundColor:backgroundColorSub
 
-      configTitleRow.add configBtn
-      configTitleRow.add configAccountLabel
-      configRows.push configTitleRow
+      stockRow.add stockBtn
+      stockRow.add stockLabel
 
-      return configRows
+      return stockRow
+
+    makeTagRow = ->
+      tagRow = Ti.UI.createTableViewRow
+        width: 158
+        height:40
+        left:1
+        backgroundColor:backgroundColorSub
+        
+      tagLabel = Ti.UI.createLabel(fontThemeWhite)
+        
+      tagLabel.text = "タグを見る"
+      tagLabel.top = 8
+      tagLabel.left = 35
+
+      tagBtn = Ti.UI.createImageView
+        image:"ui/image/light_tag.png"
+        left:5
+        top:10
+        backgroundColor:"transparent"
+        
+      tagRow.add tagLabel        
+      tagRow.add tagBtn
+      return tagRow
+
             
     matchTag = (items,tagName) ->
       for i in [0..items.length-1]
@@ -73,25 +125,22 @@ class menuTable
       
       
     table.addEventListener('click',(e) ->
-
       curretRowIndex = e.index
-
       resetBackGroundColor(table.data[0].rows)
-      
       # クリックされたrowの色を'#59BB0C'に設定
       table.data[0].rows[curretRowIndex].backgroundColor = '#59BB0C'
-      
-      # サブメニューで選択されたタグにマッチする
-      # 投稿を非表示にする
-      
 
       items = JSON.parse(Ti.App.Properties.getString('storedStocks'))
       result = []
+
       allLabelIndexPosition = 3
       if curretRowIndex is allLabelIndexPosition
         result.push(t.createRow(json)) for json in items
       else
-        result.push(matchTag(items,e.rowData.className))
+        tagName = e.rowData.className
+        result.push(matchTag(items,tagName))
+      
+
             
       # row.classの値が allLabel の場合にのみ過去の投稿を
       # 読み込むためのラベルを配置する
@@ -101,59 +150,10 @@ class menuTable
         result.push(t.createRowForLoadOldEntry())  
       
       mainTable.setData result
-
-
     )
       
     qiita.getFollowingTags( (result,links)->
-
-      configRows = makeConfigSection()
-      stockBtn = Ti.UI.createImageView
-        image:"ui/image/light_list.png"
-        left:5
-        top:5
-        backgroundColor:"transparent"
-        
-      stockLabel = Ti.UI.createLabel(fontThemeWhite)
-        
-      stockLabel.text = "ストック投稿を見る"
-      stockLabel.top = 8
-      stockLabel.left = 35
-
-      stockRow = Ti.UI.createTableViewRow
-        width: 158
-        height:40
-        left:1
-        backgroundColor:backgroundColorSub
-
-      stockRow.add stockBtn
-      stockRow.add stockLabel
-      configRows.push stockRow
-      
-      
-      tagRow = Ti.UI.createTableViewRow
-        width: 158
-        height:40
-        left:1
-        backgroundColor:backgroundColorSub
-        
-      tagLabel = Ti.UI.createLabel(fontThemeWhite)
-        
-      tagLabel.text = "タグを見る"
-      tagLabel.top = 8
-      tagLabel.left = 35
-
-      tagBtn = Ti.UI.createImageView
-        image:"ui/image/light_tag.png"
-        left:5
-        top:10
-        backgroundColor:"transparent"
-        
-      tagRow.add tagLabel        
-      tagRow.add tagBtn
-      configRows.push tagRow
-
-      
+      rows = [makeConfigRow(),makeStockRow(),makeTagRow()]
       
       allLabelRow = Ti.UI.createTableViewRow
         width:158
@@ -179,11 +179,10 @@ class menuTable
           fontWeight:'bold'
         text:"ALL"
         
-        
       allLabelRow.className = "allLabel"
       allLabelRow.add allLabel
       
-      configRows.push allLabelRow
+      rows.push allLabelRow
   
         
       for json in result
@@ -216,9 +215,9 @@ class menuTable
         menuRow.add textLabel
         menuRow.className = json.url_name
         
-        configRows.push menuRow
+        rows.push menuRow
       
-      table.data = configRows
+      table.setData rows
       
     )
     return table
