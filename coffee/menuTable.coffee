@@ -10,7 +10,15 @@ class menuTable
       font:
         fontSize: 12
         fontWeight: "bold"
-
+        
+    rowColorTheme = 
+      width:158
+      left:1
+      opacity:0.8
+      borderColor:'#ededed'
+      height:40
+      backgroundColor:backgroundColorSub
+      selectedBackgroundColor:'#59BB0C'
     
     table = Ti.UI.createTableView
       backgroundColor:backgroundColorBase
@@ -34,11 +42,7 @@ class menuTable
       configAccountLabel.top = 8
       configAccountLabel.left = 35
 
-      configRow = Ti.UI.createTableViewRow
-        width: 158
-        height:40
-        left:1
-        backgroundColor:backgroundColorSub
+      configRow = Ti.UI.createTableViewRow(rowColorTheme)
         
       configRow.addEventListener('click',(e) ->
 
@@ -64,11 +68,7 @@ class menuTable
       stockLabel.top = 8
       stockLabel.left = 35
 
-      stockRow = Ti.UI.createTableViewRow
-        width: 158
-        height:40
-        left:1
-        backgroundColor:backgroundColorSub
+      stockRow = Ti.UI.createTableViewRow(rowColorTheme)
 
       stockRow.add stockBtn
       stockRow.add stockLabel
@@ -76,11 +76,7 @@ class menuTable
       return stockRow
 
     makeTagRow = ->
-      tagRow = Ti.UI.createTableViewRow
-        width: 158
-        height:40
-        left:1
-        backgroundColor:backgroundColorSub
+      tagRow = Ti.UI.createTableViewRow(rowColorTheme)
         
       tagLabel = Ti.UI.createLabel(fontThemeWhite)
         
@@ -155,14 +151,9 @@ class menuTable
     qiita.getFollowingTags( (result,links)->
       rows = [makeConfigRow(),makeStockRow(),makeTagRow()]
       
-      allLabelRow = Ti.UI.createTableViewRow
-        width:158
-        left:1
-        opacity:0.8
-        backgroundColor:'#59BB0C'
-        selectedBackgroundColor:backgroundColorSub
-        borderColor:'#ededed'
-        height:40
+      allLabelRow = Ti.UI.createTableViewRow(rowColorTheme)
+      allLabelRow.backgroundColor = '#59BB0C'
+      allLabelRow.selectedBackgroundColor = backgroundColorSub
 
       allLabelRow.addEventListener('click',(e)->
         slideEvent()
@@ -186,14 +177,8 @@ class menuTable
   
         
       for json in result
-        menuRow = Ti.UI.createTableViewRow
-          width:158
-          left:1
-          opacity:0.8
-          backgroundColor:backgroundColorSub
-          selectedBackgroundColor:'#59BB0C'
-          borderColor:'#ededed'
-          height:40
+        menuRow = Ti.UI.createTableViewRow(rowColorTheme)
+
           
         # 該当するタグが選択された時には背景色を変更しつつ
         # 標準状態に戻す
