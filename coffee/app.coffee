@@ -21,6 +21,7 @@ Ti.App.Properties.setBool('stateMainTableSlide',false)
 
 # storedStocks毎起動時に初期化
 Ti.App.Properties.setString("storedStocks",null)
+Ti.App.Properties.setString("storedMyStocks",null)
 
 # Jasmine
 # 

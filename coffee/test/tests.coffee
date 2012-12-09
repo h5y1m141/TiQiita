@@ -9,7 +9,8 @@ if testsEnabled
   require('test/lib/jasmine-titanium-console')
   
   # include custom tests
-  require('test/example')
+  # require('test/example')
+  require('test/qiita')
   
   jasmine.getEnv().addReporter(new jasmine.TitaniumReporter())
   jasmine.getEnv().execute()

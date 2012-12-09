@@ -35,7 +35,8 @@ class qiitaController
     qiita.putStock(uuid)
     
     return true
-    
+
+
   sessionItem: (json) ->
     Ti.API.info "start sessionItem. url is #{json.url}. uuid is #{json.uuid}"
     if json

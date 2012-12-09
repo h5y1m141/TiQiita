@@ -141,8 +141,18 @@ class menuTable
           configRow = new configTableRow
           result = configRow
         when "stock"
-          Ti.API.info "CONDITION STOCK"
-          result.push(t.createRow(json)) for json in items
+          actInd.message = 'loading...'
+          actInd.backgroundColor = '#222'
+          actInd.opacity = 0.8
+          actInd.show()
+          rows = []
+          qiita.getMyStocks( (result,links) ->
+            rows.push(t.createRow(json)) for json in result
+            rows.push(t.createRowForLoadOldEntry())
+            actInd.hide()
+            mainTable.setData rows
+          )
+
         when "allLabel"
           Ti.API.info "CONDITION ALL"
           result.push(t.createRow(json)) for json in items

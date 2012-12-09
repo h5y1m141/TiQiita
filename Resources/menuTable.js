@@ -126,7 +126,7 @@ menuTable = (function() {
       return _results;
     };
     table.addEventListener('click', function(e) {
-      var allLabelIndexPosition, configIndexPosition, configRow, configTableRow, curretRowIndex, items, json, result, stockIndexPosition, tagName, _i, _j, _len, _len1;
+      var allLabelIndexPosition, configIndexPosition, configRow, configTableRow, curretRowIndex, items, json, result, rows, stockIndexPosition, tagName, _i, _len;
       curretRowIndex = e.index;
       resetBackGroundColor(table.data[0].rows);
       table.data[0].rows[curretRowIndex].backgroundColor = qiitaColor;
@@ -143,16 +143,26 @@ menuTable = (function() {
           result = configRow;
           break;
         case "stock":
-          Ti.API.info("CONDITION STOCK");
-          for (_i = 0, _len = items.length; _i < _len; _i++) {
-            json = items[_i];
-            result.push(t.createRow(json));
-          }
+          actInd.message = 'loading...';
+          actInd.backgroundColor = '#222';
+          actInd.opacity = 0.8;
+          actInd.show();
+          rows = [];
+          qiita.getMyStocks(function(result, links) {
+            var json, _i, _len;
+            for (_i = 0, _len = result.length; _i < _len; _i++) {
+              json = result[_i];
+              rows.push(t.createRow(json));
+            }
+            rows.push(t.createRowForLoadOldEntry());
+            actInd.hide();
+            return mainTable.setData(rows);
+          });
           break;
         case "allLabel":
           Ti.API.info("CONDITION ALL");
-          for (_j = 0, _len1 = items.length; _j < _len1; _j++) {
-            json = items[_j];
+          for (_i = 0, _len = items.length; _i < _len; _i++) {
+            json = items[_i];
             result.push(t.createRow(json));
           }
           result.push(t.createRowForLoadOldEntry());

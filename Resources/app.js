@@ -28,6 +28,8 @@ Ti.App.Properties.setBool('stateMainTableSlide', false);
 
 Ti.App.Properties.setString("storedStocks", null);
 
+Ti.App.Properties.setString("storedMyStocks", null);
+
 testsEnabled = true;
 
 if (testsEnabled === true) {
