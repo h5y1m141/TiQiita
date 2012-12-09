@@ -149,9 +149,15 @@ menuTable = (function() {
           actInd.show();
           rows = [];
           qiita.getMyStocks(function(result, links) {
-            var json, _i, _len;
-            for (_i = 0, _len = result.length; _i < _len; _i++) {
-              json = result[_i];
+            var json, link, _i, _j, _len, _len1;
+            for (_i = 0, _len = links.length; _i < _len; _i++) {
+              link = links[_i];
+              if (link["rel"] === 'next') {
+                Ti.App.Properties.setString('nextPageURL', link["url"]);
+              }
+            }
+            for (_j = 0, _len1 = result.length; _j < _len1; _j++) {
+              json = result[_j];
               rows.push(t.createRow(json));
             }
             rows.push(t.createRowForLoadOldEntry());

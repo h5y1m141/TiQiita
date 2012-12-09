@@ -8,13 +8,12 @@ describe 'QiitaのStaticプロパティへのアクセス', ->
     expect(qiita.parameter.stocks.url).toBe(url)
 
 
-describe 'ネットワークの接続確認', ->
+describe 'ネットワークの接続確認:正常系', ->
   it 'ネットワーク利用できる状況にある', ->
     Qiita = require('qiita')
     qiita = new Qiita()
     
     expect(qiita.isConnected()).toBe true
-
 
 describe 'QiitaのStock取得', ->
   it '投稿情報取得したら投稿数が一致する', ->

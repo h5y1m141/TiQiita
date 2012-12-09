@@ -147,6 +147,10 @@ class menuTable
           actInd.show()
           rows = []
           qiita.getMyStocks( (result,links) ->
+            for link in links
+              if link["rel"] == 'next'
+                Ti.App.Properties.setString('nextPageURL',link["url"])
+
             rows.push(t.createRow(json)) for json in result
             rows.push(t.createRowForLoadOldEntry())
             actInd.hide()

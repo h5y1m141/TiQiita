@@ -50,9 +50,7 @@ class Qiita
     items = JSON.parse(itemsJSON.read().toString())
     relLink = JSON.parse(relLinkJSON.read().toString())
     
-    # QiitaAPIから取得した投稿情報をTi.App.Propertiesに都度突っ込み
-    # これをローカルDB的に活用する
-    # Ti.App.Properties.setList("storedStocks",json)
+
     if storedStocksFlag is true
       @._storedStocks(itemsJSON.read().toString())
 
@@ -64,49 +62,26 @@ class Qiita
       callback(followingTags,relLink)
     
     return true
-  _storedMyStocks:(strItems)->
-    # JSONが含まれた配列をそのままTi.App.Properties.setList()
-    # することが出来ないようなので、setStringを利用してキャッシュする
-
-    myStocks = JSON.parse(Ti.App.Properties.getString('storedMyStocks'))
-
-    if myStocks is null
-      Ti.App.Properties.setString('storedMyStocks',strItems)
-
-    else
-      # merge two json objects
-      # http://developer.appcelerator.com/question/136239/merge-two-json-objects-dynamicallyandroid
-      objmyStocks1 = strItems.substring(0, strItems.length - 1)
-      myStocks = Ti.App.Properties.getString('storedMyStocks')
-      objmyStocks2 = myStocks.substring(1,myStocks.length)
-
-      mergeMyStocks = "#{objmyStocks1},#{objmyStocks2}"
-      Ti.App.Properties.setString('storedMyStocks',mergeMyStocks)
-
-    myStocksresult = JSON.parse(Ti.App.Properties.getString('storedMyStocks'))
-    Ti.API.info "_storedMyStocks finish. result is : #{myStocksresult.length}"
-
-    return true
         
-  _storedStocks:(strItems)->
+  _storedStocks:(TiAppPropertiesName,strItems)->
     # JSONが含まれた配列をそのままTi.App.Properties.setList()
     # することが出来ないようなので、setStringを利用してキャッシュする
 
-    stocks = JSON.parse(Ti.App.Properties.getString('storedStocks'))
+    stocks = JSON.parse(Ti.App.Properties.getString(TiAppPropertiesName))
     if stocks is null
-      Ti.App.Properties.setString('storedStocks',strItems)
+      Ti.App.Properties.setString(TiAppPropertiesName,strItems)
 
     else
       # merge two json objects
       # http://developer.appcelerator.com/question/136239/merge-two-json-objects-dynamicallyandroid
       obj1 = strItems.substring(0, strItems.length - 1)
-      stocks = Ti.App.Properties.getString('storedStocks')
+      stocks = Ti.App.Properties.getString(TiAppPropertiesName)
       obj2 = stocks.substring(1,stocks.length)
 
       merge = "#{obj1},#{obj2}"
-      Ti.App.Properties.setString('storedStocks',merge)
+      Ti.App.Properties.setString(TiAppPropertiesName,merge)
 
-    result = JSON.parse(Ti.App.Properties.getString('storedStocks'))
+    result = JSON.parse(Ti.App.Properties.getString(TiAppPropertiesName))
     Ti.API.info "_storedStocks finish. result is : #{result.length}"
 
     return true
@@ -131,13 +106,8 @@ class Qiita
       # QiitaAPIから取得した投稿情報をTi.App.Propertiesに都度突っ込み
       # これをローカルDB的に活用する
       
-      if value is "MyStock"
-        Ti.API.info "My Stock selected"
-        self._storedMyStocks(xhr.responseText)
-      else if value is "stock"
-        Ti.API.info "Stock selected!!"
-        self._storedStocks(xhr.responseText)
-      else
+      if value isnt false
+        self._storedStocks(value,xhr.responseText)
 
       callback(json,relLink)
       
@@ -170,7 +140,7 @@ class Qiita
     
   getStocks:(callback) ->
     param = @parameter.stocks
-    @._request(param,"stock",callback)
+    @._request(param,'storedStocks',callback)
   getFollowingUsers: (callback) ->
     param = @parameter.followingUsers
     @._request(param,false,callback)
@@ -184,7 +154,7 @@ class Qiita
     # @._mockObject("followingTags",false,callback)
   getFeed:(callback) ->
     param = @parameter.feed
-    @._request(param,"stock",callback)
+    @._request(param,false,callback)
     # @._mockObject("items","stock",callback)
     
   getNextFeed:(url,callback) ->
@@ -192,8 +162,8 @@ class Qiita
       "url": url
       "method":'GET'
 
-    @._request(param,"stock",callback)
-    # @._mockObject("items","stock",callback)
+    @._request(param,'storedStocks',callback)
+    # @._mockObject("items",'storedStocks',callback)
 
   getMyStocks:(callback) ->
     token = Ti.App.Properties.getString('QiitaToken')
@@ -203,8 +173,8 @@ class Qiita
       url:@parameter.myStocks.url + "?token=#{token}"
       method:@parameter.myStocks.method
 
-    @._request(param,"MyStock",callback)
-    # @._mockObject("stocks","MyStock",callback)
+    @._request(param,'storedMyStocks',callback)
+    # @._mockObject("stocks",'storedMyStocks',callback)
     
   getMyFeed:(callback) ->
     token = Ti.App.Properties.getString('QiitaToken')

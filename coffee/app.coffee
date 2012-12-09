@@ -4,6 +4,7 @@ menuTable = require('menuTable')
 
 moment = require('lib/moment.min')
 momentja = require('lib/momentja')
+
 qiitaController = require('qiitaController')
 defaultState = require("defaultState")
 slideState = require("slideState")
@@ -25,11 +26,12 @@ Ti.App.Properties.setString("storedMyStocks",null)
 
 # Jasmine
 # 
-testsEnabled = true
+testsEnabled = false
 
 
 
 if testsEnabled is true
+  
   require('test/tests')
   
 else
