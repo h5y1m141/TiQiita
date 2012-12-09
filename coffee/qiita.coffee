@@ -120,7 +120,6 @@ class Qiita
     xhr.onload = ->
       Ti.API.info "_request method start"
       responseHeaders = xhr.responseHeaders
-      Ti.API.info responseHeaders
       
       if responseHeaders.Link
         relLink = self._convertLinkHeaderToJSON(responseHeaders.Link)
@@ -164,6 +163,10 @@ class Qiita
       json.push(_obj)
 
     return json
+
+  isConnected:() ->
+    
+    return Ti.Network.online    
     
   getStocks:(callback) ->
     param = @parameter.stocks
