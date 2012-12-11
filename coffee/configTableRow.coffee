@@ -58,5 +58,4 @@ class configTableRow
     
     return configRows
 
-
 module.exports = configTableRow
