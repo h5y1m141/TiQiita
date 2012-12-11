@@ -127,7 +127,7 @@ class menuTable
       # クリックされたrowの色を'#59BB0C'に設定
       table.data[0].rows[curretRowIndex].backgroundColor = qiitaColor
 
-      items = JSON.parse(Ti.App.Properties.getString('storedStocks'))
+      
       result = []
 
       configIndexPosition   = 0
@@ -145,6 +145,7 @@ class menuTable
           actInd.backgroundColor = '#222'
           actInd.opacity = 0.8
           actInd.show()
+          items = JSON.parse(Ti.App.Properties.getString('storedMyStocks'))
           rows = []
           qiita.getMyStocks( (result,links) ->
             for link in links
@@ -159,6 +160,7 @@ class menuTable
 
         when "allLabel"
           Ti.API.info "CONDITION ALL"
+          items = JSON.parse(Ti.App.Properties.getString('storedStocks'))
           result.push(t.createRow(json)) for json in items
           # row.classの値が allLabel の場合にのみ過去の投稿を
           # 読み込むためのラベルを配置する
@@ -167,6 +169,7 @@ class menuTable
           result.push(t.createRowForLoadOldEntry())
         else
           tagName = e.rowData.className
+          items = JSON.parse(Ti.App.Properties.getString('storedStocks'))
           result.push(matchTag(items,tagName))
       
 
