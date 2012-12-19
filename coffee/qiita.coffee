@@ -74,12 +74,13 @@ class Qiita
     else
       # merge two json objects
       # http://developer.appcelerator.com/question/136239/merge-two-json-objects-dynamicallyandroid
-      obj1 = strItems.substring(0, strItems.length - 1)
-      stocks = Ti.App.Properties.getString(TiAppPropertiesName)
-      obj2 = stocks.substring(1,stocks.length)
+      # obj1 = strItems.substring(0, strItems.length - 1)
+      # stocks = Ti.App.Properties.getString(TiAppPropertiesName)
+      # obj2 = stocks.substring(1,stocks.length)
 
-      merge = "#{obj1},#{obj2}"
-      Ti.App.Properties.setString(TiAppPropertiesName,merge)
+      # merge = "#{obj1},#{obj2}"
+      merge = stocks.concat JSON.parse(strItems)
+      Ti.App.Properties.setString(TiAppPropertiesName,JSON.stringify(merge))
 
     result = JSON.parse(Ti.App.Properties.getString(TiAppPropertiesName))
     Ti.API.info "_storedStocks finish. result is : #{result.length}"
@@ -133,7 +134,15 @@ class Qiita
       json.push(_obj)
 
     return json
+    
+  _mergeItems:(object1,object2) ->
+    _ = require("lib/underscore-1.4.3.min")
+    # return _.object(object1,object2)
+    # return _.extend(object1,object2)
+    object1 = object1.concat object2
+    return object1
 
+  
   isConnected:() ->
     
     return Ti.Network.online    
