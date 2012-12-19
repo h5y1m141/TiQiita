@@ -126,11 +126,17 @@ menuTable = (function() {
       return _results;
     };
     table.addEventListener('click', function(e) {
-      var allLabelIndexPosition, configIndexPosition, configRow, configTableRow, curretRowIndex, items, json, result, rows, stockIndexPosition, tagName, _i, _len;
+      var allLabelIndexPosition, configIndexPosition, configRow, configTableRow, curretRowIndex, items, json, result, rows, stockFlg, stockIndexPosition, tagName, _i, _len;
       curretRowIndex = e.index;
       resetBackGroundColor(table.data[0].rows);
       table.data[0].rows[curretRowIndex].backgroundColor = qiitaColor;
       result = [];
+      stockFlg = table.data[0].rows[curretRowIndex].className;
+      if (stockFlg === "stock") {
+        items = JSON.parse(Ti.App.Properties.getString('storedMyStocks'));
+      } else {
+        items = JSON.parse(Ti.App.Properties.getString('storedStocks'));
+      }
       configIndexPosition = 0;
       stockIndexPosition = 1;
       allLabelIndexPosition = 3;
@@ -146,7 +152,6 @@ menuTable = (function() {
           actInd.backgroundColor = '#222';
           actInd.opacity = 0.8;
           actInd.show();
-          items = JSON.parse(Ti.App.Properties.getString('storedMyStocks'));
           rows = [];
           qiita.getMyStocks(function(result, links) {
             var json, link, _i, _j, _len, _len1;
@@ -167,7 +172,6 @@ menuTable = (function() {
           break;
         case "allLabel":
           Ti.API.info("CONDITION ALL");
-          items = JSON.parse(Ti.App.Properties.getString('storedStocks'));
           for (_i = 0, _len = items.length; _i < _len; _i++) {
             json = items[_i];
             result.push(t.createRow(json));
@@ -176,7 +180,6 @@ menuTable = (function() {
           break;
         default:
           tagName = e.rowData.className;
-          items = JSON.parse(Ti.App.Properties.getString('storedStocks'));
           result.push(matchTag(items, tagName));
       }
       return mainTable.setData(result);

@@ -98,6 +98,7 @@ class menuTable
 
             
     matchTag = (items,tagName) ->
+
       for i in [0..items.length-1]
         tags = items[i].tags
         _ = require("lib/underscore-min")
@@ -129,6 +130,11 @@ class menuTable
 
       
       result = []
+      stockFlg = table.data[0].rows[curretRowIndex].className
+      if stockFlg is "stock"
+        items = JSON.parse(Ti.App.Properties.getString('storedMyStocks'))
+      else
+        items = JSON.parse(Ti.App.Properties.getString('storedStocks'))
 
       configIndexPosition   = 0
       stockIndexPosition    = 1
@@ -145,7 +151,7 @@ class menuTable
           actInd.backgroundColor = '#222'
           actInd.opacity = 0.8
           actInd.show()
-          items = JSON.parse(Ti.App.Properties.getString('storedMyStocks'))
+
           rows = []
           qiita.getMyStocks( (result,links) ->
             for link in links
@@ -160,7 +166,7 @@ class menuTable
 
         when "allLabel"
           Ti.API.info "CONDITION ALL"
-          items = JSON.parse(Ti.App.Properties.getString('storedStocks'))
+
           result.push(t.createRow(json)) for json in items
           # row.classの値が allLabel の場合にのみ過去の投稿を
           # 読み込むためのラベルを配置する
@@ -169,7 +175,7 @@ class menuTable
           result.push(t.createRowForLoadOldEntry())
         else
           tagName = e.rowData.className
-          items = JSON.parse(Ti.App.Properties.getString('storedStocks'))
+
           result.push(matchTag(items,tagName))
       
 

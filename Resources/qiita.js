@@ -72,19 +72,16 @@ Qiita = (function() {
   };
 
   Qiita.prototype._storedStocks = function(TiAppPropertiesName, strItems) {
-    var merge, obj1, obj2, result, stocks;
+    var merge, result, stocks;
     stocks = JSON.parse(Ti.App.Properties.getString(TiAppPropertiesName));
     if (stocks === null) {
       Ti.App.Properties.setString(TiAppPropertiesName, strItems);
     } else {
-      obj1 = strItems.substring(0, strItems.length - 1);
-      stocks = Ti.App.Properties.getString(TiAppPropertiesName);
-      obj2 = stocks.substring(1, stocks.length);
-      merge = "" + obj1 + "," + obj2;
-      Ti.App.Properties.setString(TiAppPropertiesName, merge);
+      merge = stocks.concat(JSON.parse(strItems));
+      Ti.App.Properties.setString(TiAppPropertiesName, JSON.stringify(merge));
     }
     result = JSON.parse(Ti.App.Properties.getString(TiAppPropertiesName));
-    Ti.API.info("_storedStocks finish. result is : " + result.length);
+    Ti.API.info("stored under " + TiAppPropertiesName + ". result is : " + result.length);
     return true;
   };
 
@@ -128,6 +125,13 @@ Qiita = (function() {
     return json;
   };
 
+  Qiita.prototype._mergeItems = function(object1, object2) {
+    var _;
+    _ = require("lib/underscore-1.4.3.min");
+    object1 = object1.concat(object2);
+    return object1;
+  };
+
   Qiita.prototype.isConnected = function() {
     return Ti.Network.online;
   };
@@ -153,7 +157,7 @@ Qiita = (function() {
   Qiita.prototype.getFeed = function(callback) {
     var param;
     param = this.parameter.feed;
-    return this._request(param, false, callback);
+    return this._request(param, 'storedStocks', callback);
   };
 
   Qiita.prototype.getNextFeed = function(url, callback) {
@@ -188,7 +192,6 @@ Qiita = (function() {
       url: this.parameter.myFeed.url + ("?token=" + token),
       method: this.parameter.myFeed.method
     };
-    Ti.API.info(param.url);
     return this._request(param, false, callback);
   };
 

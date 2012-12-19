@@ -26,11 +26,10 @@ Ti.App.Properties.setString("storedMyStocks",null)
 
 # Jasmine
 # 
-testsEnabled = false
+testsEnabled = true
 
 
-
-if testsEnabled is true
+if testsEnabled is false
   
   require('test/tests')
   

@@ -68,22 +68,16 @@ class Qiita
     # することが出来ないようなので、setStringを利用してキャッシュする
 
     stocks = JSON.parse(Ti.App.Properties.getString(TiAppPropertiesName))
+
     if stocks is null
       Ti.App.Properties.setString(TiAppPropertiesName,strItems)
 
     else
-      # merge two json objects
-      # http://developer.appcelerator.com/question/136239/merge-two-json-objects-dynamicallyandroid
-      # obj1 = strItems.substring(0, strItems.length - 1)
-      # stocks = Ti.App.Properties.getString(TiAppPropertiesName)
-      # obj2 = stocks.substring(1,stocks.length)
-
-      # merge = "#{obj1},#{obj2}"
       merge = stocks.concat JSON.parse(strItems)
       Ti.App.Properties.setString(TiAppPropertiesName,JSON.stringify(merge))
 
     result = JSON.parse(Ti.App.Properties.getString(TiAppPropertiesName))
-    Ti.API.info "_storedStocks finish. result is : #{result.length}"
+    Ti.API.info "stored under #{TiAppPropertiesName}. result is : #{result.length}"
 
     return true
     
@@ -163,8 +157,8 @@ class Qiita
     # @._mockObject("followingTags",false,callback)
   getFeed:(callback) ->
     param = @parameter.feed
-    @._request(param,false,callback)
-    # @._mockObject("items","stock",callback)
+    @._request(param,'storedStocks',callback)
+    # @._mockObject("items",'storedStocks',callback)
     
   getNextFeed:(url,callback) ->
     param =
@@ -192,7 +186,7 @@ class Qiita
     param = 
       url:@parameter.myFeed.url + "?token=#{token}"
       method:@parameter.myFeed.method
-    Ti.API.info(param.url)
+
     @._request(param,false,callback)
   putStock:(uuid) ->
     token = Ti.App.Properties.getString('QiitaToken')

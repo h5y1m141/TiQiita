@@ -30,9 +30,9 @@ Ti.App.Properties.setString("storedStocks", null);
 
 Ti.App.Properties.setString("storedMyStocks", null);
 
-testsEnabled = false;
+testsEnabled = true;
 
-if (testsEnabled === true) {
+if (testsEnabled === false) {
   require('test/tests');
 } else {
   mainTable = t.getTable();

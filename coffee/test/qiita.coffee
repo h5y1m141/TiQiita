@@ -23,10 +23,15 @@ describe 'QiitaのStock取得', ->
       expect(result.length).toBe(20)
     )
 
-
-
-
-describe 'QiitaClass', ->
-  it '', ->
+describe 'Qiitaのアイテム', ->
+  it 'テスト目的でローカルに準備してある複数の投稿情報が含まれた配列の結合', ->
     Qiita = require('qiita')
     qiita = new Qiita()
+    items = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'test/items.json')
+    anoterhItems = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'test/anotherItems.json')
+    
+    o1 = JSON.parse items.read().toString()
+    o2 = JSON.parse anoterhItems.read().toString()
+    result = qiita._mergeItems(o1,o2)
+    expect(result.length).toBe(40)
+
