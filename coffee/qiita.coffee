@@ -73,6 +73,7 @@ class Qiita
       Ti.App.Properties.setString(TiAppPropertiesName,strItems)
 
     else
+
       merge = stocks.concat JSON.parse(strItems)
       Ti.App.Properties.setString(TiAppPropertiesName,JSON.stringify(merge))
 
@@ -134,7 +135,10 @@ class Qiita
     # return _.object(object1,object2)
     # return _.extend(object1,object2)
     object1 = object1.concat object2
-    return object1
+    return _(object1).sortBy("created_at")
+
+  _islastItems:() ->
+    return null  
 
   
   isConnected:() ->

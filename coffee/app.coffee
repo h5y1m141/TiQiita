@@ -29,7 +29,7 @@ Ti.App.Properties.setString("storedMyStocks",null)
 testsEnabled = true
 
 
-if testsEnabled is false
+if testsEnabled is true
   
   require('test/tests')
   
