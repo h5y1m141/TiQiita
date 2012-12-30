@@ -16,14 +16,16 @@ t = new tableView()
 qiita = new Qiita()
 controller = new qiitaController()
 
-  
-# クリックイベント時の状態管理のために以下利用
-Ti.App.Properties.setBool('stateMainTableSlide',false)
+# Ti.App.Propertiesの初期化  
+## クリックイベント時の状態管理のために以下利用
+Ti.App.Properties.setBool 'stateMainTableSlide',false
 
-# storedStocks毎起動時に初期化
-Ti.App.Properties.setString("storedStocks",null)
-Ti.App.Properties.setString("storedMyStocks",null)
+## storedStocks毎起動時に初期化
+Ti.App.Properties.setString "storedStocks",null
+Ti.App.Properties.setString "storedMyStocks",null
 
+## QiitaAPIのページネーション処理で利用
+Ti.App.Properties.setBool "isLastPage",false
 # Jasmine
 # 
 testsEnabled = true

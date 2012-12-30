@@ -7,7 +7,6 @@ describe 'QiitaのStaticプロパティへのアクセス', ->
     url = "https://qiita.com/api/v1/users/h5y1m141@github/stocks"
     expect(qiita.parameter.stocks.url).toBe(url)
 
-
 describe 'Qiitaクラスのためのテスト', ->
 
   beforeEach ->
@@ -21,23 +20,27 @@ describe 'Qiitaクラスのためのテスト', ->
       expect(qiita.isConnected()).toBe true
 
   describe 'QiitaのStock取得', ->
-    it '投稿情報取得したら投稿数が一致する', ->
-      qiita.getMyStocks( (result,links) ->
-        expect(result.length).toBe(20)
-      )
 
-  describe 'Qiitaのアイテム', ->
-    it 'テスト目的でローカルに準備してある複数の投稿情報が含まれた配列の結合', ->
-      items = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'test/items.json')
-      anoterhItems = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'test/anotherItems.json')
+    content = null
+    async = new AsyncSpec(@)
+    async.beforeEach (done) ->
+      runs ->
+        qiita.getMyStocks( (result,links) ->
+          content = result
+          done()
+        )
       
-      o1 = JSON.parse items.read().toString()
-      o2 = JSON.parse anoterhItems.read().toString()
-      result = qiita._mergeItems(o1,o2)
-      expect(result.length).toBe(40)
+    waits 1000
+    
+    it '投稿情報取得出来る', ()->
+      runs ->
+        expect(content).not.toBeNull()
 
+    it '投稿情報の件数が一致する', () ->
+      runs ->
+        expect(content.length).toBe 20
+        
 
-  describe 'QiitaAPIの最終ページまで到達', ->
-    it '最後のページに到達してる場合に、次のページへのrellinkは存在するがそのページにアクセスすると空の配列が返る', ->
-      expect(qiita._islastItems()).toBe(null)
-      
+        
+
+     

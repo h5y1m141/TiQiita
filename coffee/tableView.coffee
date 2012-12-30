@@ -12,7 +12,9 @@ class tableView
       # TableViewの一番下に、過去投稿を読み込むためのボタンを
       # 配置しており、そのrowだけは投稿詳細画面に遷移させない
       # 詳細画面にいくかどうかはrowのclassNameの値をチェックする
-      if e.rowData.className == 'entry'
+      Ti.API.info "@table.addEventListener start"
+      
+      if e.rowData.className is 'entry'
         
         # 一覧画面から詳細画面に遷移した後、該当の投稿情報を
         # ストックする際にURLやuuidの情報が必要になるために
@@ -21,6 +23,8 @@ class tableView
         controller.webViewContentsUpdate e.rowData.data.body
         controller.webViewHeaderUpdate e.rowData.data
         controller.moveToWebViewWindow()
+       else if e.rowData.className is "config"
+        controller.login e.rowData
        else
         controller.loadOldEntry()
     )

@@ -12,11 +12,14 @@ tableView = (function() {
       top: 0
     });
     this.table.addEventListener('click', function(e) {
+      Ti.API.info("@table.addEventListener start");
       if (e.rowData.className === 'entry') {
         controller.sessionItem(e.rowData.data);
         controller.webViewContentsUpdate(e.rowData.data.body);
         controller.webViewHeaderUpdate(e.rowData.data);
         return controller.moveToWebViewWindow();
+      } else if (e.rowData.className === "config") {
+        return controller.login(e.rowData);
       } else {
         return controller.loadOldEntry();
       }

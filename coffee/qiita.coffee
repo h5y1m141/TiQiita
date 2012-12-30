@@ -24,16 +24,22 @@ class Qiita
         method:'GET'
 
 
-  _auth:() ->
+  _auth:(param) ->
+    if param is null
+      requestParam = 
+        url_name: @config.user_name
+        password: @config.password
+    else
+      requestParam = param
+
     xhr = Ti.Network.createHTTPClient()
-    param = 
-      url_name: @config.user_name
-      password: @config.password
     xhr.open('POST','https://qiita.com/api/v1/auth')
     xhr.onload = ->
       body = JSON.parse(xhr.responseText)
       Ti.App.Properties.setString('QiitaToken', body.token)
-    xhr.send(param)
+      Ti.API.info "token is stored. token value is #{body.token}"
+      
+    xhr.send(requestParam)
     return true
 
   # オフラインやQiitaAPIに対するlimitがあるため
@@ -81,6 +87,13 @@ class Qiita
     Ti.API.info "stored under #{TiAppPropertiesName}. result is : #{result.length}"
 
     return true
+
+
+  # Qiita APIにアクセスする一番肝となるメソッド
+  #
+  # - パラメータ組立(GET/POST/PUTメソッド&該当のURLエンドポイント)
+  # - レスポンスヘッダー解析して、next/lastページのリンク取得
+  # - 最終ページに到達した場合の処理
     
   _request:(parameter,value,callback) ->
     self = @
@@ -98,6 +111,16 @@ class Qiita
         relLink = null
 
       json = JSON.parse(xhr.responseText)
+
+      
+      if json is null
+        self._isLastItems true
+      else
+        self._isLastItems false
+
+      
+
+      Ti.API.info(Ti.App.Properties.getString("isLastPage")) 
 
       # QiitaAPIから取得した投稿情報をTi.App.Propertiesに都度突っ込み
       # これをローカルDB的に活用する
@@ -137,8 +160,9 @@ class Qiita
     object1 = object1.concat object2
     return _(object1).sortBy("created_at")
 
-  _islastItems:() ->
-    return null  
+  _isLastItems:(flg) ->
+    Ti.API.info "start isLastItems. flg is #{flg}"
+    return Ti.App.properties.setBool "isLastPage",flg
 
   
   isConnected:() ->
@@ -176,6 +200,8 @@ class Qiita
     token = Ti.App.Properties.getString('QiitaToken')
     if token is null
       @._auth()
+    Ti.API.info "token is : #{Ti.App.Properties.getString('QiitaToken')}"
+
     param = 
       url:@parameter.myStocks.url + "?token=#{token}"
       method:@parameter.myStocks.method

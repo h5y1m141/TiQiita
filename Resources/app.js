@@ -30,9 +30,11 @@ Ti.App.Properties.setString("storedStocks", null);
 
 Ti.App.Properties.setString("storedMyStocks", null);
 
+Ti.App.Properties.setBool("isLastPage", false);
+
 testsEnabled = true;
 
-if (testsEnabled === false) {
+if (testsEnabled === true) {
   require('test/tests');
 } else {
   mainTable = t.getTable();

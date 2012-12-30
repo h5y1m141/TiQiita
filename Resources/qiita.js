@@ -32,20 +32,25 @@ Qiita = (function() {
     };
   }
 
-  Qiita.prototype._auth = function() {
-    var param, xhr;
+  Qiita.prototype._auth = function(param) {
+    var requestParam, xhr;
+    if (param === null) {
+      requestParam = {
+        url_name: this.config.user_name,
+        password: this.config.password
+      };
+    } else {
+      requestParam = param;
+    }
     xhr = Ti.Network.createHTTPClient();
-    param = {
-      url_name: this.config.user_name,
-      password: this.config.password
-    };
     xhr.open('POST', 'https://qiita.com/api/v1/auth');
     xhr.onload = function() {
       var body;
       body = JSON.parse(xhr.responseText);
-      return Ti.App.Properties.setString('QiitaToken', body.token);
+      Ti.App.Properties.setString('QiitaToken', body.token);
+      return Ti.API.info("token is stored. token value is " + body.token);
     };
-    xhr.send(param);
+    xhr.send(requestParam);
     return true;
   };
 
@@ -101,6 +106,12 @@ Qiita = (function() {
         relLink = null;
       }
       json = JSON.parse(xhr.responseText);
+      if (json === null) {
+        self._isLastItems(true);
+      } else {
+        self._isLastItems(false);
+      }
+      Ti.API.info(Ti.App.Properties.getString("isLastPage"));
       if (value !== false) {
         self._storedStocks(value, xhr.responseText);
       }
@@ -129,7 +140,12 @@ Qiita = (function() {
     var _;
     _ = require("lib/underscore-1.4.3.min");
     object1 = object1.concat(object2);
-    return object1;
+    return _(object1).sortBy("created_at");
+  };
+
+  Qiita.prototype._isLastItems = function(flg) {
+    Ti.API.info("start isLastItems. flg is " + flg);
+    return Ti.App.properties.setBool("isLastPage", flg);
   };
 
   Qiita.prototype.isConnected = function() {
@@ -175,6 +191,7 @@ Qiita = (function() {
     if (token === null) {
       this._auth();
     }
+    Ti.API.info("token is : " + (Ti.App.Properties.getString('QiitaToken')));
     param = {
       url: this.parameter.myStocks.url + ("?token=" + token),
       method: this.parameter.myStocks.method

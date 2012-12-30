@@ -99,36 +99,8 @@ qiitaController = (function() {
     return alert("start contoroller show");
   };
 
-  qiitaController.prototype.postItemToHatena = function() {
-    var configJSON, file, hatena, hatenaKey;
-    Ti.API.info(Ti.App.Properties.getString('stockURL'));
-    configJSON = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'config/hatena.json');
-    file = configJSON.read().toString();
-    hatenaKey = JSON.parse(file);
-    hatena = require('lib/hatena').Hatena({
-      consumerKey: hatenaKey.consumerKey,
-      consumerSecret: hatenaKey.consumerSecret,
-      accessTokenKey: Ti.App.Properties.getString("hatenaAccessTokenKey", ""),
-      accessTokenSecret: Ti.App.Properties.getString("hatenaAccessTokenSecret", ""),
-      scope: "read_public,write_public,write_private"
-    });
-    hatena.addEventListener('login', function(e) {
-      Ti.API.info("start hanate login");
-      if (e.success) {
-        Ti.App.Properties.setString('hatenaAccessTokenKey', e.accessTokenKey);
-        Ti.App.Properties.setString('hatenaAccessTokenSecret', e.accessTokenSecret);
-        return hatena.request('applications/my.json', {}, {}, 'POST', function(req) {
-          var data;
-          Ti.API.info(req);
-          if (req.success) {
-            Ti.API.info("start hatena API request");
-            data = JSON.parse(req.result.text);
-            return Ti.API.info(data);
-          }
-        });
-      }
-    });
-    hatena.authorize();
+  qiitaController.prototype.login = function(flg) {
+    Ti.API.info("start Qiita Login. login flag is " + flg);
     return true;
   };
 

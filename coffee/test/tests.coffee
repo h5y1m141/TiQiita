@@ -6,6 +6,7 @@ if testsEnabled
   # and being able to drop in jasmine library as is, without modifications
   
   Ti.include('/test/lib/jasmine-1.0.2.js')
+  Ti.include('/test/lib/jasmine.async.min.js')
   require('test/lib/jasmine-titanium-console')
   
   # include custom tests

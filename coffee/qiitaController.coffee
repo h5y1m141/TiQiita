@@ -86,6 +86,10 @@ class qiitaController
   show: () ->
     alert "start contoroller show"
 
+  login:(flg) ->
+    Ti.API.info "start Qiita Login. login flag is #{flg}"
+    return true
+
                   
 
 
