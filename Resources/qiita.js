@@ -47,8 +47,14 @@ Qiita = (function() {
     xhr.onload = function() {
       var body;
       body = JSON.parse(xhr.responseText);
-      Ti.App.Properties.setString('QiitaToken', body.token);
-      return Ti.API.info("token is stored. token value is " + body.token);
+      return Ti.App.Properties.setString('QiitaToken', body.token);
+    };
+    xhr.onerror = function(e) {
+      var error;
+      error = JSON.parse(e);
+      if (error.type === "error") {
+        return Ti.App.Properties.setString('QiitaTokenFail', error.error);
+      }
     };
     xhr.send(requestParam);
     return true;
@@ -98,7 +104,6 @@ Qiita = (function() {
     xhr.open(parameter.method, parameter.url);
     xhr.onload = function() {
       var json, relLink, responseHeaders;
-      Ti.API.info("_request method start");
       responseHeaders = xhr.responseHeaders;
       if (responseHeaders.Link) {
         relLink = self._convertLinkHeaderToJSON(responseHeaders.Link);
@@ -111,7 +116,6 @@ Qiita = (function() {
       } else {
         self._isLastItems(false);
       }
-      Ti.API.info(Ti.App.Properties.getString("isLastPage"));
       if (value !== false) {
         self._storedStocks(value, xhr.responseText);
       }

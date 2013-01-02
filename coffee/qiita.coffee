@@ -25,6 +25,7 @@ class Qiita
 
 
   _auth:(param) ->
+
     if param is null
       requestParam = 
         url_name: @config.user_name
@@ -37,7 +38,11 @@ class Qiita
     xhr.onload = ->
       body = JSON.parse(xhr.responseText)
       Ti.App.Properties.setString('QiitaToken', body.token)
-      Ti.API.info "token is stored. token value is #{body.token}"
+
+    xhr.onerror = (e) ->
+      error = JSON.parse(e)
+      if error.type is "error"
+        Ti.App.Properties.setString('QiitaTokenFail', error.error)
       
     xhr.send(requestParam)
     return true
@@ -102,7 +107,7 @@ class Qiita
     Ti.API.info parameter.method + ":" + parameter.url
     xhr.open(parameter.method,parameter.url)
     xhr.onload = ->
-      Ti.API.info "_request method start"
+
       responseHeaders = xhr.responseHeaders
       
       if responseHeaders.Link
@@ -119,9 +124,6 @@ class Qiita
         self._isLastItems false
 
       
-
-      Ti.API.info(Ti.App.Properties.getString("isLastPage")) 
-
       # QiitaAPIから取得した投稿情報をTi.App.Propertiesに都度突っ込み
       # これをローカルDB的に活用する
       
