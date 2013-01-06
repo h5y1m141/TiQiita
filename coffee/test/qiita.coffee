@@ -19,11 +19,26 @@ describe 'Qiitaクラスのためのテスト', ->
 
   describe 'Qiitaのストック情報', ->
 
-    content = null
+    content          = null
+    nextPage         = null
+    lastPage         = null
+    lastPageContents = null
+    
     async = new AsyncSpec(@)
     async.beforeEach (done) ->
       runs ->
         qiita.getMyStocks( (result,links) ->
+          for link in links
+            if link["rel"] is "next"
+              nextPage = link["url"]
+            else if link["rel"] is "last"
+              lastPage = link["url"]
+              qiita.getNextFeed(lastPage,(result,links) ->
+                lastPageContents = result
+              )
+            else
+              Ti.API.info link["url"]
+          
           content = result
           done()
         )
@@ -37,6 +52,39 @@ describe 'Qiitaクラスのためのテスト', ->
     it '投稿情報の件数が一致する', () ->
       runs ->
         expect(content.length).toBe 20
+
+    it '最終ページに移動できる', () ->
+      runs ->
+          expect(lastPageContents instanceof Array).toBe true
+
+    waits 1000
+  
+    
+    postItem =
+      uuid:"1d65e3fc04ee4693122c"
+      title:"MySQLで秘密のトークンなんかを0と比較したらちょい危険"
+      
+    it 'ストックに成功する', () ->      
+      runs ->
+        expect(qiita.putStock(postItem.uuid)) is true
+
+        
+    putStockFail = null
+    postFail =
+      uuid:"1"
+      title:"MySQLで秘密のトークンなんかを0と比較したらちょい危険"
+    
+    async.beforeEach (done) ->
+      runs ->
+        qiita.putStock(postFail.uuid)
+        done()
+      
+    it '存在しないストックをポストした場合にはErrorになる', () ->      
+      runs ->
+        putStockFail = Ti.App.Properties.getString('QiitaPutStockFail')
+        expect(putStockFail) is "error"
+    
+          
 
   describe 'Qiitaのフィード情報', ->
     feed = null
@@ -72,8 +120,9 @@ describe 'Qiitaクラスのためのテスト', ->
     
     it 'フィード情報の最後のページのURLが取得できる', () ->
       runs ->
-        # expect(lastPage).toBe "https://qiita.com/api/v1/items?page=403"
         expect(lastPage).not.toBeNull()
+        
+        
 
   describe '認証処理', ->
     noToken = null

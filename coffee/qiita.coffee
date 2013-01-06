@@ -235,11 +235,21 @@ class Qiita
       token:Ti.App.Properties.getString('QiitaToken')
     })
     xhr.onload = ->
+
+      # PUTメソッドを使って投稿成功しても、xhr.responseTextは
+      # nullしか返らないがonload内でその後のalertDialog()を
+      # 呼び出すためにこの処理が必要
+      
       body = JSON.parse(xhr.responseText)
+      
       actInd.hide()
       alertDialog = Ti.UI.createAlertDialog()
       alertDialog.setTitle "Qiitaへのストックが完了しました"
       alertDialog.show()
+
+      
+      
+      
         
 module.exports = Qiita
 
