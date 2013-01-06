@@ -19,8 +19,6 @@ tmp
 /Resources/.DS_Store
 /Resources/ui/.DS_Store
 /.DS_Store
-/Resources/test/*
-/Resources/test/**
 /Resources/config.json
 /Resources/KS_nav_ui.png
 /Resources/KS_nav_views.png
