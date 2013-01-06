@@ -1,6 +1,6 @@
 # ここはjasmine-titaniumの基本的な動作確認のためのテスト
   
-describe 'QiitaのStaticプロパティへのアクセス', ->
+xdescribe 'QiitaのStaticプロパティへのアクセス', ->
   it '指定のurlプロパティにアクセスした場合に値が一致する', ->
     Qiita = require('qiita')
     qiita = new Qiita()
@@ -59,7 +59,7 @@ describe 'Qiitaクラスのためのテスト', ->
           
     it '原因がわからないが自分のアカウントで最終ページに到達すると投稿情報空になるので、その確認', () ->
       runs ->
-        expect(lastPageContents.length).toBe 20
+        expect(lastPageContents.length).toBe 0
           
 
     waits 1000
@@ -69,7 +69,7 @@ describe 'Qiitaクラスのためのテスト', ->
       uuid:"1d65e3fc04ee4693122c"
       title:"MySQLで秘密のトークンなんかを0と比較したらちょい危険"
       
-    it 'ストックに成功する', () ->      
+    xit 'ストックに成功する', () ->      
       runs ->
         expect(qiita.putStock(postItem.uuid)) is true
 
@@ -84,14 +84,14 @@ describe 'Qiitaクラスのためのテスト', ->
         qiita.putStock(postFail.uuid)
         done()
       
-    it '存在しないストックをポストした場合にはErrorになる', () ->      
+    xit '存在しないストックをポストした場合にはErrorになる', () ->      
       runs ->
         putStockFail = Ti.App.Properties.getString('QiitaPutStockFail')
         expect(putStockFail) is "error"
     
           
 
-  describe 'Qiitaのフィード情報', ->
+  xdescribe 'Qiitaのフィード情報', ->
     feed = null
     nextPage = null
     lastPage = null
@@ -129,7 +129,7 @@ describe 'Qiitaクラスのためのテスト', ->
         
         
 
-  describe '認証処理', ->
+  xdescribe '認証処理', ->
     noToken = null
     token = null
         
