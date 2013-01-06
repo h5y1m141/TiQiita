@@ -55,7 +55,12 @@ describe 'Qiitaクラスのためのテスト', ->
 
     it '最終ページに移動できる', () ->
       runs ->
-          expect(lastPageContents instanceof Array).toBe true
+        expect(lastPageContents instanceof Array).toBe true
+          
+    it '原因がわからないが自分のアカウントで最終ページに到達すると投稿情報空になるので、その確認', () ->
+      runs ->
+        expect(lastPageContents.length).toBe 20
+          
 
     waits 1000
   
