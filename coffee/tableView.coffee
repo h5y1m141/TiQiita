@@ -12,7 +12,6 @@ class tableView
       # TableViewの一番下に、過去投稿を読み込むためのボタンを
       # 配置しており、そのrowだけは投稿詳細画面に遷移させない
       # 詳細画面にいくかどうかはrowのclassNameの値をチェックする
-      Ti.API.info "@table.addEventListener start"
       
       if e.rowData.className is 'entry'
         
@@ -26,7 +25,8 @@ class tableView
        else if e.rowData.className is "config"
         controller.login e.rowData
        else
-        controller.loadOldEntry()
+        storedTo = e.rowData.storedTo
+        controller.loadOldEntry(storedTo)
     )
     
   getTable: ()->
@@ -109,20 +109,20 @@ class tableView
     row.tags = json.tags
 
     return row
-  createRowForLoadOldEntry: () ->
+  createRowForLoadOldEntry: (storedTo) ->
     nextPage =  Ti.App.Properties.getString('nextPageURL')
 
     row = Ti.UI.createTableViewRow
       touchEnabled:false
       width:320
-      height:30
+      height:50
       borderWidth:2
       backgroundColor:'#222',
       borderColor:'#ededed',
       selectedBackgroundColor:'#59BB0C'
     textLabel = Ti.UI.createLabel
       width:320
-      height:30
+      height:50
       top:0
       left:0
       color:'#fff'
@@ -134,6 +134,7 @@ class tableView
     row.add(textLabel)
     row.className = 'loadOldEntry'
     row.url = nextPage
+    row.storedTo = storedTo
     return row
     
     

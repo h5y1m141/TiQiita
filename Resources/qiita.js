@@ -1,7 +1,5 @@
 var Qiita;
-
 Qiita = (function() {
-
   function Qiita() {
     var configJSON, file;
     configJSON = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'config/login.json');
@@ -31,7 +29,6 @@ Qiita = (function() {
       }
     };
   }
-
   Qiita.prototype._auth = function(param) {
     var requestParam, xhr;
     if (param === null) {
@@ -59,7 +56,6 @@ Qiita = (function() {
     xhr.send(requestParam);
     return true;
   };
-
   Qiita.prototype._mockObject = function(value, storedStocksFlag, callback) {
     var followingTags, followingTagsJSON, items, itemsJSON, relLink, relLinkJSON, stocksJSON;
     followingTagsJSON = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, "test/following_tags.json");
@@ -81,7 +77,6 @@ Qiita = (function() {
     }
     return true;
   };
-
   Qiita.prototype._storedStocks = function(TiAppPropertiesName, strItems) {
     var merge, result, stocks;
     stocks = JSON.parse(Ti.App.Properties.getString(TiAppPropertiesName));
@@ -95,7 +90,6 @@ Qiita = (function() {
     Ti.API.info("stored under " + TiAppPropertiesName + ". result is : " + result.length);
     return true;
   };
-
   Qiita.prototype._request = function(parameter, value, callback) {
     var self, xhr;
     self = this;
@@ -123,14 +117,13 @@ Qiita = (function() {
     };
     return xhr.send();
   };
-
   Qiita.prototype._convertLinkHeaderToJSON = function(value) {
-    var i, json, length, links, relValues, _i, _obj;
+    var i, json, length, links, relValues, _obj;
     json = [];
     links = value.match(/https?:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+/g);
     relValues = value.match(/first|prev|next|last/g);
     length = links.length - 1;
-    for (i = _i = 0; 0 <= length ? _i <= length : _i >= length; i = 0 <= length ? ++_i : --_i) {
+    for (i = 0; 0 <= length ? i <= length : i >= length; 0 <= length ? i++ : i--) {
       _obj = {
         "rel": relValues[i],
         "url": links[i]
@@ -139,56 +132,47 @@ Qiita = (function() {
     }
     return json;
   };
-
   Qiita.prototype._mergeItems = function(object1, object2) {
     var _;
     _ = require("lib/underscore-1.4.3.min");
     object1 = object1.concat(object2);
     return _(object1).sortBy("created_at");
   };
-
   Qiita.prototype._isLastItems = function(flg) {
     Ti.API.info("start isLastItems. flg is " + flg);
     return Ti.App.properties.setBool("isLastPage", flg);
   };
-
   Qiita.prototype.isConnected = function() {
     return Ti.Network.online;
   };
-
   Qiita.prototype.getStocks = function(callback) {
     var param;
     param = this.parameter.stocks;
     return this._request(param, 'storedStocks', callback);
   };
-
   Qiita.prototype.getFollowingUsers = function(callback) {
     var param;
     param = this.parameter.followingUsers;
     return this._request(param, false, callback);
   };
-
   Qiita.prototype.getFollowingTags = function(callback) {
     var param;
     param = this.parameter.followingTags;
     return this._request(param, false, callback);
   };
-
   Qiita.prototype.getFeed = function(callback) {
     var param;
     param = this.parameter.feed;
     return this._request(param, 'storedStocks', callback);
   };
-
-  Qiita.prototype.getNextFeed = function(url, callback) {
+  Qiita.prototype.getNextFeed = function(url, storedTo, callback) {
     var param;
     param = {
       "url": url,
       "method": 'GET'
     };
-    return this._request(param, 'storedStocks', callback);
+    return this._request(param, storedTo, callback);
   };
-
   Qiita.prototype.getMyStocks = function(callback) {
     var param, token;
     token = Ti.App.Properties.getString('QiitaToken');
@@ -202,7 +186,6 @@ Qiita = (function() {
     };
     return this._request(param, 'storedMyStocks', callback);
   };
-
   Qiita.prototype.getMyFeed = function(callback) {
     var param, token;
     token = Ti.App.Properties.getString('QiitaToken');
@@ -215,7 +198,6 @@ Qiita = (function() {
     };
     return this._request(param, false, callback);
   };
-
   Qiita.prototype.putStock = function(uuid) {
     var method, token, url, xhr;
     token = Ti.App.Properties.getString('QiitaToken');
@@ -239,9 +221,6 @@ Qiita = (function() {
       return alertDialog.show();
     };
   };
-
   return Qiita;
-
 })();
-
 module.exports = Qiita;

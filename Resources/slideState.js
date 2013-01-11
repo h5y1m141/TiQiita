@@ -1,15 +1,9 @@
 var slideState;
-
 slideState = (function() {
-
-  function slideState() {
-    Ti.API.info("STATE: スライド状態");
-  }
-
+  function slideState() {}
   slideState.prototype.sayState = function() {
     return "STATE: スライド状態";
   };
-
   slideState.prototype.moveBackward = function() {
     Ti.API.info("ACTION: スライドから標準状態に戻る");
     Ti.App.Properties.setBool("stateMainTableSlide", false);
@@ -18,18 +12,12 @@ slideState = (function() {
     mainTable.animate({
       duration: 200,
       left: 0
-    }, function() {
-      return Ti.API.info("アニメーション終了");
-    });
+    }, function() {});
     return new defaultState();
   };
-
   slideState.prototype.moveForward = function() {
     return Ti.API.info("この状態では何もしない");
   };
-
   return slideState;
-
 })();
-
 module.exports = slideState;

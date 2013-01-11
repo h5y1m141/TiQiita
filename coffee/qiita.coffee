@@ -190,12 +190,12 @@ class Qiita
     @._request(param,'storedStocks',callback)
     # @._mockObject("items",'storedStocks',callback)
     
-  getNextFeed:(url,callback) ->
+  getNextFeed:(url,storedTo,callback) ->
     param =
       "url": url
       "method":'GET'
 
-    @._request(param,'storedStocks',callback)
+    @._request(param,storedTo,callback)
     # @._mockObject("items",'storedStocks',callback)
 
   getMyStocks:(callback) ->

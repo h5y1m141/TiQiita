@@ -4,14 +4,14 @@ class qiitaController
     
     
     
-  loadOldEntry: () ->
+  loadOldEntry: (storedTo) ->
     url = Ti.App.Properties.getString('nextPageURL')
     Ti.API.info "NEXTPAGE:#{url}"
     actInd.backgroundColor = '#222'
     actInd.opacity = 0.8
     actInd.show()
         
-    qiita.getNextFeed(url,(result,links) ->
+    qiita.getNextFeed(url,storedTo,(result,links) ->
       for link in links
         if link["rel"] == 'next'
           Ti.App.Properties.setString('nextPageURL',link["url"])
@@ -45,7 +45,7 @@ class qiitaController
       Ti.App.Properties.setString('stockID',json.id)
   
   slideMainTable: () ->
-    Ti.API.info "slideMainTable start. state is #{@state.sayState()}"
+
     if Ti.App.Properties.getBool("stateMainTableSlide") is false
       @state = @state.moveForward()
     else

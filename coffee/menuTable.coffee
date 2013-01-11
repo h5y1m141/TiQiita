@@ -159,7 +159,7 @@ class menuTable
                 Ti.App.Properties.setString('nextPageURL',link["url"])
 
             rows.push(t.createRow(json)) for json in result
-            rows.push(t.createRowForLoadOldEntry())
+            rows.push(t.createRowForLoadOldEntry('storedMyStocks'))
             actInd.hide()
             mainTable.setData rows
           )
@@ -178,10 +178,6 @@ class menuTable
 
           result.push(matchTag(items,tagName))
       
-
-            
-      
-
           
       
       mainTable.setData result

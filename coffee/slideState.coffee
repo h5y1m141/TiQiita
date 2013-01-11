@@ -1,6 +1,6 @@
 class slideState
   constructor: () ->
-    Ti.API.info "STATE: スライド状態"
+    # Ti.API.info "STATE: スライド状態"
     
     
   sayState: () ->
@@ -16,7 +16,7 @@ class slideState
       duration:200
       left:0
     },()->
-      Ti.API.info "アニメーション終了"
+      # Ti.API.info "アニメーション終了"
     
     )
     return new defaultState()

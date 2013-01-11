@@ -28,7 +28,7 @@ Ti.App.Properties.setString "storedMyStocks",null
 Ti.App.Properties.setBool "isLastPage",false
 # Jasmine
 # 
-testsEnabled = true
+testsEnabled = false
 
 
 if testsEnabled is true
@@ -76,7 +76,7 @@ else
         Ti.App.Properties.setString('nextPageURL',link["url"])
       
     rows.push(t.createRow(json)) for json in result
-    rows.push(t.createRowForLoadOldEntry())
+    rows.push(t.createRowForLoadOldEntry('storedStocks'))
     mainTable.setData rows
     actInd.hide()
     mainWindow.add mainTable

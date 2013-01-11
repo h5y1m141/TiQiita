@@ -1,7 +1,5 @@
 var menuTable;
-
 menuTable = (function() {
-
   function menuTable() {
     var backgroundColorBase, backgroundColorForTags, backgroundColorSub, fontThemeWhite, makeConfigRow, makeStockRow, makeTagRow, matchTag, qiitaColor, resetBackGroundColor, rowColorTheme, slideEvent, table;
     backgroundColorBase = '#222';
@@ -95,8 +93,8 @@ menuTable = (function() {
       return tagRow;
     };
     matchTag = function(items, tagName) {
-      var i, tags, value, _, _i, _ref;
-      for (i = _i = 0, _ref = items.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+      var i, tags, value, _, _ref;
+      for (i = 0, _ref = items.length - 1; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
         tags = items[i].tags;
         _ = require("lib/underscore-min");
         value = _.where(tags, {
@@ -117,11 +115,7 @@ menuTable = (function() {
       _results = [];
       for (_i = 0, _len = menuRows.length; _i < _len; _i++) {
         menuRow = menuRows[_i];
-        if (menuRow.backgroundColor !== backgroundColorSub) {
-          _results.push(menuRow.backgroundColor = backgroundColorSub);
-        } else {
-          _results.push(void 0);
-        }
+        _results.push(menuRow.backgroundColor !== backgroundColorSub ? menuRow.backgroundColor = backgroundColorSub : void 0);
       }
       return _results;
     };
@@ -154,18 +148,18 @@ menuTable = (function() {
           actInd.show();
           rows = [];
           qiita.getMyStocks(function(result, links) {
-            var json, link, _i, _j, _len, _len1;
+            var json, link, _i, _j, _len, _len2;
             for (_i = 0, _len = links.length; _i < _len; _i++) {
               link = links[_i];
               if (link["rel"] === 'next') {
                 Ti.App.Properties.setString('nextPageURL', link["url"]);
               }
             }
-            for (_j = 0, _len1 = result.length; _j < _len1; _j++) {
+            for (_j = 0, _len2 = result.length; _j < _len2; _j++) {
               json = result[_j];
               rows.push(t.createRow(json));
             }
-            rows.push(t.createRowForLoadOldEntry());
+            rows.push(t.createRowForLoadOldEntry('storedMyStocks'));
             actInd.hide();
             return mainTable.setData(rows);
           });
@@ -237,9 +231,6 @@ menuTable = (function() {
     });
     return table;
   }
-
   return menuTable;
-
 })();
-
 module.exports = menuTable;

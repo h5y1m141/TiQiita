@@ -1,7 +1,5 @@
 var tableView;
-
 tableView = (function() {
-
   function tableView() {
     this.table = Ti.UI.createTableView({
       backgroundColor: '#ededed',
@@ -12,7 +10,7 @@ tableView = (function() {
       top: 0
     });
     this.table.addEventListener('click', function(e) {
-      Ti.API.info("@table.addEventListener start");
+      var storedTo;
       if (e.rowData.className === 'entry') {
         controller.sessionItem(e.rowData.data);
         controller.webViewContentsUpdate(e.rowData.data.body);
@@ -21,26 +19,23 @@ tableView = (function() {
       } else if (e.rowData.className === "config") {
         return controller.login(e.rowData);
       } else {
-        return controller.loadOldEntry();
+        storedTo = e.rowData.storedTo;
+        return controller.loadOldEntry(storedTo);
       }
     });
   }
-
   tableView.prototype.getTable = function() {
     return this.table;
   };
-
   tableView.prototype.insertRow = function(index, row) {
     this.table.insertRowAfter(index, row, {
       animated: true
     });
     return true;
   };
-
   tableView.prototype.lastRowIndex = function() {
     return this.table.data[0].rows.length - 2;
   };
-
   tableView.prototype.createRow = function(json) {
     var bodySummary, createdDate, handleName, iconImage, row, textLabel, updateTime;
     row = Ti.UI.createTableViewRow({
@@ -114,14 +109,13 @@ tableView = (function() {
     row.tags = json.tags;
     return row;
   };
-
-  tableView.prototype.createRowForLoadOldEntry = function() {
+  tableView.prototype.createRowForLoadOldEntry = function(storedTo) {
     var nextPage, row, textLabel;
     nextPage = Ti.App.Properties.getString('nextPageURL');
     row = Ti.UI.createTableViewRow({
       touchEnabled: false,
       width: 320,
-      height: 30,
+      height: 50,
       borderWidth: 2,
       backgroundColor: '#222',
       borderColor: '#ededed',
@@ -129,7 +123,7 @@ tableView = (function() {
     });
     textLabel = Ti.UI.createLabel({
       width: 320,
-      height: 30,
+      height: 50,
       top: 0,
       left: 0,
       color: '#fff',
@@ -143,11 +137,9 @@ tableView = (function() {
     row.add(textLabel);
     row.className = 'loadOldEntry';
     row.url = nextPage;
+    row.storedTo = storedTo;
     return row;
   };
-
   return tableView;
-
 })();
-
 module.exports = tableView;

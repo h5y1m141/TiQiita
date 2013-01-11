@@ -1,39 +1,21 @@
 var Qiita, actInd, controller, defaultState, listBtn, mainTable, mainWindow, menuTable, moment, momentja, qiita, qiitaController, rows, slideState, t, tab, tabGroup, tableView, testsEnabled, token, webView, webViewContents, webViewHeader, webWindow, webview;
-
 Qiita = require('qiita');
-
 tableView = require('tableView');
-
 menuTable = require('menuTable');
-
 moment = require('lib/moment.min');
-
 momentja = require('lib/momentja');
-
 qiitaController = require('qiitaController');
-
 defaultState = require("defaultState");
-
 slideState = require("slideState");
-
 webView = require('webView');
-
 t = new tableView();
-
 qiita = new Qiita();
-
 controller = new qiitaController();
-
 Ti.App.Properties.setBool('stateMainTableSlide', false);
-
 Ti.App.Properties.setString("storedStocks", null);
-
 Ti.App.Properties.setString("storedMyStocks", null);
-
 Ti.App.Properties.setBool("isLastPage", false);
-
-testsEnabled = true;
-
+testsEnabled = false;
 if (testsEnabled === true) {
   require('test/tests');
 } else {
@@ -65,18 +47,18 @@ if (testsEnabled === true) {
   mainWindow.add(actInd);
   rows = [];
   qiita.getFeed(function(result, links) {
-    var json, link, menu, _i, _j, _len, _len1;
+    var json, link, menu, _i, _j, _len, _len2;
     for (_i = 0, _len = links.length; _i < _len; _i++) {
       link = links[_i];
       if (link["rel"] === 'next') {
         Ti.App.Properties.setString('nextPageURL', link["url"]);
       }
     }
-    for (_j = 0, _len1 = result.length; _j < _len1; _j++) {
+    for (_j = 0, _len2 = result.length; _j < _len2; _j++) {
       json = result[_j];
       rows.push(t.createRow(json));
     }
-    rows.push(t.createRowForLoadOldEntry());
+    rows.push(t.createRowForLoadOldEntry('storedStocks'));
     mainTable.setData(rows);
     actInd.hide();
     mainWindow.add(mainTable);
