@@ -1,4 +1,4 @@
-var Qiita, actInd, controller, defaultState, listBtn, mainTable, mainWindow, menuTable, moment, momentja, qiita, qiitaController, rows, slideState, t, tab, tabGroup, tableView, testsEnabled, token, webView, webViewContents, webViewHeader, webWindow, webview;
+var Qiita, actInd, activityIndicator, controller, defaultState, listBtn, mainTable, mainWindow, menuTable, moment, momentja, qiita, qiitaController, rows, slideState, t, tab, tabGroup, tableView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win;
 Qiita = require('qiita');
 tableView = require('tableView');
 menuTable = require('menuTable');
@@ -8,6 +8,8 @@ qiitaController = require('qiitaController');
 defaultState = require("defaultState");
 slideState = require("slideState");
 webView = require('webView');
+win = require('ui/window');
+activityIndicator = require('ui/activityIndicator');
 t = new tableView();
 qiita = new Qiita();
 controller = new qiitaController();
@@ -20,29 +22,8 @@ if (testsEnabled === true) {
   require('test/tests');
 } else {
   mainTable = t.getTable();
-  token = Ti.App.Properties.getString('QiitaToken');
-  if (token === null) {
-    qiita._auth();
-  }
-  Ti.API.info('Token is' + token);
-  mainWindow = Ti.UI.createWindow({
-    title: 'Qiita',
-    barColor: '#59BB0C'
-  });
-  actInd = Ti.UI.createActivityIndicator({
-    zIndex: 10,
-    top: 100,
-    left: 120,
-    height: 40,
-    width: 'auto',
-    font: {
-      fontFamily: 'Helvetica Neue',
-      fontSize: 15,
-      fontWeight: 'bold'
-    },
-    color: '#fff',
-    message: 'loading...'
-  });
+  mainWindow = new win();
+  actInd = new activityIndicator();
   actInd.show();
   mainWindow.add(actInd);
   rows = [];
@@ -73,10 +54,8 @@ if (testsEnabled === true) {
     return controller.slideMainTable();
   });
   mainWindow.leftNavButton = listBtn;
-  webWindow = Ti.UI.createWindow({
-    backButtonTitle: '戻る',
-    barColor: '#59BB0C'
-  });
+  webWindow = new win();
+  webWindow.backButtonTitle = '戻る';
   webview = new webView();
   webViewHeader = webview.retreiveWebViewHeader();
   webViewContents = webview.retreiveWebView();

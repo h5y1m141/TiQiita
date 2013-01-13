@@ -10,7 +10,8 @@ defaultState = require("defaultState")
 slideState = require("slideState")
 
 webView = require('webView')
-
+win = require('ui/window')
+activityIndicator = require('ui/activityIndicator')
 
 t = new tableView()
 qiita = new Qiita()
@@ -39,34 +40,11 @@ else
 
   # 投稿一覧情報を取得
   mainTable = t.getTable()
+  mainWindow = new win()
+  actInd = new activityIndicator()
 
-
-  token = Ti.App.Properties.getString('QiitaToken')
-  if token is null
-    qiita._auth()
-  Ti.API.info('Token is' + token)
-
-  mainWindow = Ti.UI.createWindow
-    title:'Qiita'
-    barColor:'#59BB0C'
-
-
-
-
-  actInd = Ti.UI.createActivityIndicator
-    zIndex:10
-    top:100
-    left: 120
-    height: 40
-    width: 'auto'
-    font: 
-      fontFamily:'Helvetica Neue'
-      fontSize:15
-      fontWeight:'bold'
-    color: '#fff'
-    message: 'loading...'
   actInd.show()
-  mainWindow.add(actInd)
+  mainWindow.add actInd
 
   rows = []
   qiita.getFeed( (result,links) ->
@@ -97,10 +75,9 @@ else
   mainWindow.leftNavButton  = listBtn
 
 
+  webWindow = new win()
+  webWindow.backButtonTitle = '戻る'
 
-  webWindow = Ti.UI.createWindow
-    backButtonTitle:'戻る',
-    barColor:'#59BB0C'
     
   webview = new webView()
   webViewHeader = webview.retreiveWebViewHeader()
@@ -112,5 +89,5 @@ else
   tabGroup = Ti.UI.createTabGroup()
   tab = Ti.UI.createTab
     window: mainWindow
-  tabGroup.addTab(tab)
+  tabGroup.addTab tab
   tabGroup.open()
