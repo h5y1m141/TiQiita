@@ -110,6 +110,7 @@ Qiita = (function() {
       } else {
         self._isLastItems(false);
       }
+      Ti.API.info("ITEM COUNT : " + json.length);
       if (value !== false) {
         self._storedStocks(value, xhr.responseText);
       }

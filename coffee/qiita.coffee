@@ -123,12 +123,13 @@ class Qiita
       else
         self._isLastItems false
 
-      
+      Ti.API.info "ITEM COUNT : #{json.length}"
       # QiitaAPIから取得した投稿情報をTi.App.Propertiesに都度突っ込み
       # これをローカルDB的に活用する
       
       if value isnt false
         self._storedStocks(value,xhr.responseText)
+
 
       callback(json,relLink)
       

@@ -66,6 +66,7 @@ else
   )  
 
 
+
   listBtn = Ti.UI.createButton
     systemButton: Titanium.UI.iPhone.SystemButton.BOOKMARKS
     
@@ -78,7 +79,8 @@ else
   webWindow = new win()
   webWindow.backButtonTitle = '戻る'
 
-    
+  # あらかじめwebviewを生成しておかないと、メイン画面から
+  # 遷移した時にもたつく原因になるために以下を実施している    
   webview = new webView()
   webViewHeader = webview.retreiveWebViewHeader()
   webViewContents = webview.retreiveWebView()

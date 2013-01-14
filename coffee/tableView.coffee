@@ -26,7 +26,7 @@ class tableView
         controller.login e.rowData
        else
         storedTo = e.rowData.storedTo
-        controller.loadOldEntry(storedTo)
+        controller.loadOldEntry storedTo
     )
     
   getTable: ()->
@@ -35,6 +35,13 @@ class tableView
   insertRow: (index,row)->
     @table.insertRowAfter(index,row,{animated:true})
     return true
+    
+  hideLastRow: () ->
+    #以前の投稿が存在しない場合には、読み込むボタンを配置した
+    # rowを非表示にしたいのでそのためのメソッド
+    lastRow = @table.data[0].rows.length-1
+    @table.deleteRow lastRow
+    
   lastRowIndex: () ->
     # TableViewの行から2を引くことで最後のRowのindexを取得してるが
     # 理由は下記２点のため

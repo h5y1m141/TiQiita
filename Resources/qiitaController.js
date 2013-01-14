@@ -11,22 +11,24 @@ qiitaController = (function() {
     actInd.opacity = 0.8;
     actInd.show();
     qiita.getNextFeed(url, storedTo, function(result, links) {
-      var json, lastIndex, link, r, _i, _j, _len, _len2, _results;
+      var MAXITEMCOUNT, json, lastIndex, link, r, _i, _j, _len, _len2;
       for (_i = 0, _len = links.length; _i < _len; _i++) {
         link = links[_i];
         if (link["rel"] === 'next') {
           Ti.App.Properties.setString('nextPageURL', link["url"]);
         }
       }
-      _results = [];
       for (_j = 0, _len2 = result.length; _j < _len2; _j++) {
         json = result[_j];
         r = t.createRow(json);
         lastIndex = t.lastRowIndex();
         t.insertRow(lastIndex, r);
-        _results.push(actInd.hide());
+        actInd.hide();
       }
-      return _results;
+      MAXITEMCOUNT = 20;
+      if (result.length !== MAXITEMCOUNT) {
+        return t.hideLastRow();
+      }
     });
     return true;
   };

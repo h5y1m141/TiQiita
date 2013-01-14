@@ -33,6 +33,11 @@ tableView = (function() {
     });
     return true;
   };
+  tableView.prototype.hideLastRow = function() {
+    var lastRow;
+    lastRow = this.table.data[0].rows.length - 1;
+    return this.table.deleteRow(lastRow);
+  };
   tableView.prototype.lastRowIndex = function() {
     return this.table.data[0].rows.length - 2;
   };

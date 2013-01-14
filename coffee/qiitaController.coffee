@@ -2,7 +2,7 @@ class qiitaController
   constructor: () ->
     @state = new defaultState()
     
-    
+        
     
   loadOldEntry: (storedTo) ->
     url = Ti.App.Properties.getString('nextPageURL')
@@ -15,13 +15,22 @@ class qiitaController
       for link in links
         if link["rel"] == 'next'
           Ti.App.Properties.setString('nextPageURL',link["url"])
-
+          
+        
       for json in result
         r = t.createRow(json)
         lastIndex = t.lastRowIndex()
 
         t.insertRow(lastIndex,r)
         actInd.hide()
+        
+      # ここで投稿件数をチェックして、20件以下だったら過去のを
+      # 読み込むrowを非表示にすればOK
+        
+      MAXITEMCOUNT = 20
+      if result.length isnt MAXITEMCOUNT
+        t.hideLastRow()
+        
     )
     return true
 
