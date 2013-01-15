@@ -31,26 +31,30 @@ Qiita = (function() {
   }
   Qiita.prototype._auth = function(param) {
     var requestParam, xhr;
-    if (param === null) {
+    if (typeof param !== "undefined" && param !== null) {
+      requestParam = param;
+    } else {
       requestParam = {
-        url_name: this.config.user_name,
+        url_name: this.config.url_name,
         password: this.config.password
       };
-    } else {
-      requestParam = param;
     }
+    Ti.API.info(requestParam["url_name"]);
+    Ti.API.info(requestParam["password"]);
     xhr = Ti.Network.createHTTPClient();
     xhr.open('POST', 'https://qiita.com/api/v1/auth');
     xhr.onload = function() {
       var body;
-      body = JSON.parse(xhr.responseText);
+      body = JSON.parse(this.responseText);
+      Ti.API.info("status code: " + this.status);
       return Ti.App.Properties.setString('QiitaToken', body.token);
     };
     xhr.onerror = function(e) {
       var error;
       error = JSON.parse(e);
       if (error.type === "error") {
-        return Ti.App.Properties.setString('QiitaTokenFail', error.error);
+        Ti.App.Properties.setString('QiitaTokenFail', error.error);
+        return Ti.API.info("_auth error error message is " + error.error);
       }
     };
     xhr.send(requestParam);
@@ -180,7 +184,6 @@ Qiita = (function() {
     if (token === null) {
       this._auth();
     }
-    Ti.API.info("token is : " + (Ti.App.Properties.getString('QiitaToken')));
     param = {
       url: this.parameter.myStocks.url + ("?token=" + token),
       method: this.parameter.myStocks.method

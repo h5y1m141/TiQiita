@@ -26,23 +26,33 @@ class Qiita
 
   _auth:(param) ->
 
-    if param is null
-      requestParam = 
-        url_name: @config.user_name
-        password: @config.password
-    else
+    if typeof param isnt "undefined" and param isnt null
       requestParam = param
+    else
+      requestParam = {
+        url_name: @config.url_name,
+        password: @config.password
+      }
+    Ti.API.info requestParam["url_name"]
+    Ti.API.info requestParam["password"]
+      
+
+    
 
     xhr = Ti.Network.createHTTPClient()
+
     xhr.open('POST','https://qiita.com/api/v1/auth')
     xhr.onload = ->
-      body = JSON.parse(xhr.responseText)
+      body = JSON.parse(@.responseText)
+      Ti.API.info "status code: #{@.status}"
       Ti.App.Properties.setString('QiitaToken', body.token)
-
+    
     xhr.onerror = (e) ->
       error = JSON.parse(e)
       if error.type is "error"
+        
         Ti.App.Properties.setString('QiitaTokenFail', error.error)
+        Ti.API.info "_auth error error message is #{error.error}"
       
     xhr.send(requestParam)
     return true
@@ -201,9 +211,9 @@ class Qiita
 
   getMyStocks:(callback) ->
     token = Ti.App.Properties.getString('QiitaToken')
+
     if token is null
       @._auth()
-    Ti.API.info "token is : #{Ti.App.Properties.getString('QiitaToken')}"
 
     param = 
       url:@parameter.myStocks.url + "?token=#{token}"
@@ -211,6 +221,9 @@ class Qiita
 
     @._request(param,'storedMyStocks',callback)
     # @._mockObject("stocks",'storedMyStocks',callback)
+
+      
+    
     
   getMyFeed:(callback) ->
     token = Ti.App.Properties.getString('QiitaToken')

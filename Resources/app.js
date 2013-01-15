@@ -24,6 +24,8 @@ if (testsEnabled === true) {
   mainTable = t.getTable();
   mainWindow = new win();
   actInd = new activityIndicator();
+  qiita._auth();
+  Ti.API.info(Ti.App.Properties.getString('QiitaToken'));
   actInd.show();
   mainWindow.add(actInd);
   rows = [];

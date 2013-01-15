@@ -27,21 +27,26 @@ Ti.App.Properties.setString "storedMyStocks",null
 
 ## QiitaAPIのページネーション処理で利用
 Ti.App.Properties.setBool "isLastPage",false
+
+
 # Jasmine
 # 
 testsEnabled = false
 
 
 if testsEnabled is true
-  
   require('test/tests')
-  
 else
 
   # 投稿一覧情報を取得
   mainTable = t.getTable()
   mainWindow = new win()
   actInd = new activityIndicator()
+
+
+  qiita._auth()
+  Ti.API.info Ti.App.Properties.getString('QiitaToken')
+
 
   actInd.show()
   mainWindow.add actInd
