@@ -33,11 +33,6 @@ class Qiita
         url_name: @config.url_name,
         password: @config.password
       }
-    Ti.API.info requestParam["url_name"]
-    Ti.API.info requestParam["password"]
-      
-
-    
 
     xhr = Ti.Network.createHTTPClient()
 

@@ -7,7 +7,9 @@ class tableView
       width:320
       left:0
       top:0
-    @table.addEventListener('click',(e)->
+
+            
+    @table.addEventListener('click',(e) ->
 
       # TableViewの一番下に、過去投稿を読み込むためのボタンを
       # 配置しており、そのrowだけは投稿詳細画面に遷移させない
@@ -30,7 +32,6 @@ class tableView
     )
     
   getTable: ()->
-
     return @table
   insertRow: (index,row)->
     @table.insertRowAfter(index,row,{animated:true})
@@ -143,7 +144,6 @@ class tableView
     row.url = nextPage
     row.storedTo = storedTo
     return row
-    
     
 module.exports = tableView
 

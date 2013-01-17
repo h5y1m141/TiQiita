@@ -91,7 +91,23 @@ class qiitaController
     webWindow.rightNavButton = actionBtn
     return tab.open(webWindow)
 
-
+  loadEntry: () ->
+    Ti.API.info "called loadEntry method. mainTable is #{mainTable}"
+    
+    qiita.getFeed( (result,links) ->
+      rows = []
+      for link in links
+        if link["rel"] == 'next'
+          Ti.App.Properties.setString('nextPageURL',link["url"])
+        
+      rows.push(t.createRow(json)) for json in result
+      rows.push(t.createRowForLoadOldEntry('storedStocks'))
+      mainTable.setData rows
+      actInd.hide()
+      return true
+    )  
+    
+    
   show: () ->
     alert "start contoroller show"
 

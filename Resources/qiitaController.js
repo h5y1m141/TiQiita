@@ -86,6 +86,27 @@ qiitaController = (function() {
     webWindow.rightNavButton = actionBtn;
     return tab.open(webWindow);
   };
+  qiitaController.prototype.loadEntry = function() {
+    Ti.API.info("called loadEntry method. mainTable is " + mainTable);
+    return qiita.getFeed(function(result, links) {
+      var json, link, rows, _i, _j, _len, _len2;
+      rows = [];
+      for (_i = 0, _len = links.length; _i < _len; _i++) {
+        link = links[_i];
+        if (link["rel"] === 'next') {
+          Ti.App.Properties.setString('nextPageURL', link["url"]);
+        }
+      }
+      for (_j = 0, _len2 = result.length; _j < _len2; _j++) {
+        json = result[_j];
+        rows.push(t.createRow(json));
+      }
+      rows.push(t.createRowForLoadOldEntry('storedStocks'));
+      mainTable.setData(rows);
+      actInd.hide();
+      return true;
+    });
+  };
   qiitaController.prototype.show = function() {
     return alert("start contoroller show");
   };

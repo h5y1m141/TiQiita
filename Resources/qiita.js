@@ -39,8 +39,6 @@ Qiita = (function() {
         password: this.config.password
       };
     }
-    Ti.API.info(requestParam["url_name"]);
-    Ti.API.info(requestParam["password"]);
     xhr = Ti.Network.createHTTPClient();
     xhr.open('POST', 'https://qiita.com/api/v1/auth');
     xhr.onload = function() {
