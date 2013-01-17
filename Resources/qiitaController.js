@@ -8,7 +8,6 @@ qiitaController = (function() {
     url = Ti.App.Properties.getString('nextPageURL');
     Ti.API.info("NEXTPAGE:" + url);
     actInd.backgroundColor = '#222';
-    actInd.opacity = 0.8;
     actInd.show();
     qiita.getNextFeed(url, storedTo, function(result, links) {
       var MAXITEMCOUNT, json, lastIndex, link, r, _i, _j, _len, _len2;
@@ -87,7 +86,9 @@ qiitaController = (function() {
     return tab.open(webWindow);
   };
   qiitaController.prototype.loadEntry = function() {
-    Ti.API.info("called loadEntry method. mainTable is " + mainTable);
+    actInd.backgroundColor = '#222';
+    actInd.zIndex = 10;
+    actInd.show();
     return qiita.getFeed(function(result, links) {
       var json, link, rows, _i, _j, _len, _len2;
       rows = [];

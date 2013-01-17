@@ -8,7 +8,6 @@ class qiitaController
     url = Ti.App.Properties.getString('nextPageURL')
     Ti.API.info "NEXTPAGE:#{url}"
     actInd.backgroundColor = '#222'
-    actInd.opacity = 0.8
     actInd.show()
         
     qiita.getNextFeed(url,storedTo,(result,links) ->
@@ -92,7 +91,9 @@ class qiitaController
     return tab.open(webWindow)
 
   loadEntry: () ->
-    Ti.API.info "called loadEntry method. mainTable is #{mainTable}"
+    actInd.backgroundColor = '#222'
+    actInd.zIndex = 10
+    actInd.show()
     
     qiita.getFeed( (result,links) ->
       rows = []
