@@ -22,6 +22,9 @@ class Qiita
       followingTags:
         url:"https://qiita.com/api/v1/users/#{@user_name}/following_tags"
         method:'GET'
+      tags:
+        url:"https://qiita.com/api/v1/tags"
+        method:'GET'
 
 
   _auth:(param,callback) ->
@@ -194,7 +197,11 @@ class Qiita
   getFollowingUsers: (callback) ->
     param = @parameter.followingUsers
     @._request(param,false,callback)
-
+    
+  getTags: (callback) ->
+    param = @parameter.tags
+    @._request(param,false,callback)
+    
   getFollowingTags: (callback) ->
     param = @parameter.followingTags
     # 自分がフォローしてるタグの情報はAppPropertiesでキャッシュしたくないので

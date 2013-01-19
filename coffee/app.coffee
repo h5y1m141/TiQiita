@@ -44,11 +44,11 @@ else
   actInd = new activityIndicator()
 
 
-  qiita._auth()
-  Ti.API.info Ti.App.Properties.getString('QiitaToken')
+  # qiita._auth()
+  # Ti.API.info Ti.App.Properties.getString('QiitaToken')
 
 
-  # actInd.show()
+  actInd.show()
   mainWindow.add actInd
 
   rows = []
@@ -58,12 +58,12 @@ else
       if link["rel"] == 'next'
         Ti.App.Properties.setString('nextPageURL',link["url"])
       
-  #   rows.push(t.createRow(json)) for json in result
-  #   rows.push(t.createRowForLoadOldEntry('storedStocks'))
-  #   mainTable.setData rows
+    rows.push(t.createRow(json)) for json in result
+    rows.push(t.createRowForLoadOldEntry('storedStocks'))
+    mainTable.setData rows
     actInd.hide()
     mainWindow.add mainTable
-  #   # 自分がチェックしてるタグを取得して、左側にサブメニューとして配置
+    # 自分がチェックしてるタグを取得して、左側にサブメニューとして配置
     menu = new menuTable()
     mainWindow.add menu
     

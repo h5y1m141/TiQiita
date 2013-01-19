@@ -174,7 +174,7 @@ menuTable = (function() {
       }
       return mainTable.setData(result);
     });
-    qiita.getFollowingTags(function(result, links) {
+    qiita.getTags(function(result, links) {
       var allLabel, allLabelRow, json, menuRow, rows, textLabel, _i, _len;
       rows = [makeConfigRow(), makeStockRow(), makeTagRow()];
       allLabelRow = Ti.UI.createTableViewRow(rowColorTheme);

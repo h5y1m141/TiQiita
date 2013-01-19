@@ -180,7 +180,7 @@ class menuTable
       mainTable.setData result
     )
       
-    qiita.getFollowingTags( (result,links)->
+    qiita.getTags( (result,links)->
       rows = [makeConfigRow(),makeStockRow(),makeTagRow()]
       
       allLabelRow = Ti.UI.createTableViewRow(rowColorTheme)

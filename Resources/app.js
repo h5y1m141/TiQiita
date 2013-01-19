@@ -24,18 +24,23 @@ if (testsEnabled === true) {
   mainTable = t.getTable();
   mainWindow = new win();
   actInd = new activityIndicator();
-  qiita._auth();
-  Ti.API.info(Ti.App.Properties.getString('QiitaToken'));
+  actInd.show();
   mainWindow.add(actInd);
   rows = [];
   qiita.getFeed(function(result, links) {
-    var link, menu, _i, _len;
+    var json, link, menu, _i, _j, _len, _len2;
     for (_i = 0, _len = links.length; _i < _len; _i++) {
       link = links[_i];
       if (link["rel"] === 'next') {
         Ti.App.Properties.setString('nextPageURL', link["url"]);
       }
     }
+    for (_j = 0, _len2 = result.length; _j < _len2; _j++) {
+      json = result[_j];
+      rows.push(t.createRow(json));
+    }
+    rows.push(t.createRowForLoadOldEntry('storedStocks'));
+    mainTable.setData(rows);
     actInd.hide();
     mainWindow.add(mainTable);
     menu = new menuTable();

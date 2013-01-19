@@ -26,6 +26,10 @@ Qiita = (function() {
       followingTags: {
         url: "https://qiita.com/api/v1/users/" + this.user_name + "/following_tags",
         method: 'GET'
+      },
+      tags: {
+        url: "https://qiita.com/api/v1/tags",
+        method: 'GET'
       }
     };
   }
@@ -165,6 +169,11 @@ Qiita = (function() {
   Qiita.prototype.getFollowingUsers = function(callback) {
     var param;
     param = this.parameter.followingUsers;
+    return this._request(param, false, callback);
+  };
+  Qiita.prototype.getTags = function(callback) {
+    var param;
+    param = this.parameter.tags;
     return this._request(param, false, callback);
   };
   Qiita.prototype.getFollowingTags = function(callback) {
