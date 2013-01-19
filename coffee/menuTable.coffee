@@ -142,10 +142,7 @@ class menuTable
       
       switch table.data[0].rows[curretRowIndex].className
         when "config"
-          Ti.API.info "CONDITION CONFIG"
-          configTableRow = require("configTableRow")
-          configRow = new configTableRow
-          result = configRow
+          return controller.moveToConfigWindow()
         when "stock"
           actInd.message = 'loading...'
           actInd.backgroundColor = '#222'

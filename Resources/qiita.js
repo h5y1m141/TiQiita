@@ -29,10 +29,15 @@ Qiita = (function() {
       }
     };
   }
-  Qiita.prototype._auth = function(param) {
+  Qiita.prototype._auth = function(param, callback) {
     var requestParam, xhr;
     if (typeof param !== "undefined" && param !== null) {
       requestParam = param;
+    } else if (Ti.App.Properties.getString('QiitaLoginID') !== null) {
+      requestParam = {
+        url_name: Ti.App.Properties.getString('QiitaLoginID'),
+        password: Ti.App.Properties.getString('QiitaLoginPassword')
+      };
     } else {
       requestParam = {
         url_name: this.config.url_name,
@@ -42,18 +47,22 @@ Qiita = (function() {
     xhr = Ti.Network.createHTTPClient();
     xhr.open('POST', 'https://qiita.com/api/v1/auth');
     xhr.onload = function() {
-      var body;
+      var body, token;
       body = JSON.parse(this.responseText);
       Ti.API.info("status code: " + this.status);
-      return Ti.App.Properties.setString('QiitaToken', body.token);
+      Ti.App.Properties.setString('QiitaToken', body.token);
+      token = body.token;
+      return callback(token);
     };
     xhr.onerror = function(e) {
-      var error;
-      error = JSON.parse(e);
-      if (error.type === "error") {
-        Ti.App.Properties.setString('QiitaTokenFail', error.error);
-        return Ti.API.info("_auth error error message is " + error.error);
-      }
+      var error, token;
+      Ti.API.info("status code: " + this.status);
+      Ti.App.Properties.setString('QiitaToken', null);
+      error = JSON.parse(this.responseText);
+      Ti.API.info(error.error);
+      Ti.App.Properties.setString('QiitaTokenFail', error.error);
+      token = null;
+      return callback(token);
     };
     xhr.send(requestParam);
     return true;

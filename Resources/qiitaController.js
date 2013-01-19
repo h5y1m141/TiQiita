@@ -61,6 +61,16 @@ qiitaController = (function() {
   qiitaController.prototype.webViewHeaderUpdate = function(json) {
     return webview.headerUpdate(json);
   };
+  qiitaController.prototype.moveToConfigWindow = function() {
+    var configMenu, configWindow, menu;
+    configMenu = require("ui/configMenu");
+    menu = new configMenu();
+    configWindow = new win();
+    configWindow.title = "アカウント情報";
+    configWindow.backButtonTitle = '戻る';
+    configWindow.add(menu);
+    return tab.open(configWindow);
+  };
   qiitaController.prototype.moveToWebViewWindow = function() {
     var actionBtn;
     actionBtn = Ti.UI.createButton({
@@ -111,8 +121,20 @@ qiitaController = (function() {
   qiitaController.prototype.show = function() {
     return alert("start contoroller show");
   };
-  qiitaController.prototype.login = function(flg) {
-    Ti.API.info("start Qiita Login. login flag is " + flg);
+  qiitaController.prototype.login = function(param) {
+    qiita._auth(param, function(token) {
+      actInd.backgroundColor = '#222';
+      actInd.zIndex = 10;
+      actInd.show();
+      if (token === null) {
+        alert("ユーザIDかパスワードが間違ってます");
+      } else {
+        alert("認証出来ました");
+        Ti.App.Properties.setString('QiitaLoginID', param.url_name);
+        Ti.App.Properties.setString('QiitaLoginPassword', param.password);
+      }
+      return actInd.hide();
+    });
     return true;
   };
   return qiitaController;

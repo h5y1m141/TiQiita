@@ -120,7 +120,7 @@ menuTable = (function() {
       return _results;
     };
     table.addEventListener('click', function(e) {
-      var allLabelIndexPosition, configIndexPosition, configRow, configTableRow, curretRowIndex, items, json, result, rows, stockFlg, stockIndexPosition, tagName, _i, _len;
+      var allLabelIndexPosition, configIndexPosition, curretRowIndex, items, json, result, rows, stockFlg, stockIndexPosition, tagName, _i, _len;
       curretRowIndex = e.index;
       resetBackGroundColor(table.data[0].rows);
       table.data[0].rows[curretRowIndex].backgroundColor = qiitaColor;
@@ -136,11 +136,7 @@ menuTable = (function() {
       allLabelIndexPosition = 3;
       switch (table.data[0].rows[curretRowIndex].className) {
         case "config":
-          Ti.API.info("CONDITION CONFIG");
-          configTableRow = require("configTableRow");
-          configRow = new configTableRow;
-          result = configRow;
-          break;
+          return controller.moveToConfigWindow();
         case "stock":
           actInd.message = 'loading...';
           actInd.backgroundColor = '#222';
