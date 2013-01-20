@@ -1,15 +1,15 @@
 moment = require('lib/moment.min')
 momentja = require('lib/momentja')
 Qiita = require('qiita')
-tableView = require('tableView')
-menuTable = require('menuTable')
+tableView = require('ui/tableView')
+menuTable = require('ui/menuTable')
 
 
 qiitaController = require('qiitaController')
 defaultState = require("defaultState")
 slideState = require("slideState")
 
-webView = require('webView')
+webView = require('ui/webView')
 win = require('ui/window')
 activityIndicator = require('ui/activityIndicator')
 
