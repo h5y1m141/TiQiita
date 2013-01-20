@@ -126,31 +126,39 @@ class Qiita
     Ti.API.info parameter.method + ":" + parameter.url
     xhr.open(parameter.method,parameter.url)
     xhr.onload = ->
-
-      responseHeaders = xhr.responseHeaders
-      
-      if responseHeaders.Link
-        relLink = self._convertLinkHeaderToJSON(responseHeaders.Link)
-      else
-        relLink = null
-
-      json = JSON.parse(xhr.responseText)
-
-      
-      if json is null
-        self._isLastItems true
-      else
-        self._isLastItems false
-
+      json = JSON.parse(@.responseText)
       Ti.API.info "ITEM COUNT : #{json.length}"
-      # QiitaAPIから取得した投稿情報をTi.App.Propertiesに都度突っ込み
-      # これをローカルDB的に活用する
-      
+
+      # アプリ起動中にキャッシュしたい情報かどうかをこのvalueパラメータ
+      # にて行う。
+      # 具体的には、次のページのURL情報やローカルのDB的にキャッシュしたい
+      # 場合にはtrueにしてる
+
       if value isnt false
-        self._storedStocks(value,xhr.responseText)
+        # QiitaAPIから取得した投稿情報をTi.App.Propertiesに都度突っ込み
+        # これをローカルDB的に活用する
+        
+        self._storedStocks(value,@.responseText)
 
+        # ページネーションに必要となる
+        # 次ページと最終ページのURLのハンドリング処理
 
-      callback(json,relLink)
+        responseHeaders = @.responseHeaders
+        
+        if responseHeaders.Link
+          relLink = self._convertLinkHeaderToJSON(responseHeaders.Link)
+          for link in relLink
+            if link["rel"] == 'next'
+              Ti.API.info link["url"]
+              Ti.App.Properties.setString('nextPageURL',link["url"])
+            else if link["rel"] == 'last'
+              Ti.App.Properties.setString('lastPageURL',link["url"])
+            else
+              Ti.API.info "done"
+        else
+          relLink = null
+      Ti.API.info "callback start.json is #{json}"
+      callback(json)
       
     xhr.send()
     
@@ -182,9 +190,6 @@ class Qiita
     object1 = object1.concat object2
     return _(object1).sortBy("created_at")
 
-  _isLastItems:(flg) ->
-    Ti.API.info "start isLastItems. flg is #{flg}"
-    return Ti.App.properties.setBool "isLastPage",flg
 
   
   isConnected:() ->
@@ -218,7 +223,7 @@ class Qiita
     param =
       "url": url
       "method":'GET'
-
+    
     @._request(param,storedTo,callback)
     # @._mockObject("items",'storedStocks',callback)
 
