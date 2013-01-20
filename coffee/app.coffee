@@ -53,10 +53,6 @@ else
 
   rows = []
   qiita.getFeed( (result,links) ->
-
-    for link in links
-      if link["rel"] == 'next'
-        Ti.App.Properties.setString('nextPageURL',link["url"])
       
     rows.push(t.createRow(json)) for json in result
     rows.push(t.createRowForLoadOldEntry('storedStocks'))

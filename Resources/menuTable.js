@@ -105,7 +105,7 @@ menuTable = (function() {
         }
       }
     };
-    slideEvent = function() {
+    slideEvent = function(currentMenu) {
       Ti.App.Properties.setBool("stateMainTableSlide", true);
       return controller.slideMainTable();
     };
@@ -120,7 +120,7 @@ menuTable = (function() {
       return _results;
     };
     table.addEventListener('click', function(e) {
-      var allLabelIndexPosition, configIndexPosition, curretRowIndex, items, json, result, rows, stockFlg, stockIndexPosition, tagName, _i, _len;
+      var allLabelIndexPosition, configIndexPosition, curretRowIndex, items, json, result, stockFlg, stockIndexPosition, tagName, _i, _len;
       curretRowIndex = e.index;
       resetBackGroundColor(table.data[0].rows);
       table.data[0].rows[curretRowIndex].backgroundColor = qiitaColor;
@@ -130,6 +130,7 @@ menuTable = (function() {
         items = JSON.parse(Ti.App.Properties.getString('storedMyStocks'));
       } else {
         items = JSON.parse(Ti.App.Properties.getString('storedStocks'));
+        Ti.API.info("loaded items is " + stockFlg + " items is " + items.length);
       }
       configIndexPosition = 0;
       stockIndexPosition = 1;
@@ -138,27 +139,7 @@ menuTable = (function() {
         case "config":
           return controller.moveToConfigWindow();
         case "stock":
-          actInd.message = 'loading...';
-          actInd.backgroundColor = '#222';
-          actInd.opacity = 0.8;
-          actInd.show();
-          rows = [];
-          qiita.getMyStocks(function(result, links) {
-            var json, link, _i, _j, _len, _len2;
-            for (_i = 0, _len = links.length; _i < _len; _i++) {
-              link = links[_i];
-              if (link["rel"] === 'next') {
-                Ti.App.Properties.setString('nextPageURL', link["url"]);
-              }
-            }
-            for (_j = 0, _len2 = result.length; _j < _len2; _j++) {
-              json = result[_j];
-              rows.push(t.createRow(json));
-            }
-            rows.push(t.createRowForLoadOldEntry('storedMyStocks'));
-            actInd.hide();
-            return mainTable.setData(rows);
-          });
+          controller.getMyStocks();
           break;
         case "allLabel":
           Ti.API.info("CONDITION ALL");
@@ -166,7 +147,7 @@ menuTable = (function() {
             json = items[_i];
             result.push(t.createRow(json));
           }
-          result.push(t.createRowForLoadOldEntry());
+          result.push(t.createRowForLoadOldEntry('storedStocks'));
           break;
         default:
           tagName = e.rowData.className;

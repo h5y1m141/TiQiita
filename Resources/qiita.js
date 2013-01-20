@@ -112,24 +112,31 @@ Qiita = (function() {
     Ti.API.info(parameter.method + ":" + parameter.url);
     xhr.open(parameter.method, parameter.url);
     xhr.onload = function() {
-      var json, relLink, responseHeaders;
-      responseHeaders = xhr.responseHeaders;
-      if (responseHeaders.Link) {
-        relLink = self._convertLinkHeaderToJSON(responseHeaders.Link);
-      } else {
-        relLink = null;
-      }
-      json = JSON.parse(xhr.responseText);
-      if (json === null) {
-        self._isLastItems(true);
-      } else {
-        self._isLastItems(false);
-      }
+      var json, link, relLink, responseHeaders, _i, _len;
+      json = JSON.parse(this.responseText);
       Ti.API.info("ITEM COUNT : " + json.length);
       if (value !== false) {
-        self._storedStocks(value, xhr.responseText);
+        self._storedStocks(value, this.responseText);
+        responseHeaders = this.responseHeaders;
+        if (responseHeaders.Link) {
+          relLink = self._convertLinkHeaderToJSON(responseHeaders.Link);
+          for (_i = 0, _len = relLink.length; _i < _len; _i++) {
+            link = relLink[_i];
+            if (link["rel"] === 'next') {
+              Ti.API.info(link["url"]);
+              Ti.App.Properties.setString('nextPageURL', link["url"]);
+            } else if (link["rel"] === 'last') {
+              Ti.App.Properties.setString('lastPageURL', link["url"]);
+            } else {
+              Ti.API.info("done");
+            }
+          }
+        } else {
+          relLink = null;
+        }
       }
-      return callback(json, relLink);
+      Ti.API.info("start callback. items is " + json.length);
+      return callback(json);
     };
     return xhr.send();
   };
@@ -153,10 +160,6 @@ Qiita = (function() {
     _ = require("lib/underscore-1.4.3.min");
     object1 = object1.concat(object2);
     return _(object1).sortBy("created_at");
-  };
-  Qiita.prototype._isLastItems = function(flg) {
-    Ti.API.info("start isLastItems. flg is " + flg);
-    return Ti.App.properties.setBool("isLastPage", flg);
   };
   Qiita.prototype.isConnected = function() {
     return Ti.Network.online;

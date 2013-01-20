@@ -115,8 +115,7 @@ tableView = (function() {
     return row;
   };
   tableView.prototype.createRowForLoadOldEntry = function(storedTo) {
-    var nextPage, row, textLabel;
-    nextPage = Ti.App.Properties.getString('nextPageURL');
+    var row, textLabel;
     row = Ti.UI.createTableViewRow({
       touchEnabled: false,
       width: 320,
@@ -141,7 +140,6 @@ tableView = (function() {
     });
     row.add(textLabel);
     row.className = 'loadOldEntry';
-    row.url = nextPage;
     row.storedTo = storedTo;
     return row;
   };

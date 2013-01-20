@@ -118,8 +118,6 @@ class tableView
 
     return row
   createRowForLoadOldEntry: (storedTo) ->
-    nextPage =  Ti.App.Properties.getString('nextPageURL')
-
     row = Ti.UI.createTableViewRow
       touchEnabled:false
       width:320
@@ -141,7 +139,6 @@ class tableView
       textAlign:1
     row.add(textLabel)
     row.className = 'loadOldEntry'
-    row.url = nextPage
     row.storedTo = storedTo
     return row
     

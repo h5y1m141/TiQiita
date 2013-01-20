@@ -1,38 +1,80 @@
 class qiitaController
   constructor: () ->
     @state = new defaultState()
+
     
-        
-    
-  loadOldEntry: (storedTo) ->
-    url = Ti.App.Properties.getString('nextPageURL')
-    Ti.API.info "NEXTPAGE:#{url}"
+  loadEntry: () ->
     actInd.backgroundColor = '#222'
+    actInd.zIndex = 10
     actInd.show()
-        
-    qiita.getNextFeed(url,storedTo,(result,links) ->
+    
+    qiita.getFeed( (result,links) ->
+      rows = []
       for link in links
         if link["rel"] == 'next'
           Ti.App.Properties.setString('nextPageURL',link["url"])
-          
         
-      for json in result
-        r = t.createRow(json)
-        lastIndex = t.lastRowIndex()
+      rows.push(t.createRow(json)) for json in result
+      rows.push(t.createRowForLoadOldEntry('storedStocks'))
+      mainTable.setData rows
+      actInd.hide()
+      return true
+    )  
+    
+  loadOldEntry: (storedTo) ->
+    url = Ti.App.Properties.getString('nextPageURL')
+    Ti.API.info "loadOldEntry start. NEXTPAGE:#{url}"
+    Ti.API.info "storedTo is #{storedTo}"
+    actInd.backgroundColor = '#222'
+    actInd.opacity = 1.0
+    actInd.zIndex = 10
+    actInd.show()
+    MAXITEMCOUNT = 20  
+    qiita.getNextFeed(url,storedTo,(result) ->
+      Ti.API.info "getNextFeed start. result is #{result.length}"
 
-        t.insertRow(lastIndex,r)
-        actInd.hide()
-        
       # ここで投稿件数をチェックして、20件以下だったら過去のを
       # 読み込むrowを非表示にすればOK
-        
-      MAXITEMCOUNT = 20
       if result.length isnt MAXITEMCOUNT
+        Ti.API.info "loadOldEntry hide"
         t.hideLastRow()
+      else
+        Ti.API.info "loadOldEntry show"
+        for json in result
+          r = t.createRow(json)
+          lastIndex = t.lastRowIndex()
+          t.insertRow(lastIndex,r)
+          
+      actInd.hide()
         
     )
     return true
+    
+  getMyStocks:() ->
+    actInd.message = 'loading...'
+    actInd.backgroundColor = '#222'
+    actInd.opacity = 1.0
+    actInd.zIndex = 10
+    actInd.show()
+    rows = []
+    MAXITEMCOUNT = 20 # 1リクエスト辺りに読み込まれる最大件数
+    mainTableLength = mainTable.data[0].rows.length-1
 
+    qiita.getMyStocks( (result) ->
+      rows.push(t.createRow(json)) for json in result
+      
+      if result.length isnt MAXITEMCOUNT
+        Ti.API.info "loadOldEntry hide"
+      else
+        Ti.API.info "loadOldEntry show"
+        rows.push(t.createRowForLoadOldEntry('storedMyStocks'))
+        
+      actInd.hide()
+      mainTable.setData rows
+    )
+
+    return true
+    
   stockItemToQiita: (uuid) ->
     uuid = Ti.App.Properties.getString('stockUUID')
     actInd.backgroundColor = '#222'
@@ -99,23 +141,6 @@ class qiitaController
     webWindow.rightNavButton = actionBtn
     return tab.open(webWindow)
 
-  loadEntry: () ->
-    actInd.backgroundColor = '#222'
-    actInd.zIndex = 10
-    actInd.show()
-    
-    qiita.getFeed( (result,links) ->
-      rows = []
-      for link in links
-        if link["rel"] == 'next'
-          Ti.App.Properties.setString('nextPageURL',link["url"])
-        
-      rows.push(t.createRow(json)) for json in result
-      rows.push(t.createRowForLoadOldEntry('storedStocks'))
-      mainTable.setData rows
-      actInd.hide()
-      return true
-    )  
     
     
   show: () ->

@@ -28,15 +28,9 @@ if (testsEnabled === true) {
   mainWindow.add(actInd);
   rows = [];
   qiita.getFeed(function(result, links) {
-    var json, link, menu, _i, _j, _len, _len2;
-    for (_i = 0, _len = links.length; _i < _len; _i++) {
-      link = links[_i];
-      if (link["rel"] === 'next') {
-        Ti.App.Properties.setString('nextPageURL', link["url"]);
-      }
-    }
-    for (_j = 0, _len2 = result.length; _j < _len2; _j++) {
-      json = result[_j];
+    var json, menu, _i, _len;
+    for (_i = 0, _len = result.length; _i < _len; _i++) {
+      json = result[_i];
       rows.push(t.createRow(json));
     }
     rows.push(t.createRowForLoadOldEntry('storedStocks'));

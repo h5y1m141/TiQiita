@@ -157,7 +157,8 @@ class Qiita
               Ti.API.info "done"
         else
           relLink = null
-      Ti.API.info "callback start.json is #{json}"
+
+      Ti.API.info "start callback. items is #{json.length}"
       callback(json)
       
     xhr.send()
@@ -237,7 +238,7 @@ class Qiita
       url:@parameter.myStocks.url + "?token=#{token}"
       method:@parameter.myStocks.method
 
-    @._request(param,'storedMyStocks',callback)
+    return @._request(param,'storedMyStocks',callback)
     # @._mockObject("stocks",'storedMyStocks',callback)
 
       

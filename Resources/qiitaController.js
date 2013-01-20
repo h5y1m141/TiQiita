@@ -3,14 +3,13 @@ qiitaController = (function() {
   function qiitaController() {
     this.state = new defaultState();
   }
-  qiitaController.prototype.loadOldEntry = function(storedTo) {
-    var url;
-    url = Ti.App.Properties.getString('nextPageURL');
-    Ti.API.info("NEXTPAGE:" + url);
+  qiitaController.prototype.loadEntry = function() {
     actInd.backgroundColor = '#222';
+    actInd.zIndex = 10;
     actInd.show();
-    qiita.getNextFeed(url, storedTo, function(result, links) {
-      var MAXITEMCOUNT, json, lastIndex, link, r, _i, _j, _len, _len2;
+    return qiita.getFeed(function(result, links) {
+      var json, link, rows, _i, _j, _len, _len2;
+      rows = [];
       for (_i = 0, _len = links.length; _i < _len; _i++) {
         link = links[_i];
         if (link["rel"] === 'next') {
@@ -19,15 +18,67 @@ qiitaController = (function() {
       }
       for (_j = 0, _len2 = result.length; _j < _len2; _j++) {
         json = result[_j];
-        r = t.createRow(json);
-        lastIndex = t.lastRowIndex();
-        t.insertRow(lastIndex, r);
-        actInd.hide();
+        rows.push(t.createRow(json));
       }
-      MAXITEMCOUNT = 20;
+      rows.push(t.createRowForLoadOldEntry('storedStocks'));
+      mainTable.setData(rows);
+      actInd.hide();
+      return true;
+    });
+  };
+  qiitaController.prototype.loadOldEntry = function(storedTo) {
+    var MAXITEMCOUNT, url;
+    url = Ti.App.Properties.getString('nextPageURL');
+    Ti.API.info("loadOldEntry start. NEXTPAGE:" + url);
+    Ti.API.info("storedTo is " + storedTo);
+    actInd.backgroundColor = '#222';
+    actInd.opacity = 1.0;
+    actInd.zIndex = 10;
+    actInd.show();
+    MAXITEMCOUNT = 20;
+    qiita.getNextFeed(url, storedTo, function(result) {
+      var json, lastIndex, r, _i, _len;
+      Ti.API.info("getNextFeed start. result is " + result.length);
       if (result.length !== MAXITEMCOUNT) {
-        return t.hideLastRow();
+        Ti.API.info("loadOldEntry hide");
+        t.hideLastRow();
+      } else {
+        Ti.API.info("loadOldEntry show");
+        for (_i = 0, _len = result.length; _i < _len; _i++) {
+          json = result[_i];
+          r = t.createRow(json);
+          lastIndex = t.lastRowIndex();
+          t.insertRow(lastIndex, r);
+        }
       }
+      return actInd.hide();
+    });
+    return true;
+  };
+  qiitaController.prototype.getMyStocks = function() {
+    var MAXITEMCOUNT, mainTableLength, rows;
+    actInd.message = 'loading...';
+    actInd.backgroundColor = '#222';
+    actInd.opacity = 1.0;
+    actInd.zIndex = 10;
+    actInd.show();
+    rows = [];
+    MAXITEMCOUNT = 20;
+    mainTableLength = mainTable.data[0].rows.length - 1;
+    qiita.getMyStocks(function(result) {
+      var json, _i, _len;
+      for (_i = 0, _len = result.length; _i < _len; _i++) {
+        json = result[_i];
+        rows.push(t.createRow(json));
+      }
+      if (result.length !== MAXITEMCOUNT) {
+        Ti.API.info("loadOldEntry hide");
+      } else {
+        Ti.API.info("loadOldEntry show");
+        rows.push(t.createRowForLoadOldEntry('storedMyStocks'));
+      }
+      actInd.hide();
+      return mainTable.setData(rows);
     });
     return true;
   };
@@ -94,29 +145,6 @@ qiitaController = (function() {
     webview.show();
     webWindow.rightNavButton = actionBtn;
     return tab.open(webWindow);
-  };
-  qiitaController.prototype.loadEntry = function() {
-    actInd.backgroundColor = '#222';
-    actInd.zIndex = 10;
-    actInd.show();
-    return qiita.getFeed(function(result, links) {
-      var json, link, rows, _i, _j, _len, _len2;
-      rows = [];
-      for (_i = 0, _len = links.length; _i < _len; _i++) {
-        link = links[_i];
-        if (link["rel"] === 'next') {
-          Ti.App.Properties.setString('nextPageURL', link["url"]);
-        }
-      }
-      for (_j = 0, _len2 = result.length; _j < _len2; _j++) {
-        json = result[_j];
-        rows.push(t.createRow(json));
-      }
-      rows.push(t.createRowForLoadOldEntry('storedStocks'));
-      mainTable.setData(rows);
-      actInd.hide();
-      return true;
-    });
   };
   qiitaController.prototype.show = function() {
     return alert("start contoroller show");

@@ -108,7 +108,8 @@ class menuTable
         if value.length isnt 0
           return t.createRow(items[i])
 
-    slideEvent = ->
+    slideEvent = (currentMenu) ->
+        
       Ti.App.Properties.setBool("stateMainTableSlide",true)
       # controller.slideMainTableを呼び出して
       # スライド状態から標準状態に画面を戻す
@@ -135,7 +136,10 @@ class menuTable
         items = JSON.parse(Ti.App.Properties.getString('storedMyStocks'))
       else
         items = JSON.parse(Ti.App.Properties.getString('storedStocks'))
+        Ti.API.info "loaded items is #{stockFlg} items is #{items.length}"
 
+      
+      
       configIndexPosition   = 0
       stockIndexPosition    = 1
       allLabelIndexPosition = 3
@@ -144,23 +148,7 @@ class menuTable
         when "config"
           return controller.moveToConfigWindow()
         when "stock"
-          actInd.message = 'loading...'
-          actInd.backgroundColor = '#222'
-          actInd.opacity = 0.8
-          actInd.show()
-
-          rows = []
-          qiita.getMyStocks( (result,links) ->
-            for link in links
-              if link["rel"] == 'next'
-                Ti.App.Properties.setString('nextPageURL',link["url"])
-
-            rows.push(t.createRow(json)) for json in result
-            rows.push(t.createRowForLoadOldEntry('storedMyStocks'))
-            actInd.hide()
-            mainTable.setData rows
-          )
-
+          controller.getMyStocks()
         when "allLabel"
           Ti.API.info "CONDITION ALL"
 
@@ -169,7 +157,7 @@ class menuTable
           # 読み込むためのラベルを配置する
           # 理由としては該当のタグにマッチする投稿情報のみ
           # 表示にした状態で loadOldEntry実行すると処理が煩雑になるため
-          result.push(t.createRowForLoadOldEntry())
+          result.push(t.createRowForLoadOldEntry('storedStocks'))
         else
           tagName = e.rowData.className
 
