@@ -1,8 +1,10 @@
 var configMenu;
 configMenu = (function() {
   function configMenu() {
-    var groupData, label1, label2, label3, loginGroup, row1, row2, row3, tableView, textField1, textField2;
+    var QiitaLoginID, QiitaLoginPassword, groupData, label1, label2, label3, loginGroup, row1, row2, row3, tableView, textField1, textField2;
     groupData = Ti.UI.createTableViewSection();
+    QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID');
+    QiitaLoginPassword = Ti.App.Properties.getString('QiitaLoginPassword');
     row1 = Ti.UI.createTableViewRow({
       width: 320,
       height: 50
@@ -71,6 +73,12 @@ configMenu = (function() {
     row2.add(label2);
     row2.add(textField2);
     row2.className = 'password';
+    if (QiitaLoginID !== null) {
+      textField1.value = QiitaLoginID;
+    }
+    if (QiitaLoginPassword !== null) {
+      textField2.value = QiitaLoginPassword;
+    }
     groupData.add(row1);
     groupData.add(row2);
     loginGroup = Ti.UI.createTableViewSection();

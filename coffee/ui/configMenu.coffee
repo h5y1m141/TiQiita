@@ -2,7 +2,9 @@ class configMenu
   constructor: () ->
     groupData = Ti.UI.createTableViewSection()
       
-
+    QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID')
+    QiitaLoginPassword = Ti.App.Properties.getString('QiitaLoginPassword')
+    
     row1 = Ti.UI.createTableViewRow
       width: 320
       height:50
@@ -31,7 +33,7 @@ class configMenu
       borderStyle:Ti.UI.INPUT_BORDERSTYLE_ROUNDED
       autocorrect:false
       autocapitalization: Ti.UI.TEXT_AUTOCAPITALIZATION_NONE
-      
+    
     textField1.addEventListener('change',(e) ->
       Ti.App.Properties.setString('QiitaLoginID',e.value)
     )
@@ -76,8 +78,13 @@ class configMenu
     row2.add label2
     row2.add textField2
     row2.className = 'password'
-
     
+    if QiitaLoginID isnt null
+      textField1.value = QiitaLoginID
+
+    if QiitaLoginPassword isnt null
+      textField2.value = QiitaLoginPassword
+      
     groupData.add row1
     groupData.add row2
 
