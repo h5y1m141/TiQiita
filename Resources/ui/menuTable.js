@@ -98,8 +98,9 @@ menuTable = (function() {
         tags = items[i].tags;
         _ = require("lib/underscore-min");
         value = _.where(tags, {
-          "url_name": tagName
+          "name": tagName
         });
+        Ti.API.info("tags is " + tags + " matchTag .tagName is " + tagName + " value is " + value);
         if (value.length !== 0) {
           return t.createRow(items[i]);
         }
@@ -153,6 +154,7 @@ menuTable = (function() {
           tagName = e.rowData.className;
           result.push(matchTag(items, tagName));
       }
+      Ti.API.info("result length is " + result.length);
       return mainTable.setData(result);
     });
     qiita.getTags(function(result, links) {
@@ -198,10 +200,10 @@ menuTable = (function() {
             fontSize: 12,
             fontWeight: 'bold'
           },
-          text: json.url_name
+          text: json.name
         });
         menuRow.add(textLabel);
-        menuRow.className = json.url_name;
+        menuRow.className = json.name;
         rows.push(menuRow);
       }
       return table.setData(rows);

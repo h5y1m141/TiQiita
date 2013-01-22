@@ -12,7 +12,8 @@ if testsEnabled
   
   # include custom tests
   # require('test/example')
-  require('test/qiita')
+  # require('test/qiita')
+  require('test/qiitaController')
   # require('test/tableView')
   
   jasmine.getEnv().addReporter(new jasmine.TitaniumReporter())

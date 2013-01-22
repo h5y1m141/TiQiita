@@ -103,7 +103,9 @@ class menuTable
         tags = items[i].tags
         _ = require("lib/underscore-min")
 
-        value = _.where(tags,{"url_name":tagName})
+        value = _.where(tags,{"name":tagName})
+        Ti.API.info "tags is #{tags} matchTag .tagName is #{tagName} value is #{value}"
+        
 
         if value.length isnt 0
           return t.createRow(items[i])
@@ -164,7 +166,7 @@ class menuTable
           result.push(matchTag(items,tagName))
       
           
-      
+      Ti.API.info "result length is #{result.length}"
       mainTable.setData result
     )
       
@@ -215,9 +217,9 @@ class menuTable
           font:
             fontSize:12
             fontWeight:'bold'
-          text:json.url_name
+          text:json.name
         menuRow.add textLabel
-        menuRow.className = json.url_name
+        menuRow.className = json.name
         
         rows.push menuRow
       

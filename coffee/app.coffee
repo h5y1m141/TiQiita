@@ -5,7 +5,8 @@ tableView = require('ui/tableView')
 menuTable = require('ui/menuTable')
 
 
-qiitaController = require('qiitaController')
+qiitaController = require('controllers/qiitaController')
+
 defaultState = require("defaultState")
 slideState = require("slideState")
 

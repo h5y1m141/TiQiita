@@ -120,7 +120,18 @@ class Qiita
   # - 最終ページに到達した場合の処理
     
   _request:(parameter,value,callback) ->
+    
     self = @
+    if self.isConnected() is false
+      # controller.errorHandle()
+      logData =
+        source  : "qiita._request()"
+        time    : moment().format("YYYY-MM-DD hh:mm:ss")
+        message : "fail"
+      Ti.API.info logData
+
+      controller.logging(logData)
+      
     xhr = Ti.Network.createHTTPClient()
 
     Ti.API.info parameter.method + ":" + parameter.url
@@ -161,6 +172,11 @@ class Qiita
       Ti.API.info "start callback. items is #{json.length}"
       callback(json)
       
+    xhr.onerror = (e) ->
+      error = JSON.parse(e)
+      controller.errorHandle(error.error)
+      
+    xhr.timeout = 5000
     xhr.send()
     
   # Qiita APIの仕様としてページネーションの情報は以下のような形式で
@@ -186,8 +202,6 @@ class Qiita
     
   _mergeItems:(object1,object2) ->
     _ = require("lib/underscore-1.4.3.min")
-    # return _.object(object1,object2)
-    # return _.extend(object1,object2)
     object1 = object1.concat object2
     return _(object1).sortBy("created_at")
 

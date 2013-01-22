@@ -106,8 +106,17 @@ Qiita = (function() {
     return true;
   };
   Qiita.prototype._request = function(parameter, value, callback) {
-    var self, xhr;
+    var logData, self, xhr;
     self = this;
+    if (self.isConnected() === false) {
+      logData = {
+        source: "qiita._request()",
+        time: moment().format("YYYY-MM-DD hh:mm:ss"),
+        message: "fail"
+      };
+      Ti.API.info(logData);
+      controller.logging(logData);
+    }
     xhr = Ti.Network.createHTTPClient();
     Ti.API.info(parameter.method + ":" + parameter.url);
     xhr.open(parameter.method, parameter.url);
@@ -138,6 +147,12 @@ Qiita = (function() {
       Ti.API.info("start callback. items is " + json.length);
       return callback(json);
     };
+    xhr.onerror = function(e) {
+      var error;
+      error = JSON.parse(e);
+      return controller.errorHandle(error.error);
+    };
+    xhr.timeout = 5000;
     return xhr.send();
   };
   Qiita.prototype._convertLinkHeaderToJSON = function(value) {
