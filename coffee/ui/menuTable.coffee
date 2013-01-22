@@ -141,11 +141,6 @@ class menuTable
         Ti.API.info "loaded items is #{stockFlg} items is #{items.length}"
 
       
-      
-      configIndexPosition   = 0
-      stockIndexPosition    = 1
-      allLabelIndexPosition = 3
-      
       switch table.data[0].rows[curretRowIndex].className
         when "config"
           return controller.moveToConfigWindow()

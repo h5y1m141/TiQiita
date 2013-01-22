@@ -121,7 +121,7 @@ menuTable = (function() {
       return _results;
     };
     table.addEventListener('click', function(e) {
-      var allLabelIndexPosition, configIndexPosition, curretRowIndex, items, json, result, stockFlg, stockIndexPosition, tagName, _i, _len;
+      var curretRowIndex, items, json, result, stockFlg, tagName, _i, _len;
       curretRowIndex = e.index;
       resetBackGroundColor(table.data[0].rows);
       table.data[0].rows[curretRowIndex].backgroundColor = qiitaColor;
@@ -133,9 +133,6 @@ menuTable = (function() {
         items = JSON.parse(Ti.App.Properties.getString('storedStocks'));
         Ti.API.info("loaded items is " + stockFlg + " items is " + items.length);
       }
-      configIndexPosition = 0;
-      stockIndexPosition = 1;
-      allLabelIndexPosition = 3;
       switch (table.data[0].rows[curretRowIndex].className) {
         case "config":
           return controller.moveToConfigWindow();
