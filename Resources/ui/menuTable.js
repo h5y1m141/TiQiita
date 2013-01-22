@@ -63,7 +63,7 @@ menuTable = (function() {
         backgroundColor: "transparent"
       });
       stockLabel = Ti.UI.createLabel(fontThemeWhite);
-      stockLabel.text = "ストック投稿を見る";
+      stockLabel.text = "ストック一覧";
       stockLabel.top = 8;
       stockLabel.left = 35;
       stockRow = Ti.UI.createTableViewRow(rowColorTheme);
@@ -79,7 +79,7 @@ menuTable = (function() {
       var tagBtn, tagLabel, tagRow;
       tagRow = Ti.UI.createTableViewRow(rowColorTheme);
       tagLabel = Ti.UI.createLabel(fontThemeWhite);
-      tagLabel.text = "タグを見る";
+      tagLabel.text = "フォローしてるタグ";
       tagLabel.top = 8;
       tagLabel.left = 35;
       tagBtn = Ti.UI.createImageView({
@@ -121,53 +121,31 @@ menuTable = (function() {
       return _results;
     };
     table.addEventListener('click', function(e) {
-      var curretRowIndex, items, json, result, stockFlg, tagName, _i, _len;
+      var curretRowIndex;
       curretRowIndex = e.index;
       resetBackGroundColor(table.data[0].rows);
       table.data[0].rows[curretRowIndex].backgroundColor = qiitaColor;
-      result = [];
-      stockFlg = table.data[0].rows[curretRowIndex].className;
-      if (stockFlg === "stock") {
-        items = JSON.parse(Ti.App.Properties.getString('storedMyStocks'));
-      } else {
-        items = JSON.parse(Ti.App.Properties.getString('storedStocks'));
-        Ti.API.info("loaded items is " + stockFlg + " items is " + items.length);
-      }
-      switch (table.data[0].rows[curretRowIndex].className) {
-        case "config":
-          return controller.moveToConfigWindow();
-        case "stock":
-          controller.getMyStocks();
-          break;
-        case "allLabel":
-          Ti.API.info("CONDITION ALL");
-          for (_i = 0, _len = items.length; _i < _len; _i++) {
-            json = items[_i];
-            result.push(t.createRow(json));
-          }
-          result.push(t.createRowForLoadOldEntry('storedStocks'));
-          break;
-        default:
-          tagName = e.rowData.className;
-          result.push(matchTag(items, tagName));
-      }
-      Ti.API.info("result length is " + result.length);
-      return mainTable.setData(result);
+      return controller.selectMenu(table.data[0].rows[curretRowIndex].className);
     });
-    qiita.getTags(function(result, links) {
-      var allLabel, allLabelRow, json, menuRow, rows, textLabel, _i, _len;
-      rows = [makeConfigRow(), makeStockRow(), makeTagRow()];
+    qiita.getFollowingTags(function(result, links) {
+      var allLabel, allLabelRow, allStockBtn, json, menuRow, rows, textLabel, _i, _len;
       allLabelRow = Ti.UI.createTableViewRow(rowColorTheme);
       allLabelRow.backgroundColor = qiitaColor;
       allLabelRow.selectedBackgroundColor = backgroundColorSub;
       allLabelRow.addEventListener('click', function(e) {
         return slideEvent();
       });
+      allStockBtn = Ti.UI.createImageView({
+        image: "ui/image/light_list.png",
+        left: 5,
+        top: 8,
+        backgroundColor: "transparent"
+      });
       allLabel = Ti.UI.createLabel({
         width: 158,
         height: 40,
         top: 0,
-        left: 0,
+        left: 35,
         wordWrap: true,
         color: '#fff',
         font: {
@@ -177,8 +155,9 @@ menuTable = (function() {
         text: "ALL"
       });
       allLabelRow.className = "allLabel";
+      allLabelRow.add(allStockBtn);
       allLabelRow.add(allLabel);
-      rows.push(allLabelRow);
+      rows = [allLabelRow, makeConfigRow(), makeStockRow(), makeTagRow()];
       for (_i = 0, _len = result.length; _i < _len; _i++) {
         json = result[_i];
         menuRow = Ti.UI.createTableViewRow(rowColorTheme);
@@ -190,7 +169,7 @@ menuTable = (function() {
           width: 150,
           height: 40,
           top: 1,
-          left: 0,
+          left: 20,
           wordWrap: true,
           color: '#fff',
           font: {
@@ -200,7 +179,7 @@ menuTable = (function() {
           text: json.name
         });
         menuRow.add(textLabel);
-        menuRow.className = json.name;
+        menuRow.className = json.url_name;
         rows.push(menuRow);
       }
       return table.setData(rows);

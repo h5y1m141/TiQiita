@@ -43,32 +43,6 @@ else
   mainTable = t.getTable()
   mainWindow = new win()
   actInd = new activityIndicator()
-
-
-  # qiita._auth()
-  # Ti.API.info Ti.App.Properties.getString('QiitaToken')
-
-
-  actInd.show()
-  mainWindow.add actInd
-
-  rows = []
-  qiita.getFeed( (result,links) ->
-      
-    rows.push(t.createRow(json)) for json in result
-    rows.push(t.createRowForLoadOldEntry('storedStocks'))
-    mainTable.setData rows
-    actInd.hide()
-    mainWindow.add mainTable
-    # 自分がチェックしてるタグを取得して、左側にサブメニューとして配置
-    menu = new menuTable()
-    mainWindow.add menu
-    
-    return true
-  )  
-
-
-
   listBtn = Ti.UI.createButton
     systemButton: Titanium.UI.iPhone.SystemButton.BOOKMARKS
     
@@ -79,13 +53,20 @@ else
   refreshBtn = Ti.UI.createButton
     systemButton: Titanium.UI.iPhone.SystemButton.REFRESH
     
-
-    
   refreshBtn.addEventListener('click',()->
     controller.loadEntry()
   )
+  menu = new menuTable()
+  
+  mainWindow.add actInd
+  mainWindow.add mainTable
+  mainWindow.add menu
   mainWindow.leftNavButton  = listBtn
   mainWindow.rightNavButton  = refreshBtn
+  
+  controller.getFeed()
+  
+  
 
 
   webWindow = new win()

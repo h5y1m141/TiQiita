@@ -63,7 +63,7 @@ class menuTable
         
       stockLabel = Ti.UI.createLabel(fontThemeWhite)
         
-      stockLabel.text = "ストック投稿を見る"
+      stockLabel.text = "ストック一覧"
       stockLabel.top = 8
       stockLabel.left = 35
 
@@ -82,7 +82,7 @@ class menuTable
         
       tagLabel = Ti.UI.createLabel(fontThemeWhite)
         
-      tagLabel.text = "タグを見る"
+      tagLabel.text = "フォローしてるタグ"
       tagLabel.top = 8
       tagLabel.left = 35
 
@@ -96,7 +96,8 @@ class menuTable
       tagRow.add tagBtn
       return tagRow
 
-            
+    # 取得されてる投稿情報の中で、引数に指定したタグにマッチするもの
+    # だけ抽出してrowを生成
     matchTag = (items,tagName) ->
 
       for i in [0..items.length-1]
@@ -131,42 +132,12 @@ class menuTable
       # クリックされたrowの色を'#59BB0C'に設定
       table.data[0].rows[curretRowIndex].backgroundColor = qiitaColor
 
-      
-      result = []
-      stockFlg = table.data[0].rows[curretRowIndex].className
-      if stockFlg is "stock"
-        items = JSON.parse(Ti.App.Properties.getString('storedMyStocks'))
-      else
-        items = JSON.parse(Ti.App.Properties.getString('storedStocks'))
-        Ti.API.info "loaded items is #{stockFlg} items is #{items.length}"
-
-      
-      switch table.data[0].rows[curretRowIndex].className
-        when "config"
-          return controller.moveToConfigWindow()
-        when "stock"
-          controller.getMyStocks()
-        when "allLabel"
-          Ti.API.info "CONDITION ALL"
-
-          result.push(t.createRow(json)) for json in items
-          # row.classの値が allLabel の場合にのみ過去の投稿を
-          # 読み込むためのラベルを配置する
-          # 理由としては該当のタグにマッチする投稿情報のみ
-          # 表示にした状態で loadOldEntry実行すると処理が煩雑になるため
-          result.push(t.createRowForLoadOldEntry('storedStocks'))
-        else
-          tagName = e.rowData.className
-
-          result.push(matchTag(items,tagName))
-      
-          
-      Ti.API.info "result length is #{result.length}"
-      mainTable.setData result
+      controller.selectMenu table.data[0].rows[curretRowIndex].className
     )
       
-    qiita.getTags( (result,links)->
-      rows = [makeConfigRow(),makeStockRow(),makeTagRow()]
+    qiita.getFollowingTags( (result,links)->
+
+      
       
       allLabelRow = Ti.UI.createTableViewRow(rowColorTheme)
       allLabelRow.backgroundColor = qiitaColor
@@ -174,12 +145,19 @@ class menuTable
 
       allLabelRow.addEventListener('click',(e)->
         slideEvent()
-      )        
+      )
+      
+      allStockBtn = Ti.UI.createImageView
+        image:"ui/image/light_list.png"
+        left:5
+        top:8
+        backgroundColor:"transparent"
+      
       allLabel = Ti.UI.createLabel
         width:158
         height:40
         top:0
-        left:0
+        left:35
         wordWrap:true
         color:'#fff'
         font:
@@ -188,10 +166,10 @@ class menuTable
         text:"ALL"
         
       allLabelRow.className = "allLabel"
+      allLabelRow.add allStockBtn
       allLabelRow.add allLabel
       
-      rows.push allLabelRow
-  
+      rows = [allLabelRow, makeConfigRow(), makeStockRow(), makeTagRow()  ]      
         
       for json in result
         menuRow = Ti.UI.createTableViewRow(rowColorTheme)
@@ -202,11 +180,18 @@ class menuTable
           e.row.backgroundColor = qiitaColor
           slideEvent()
         )
+
+        # c++のようなタグの場合、url_nameを参照すると
+        # HTMLエンコードされている表記になってしまうため
+        # ラベルの表示にはnameプロパティを設定し
+        # classNameはQiitaAPI呼び出す時の処理などでurl_name
+        # 利用したほうが都合良いためそちらを参照している
+
         textLabel = Ti.UI.createLabel
           width:150
           height:40
           top:1
-          left:0
+          left:20
           wordWrap:true
           color:'#fff'
           font:
@@ -214,7 +199,7 @@ class menuTable
             fontWeight:'bold'
           text:json.name
         menuRow.add textLabel
-        menuRow.className = json.name
+        menuRow.className = json.url_name
         
         rows.push menuRow
       

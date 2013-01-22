@@ -16,6 +16,10 @@ class Qiita
       feed:
         url:"https://qiita.com/api/v1/items"
         method:'GET'
+      feedByTag:
+        url:"https://qiita.com/api/v1/tags/@{tagName}/items"
+        method:'GET'
+        
       followingUsers:
         url:"https://qiita.com/api/v1/users/#{@user_name}/following_users"
         method:'GET'
@@ -233,13 +237,19 @@ class Qiita
     param = @parameter.feed
     @._request(param,'storedStocks',callback)
     # @._mockObject("items",'storedStocks',callback)
-    
+
+        
   getNextFeed:(url,storedTo,callback) ->
     param =
       "url": url
       "method":'GET'
     
     @._request(param,storedTo,callback)
+    # @._mockObject("items",'storedStocks',callback)
+
+  getFeedByTag:(tagName,callback) ->
+    param = @parameter.feedByTag
+    @._request(param,tagName,callback)
     # @._mockObject("items",'storedStocks',callback)
 
   getMyStocks:(callback) ->

@@ -1,4 +1,4 @@
-var Qiita, actInd, activityIndicator, controller, defaultState, listBtn, mainTable, mainWindow, menuTable, moment, momentja, qiita, qiitaController, refreshBtn, rows, slideState, t, tab, tabGroup, tableView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win;
+var Qiita, actInd, activityIndicator, controller, defaultState, listBtn, mainTable, mainWindow, menu, menuTable, moment, momentja, qiita, qiitaController, refreshBtn, slideState, t, tab, tabGroup, tableView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win;
 moment = require('lib/moment.min');
 momentja = require('lib/momentja');
 Qiita = require('qiita');
@@ -24,23 +24,6 @@ if (testsEnabled === true) {
   mainTable = t.getTable();
   mainWindow = new win();
   actInd = new activityIndicator();
-  actInd.show();
-  mainWindow.add(actInd);
-  rows = [];
-  qiita.getFeed(function(result, links) {
-    var json, menu, _i, _len;
-    for (_i = 0, _len = result.length; _i < _len; _i++) {
-      json = result[_i];
-      rows.push(t.createRow(json));
-    }
-    rows.push(t.createRowForLoadOldEntry('storedStocks'));
-    mainTable.setData(rows);
-    actInd.hide();
-    mainWindow.add(mainTable);
-    menu = new menuTable();
-    mainWindow.add(menu);
-    return true;
-  });
   listBtn = Ti.UI.createButton({
     systemButton: Titanium.UI.iPhone.SystemButton.BOOKMARKS
   });
@@ -53,8 +36,13 @@ if (testsEnabled === true) {
   refreshBtn.addEventListener('click', function() {
     return controller.loadEntry();
   });
+  menu = new menuTable();
+  mainWindow.add(actInd);
+  mainWindow.add(mainTable);
+  mainWindow.add(menu);
   mainWindow.leftNavButton = listBtn;
   mainWindow.rightNavButton = refreshBtn;
+  controller.getFeed();
   webWindow = new win();
   webWindow.backButtonTitle = '戻る';
   webview = new webView();

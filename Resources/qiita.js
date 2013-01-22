@@ -19,6 +19,10 @@ Qiita = (function() {
         url: "https://qiita.com/api/v1/items",
         method: 'GET'
       },
+      feedByTag: {
+        url: "https://qiita.com/api/v1/tags/@{tagName}/items",
+        method: 'GET'
+      },
       followingUsers: {
         url: "https://qiita.com/api/v1/users/" + this.user_name + "/following_users",
         method: 'GET'
@@ -211,6 +215,11 @@ Qiita = (function() {
       "method": 'GET'
     };
     return this._request(param, storedTo, callback);
+  };
+  Qiita.prototype.getFeedByTag = function(tagName, callback) {
+    var param;
+    param = this.parameter.feedByTag;
+    return this._request(param, tagName, callback);
   };
   Qiita.prototype.getMyStocks = function(callback) {
     var param, token;

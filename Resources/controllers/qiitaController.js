@@ -60,8 +60,27 @@ qiitaController = (function() {
     });
     return true;
   };
+  qiitaController.prototype.getFeed = function() {
+    var rows;
+    rows = [];
+    actInd.message = 'loading...';
+    actInd.backgroundColor = '#222';
+    actInd.opacity = 1.0;
+    actInd.show();
+    return qiita.getFeed(function(result, links) {
+      var json, _i, _len;
+      for (_i = 0, _len = result.length; _i < _len; _i++) {
+        json = result[_i];
+        rows.push(t.createRow(json));
+      }
+      rows.push(t.createRowForLoadOldEntry('storedStocks'));
+      mainTable.setData(rows);
+      actInd.hide();
+      return true;
+    });
+  };
   qiitaController.prototype.getMyStocks = function() {
-    var MAXITEMCOUNT, mainTableLength, rows;
+    var MAXITEMCOUNT, rows;
     actInd.message = 'loading...';
     actInd.backgroundColor = '#222';
     actInd.opacity = 1.0;
@@ -69,7 +88,6 @@ qiitaController = (function() {
     actInd.show();
     rows = [];
     MAXITEMCOUNT = 20;
-    mainTableLength = mainTable.data[0].rows.length - 1;
     qiita.getMyStocks(function(result) {
       var json, _i, _len;
       for (_i = 0, _len = result.length; _i < _len; _i++) {
@@ -110,6 +128,30 @@ qiitaController = (function() {
     } else {
       return this.state = this.state.moveBackward();
     }
+  };
+  qiitaController.prototype.selectMenu = function(menuName) {
+    var items, json, result, _i, _len;
+    result = [];
+    if (menuName === "stock") {
+      items = JSON.parse(Ti.App.Properties.getString('storedMyStocks'));
+    } else {
+      items = JSON.parse(Ti.App.Properties.getString('storedStocks'));
+    }
+    switch (menuName) {
+      case "config":
+        return this.moveToConfigWindow();
+      case "stock":
+        return this.getMyStocks();
+      case "allLabel":
+        for (_i = 0, _len = items.length; _i < _len; _i++) {
+          json = items[_i];
+          result.push(t.createRow(json));
+        }
+        result.push(t.createRowForLoadOldEntry('storedStocks'));
+        break;
+    }
+    mainTable.setData(result);
+    return true;
   };
   qiitaController.prototype.webViewContentsUpdate = function(body) {
     return webview.contentsUpdate(body);

@@ -53,6 +53,20 @@ class qiitaController
         
     )
     return true
+  getFeed:() ->
+    rows = []
+    actInd.message = 'loading...'
+    actInd.backgroundColor = '#222'
+    actInd.opacity = 1.0
+
+    actInd.show()
+    qiita.getFeed( (result,links) ->
+      rows.push(t.createRow(json)) for json in result
+      rows.push(t.createRowForLoadOldEntry('storedStocks'))
+      mainTable.setData rows
+      actInd.hide()
+      return true
+    )  
     
   getMyStocks:() ->
     actInd.message = 'loading...'
@@ -62,7 +76,7 @@ class qiitaController
     actInd.show()
     rows = []
     MAXITEMCOUNT = 20 # 1リクエスト辺りに読み込まれる最大件数
-    mainTableLength = mainTable.data[0].rows.length-1
+    # mainTableLength = mainTable.data[0].rows.length-1
 
     qiita.getMyStocks( (result) ->
       rows.push(t.createRow(json)) for json in result
@@ -105,6 +119,25 @@ class qiitaController
     else
       @state = @state.moveBackward()
       
+  selectMenu:(menuName) ->
+    result = []
+    if menuName is "stock"
+      items = JSON.parse(Ti.App.Properties.getString('storedMyStocks'))
+    else
+      items = JSON.parse(Ti.App.Properties.getString('storedStocks'))
+    
+    switch menuName
+      when "config"
+        return @.moveToConfigWindow()
+      when "stock"
+        return @.getMyStocks()
+      when "allLabel"
+        result.push(t.createRow(json)) for json in items
+        result.push(t.createRowForLoadOldEntry('storedStocks'))
+      else
+
+    mainTable.setData result    
+    return true
       
   webViewContentsUpdate: (body) ->
     return webview.contentsUpdate(body)
