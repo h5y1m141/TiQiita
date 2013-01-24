@@ -5,6 +5,8 @@ class qiitaController
       network:
         timeout:"ネットワーク接続できないかサーバがダウンしてるようです"
     Client = require("controllers/client")
+    currentPage = require("model/currentPage")
+    @page = new currentPage()
     @client = new Client()
     
 
@@ -93,7 +95,9 @@ class qiitaController
 
     return @client.useMenu menuName
 
-      
+  currentPage:(pageNumber) ->
+    
+    return true     
   webViewContentsUpdate: (body) ->
     return webview.contentsUpdate(body)
     

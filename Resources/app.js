@@ -1,9 +1,11 @@
-var Client, Qiita, actInd, activityIndicator, commandController, controller, defaultState, listBtn, mainTable, mainWindow, menu, menuTable, moment, momentja, qiita, qiitaController, refreshBtn, slideState, t, tab, tabGroup, tableView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win;
+var Client, ProgressBar, Qiita, actInd, activityIndicator, commandController, controller, defaultState, listBtn, mainTable, mainWindow, menu, menuTable, moment, momentja, progressBar, qiita, qiitaController, refreshBtn, slideState, t, tab, tabGroup, tableView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win;
 moment = require('lib/moment.min');
 momentja = require('lib/momentja');
 Qiita = require('model/qiita');
 tableView = require('ui/tableView');
 menuTable = require('ui/menuTable');
+ProgressBar = require('ui/progressBar');
+progressBar = new ProgressBar();
 qiitaController = require('controllers/qiitaController');
 Client = require("controllers/client");
 commandController = new Client();
@@ -42,6 +44,7 @@ if (testsEnabled === true) {
   mainWindow.add(actInd);
   mainWindow.add(mainTable);
   mainWindow.add(menu);
+  mainWindow.add(progressBar);
   mainWindow.leftNavButton = listBtn;
   mainWindow.rightNavButton = refreshBtn;
   commandController.useMenu("storedStocks");

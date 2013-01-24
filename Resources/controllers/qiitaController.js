@@ -1,7 +1,7 @@
 var qiitaController;
 qiitaController = (function() {
   function qiitaController() {
-    var Client;
+    var Client, currentPage;
     this.state = new defaultState();
     this.message = {
       network: {
@@ -9,6 +9,8 @@ qiitaController = (function() {
       }
     };
     Client = require("controllers/client");
+    currentPage = require("model/currentPage");
+    this.page = new currentPage();
     this.client = new Client();
   }
   qiitaController.prototype.loadEntry = function() {
@@ -95,6 +97,9 @@ qiitaController = (function() {
   };
   qiitaController.prototype.selectMenu = function(menuName) {
     return this.client.useMenu(menuName);
+  };
+  qiitaController.prototype.currentPage = function(pageNumber) {
+    return true;
   };
   qiitaController.prototype.webViewContentsUpdate = function(body) {
     return webview.contentsUpdate(body);

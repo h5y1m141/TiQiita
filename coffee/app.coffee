@@ -3,7 +3,8 @@ momentja = require('lib/momentja')
 Qiita = require('model/qiita')
 tableView = require('ui/tableView')
 menuTable = require('ui/menuTable')
-
+ProgressBar = require('ui/progressBar')
+progressBar = new ProgressBar()
 
 qiitaController = require('controllers/qiitaController')
 Client = require("controllers/client")
@@ -19,6 +20,7 @@ activityIndicator = require('ui/activityIndicator')
 t = new tableView()
 qiita = new Qiita()
 controller = new qiitaController()
+
 
 # Ti.App.Propertiesの初期化  
 ## クリックイベント時の状態管理のために以下利用
@@ -63,6 +65,7 @@ else
   mainWindow.add actInd
   mainWindow.add mainTable
   mainWindow.add menu
+  mainWindow.add progressBar
   mainWindow.leftNavButton  = listBtn
   mainWindow.rightNavButton  = refreshBtn
   
