@@ -1,12 +1,15 @@
 var qiitaController;
 qiitaController = (function() {
   function qiitaController() {
+    var Client;
     this.state = new defaultState();
     this.message = {
       network: {
         timeout: "ネットワーク接続できないかサーバがダウンしてるようです"
       }
     };
+    Client = require("controllers/client");
+    this.client = new Client();
   }
   qiitaController.prototype.loadEntry = function() {
     actInd.backgroundColor = '#222';
@@ -79,7 +82,18 @@ qiitaController = (function() {
       return true;
     });
   };
-  qiitaController.prototype.getMyStocks = function() {
+  qiitaController.prototype.getFeedByTag = function(showFlg, tag) {
+    return qiita.getFeedByTag(tag(function(result) {
+      actInd.hide();
+      return true;
+    }));
+  };
+  qiitaController.prototype.getFollowingTagsFeed = function(showFlg) {
+    return qiita.getFollowingTags(function(result) {
+      return true;
+    });
+  };
+  qiitaController.prototype.getMyStocks = function(showFlg) {
     var MAXITEMCOUNT, rows;
     actInd.message = 'loading...';
     actInd.backgroundColor = '#222';
@@ -101,7 +115,11 @@ qiitaController = (function() {
         rows.push(t.createRowForLoadOldEntry('storedMyStocks'));
       }
       actInd.hide();
-      return mainTable.setData(rows);
+      if (showFlg === true) {
+        return mainTable.setData(rows);
+      } else {
+
+      }
     });
     return true;
   };
@@ -130,27 +148,7 @@ qiitaController = (function() {
     }
   };
   qiitaController.prototype.selectMenu = function(menuName) {
-    var items, json, result, _i, _len;
-    result = [];
-    if (menuName === "stock") {
-      items = JSON.parse(Ti.App.Properties.getString('storedMyStocks'));
-    } else {
-      items = JSON.parse(Ti.App.Properties.getString('storedStocks'));
-    }
-    switch (menuName) {
-      case "config":
-        return this.moveToConfigWindow();
-      case "stock":
-        return this.getMyStocks();
-      case "allLabel":
-        for (_i = 0, _len = items.length; _i < _len; _i++) {
-          json = items[_i];
-          result.push(t.createRow(json));
-        }
-        result.push(t.createRowForLoadOldEntry('storedStocks'));
-        break;
-    }
-    mainTable.setData(result);
+    return this.client.useMenu(menuName);
     return true;
   };
   qiitaController.prototype.webViewContentsUpdate = function(body) {

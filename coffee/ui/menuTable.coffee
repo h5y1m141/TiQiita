@@ -71,7 +71,7 @@ class menuTable
       stockRow.addEventListener('click',(e) ->
         slideEvent()
       )
-      stockRow.className = "stock"
+      stockRow.className = "storedMyStocks"
       stockRow.add stockBtn
       stockRow.add stockLabel
 
@@ -163,9 +163,9 @@ class menuTable
         font:
           fontSize:12
           fontWeight:'bold'
-        text:"ALL"
+        text:"投稿一覧"
         
-      allLabelRow.className = "allLabel"
+      allLabelRow.className = "storedStocks"
       allLabelRow.add allStockBtn
       allLabelRow.add allLabel
       
@@ -173,7 +173,7 @@ class menuTable
         
       for json in result
         menuRow = Ti.UI.createTableViewRow(rowColorTheme)
-          
+        Ti.App.Properties.setString "followinTag#{json.name}",json.name  
         # 該当するタグが選択された時には背景色を変更しつつ
         # 標準状態に戻す
         menuRow.addEventListener('click',(e)->

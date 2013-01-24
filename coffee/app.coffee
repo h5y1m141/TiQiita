@@ -1,6 +1,6 @@
 moment = require('lib/moment.min')
 momentja = require('lib/momentja')
-Qiita = require('qiita')
+Qiita = require('model/qiita')
 tableView = require('ui/tableView')
 menuTable = require('ui/menuTable')
 
@@ -65,7 +65,10 @@ else
   mainWindow.rightNavButton  = refreshBtn
   
   controller.getFeed()
-  
+  showFlg =  false
+  controller.getMyStocks(showFlg)
+  controller.getFollowingTagsFeed(showFlg)
+
   
 
 

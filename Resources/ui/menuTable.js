@@ -70,7 +70,7 @@ menuTable = (function() {
       stockRow.addEventListener('click', function(e) {
         return slideEvent();
       });
-      stockRow.className = "stock";
+      stockRow.className = "storedMyStocks";
       stockRow.add(stockBtn);
       stockRow.add(stockLabel);
       return stockRow;
@@ -152,15 +152,16 @@ menuTable = (function() {
           fontSize: 12,
           fontWeight: 'bold'
         },
-        text: "ALL"
+        text: "投稿一覧"
       });
-      allLabelRow.className = "allLabel";
+      allLabelRow.className = "storedStocks";
       allLabelRow.add(allStockBtn);
       allLabelRow.add(allLabel);
       rows = [allLabelRow, makeConfigRow(), makeStockRow(), makeTagRow()];
       for (_i = 0, _len = result.length; _i < _len; _i++) {
         json = result[_i];
         menuRow = Ti.UI.createTableViewRow(rowColorTheme);
+        Ti.App.Properties.setString("followinTag" + json.name, json.name);
         menuRow.addEventListener('click', function(e) {
           e.row.backgroundColor = qiitaColor;
           return slideEvent();

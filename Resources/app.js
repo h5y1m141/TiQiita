@@ -1,7 +1,7 @@
-var Qiita, actInd, activityIndicator, controller, defaultState, listBtn, mainTable, mainWindow, menu, menuTable, moment, momentja, qiita, qiitaController, refreshBtn, slideState, t, tab, tabGroup, tableView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win;
+var Qiita, actInd, activityIndicator, controller, defaultState, listBtn, mainTable, mainWindow, menu, menuTable, moment, momentja, qiita, qiitaController, refreshBtn, showFlg, slideState, t, tab, tabGroup, tableView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win;
 moment = require('lib/moment.min');
 momentja = require('lib/momentja');
-Qiita = require('qiita');
+Qiita = require('model/qiita');
 tableView = require('ui/tableView');
 menuTable = require('ui/menuTable');
 qiitaController = require('controllers/qiitaController');
@@ -43,6 +43,9 @@ if (testsEnabled === true) {
   mainWindow.leftNavButton = listBtn;
   mainWindow.rightNavButton = refreshBtn;
   controller.getFeed();
+  showFlg = false;
+  controller.getMyStocks(showFlg);
+  controller.getFollowingTagsFeed(showFlg);
   webWindow = new win();
   webWindow.backButtonTitle = '戻る';
   webview = new webView();

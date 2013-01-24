@@ -4,7 +4,9 @@ class qiitaController
     @message =
       network:
         timeout:"ネットワーク接続できないかサーバがダウンしてるようです"
-        
+    Client = require("controllers/client")
+    @client = new Client()
+    
 
     
   loadEntry: () ->
@@ -66,9 +68,22 @@ class qiitaController
       mainTable.setData rows
       actInd.hide()
       return true
-    )  
+    )
     
-  getMyStocks:() ->
+  getFeedByTag:(showFlg,tag) ->
+    qiita.getFeedByTag(tag (result) ->
+      actInd.hide()
+      return true
+    )
+  getFollowingTagsFeed:(showFlg) ->
+    qiita.getFollowingTags( (result) ->
+      
+      return true
+    )
+      
+
+
+  getMyStocks:(showFlg) ->
     actInd.message = 'loading...'
     actInd.backgroundColor = '#222'
     actInd.opacity = 1.0
@@ -86,9 +101,13 @@ class qiitaController
       else
         Ti.API.info "loadOldEntry show"
         rows.push(t.createRowForLoadOldEntry('storedMyStocks'))
-        
+      
       actInd.hide()
-      mainTable.setData rows
+      
+      if showFlg is true
+        return mainTable.setData rows
+      else
+        return
     )
 
     return true
@@ -120,23 +139,32 @@ class qiitaController
       @state = @state.moveBackward()
       
   selectMenu:(menuName) ->
-    result = []
-    if menuName is "stock"
-      items = JSON.parse(Ti.App.Properties.getString('storedMyStocks'))
-    else
-      items = JSON.parse(Ti.App.Properties.getString('storedStocks'))
-    
-    switch menuName
-      when "config"
-        return @.moveToConfigWindow()
-      when "stock"
-        return @.getMyStocks()
-      when "allLabel"
-        result.push(t.createRow(json)) for json in items
-        result.push(t.createRowForLoadOldEntry('storedStocks'))
-      else
 
-    mainTable.setData result    
+    return @client.useMenu menuName
+    # result = []
+      
+    # switch menuName
+    #   when "config"
+    #     return @.moveToConfigWindow()
+    #   when "storedMyStocks"
+    #     items = JSON.parse(Ti.App.Properties.getString('storedMyStocks'))
+    #     if items isnt null
+    #       result.push(t.createRow(json)) for json in items
+    #       result.push(t.createRowForLoadOldEntry('storedMyStocks'))
+    #     else
+    #       showFlg = true
+    #       @.getMyStocks(showFlg)
+    #   when "storedStocks"
+    #     items = JSON.parse(Ti.App.Properties.getString('storedStocks'))
+    #     if  items isnt null
+    #       result.push(t.createRow(json)) for json in items
+    #       result.push(t.createRowForLoadOldEntry('storedStocks'))
+    #     else
+    #       @.getFeed()
+          
+    #   else
+
+    # mainTable.setData result    
     return true
       
   webViewContentsUpdate: (body) ->
