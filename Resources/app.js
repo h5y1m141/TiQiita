@@ -1,10 +1,12 @@
-var Qiita, actInd, activityIndicator, controller, defaultState, listBtn, mainTable, mainWindow, menu, menuTable, moment, momentja, qiita, qiitaController, refreshBtn, showFlg, slideState, t, tab, tabGroup, tableView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win;
+var Client, Qiita, actInd, activityIndicator, commandController, controller, defaultState, listBtn, mainTable, mainWindow, menu, menuTable, moment, momentja, qiita, qiitaController, refreshBtn, slideState, t, tab, tabGroup, tableView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win;
 moment = require('lib/moment.min');
 momentja = require('lib/momentja');
 Qiita = require('model/qiita');
 tableView = require('ui/tableView');
 menuTable = require('ui/menuTable');
 qiitaController = require('controllers/qiitaController');
+Client = require("controllers/client");
+commandController = new Client();
 defaultState = require("defaultState");
 slideState = require("slideState");
 webView = require('ui/webView');
@@ -42,10 +44,9 @@ if (testsEnabled === true) {
   mainWindow.add(menu);
   mainWindow.leftNavButton = listBtn;
   mainWindow.rightNavButton = refreshBtn;
-  controller.getFeed();
-  showFlg = false;
-  controller.getMyStocks(showFlg);
-  controller.getFollowingTagsFeed(showFlg);
+  commandController.useMenu("storedStocks");
+  commandController.useMenu("storedMyStocks");
+  commandController.useMenu("followingTags");
   webWindow = new win();
   webWindow.backButtonTitle = '戻る';
   webview = new webView();

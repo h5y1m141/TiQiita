@@ -6,6 +6,8 @@ menuTable = require('ui/menuTable')
 
 
 qiitaController = require('controllers/qiitaController')
+Client = require("controllers/client")
+commandController = new Client()
 
 defaultState = require("defaultState")
 slideState = require("slideState")
@@ -64,10 +66,13 @@ else
   mainWindow.leftNavButton  = listBtn
   mainWindow.rightNavButton  = refreshBtn
   
-  controller.getFeed()
-  showFlg =  false
-  controller.getMyStocks(showFlg)
-  controller.getFollowingTagsFeed(showFlg)
+
+
+  commandController.useMenu "storedStocks"
+  commandController.useMenu "storedMyStocks"
+  commandController.useMenu "followingTags"
+
+  # controller.getFollowingTagsFeed(showFlg)
 
   
 

@@ -55,62 +55,13 @@ class qiitaController
         
     )
     return true
-  getFeed:() ->
-    rows = []
-    actInd.message = 'loading...'
-    actInd.backgroundColor = '#222'
-    actInd.opacity = 1.0
-
-    actInd.show()
-    qiita.getFeed( (result,links) ->
-      rows.push(t.createRow(json)) for json in result
-      rows.push(t.createRowForLoadOldEntry('storedStocks'))
-      mainTable.setData rows
-      actInd.hide()
-      return true
-    )
     
   getFeedByTag:(showFlg,tag) ->
     qiita.getFeedByTag(tag (result) ->
       actInd.hide()
       return true
     )
-  getFollowingTagsFeed:(showFlg) ->
-    qiita.getFollowingTags( (result) ->
       
-      return true
-    )
-      
-
-
-  getMyStocks:(showFlg) ->
-    actInd.message = 'loading...'
-    actInd.backgroundColor = '#222'
-    actInd.opacity = 1.0
-    actInd.zIndex = 10
-    actInd.show()
-    rows = []
-    MAXITEMCOUNT = 20 # 1リクエスト辺りに読み込まれる最大件数
-    # mainTableLength = mainTable.data[0].rows.length-1
-
-    qiita.getMyStocks( (result) ->
-      rows.push(t.createRow(json)) for json in result
-      
-      if result.length isnt MAXITEMCOUNT
-        Ti.API.info "loadOldEntry hide"
-      else
-        Ti.API.info "loadOldEntry show"
-        rows.push(t.createRowForLoadOldEntry('storedMyStocks'))
-      
-      actInd.hide()
-      
-      if showFlg is true
-        return mainTable.setData rows
-      else
-        return
-    )
-
-    return true
     
   stockItemToQiita: (uuid) ->
     uuid = Ti.App.Properties.getString('stockUUID')
@@ -141,31 +92,7 @@ class qiitaController
   selectMenu:(menuName) ->
 
     return @client.useMenu menuName
-    # result = []
-      
-    # switch menuName
-    #   when "config"
-    #     return @.moveToConfigWindow()
-    #   when "storedMyStocks"
-    #     items = JSON.parse(Ti.App.Properties.getString('storedMyStocks'))
-    #     if items isnt null
-    #       result.push(t.createRow(json)) for json in items
-    #       result.push(t.createRowForLoadOldEntry('storedMyStocks'))
-    #     else
-    #       showFlg = true
-    #       @.getMyStocks(showFlg)
-    #   when "storedStocks"
-    #     items = JSON.parse(Ti.App.Properties.getString('storedStocks'))
-    #     if  items isnt null
-    #       result.push(t.createRow(json)) for json in items
-    #       result.push(t.createRowForLoadOldEntry('storedStocks'))
-    #     else
-    #       @.getFeed()
-          
-    #   else
 
-    # mainTable.setData result    
-    return true
       
   webViewContentsUpdate: (body) ->
     return webview.contentsUpdate(body)

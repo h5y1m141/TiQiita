@@ -63,65 +63,11 @@ qiitaController = (function() {
     });
     return true;
   };
-  qiitaController.prototype.getFeed = function() {
-    var rows;
-    rows = [];
-    actInd.message = 'loading...';
-    actInd.backgroundColor = '#222';
-    actInd.opacity = 1.0;
-    actInd.show();
-    return qiita.getFeed(function(result, links) {
-      var json, _i, _len;
-      for (_i = 0, _len = result.length; _i < _len; _i++) {
-        json = result[_i];
-        rows.push(t.createRow(json));
-      }
-      rows.push(t.createRowForLoadOldEntry('storedStocks'));
-      mainTable.setData(rows);
-      actInd.hide();
-      return true;
-    });
-  };
   qiitaController.prototype.getFeedByTag = function(showFlg, tag) {
     return qiita.getFeedByTag(tag(function(result) {
       actInd.hide();
       return true;
     }));
-  };
-  qiitaController.prototype.getFollowingTagsFeed = function(showFlg) {
-    return qiita.getFollowingTags(function(result) {
-      return true;
-    });
-  };
-  qiitaController.prototype.getMyStocks = function(showFlg) {
-    var MAXITEMCOUNT, rows;
-    actInd.message = 'loading...';
-    actInd.backgroundColor = '#222';
-    actInd.opacity = 1.0;
-    actInd.zIndex = 10;
-    actInd.show();
-    rows = [];
-    MAXITEMCOUNT = 20;
-    qiita.getMyStocks(function(result) {
-      var json, _i, _len;
-      for (_i = 0, _len = result.length; _i < _len; _i++) {
-        json = result[_i];
-        rows.push(t.createRow(json));
-      }
-      if (result.length !== MAXITEMCOUNT) {
-        Ti.API.info("loadOldEntry hide");
-      } else {
-        Ti.API.info("loadOldEntry show");
-        rows.push(t.createRowForLoadOldEntry('storedMyStocks'));
-      }
-      actInd.hide();
-      if (showFlg === true) {
-        return mainTable.setData(rows);
-      } else {
-
-      }
-    });
-    return true;
   };
   qiitaController.prototype.stockItemToQiita = function(uuid) {
     uuid = Ti.App.Properties.getString('stockUUID');
@@ -149,7 +95,6 @@ qiitaController = (function() {
   };
   qiitaController.prototype.selectMenu = function(menuName) {
     return this.client.useMenu(menuName);
-    return true;
   };
   qiitaController.prototype.webViewContentsUpdate = function(body) {
     return webview.contentsUpdate(body);
