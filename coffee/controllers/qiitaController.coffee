@@ -10,9 +10,6 @@ class qiitaController
 
     
   loadEntry: () ->
-    actInd.backgroundColor = '#222'
-    actInd.zIndex = 10
-    actInd.show()
     
     qiita.getFeed( (result,links) ->
       rows = []

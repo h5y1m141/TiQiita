@@ -12,9 +12,6 @@ qiitaController = (function() {
     this.client = new Client();
   }
   qiitaController.prototype.loadEntry = function() {
-    actInd.backgroundColor = '#222';
-    actInd.zIndex = 10;
-    actInd.show();
     return qiita.getFeed(function(result, links) {
       var json, link, rows, _i, _j, _len, _len2, _obj;
       rows = [];

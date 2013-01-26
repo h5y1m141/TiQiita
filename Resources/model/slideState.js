@@ -7,6 +7,7 @@ slideState = (function() {
   slideState.prototype.moveUP = function() {
     Ti.API.info("ACTION: スライドから標準状態に戻る。垂直方向");
     Ti.App.Properties.setBool("stateMainTableSlide", false);
+    mainTable.touchEnabled = true;
     mainTable.animate({
       duration: 200,
       top: 0

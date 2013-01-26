@@ -14,11 +14,6 @@ class getStocksCommand
     
   getFeed:() ->
     rows = []
-    actInd.message = 'loading...'
-    actInd.backgroundColor = '#222'
-    actInd.opacity = 1.0
-
-    actInd.show()
     qiita.getFeed( (result,links) ->
       for link in links
         if link["rel"] == 'next'

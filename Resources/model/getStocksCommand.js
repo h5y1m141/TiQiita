@@ -21,10 +21,6 @@ getStocksCommand = (function() {
   getStocksCommand.prototype.getFeed = function() {
     var rows;
     rows = [];
-    actInd.message = 'loading...';
-    actInd.backgroundColor = '#222';
-    actInd.opacity = 1.0;
-    actInd.show();
     return qiita.getFeed(function(result, links) {
       var json, lastURL, link, nextURL, _i, _j, _len, _len2, _obj;
       for (_i = 0, _len = links.length; _i < _len; _i++) {

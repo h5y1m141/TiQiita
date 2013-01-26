@@ -15,11 +15,6 @@ class getMyStocksCommand
     mainTable.setData result    
       
   getMyStocks:(showFlg) ->
-    # actInd.message = 'loading...'
-    # actInd.backgroundColor = '#222'
-    # actInd.opacity = 1.0
-    # actInd.zIndex = 10
-    # actInd.show()
     rows = []
     MAXITEMCOUNT = 20 # 1リクエスト辺りに読み込まれる最大件数
 
