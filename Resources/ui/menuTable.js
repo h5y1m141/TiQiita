@@ -130,7 +130,7 @@ menuTable = (function() {
       return controller.selectMenu(table.data[0].rows[curretRowIndex].className);
     });
     qiita.getFollowingTags(function(result, links) {
-      var allLabel, allLabelRow, allStockBtn, json, menuRow, rows, textLabel, _i, _len;
+      var allLabel, allLabelRow, allStockBtn, followinTags, json, menuRow, rows, textLabel, _i, _len;
       allLabelRow = Ti.UI.createTableViewRow(rowColorTheme);
       allLabelRow.backgroundColor = qiitaColor;
       allLabelRow.selectedBackgroundColor = backgroundColorSub;
@@ -159,10 +159,12 @@ menuTable = (function() {
       allLabelRow.className = "storedStocks";
       allLabelRow.add(allStockBtn);
       allLabelRow.add(allLabel);
-      rows = [allLabelRow, makeConfigRow(), makeStockRow(), makeTagRow()];
+      rows = [allLabelRow, makeStockRow(), makeTagRow()];
+      followinTags = [];
       for (_i = 0, _len = result.length; _i < _len; _i++) {
         json = result[_i];
         menuRow = Ti.UI.createTableViewRow(rowColorTheme);
+        followinTags.push(json.name);
         Ti.App.Properties.setString("followinTag" + json.name, json.name);
         menuRow.addEventListener('click', function(e) {
           e.row.backgroundColor = qiitaColor;
@@ -185,6 +187,9 @@ menuTable = (function() {
         menuRow.className = json.url_name;
         rows.push(menuRow);
       }
+      Ti.API.info("followinTags is " + followinTags);
+      Ti.App.Properties.setList("followinTags", followinTags);
+      rows.push(makeConfigRow());
       return table.setData(rows);
     });
     return table;

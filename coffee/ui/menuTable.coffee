@@ -170,10 +170,13 @@ class menuTable
       allLabelRow.add allStockBtn
       allLabelRow.add allLabel
       
-      rows = [allLabelRow, makeConfigRow(), makeStockRow(), makeTagRow()  ]      
-        
+      rows = [allLabelRow,  makeStockRow(), makeTagRow()]
+      # 自分がフォローしてるタグ一覧をTi.App.PropertiesSetList followinTags
+      # としてセットするために以下配列に取得するタグ名を格納
+      followinTags = []  
       for json in result
         menuRow = Ti.UI.createTableViewRow(rowColorTheme)
+        followinTags.push(json.name)       
         Ti.App.Properties.setString "followinTag#{json.name}",json.name  
         # 該当するタグが選択された時には背景色を変更しつつ
         # 標準状態に戻す
@@ -181,13 +184,11 @@ class menuTable
           e.row.backgroundColor = qiitaColor
           slideEvent()
         )
-
         # c++のようなタグの場合、url_nameを参照すると
         # HTMLエンコードされている表記になってしまうため
         # ラベルの表示にはnameプロパティを設定し
         # classNameはQiitaAPI呼び出す時の処理などでurl_name
         # 利用したほうが都合良いためそちらを参照している
-
         textLabel = Ti.UI.createLabel
           width:150
           height:40
@@ -203,7 +204,10 @@ class menuTable
         menuRow.className = json.url_name
         
         rows.push menuRow
-      
+        
+      Ti.API.info "followinTags is #{followinTags}"
+      Ti.App.Properties.setList "followinTags",followinTags
+      rows.push makeConfigRow()
       table.setData rows
       
     )

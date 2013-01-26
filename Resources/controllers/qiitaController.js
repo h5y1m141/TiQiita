@@ -1,15 +1,15 @@
 var qiitaController;
 qiitaController = (function() {
   function qiitaController() {
-    var Client;
+    var CommandController;
     this.state = new defaultState();
     this.message = {
       network: {
         timeout: "ネットワーク接続できないかサーバがダウンしてるようです"
       }
     };
-    Client = require("controllers/client");
-    this.client = new Client();
+    CommandController = require("controllers/commandController");
+    this.commandController = new CommandController();
   }
   qiitaController.prototype.loadEntry = function() {
     return qiita.getFeed(function(result, links) {
@@ -114,7 +114,7 @@ qiitaController = (function() {
     }
   };
   qiitaController.prototype.selectMenu = function(menuName) {
-    return this.client.useMenu(menuName);
+    return this.commandController.useMenu(menuName);
   };
   qiitaController.prototype.currentPage = function(label, nextURL) {
     var currentPage;
