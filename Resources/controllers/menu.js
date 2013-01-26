@@ -1,6 +1,6 @@
 var Menu;
 Menu = (function() {
-  function Menu(list) {
+  function Menu() {
     this.commands = [];
     this.previous_command = null;
   }

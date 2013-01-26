@@ -1,16 +1,20 @@
-var Client, ProgressBar, Qiita, actInd, activityIndicator, commandController, controller, defaultState, listBtn, mainTable, mainWindow, menu, menuTable, moment, momentja, progressBar, qiita, qiitaController, refreshBtn, slideState, t, tab, tabGroup, tableView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win;
+var CommandController, PageController, ProgressBar, Qiita, StatusView, actInd, activityIndicator, commandController, controller, defaultState, direction, listBtn, mainTable, mainWindow, menu, menuTable, moment, momentja, pageController, progressBar, qiita, qiitaController, refreshBtn, slideState, statusView, t, tab, tabGroup, tableView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win;
 moment = require('lib/moment.min');
 momentja = require('lib/momentja');
 Qiita = require('model/qiita');
 tableView = require('ui/tableView');
 menuTable = require('ui/menuTable');
+StatusView = require('ui/statusView');
+statusView = new StatusView();
 ProgressBar = require('ui/progressBar');
 progressBar = new ProgressBar();
 qiitaController = require('controllers/qiitaController');
-Client = require("controllers/client");
-commandController = new Client();
-defaultState = require("defaultState");
-slideState = require("slideState");
+PageController = require('controllers/pageController');
+pageController = new PageController();
+CommandController = require("controllers/commandController");
+commandController = new CommandController();
+defaultState = require("model/defaultState");
+slideState = require("model/slideState");
 webView = require('ui/webView');
 win = require('ui/window');
 activityIndicator = require('ui/activityIndicator');
@@ -20,7 +24,6 @@ controller = new qiitaController();
 Ti.App.Properties.setBool('stateMainTableSlide', false);
 Ti.App.Properties.setString("storedStocks", null);
 Ti.App.Properties.setString("storedMyStocks", null);
-Ti.App.Properties.setBool("isLastPage", false);
 testsEnabled = false;
 if (testsEnabled === true) {
   require('test/tests');
@@ -32,7 +35,9 @@ if (testsEnabled === true) {
     systemButton: Titanium.UI.iPhone.SystemButton.BOOKMARKS
   });
   listBtn.addEventListener('click', function() {
-    return controller.slideMainTable();
+    var direction;
+    direction = "horizontal";
+    return controller.slideMainTable(direction);
   });
   refreshBtn = Ti.UI.createButton({
     systemButton: Titanium.UI.iPhone.SystemButton.REFRESH
@@ -44,9 +49,13 @@ if (testsEnabled === true) {
   mainWindow.add(actInd);
   mainWindow.add(mainTable);
   mainWindow.add(menu);
-  mainWindow.add(progressBar);
+  progressBar.show();
+  statusView.add(progressBar);
+  mainWindow.add(statusView);
   mainWindow.leftNavButton = listBtn;
   mainWindow.rightNavButton = refreshBtn;
+  direction = "vertical";
+  controller.slideMainTable(direction);
   commandController.useMenu("storedStocks");
   commandController.useMenu("storedMyStocks");
   commandController.useMenu("followingTags");

@@ -116,7 +116,8 @@ class menuTable
       Ti.App.Properties.setBool("stateMainTableSlide",true)
       # controller.slideMainTableを呼び出して
       # スライド状態から標準状態に画面を戻す
-      controller.slideMainTable()
+      direction = "horizontal"
+      controller.slideMainTable(direction)
       
     # すべてのrowの背景色をデフォルト値に設定
     resetBackGroundColor = (menuRows) ->

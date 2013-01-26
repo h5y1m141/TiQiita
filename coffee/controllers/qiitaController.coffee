@@ -5,8 +5,6 @@ class qiitaController
       network:
         timeout:"ネットワーク接続できないかサーバがダウンしてるようです"
     Client = require("controllers/client")
-    currentPage = require("model/currentPage")
-    @page = new currentPage()
     @client = new Client()
     
 
@@ -21,7 +19,12 @@ class qiitaController
       for link in links
         if link["rel"] == 'next'
           Ti.App.Properties.setString('nextPageURL',link["url"])
-        
+          
+      pageController.showLists()
+      _obj = {label:'storedStocks',nextURL:link["url"],lastURL:null}
+      pageController.set(_obj)
+      pageController.showLists()
+          
       rows.push(t.createRow(json)) for json in result
       rows.push(t.createRowForLoadOldEntry('storedStocks'))
       mainTable.setData rows
@@ -31,8 +34,7 @@ class qiitaController
     
   loadOldEntry: (storedTo) ->
     url = Ti.App.Properties.getString('nextPageURL')
-    Ti.API.info "loadOldEntry start. NEXTPAGE:#{url}"
-    Ti.API.info "storedTo is #{storedTo}"
+    
     actInd.backgroundColor = '#222'
     actInd.opacity = 1.0
     actInd.zIndex = 10
@@ -40,6 +42,10 @@ class qiitaController
     MAXITEMCOUNT = 20  
     qiita.getNextFeed(url,storedTo,(result) ->
       Ti.API.info "getNextFeed start. result is #{result.length}"
+      pageController.showLists()
+      _obj = {label:storedTo,nextURL:url,lastURL:null}
+      pageController.set(_obj)
+      pageController.showLists()
 
       # ここで投稿件数をチェックして、20件以下だったら過去のを
       # 読み込むrowを非表示にすればOK
@@ -84,20 +90,31 @@ class qiitaController
       Ti.App.Properties.setString('stockUUID',json.uuid)
       Ti.App.Properties.setString('stockID',json.id)
   
-  slideMainTable: () ->
-
-    if Ti.App.Properties.getBool("stateMainTableSlide") is false
+  slideMainTable: (direction) ->
+    slideState = Ti.App.Properties.getBool("stateMainTableSlide") 
+    Ti.API.info "direction is #{direction}.slideState is #{slideState}"
+    if slideState is false and direction is "horizontal"
       @state = @state.moveForward()
-    else
+    else if slideState is true and direction is "horizontal"
       @state = @state.moveBackward()
-      
+    else if slideState is false and direction is "vertical"
+      @state = @state.moveDown()
+    else if slideState is true and direction is "vertical"
+      @state = @state.moveUP()
+    else
+      return 
   selectMenu:(menuName) ->
 
     return @client.useMenu menuName
 
-  currentPage:(pageNumber) ->
-    
-    return true     
+  currentPage:(label,nextURL) ->
+    currentPage =
+      label:storedTo
+      nextURL:nextURL
+    return Ti.App.Properties.setString "currentPage", JSON.stringify(currentPage)  
+  getCurrentPage:() ->
+    return JSON.parse(Ti.App.Properties.getString("currentPage"))
+
   webViewContentsUpdate: (body) ->
     return webview.contentsUpdate(body)
     

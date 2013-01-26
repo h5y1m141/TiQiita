@@ -1,7 +1,7 @@
 var qiitaController;
 qiitaController = (function() {
   function qiitaController() {
-    var Client, currentPage;
+    var Client;
     this.state = new defaultState();
     this.message = {
       network: {
@@ -9,8 +9,6 @@ qiitaController = (function() {
       }
     };
     Client = require("controllers/client");
-    currentPage = require("model/currentPage");
-    this.page = new currentPage();
     this.client = new Client();
   }
   qiitaController.prototype.loadEntry = function() {
@@ -18,7 +16,7 @@ qiitaController = (function() {
     actInd.zIndex = 10;
     actInd.show();
     return qiita.getFeed(function(result, links) {
-      var json, link, rows, _i, _j, _len, _len2;
+      var json, link, rows, _i, _j, _len, _len2, _obj;
       rows = [];
       for (_i = 0, _len = links.length; _i < _len; _i++) {
         link = links[_i];
@@ -26,6 +24,14 @@ qiitaController = (function() {
           Ti.App.Properties.setString('nextPageURL', link["url"]);
         }
       }
+      pageController.showLists();
+      _obj = {
+        label: 'storedStocks',
+        nextURL: link["url"],
+        lastURL: null
+      };
+      pageController.set(_obj);
+      pageController.showLists();
       for (_j = 0, _len2 = result.length; _j < _len2; _j++) {
         json = result[_j];
         rows.push(t.createRow(json));
@@ -39,16 +45,22 @@ qiitaController = (function() {
   qiitaController.prototype.loadOldEntry = function(storedTo) {
     var MAXITEMCOUNT, url;
     url = Ti.App.Properties.getString('nextPageURL');
-    Ti.API.info("loadOldEntry start. NEXTPAGE:" + url);
-    Ti.API.info("storedTo is " + storedTo);
     actInd.backgroundColor = '#222';
     actInd.opacity = 1.0;
     actInd.zIndex = 10;
     actInd.show();
     MAXITEMCOUNT = 20;
     qiita.getNextFeed(url, storedTo, function(result) {
-      var json, lastIndex, r, _i, _len;
+      var json, lastIndex, r, _i, _len, _obj;
       Ti.API.info("getNextFeed start. result is " + result.length);
+      pageController.showLists();
+      _obj = {
+        label: storedTo,
+        nextURL: url,
+        lastURL: null
+      };
+      pageController.set(_obj);
+      pageController.showLists();
       if (result.length !== MAXITEMCOUNT) {
         Ti.API.info("loadOldEntry hide");
         t.hideLastRow();
@@ -88,18 +100,35 @@ qiitaController = (function() {
       return Ti.App.Properties.setString('stockID', json.id);
     }
   };
-  qiitaController.prototype.slideMainTable = function() {
-    if (Ti.App.Properties.getBool("stateMainTableSlide") === false) {
+  qiitaController.prototype.slideMainTable = function(direction) {
+    var slideState;
+    slideState = Ti.App.Properties.getBool("stateMainTableSlide");
+    Ti.API.info("direction is " + direction + ".slideState is " + slideState);
+    if (slideState === false && direction === "horizontal") {
       return this.state = this.state.moveForward();
-    } else {
+    } else if (slideState === true && direction === "horizontal") {
       return this.state = this.state.moveBackward();
+    } else if (slideState === false && direction === "vertical") {
+      return this.state = this.state.moveDown();
+    } else if (slideState === true && direction === "vertical") {
+      return this.state = this.state.moveUP();
+    } else {
+
     }
   };
   qiitaController.prototype.selectMenu = function(menuName) {
     return this.client.useMenu(menuName);
   };
-  qiitaController.prototype.currentPage = function(pageNumber) {
-    return true;
+  qiitaController.prototype.currentPage = function(label, nextURL) {
+    var currentPage;
+    currentPage = {
+      label: storedTo,
+      nextURL: nextURL
+    };
+    return Ti.App.Properties.setString("currentPage", JSON.stringify(currentPage));
+  };
+  qiitaController.prototype.getCurrentPage = function() {
+    return JSON.parse(Ti.App.Properties.getString("currentPage"));
   };
   qiitaController.prototype.webViewContentsUpdate = function(body) {
     return webview.contentsUpdate(body);

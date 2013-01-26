@@ -147,7 +147,7 @@ Qiita = (function() {
           relLink = null;
         }
       }
-      return callback(json);
+      return callback(json, relLink);
     };
     xhr.onerror = function(e) {
       var error;

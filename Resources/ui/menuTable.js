@@ -107,8 +107,10 @@ menuTable = (function() {
       }
     };
     slideEvent = function(currentMenu) {
+      var direction;
       Ti.App.Properties.setBool("stateMainTableSlide", true);
-      return controller.slideMainTable();
+      direction = "horizontal";
+      return controller.slideMainTable(direction);
     };
     resetBackGroundColor = function(menuRows) {
       var menuRow, _i, _len, _results;

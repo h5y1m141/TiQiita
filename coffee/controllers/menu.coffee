@@ -1,5 +1,5 @@
 class Menu
-  constructor:(list) ->
+  constructor:() ->
     @commands = []
     @previous_command =  null
     

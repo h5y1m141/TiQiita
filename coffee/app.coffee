@@ -3,15 +3,19 @@ momentja = require('lib/momentja')
 Qiita = require('model/qiita')
 tableView = require('ui/tableView')
 menuTable = require('ui/menuTable')
+StatusView = require('ui/statusView')
+statusView = new StatusView()
 ProgressBar = require('ui/progressBar')
 progressBar = new ProgressBar()
 
 qiitaController = require('controllers/qiitaController')
-Client = require("controllers/client")
-commandController = new Client()
+PageController = require('controllers/pageController')
+pageController = new PageController()
+CommandController = require("controllers/commandController")
+commandController = new CommandController()
 
-defaultState = require("defaultState")
-slideState = require("slideState")
+defaultState = require("model/defaultState")
+slideState = require("model/slideState")
 
 webView = require('ui/webView')
 win = require('ui/window')
@@ -29,9 +33,6 @@ Ti.App.Properties.setBool 'stateMainTableSlide',false
 ## storedStocks毎起動時に初期化
 Ti.App.Properties.setString "storedStocks",null
 Ti.App.Properties.setString "storedMyStocks",null
-
-## QiitaAPIのページネーション処理で利用
-Ti.App.Properties.setBool "isLastPage",false
 
 
 # Jasmine
@@ -51,7 +52,8 @@ else
     systemButton: Titanium.UI.iPhone.SystemButton.BOOKMARKS
     
   listBtn.addEventListener('click',()->
-    controller.slideMainTable()
+    direction = "horizontal"
+    controller.slideMainTable(direction)
   )
   
   refreshBtn = Ti.UI.createButton
@@ -65,12 +67,15 @@ else
   mainWindow.add actInd
   mainWindow.add mainTable
   mainWindow.add menu
-  mainWindow.add progressBar
+  progressBar.show()
+  statusView.add progressBar
+  mainWindow.add statusView
   mainWindow.leftNavButton  = listBtn
   mainWindow.rightNavButton  = refreshBtn
   
-
-
+  # direction = "horizontal"
+  direction = "vertical"
+  controller.slideMainTable(direction)
   commandController.useMenu "storedStocks"
   commandController.useMenu "storedMyStocks"
   commandController.useMenu "followingTags"

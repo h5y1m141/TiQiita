@@ -172,7 +172,7 @@ class Qiita
         else
           relLink = null
 
-      callback(json)
+      callback(json,relLink)
       
     xhr.onerror = (e) ->
       error = JSON.parse(e)
