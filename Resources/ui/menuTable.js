@@ -164,7 +164,7 @@ menuTable = (function() {
       for (_i = 0, _len = result.length; _i < _len; _i++) {
         json = result[_i];
         menuRow = Ti.UI.createTableViewRow(rowColorTheme);
-        followinTags.push(json.name);
+        followinTags.push(json.url_name);
         Ti.App.Properties.setString("followinTag" + json.name, json.name);
         menuRow.addEventListener('click', function(e) {
           e.row.backgroundColor = qiitaColor;
@@ -184,10 +184,9 @@ menuTable = (function() {
           text: json.name
         });
         menuRow.add(textLabel);
-        menuRow.className = json.url_name;
+        menuRow.className = "followinTags" + json.url_name;
         rows.push(menuRow);
       }
-      Ti.API.info("followinTags is " + followinTags);
       Ti.App.Properties.setList("followinTags", followinTags);
       rows.push(makeConfigRow());
       return table.setData(rows);

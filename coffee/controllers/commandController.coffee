@@ -6,10 +6,16 @@ class commandController
     stocksCommand = require("model/getStocksCommand")
     configCommand = require("model/configCommand")
     followingTagsCommand = require("model/getFollowingTagsCommand")
+    feedByTagCommand = require("model/getFeedByTagCommand")    
     @menu.addCommands("storedMyStocks",new myStocksCommand())
     @menu.addCommands("storedStocks",new stocksCommand())
     @menu.addCommands("config",new configCommand())
     @menu.addCommands("followingTags", new followingTagsCommand())
+    
+    followinTags = Ti.App.Properties.getList "followinTags"
+    for tagName in followinTags
+      Ti.API.info "tagName command run!! tagName is #{tagName}"
+      @menu.addCommands("followinTags#{tagName}", new feedByTagCommand("followinTags#{tagName}",tagName))
     
   useMenu:(commandLabel) ->
     @menu.run(commandLabel)

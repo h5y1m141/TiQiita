@@ -44,7 +44,6 @@ getStocksCommand = (function() {
       }
       rows.push(t.createRowForLoadOldEntry(this.value));
       mainTable.setData(rows);
-      actInd.hide();
       return true;
     });
   };

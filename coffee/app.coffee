@@ -34,6 +34,8 @@ Ti.App.Properties.setBool 'stateMainTableSlide',false
 Ti.App.Properties.setString "storedStocks",null
 Ti.App.Properties.setString "storedMyStocks",null
 
+## フォローしてるタグ
+Ti.App.Properties.setList "followinTags",null
 
 # Jasmine
 # 
@@ -98,6 +100,7 @@ else
   webWindow.add actInd
 
   tabGroup = Ti.UI.createTabGroup()
+  tabGroup.tabBarVisible = false
   tab = Ti.UI.createTab
     window: mainWindow
   tabGroup.addTab tab

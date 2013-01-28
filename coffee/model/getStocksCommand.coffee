@@ -27,7 +27,7 @@ class getStocksCommand
       rows.push(t.createRow(json)) for json in result
       rows.push(t.createRowForLoadOldEntry(@value))
       mainTable.setData rows
-      actInd.hide()
+
       return true
     )
     

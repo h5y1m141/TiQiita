@@ -16,9 +16,6 @@ class Qiita
       feed:
         url:"https://qiita.com/api/v1/items"
         method:'GET'
-      feedByTag:
-        url:"https://qiita.com/api/v1/tags/@{tagName}/items"
-        method:'GET'
         
       followingUsers:
         url:"https://qiita.com/api/v1/users/#{@user_name}/following_users"
@@ -246,9 +243,14 @@ class Qiita
     # @._mockObject("items",'storedStocks',callback)
 
   getFeedByTag:(tagName,callback) ->
-    param = @parameter.feedByTag
-    @._request(param,tagName,callback)
-    # @._mockObject("items",'storedStocks',callback)
+    url = "https://qiita.com/api/v1/tags/#{tagName}/items"
+    storedTo = "followingTags#{tagName}"
+
+    param =
+      "url": url
+      "method":'GET'
+    @._request(param,storedTo,callback)
+
 
   getMyStocks:(callback) ->
     token = Ti.App.Properties.getString('QiitaToken')
