@@ -1,7 +1,6 @@
 class Menu
   constructor:() ->
     @commands = []
-    @previous_command =  null
     
   addCommands:(commandLabel,command) ->
     param = 
@@ -9,6 +8,9 @@ class Menu
       command:command
     return @commands.push(param)
     
+  showCommands:() ->
+    Ti.API.info @commands
+    return true
     
   run:(commandLabel) ->
     for command in @commands

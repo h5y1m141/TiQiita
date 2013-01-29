@@ -2,7 +2,6 @@ var Menu;
 Menu = (function() {
   function Menu() {
     this.commands = [];
-    this.previous_command = null;
   }
   Menu.prototype.addCommands = function(commandLabel, command) {
     var param;
@@ -11,6 +10,10 @@ Menu = (function() {
       command: command
     };
     return this.commands.push(param);
+  };
+  Menu.prototype.showCommands = function() {
+    Ti.API.info(this.commands);
+    return true;
   };
   Menu.prototype.run = function(commandLabel) {
     var command, _i, _len, _ref, _results;

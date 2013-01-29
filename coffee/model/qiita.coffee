@@ -123,15 +123,15 @@ class Qiita
   _request:(parameter,value,callback) ->
     
     self = @
-    if self.isConnected() is false
-      # controller.errorHandle()
-      logData =
-        source  : "qiita._request()"
-        time    : moment().format("YYYY-MM-DD hh:mm:ss")
-        message : "fail"
-      Ti.API.info logData
+    # if self.isConnected() is false
+    #   # controller.errorHandle()
+    #   logData =
+    #     source  : "qiita._request()"
+    #     time    : moment().format("YYYY-MM-DD hh:mm:ss")
+    #     message : "fail"
+    #   Ti.API.info logData
 
-      controller.logging(logData)
+    #   controller.logging(logData)
       
     xhr = Ti.Network.createHTTPClient()
 
@@ -244,8 +244,7 @@ class Qiita
 
   getFeedByTag:(tagName,callback) ->
     url = "https://qiita.com/api/v1/tags/#{tagName}/items"
-    storedTo = "followingTags#{tagName}"
-
+    storedTo = "followingTag#{tagName}"
     param =
       "url": url
       "method":'GET'

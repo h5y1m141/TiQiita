@@ -4,8 +4,6 @@ class qiitaController
     @message =
       network:
         timeout:"ネットワーク接続できないかサーバがダウンしてるようです"
-    CommandController = require("controllers/commandController")
-    @commandController = new CommandController()
 
     
 
@@ -102,7 +100,7 @@ class qiitaController
     else
       return 
   selectMenu:(menuName) ->
-    return @commandController.useMenu menuName
+    return commandController.useMenu menuName
 
 
   currentPage:(label,nextURL) ->

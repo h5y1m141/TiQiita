@@ -106,17 +106,8 @@ Qiita = (function() {
     return true;
   };
   Qiita.prototype._request = function(parameter, value, callback) {
-    var logData, self, xhr;
+    var self, xhr;
     self = this;
-    if (self.isConnected() === false) {
-      logData = {
-        source: "qiita._request()",
-        time: moment().format("YYYY-MM-DD hh:mm:ss"),
-        message: "fail"
-      };
-      Ti.API.info(logData);
-      controller.logging(logData);
-    }
     xhr = Ti.Network.createHTTPClient();
     Ti.API.info(parameter.method + ":" + parameter.url);
     xhr.open(parameter.method, parameter.url);
@@ -213,7 +204,7 @@ Qiita = (function() {
   Qiita.prototype.getFeedByTag = function(tagName, callback) {
     var param, storedTo, url;
     url = "https://qiita.com/api/v1/tags/" + tagName + "/items";
-    storedTo = "followingTags" + tagName;
+    storedTo = "followingTag" + tagName;
     param = {
       "url": url,
       "method": 'GET'

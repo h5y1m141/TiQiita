@@ -33,6 +33,12 @@ Ti.App.Properties.setBool 'stateMainTableSlide',false
 ## storedStocks毎起動時に初期化
 Ti.App.Properties.setString "storedStocks",null
 Ti.App.Properties.setString "storedMyStocks",null
+Ti.App.Properties.setString "followinTagSSH",null
+Ti.App.Properties.setString "followinTagZsh",null
+Ti.App.Properties.setString "followinTagsinatra",null
+Ti.App.Properties.setString "followinTagJavaScript",null
+Ti.App.Properties.setString "followinTagCoffeeScript",null
+Ti.App.Properties.setString "followinTagRuby",null
 
 ## フォローしてるタグ
 Ti.App.Properties.setList "followinTags",null
@@ -81,9 +87,6 @@ else
   commandController.useMenu "storedStocks"
   commandController.useMenu "storedMyStocks"
   commandController.useMenu "followingTags"
-
-  # controller.getFollowingTagsFeed(showFlg)
-
   
 
 

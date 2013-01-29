@@ -177,7 +177,7 @@ class menuTable
       for json in result
         menuRow = Ti.UI.createTableViewRow(rowColorTheme)
         followinTags.push(json.url_name)       
-        Ti.App.Properties.setString "followinTag#{json.name}",json.name  
+        
         # 該当するタグが選択された時には背景色を変更しつつ
         # 標準状態に戻す
         menuRow.addEventListener('click',(e)->
@@ -200,11 +200,10 @@ class menuTable
             fontWeight:'bold'
           text:json.name
         menuRow.add textLabel
-        menuRow.className = "followinTags#{json.url_name}"
-        
+        menuRow.className = "followinTag#{json.url_name}"
         rows.push menuRow
         
-      Ti.App.Properties.setList "followinTags",followinTags
+
       rows.push makeConfigRow()
       table.setData rows
       

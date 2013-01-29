@@ -1,24 +1,23 @@
 var getFeedByTagCommand;
 getFeedByTagCommand = (function() {
-  function getFeedByTagCommand(followinTagsName, tagName) {
-    this.followinTagsName = followinTagsName;
+  function getFeedByTagCommand(tagName) {
     this.tagName = tagName;
   }
   getFeedByTagCommand.prototype.execute = function() {
     var items, json, result, showFlg, storedTo, _i, _len;
-    storedTo = "followinTags" + this.tagName;
-    items = JSON.parse(Ti.App.Properties.getString(storedTo));
+    storedTo = "followinTag" + this.tagName;
+    Ti.API.info("getFeedByTagCommand run." + (Ti.App.Properties.getString(storedTo)));
     result = [];
-    Ti.API.info("getFeedByTagCommand!  items is " + items);
-    if (items !== null) {
+    if (Ti.App.Properties.getString(storedTo) === null) {
+      showFlg = true;
+      this.getFeedByTag(showFlg);
+    } else {
+      items = JSON.parse(Ti.App.Properties.getString(storedTo));
       for (_i = 0, _len = items.length; _i < _len; _i++) {
         json = items[_i];
         result.push(t.createRow(json));
       }
       result.push(t.createRowForLoadOldEntry(storedTo));
-    } else {
-      showFlg = true;
-      this.getFeedByTag(showFlg);
     }
     return mainTable.setData(result);
   };
@@ -26,7 +25,7 @@ getFeedByTagCommand = (function() {
     var MAXITEMCOUNT, rows, storedTo;
     rows = [];
     MAXITEMCOUNT = 20;
-    storedTo = "followinTags" + this.tagName;
+    storedTo = "followinTag" + this.tagName;
     return qiita.getFeedByTag(this.tagName, function(result, links) {
       var json, lastURL, link, nextURL, _i, _j, _len, _len2, _obj;
       for (_i = 0, _len = links.length; _i < _len; _i++) {
@@ -37,6 +36,7 @@ getFeedByTagCommand = (function() {
           lastURL = link["url"];
         }
       }
+      Ti.API.info("storedTo: " + storedTo);
       _obj = {
         label: storedTo,
         nextURL: nextURL,
@@ -53,6 +53,7 @@ getFeedByTagCommand = (function() {
         Ti.API.info("loadOldEntry show");
         rows.push(t.createRowForLoadOldEntry(storedTo));
       }
+      Ti.API.info("show status check. showFlg is " + showFlg);
       if (showFlg === true) {
         return mainTable.setData(rows);
       } else {
