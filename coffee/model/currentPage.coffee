@@ -24,9 +24,9 @@ class currentPage
         list.lastURL = obj.lastURL
         
   showLists:() ->
-    for list in @lists
-      Ti.API.info "list.label is #{list.label}"
-      Ti.API.info "list.label is #{list.nextURL}"
+    # for list in @lists
+      # Ti.API.info "list.label is #{list.label}"
+      # Ti.API.info "list.label is #{list.nextURL}"
       
     return @lists
     

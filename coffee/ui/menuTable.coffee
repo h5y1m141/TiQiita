@@ -132,7 +132,7 @@ class menuTable
       resetBackGroundColor(table.data[0].rows)
       # クリックされたrowの色を'#59BB0C'に設定
       table.data[0].rows[curretRowIndex].backgroundColor = qiitaColor
-
+      Ti.API.info "select menu event fire. #{table.data[0].rows[curretRowIndex].className}"
       controller.selectMenu table.data[0].rows[curretRowIndex].className
     )
       

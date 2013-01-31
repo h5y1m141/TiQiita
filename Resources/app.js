@@ -24,12 +24,6 @@ controller = new qiitaController();
 Ti.App.Properties.setBool('stateMainTableSlide', false);
 Ti.App.Properties.setString("storedStocks", null);
 Ti.App.Properties.setString("storedMyStocks", null);
-Ti.App.Properties.setString("followinTagSSH", null);
-Ti.App.Properties.setString("followinTagZsh", null);
-Ti.App.Properties.setString("followinTagsinatra", null);
-Ti.App.Properties.setString("followinTagJavaScript", null);
-Ti.App.Properties.setString("followinTagCoffeeScript", null);
-Ti.App.Properties.setString("followinTagRuby", null);
 Ti.App.Properties.setList("followinTags", null);
 testsEnabled = false;
 if (testsEnabled === true) {

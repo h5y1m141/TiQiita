@@ -73,7 +73,6 @@ qiitaController = (function() {
   };
   qiitaController.prototype.getFeedByTag = function(showFlg, tag) {
     return qiita.getFeedByTag(tag(function(result) {
-      actInd.hide();
       return true;
     }));
   };

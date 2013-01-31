@@ -9,7 +9,7 @@ class followingTagsCommand
         Ti.API.info "commandController.applyFeedByTagCommand run!! tagName is #{json.url_name}"
         commandController.applyFeedByTagCommand json.url_name
         
-      Ti.App.Properties.setList "followinTags",followinTags
+      # Ti.App.Properties.setList "followinTags",followinTags
       
       commandController.countUp(progressBar)
       return true

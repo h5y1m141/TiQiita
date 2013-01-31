@@ -62,7 +62,7 @@ class qiitaController
     
   getFeedByTag:(showFlg,tag) ->
     qiita.getFeedByTag(tag (result) ->
-      actInd.hide()
+
       return true
     )
       

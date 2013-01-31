@@ -5,19 +5,22 @@ class getFeedByTagCommand
     
   execute:() ->
     storedTo = "followinTag#{@tagName}"
-    Ti.API.info "getFeedByTagCommand run.#{Ti.App.Properties.getString(storedTo)}"
+    Ti.API.info "getFeedByTagCommand execute! storedTo is #{storedTo}"
     result = []
-    
-    if Ti.App.Properties.getString(storedTo) is null
-      showFlg = true
-      @.getFeedByTag(showFlg)
-    else
-      items = JSON.parse(Ti.App.Properties.getString(storedTo))
+    items = JSON.parse(Ti.App.Properties.getString(storedTo))
 
+    if items isnt null
+      Ti.API.info "cache loaded. items is #{items.length}"
       result.push(t.createRow(json)) for json in items
       result.push(t.createRowForLoadOldEntry(storedTo))
-      
-    mainTable.setData result
+
+    else
+      Ti.API.info "#{storedTo} isn't cached so that get items via Qiita API"
+      showFlg = true
+      @.getFeedByTag(showFlg)
+
+    mainTable.setData result      
+
     
   getFeedByTag:(showFlg) ->
     rows = []
@@ -31,22 +34,23 @@ class getFeedByTagCommand
           nextURL = link["url"]
         else if link["rel"] == 'last'
           lastURL = link["url"]
-      Ti.API.info "storedTo: #{storedTo}"
+
       _obj = {label:storedTo,nextURL:nextURL,lastURL:lastURL}
       pageController.set(_obj)
 
       rows.push(t.createRow(json)) for json in result
+      
       if result.length isnt MAXITEMCOUNT
         Ti.API.info "loadOldEntry hide"
       else
         Ti.API.info "loadOldEntry show"
         rows.push(t.createRowForLoadOldEntry(storedTo))
-      Ti.API.info "show status check. showFlg is #{showFlg}"
+
       if showFlg is true
         return mainTable.setData rows
       else
         return null
     )
-
+    return true
       
 module.exports = getFeedByTagCommand

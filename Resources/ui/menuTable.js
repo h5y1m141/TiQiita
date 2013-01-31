@@ -127,6 +127,7 @@ menuTable = (function() {
       curretRowIndex = e.index;
       resetBackGroundColor(table.data[0].rows);
       table.data[0].rows[curretRowIndex].backgroundColor = qiitaColor;
+      Ti.API.info("select menu event fire. " + table.data[0].rows[curretRowIndex].className);
       return controller.selectMenu(table.data[0].rows[curretRowIndex].className);
     });
     qiita.getFollowingTags(function(result, links) {

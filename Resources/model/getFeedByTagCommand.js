@@ -6,18 +6,20 @@ getFeedByTagCommand = (function() {
   getFeedByTagCommand.prototype.execute = function() {
     var items, json, result, showFlg, storedTo, _i, _len;
     storedTo = "followinTag" + this.tagName;
-    Ti.API.info("getFeedByTagCommand run." + (Ti.App.Properties.getString(storedTo)));
+    Ti.API.info("getFeedByTagCommand execute! storedTo is " + storedTo);
     result = [];
-    if (Ti.App.Properties.getString(storedTo) === null) {
-      showFlg = true;
-      this.getFeedByTag(showFlg);
-    } else {
-      items = JSON.parse(Ti.App.Properties.getString(storedTo));
+    items = JSON.parse(Ti.App.Properties.getString(storedTo));
+    if (items !== null) {
+      Ti.API.info("cache loaded. items is " + items.length);
       for (_i = 0, _len = items.length; _i < _len; _i++) {
         json = items[_i];
         result.push(t.createRow(json));
       }
       result.push(t.createRowForLoadOldEntry(storedTo));
+    } else {
+      Ti.API.info("" + storedTo + " isn't cached so that get items via Qiita API");
+      showFlg = true;
+      this.getFeedByTag(showFlg);
     }
     return mainTable.setData(result);
   };
@@ -26,7 +28,7 @@ getFeedByTagCommand = (function() {
     rows = [];
     MAXITEMCOUNT = 20;
     storedTo = "followinTag" + this.tagName;
-    return qiita.getFeedByTag(this.tagName, function(result, links) {
+    qiita.getFeedByTag(this.tagName, function(result, links) {
       var json, lastURL, link, nextURL, _i, _j, _len, _len2, _obj;
       for (_i = 0, _len = links.length; _i < _len; _i++) {
         link = links[_i];
@@ -36,7 +38,6 @@ getFeedByTagCommand = (function() {
           lastURL = link["url"];
         }
       }
-      Ti.API.info("storedTo: " + storedTo);
       _obj = {
         label: storedTo,
         nextURL: nextURL,
@@ -53,13 +54,13 @@ getFeedByTagCommand = (function() {
         Ti.API.info("loadOldEntry show");
         rows.push(t.createRowForLoadOldEntry(storedTo));
       }
-      Ti.API.info("show status check. showFlg is " + showFlg);
       if (showFlg === true) {
         return mainTable.setData(rows);
       } else {
         return null;
       }
     });
+    return true;
   };
   return getFeedByTagCommand;
 })();

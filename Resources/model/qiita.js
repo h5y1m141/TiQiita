@@ -92,20 +92,27 @@ Qiita = (function() {
     }
     return true;
   };
-  Qiita.prototype._storedStocks = function(TiAppPropertiesName, strItems) {
-    var merge, result, stocks;
-    stocks = JSON.parse(Ti.App.Properties.getString(TiAppPropertiesName));
-    if (stocks === null) {
-      Ti.App.Properties.setString(TiAppPropertiesName, strItems);
-    } else {
-      merge = stocks.concat(JSON.parse(strItems));
-      Ti.App.Properties.setString(TiAppPropertiesName, JSON.stringify(merge));
+  Qiita.prototype._storedStocks = function(_storedTo, strItems) {
+    var cachedItems, length, merge, result, stocks;
+    cachedItems = Ti.App.Properties.getString(_storedTo);
+    Ti.API.info(cachedItems);
+    stocks = JSON.parse(cachedItems);
+    if (stocks !== null) {
+      Ti.API.info(stocks.length);
     }
-    result = JSON.parse(Ti.App.Properties.getString(TiAppPropertiesName));
-    Ti.API.info("stored under " + TiAppPropertiesName + ". result is : " + result.length);
-    return true;
+    if (stocks === null) {
+      length = JSON.parse(strItems);
+      Ti.API.info("_storedStocks start");
+      Ti.App.Properties.setString(_storedTo, strItems);
+    } else {
+      Ti.API.info("_storedStocks merge start");
+      merge = stocks.concat(JSON.parse(strItems));
+      Ti.App.Properties.setString(_storedTo, JSON.stringify(merge));
+    }
+    result = JSON.parse(Ti.App.Properties.getString(_storedTo));
+    return Ti.API.info("_storedStocks finish : " + result.length);
   };
-  Qiita.prototype._request = function(parameter, value, callback) {
+  Qiita.prototype._request = function(parameter, storedTo, callback) {
     var self, xhr;
     self = this;
     xhr = Ti.Network.createHTTPClient();
@@ -114,8 +121,8 @@ Qiita = (function() {
     xhr.onload = function() {
       var json, link, relLink, responseHeaders, _i, _len;
       json = JSON.parse(this.responseText);
-      if (value !== false) {
-        self._storedStocks(value, this.responseText);
+      if (storedTo !== false) {
+        self._storedStocks(storedTo, this.responseText);
         responseHeaders = this.responseHeaders;
         if (responseHeaders.Link) {
           relLink = self._convertLinkHeaderToJSON(responseHeaders.Link);

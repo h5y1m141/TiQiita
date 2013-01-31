@@ -94,24 +94,29 @@ class Qiita
     
     return true
         
-  _storedStocks:(TiAppPropertiesName,strItems)->
+  _storedStocks:(_storedTo,strItems)->
     # JSONが含まれた配列をそのままTi.App.Properties.setList()
     # することが出来ないようなので、setStringを利用してキャッシュする
+    cachedItems = Ti.App.Properties.getString(_storedTo)
+    Ti.API.info cachedItems
+    stocks = JSON.parse(cachedItems)
 
-    stocks = JSON.parse(Ti.App.Properties.getString(TiAppPropertiesName))
-
+    Ti.API.info stocks.length if stocks isnt null
     if stocks is null
-      Ti.App.Properties.setString(TiAppPropertiesName,strItems)
+      length = JSON.parse(strItems)
+      Ti.API.info "_storedStocks start"
+      Ti.App.Properties.setString(_storedTo,strItems)
 
     else
-
+      Ti.API.info "_storedStocks merge start"
       merge = stocks.concat JSON.parse(strItems)
-      Ti.App.Properties.setString(TiAppPropertiesName,JSON.stringify(merge))
+      Ti.App.Properties.setString(_storedTo,JSON.stringify(merge))
+      
+    ## debug
+    result = JSON.parse(Ti.App.Properties.getString(_storedTo))
+    Ti.API.info "_storedStocks finish : #{result.length}"
+    
 
-    result = JSON.parse(Ti.App.Properties.getString(TiAppPropertiesName))
-    Ti.API.info "stored under #{TiAppPropertiesName}. result is : #{result.length}"
-
-    return true
 
 
   # Qiita APIにアクセスする一番肝となるメソッド
@@ -120,7 +125,7 @@ class Qiita
   # - レスポンスヘッダー解析して、next/lastページのリンク取得
   # - 最終ページに到達した場合の処理
     
-  _request:(parameter,value,callback) ->
+  _request:(parameter,storedTo,callback) ->
     
     self = @
     # if self.isConnected() is false
@@ -140,16 +145,16 @@ class Qiita
     xhr.onload = ->
       json = JSON.parse(@.responseText)
 
-      # アプリ起動中にキャッシュしたい情報かどうかをこのvalueパラメータ
+      # アプリ起動中にキャッシュしたい情報かどうかをこのstoredToパラメータ
       # にて行う。
       # 具体的には、次のページのURL情報やローカルのDB的にキャッシュしたい
       # 場合にはtrueにしてる
 
-      if value isnt false
+      if storedTo isnt false
         # QiitaAPIから取得した投稿情報をTi.App.Propertiesに都度突っ込み
         # これをローカルDB的に活用する
         
-        self._storedStocks(value,@.responseText)
+        self._storedStocks(storedTo,@.responseText)
 
         # ページネーションに必要となる
         # 次ページと最終ページのURLのハンドリング処理

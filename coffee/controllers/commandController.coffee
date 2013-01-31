@@ -6,12 +6,14 @@ class commandController
     stocksCommand = require("model/getStocksCommand")
     configCommand = require("model/configCommand")
     followingTagsCommand = require("model/getFollowingTagsCommand")
-    @feedByTagCommand = require("model/getFeedByTagCommand")    
+    
     @menu.addCommands("storedMyStocks",new myStocksCommand())
     @menu.addCommands("storedStocks",new stocksCommand())
     @menu.addCommands("config",new configCommand())
     @menu.addCommands("followingTags", new followingTagsCommand())
-    
+    # feedByTagCommand = require("model/getFeedByTagCommand")    
+    # @menu.addCommands("followinTagSSH", new feedByTagCommand("followinTagSSH"
+  ))
     
   useMenu:(commandLabel) ->
 
@@ -23,8 +25,8 @@ class commandController
     # constructor内でタグに該当するコマンドを割り当てると
     # followinTagsがnullになってる場合があるため
     # followinTagsの値をチェックした上で以下を実施する
-    
-    @menu.addCommands("followinTag#{tagName}", new @feedByTagCommand(tagName))
+    feedByTagCommand = require("model/getFeedByTagCommand")    
+    @menu.addCommands("followinTag#{tagName}", new feedByTagCommand(tagName))
     
     return true
     

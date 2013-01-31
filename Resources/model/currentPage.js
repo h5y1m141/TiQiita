@@ -41,13 +41,6 @@ currentPage = (function() {
     return _results;
   };
   currentPage.prototype.showLists = function() {
-    var list, _i, _len, _ref;
-    _ref = this.lists;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      list = _ref[_i];
-      Ti.API.info("list.label is " + list.label);
-      Ti.API.info("list.label is " + list.nextURL);
-    }
     return this.lists;
   };
   return currentPage;
