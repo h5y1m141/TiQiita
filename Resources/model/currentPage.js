@@ -1,17 +1,8 @@
 var currentPage;
 currentPage = (function() {
   function currentPage() {
-    this.lists = [
-      {
-        label: "storedStock",
-        nextURL: null,
-        lastURL: null
-      }, {
-        label: "storedMyStocks",
-        nextURL: null,
-        lastURL: null
-      }
-    ];
+    this.lists = [];
+    this.status = null;
   }
   currentPage.prototype.exists = function(label) {
     var list, _i, _len, _ref;
@@ -23,25 +14,51 @@ currentPage = (function() {
       }
     }
   };
-  currentPage.prototype.set = function(obj) {
-    if (this.exists(obj.label) !== true) {
-      return this.lists.push(obj);
-    } else {
-      return this.edit(obj);
-    }
-  };
-  currentPage.prototype.edit = function(obj) {
-    var list, _i, _len, _ref, _results;
+  currentPage.prototype.use = function(label) {
+    var list, noList, _i, _len, _ref;
     _ref = this.lists;
-    _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       list = _ref[_i];
-      _results.push(list.label === obj.label ? (list.label = obj.label, list.nextURL = obj.nextURL, list.lastURL = obj.lastURL) : void 0);
+      if (list.label === label) {
+        return this.status = list;
+      } else {
+        noList = {
+          label: "noList",
+          nextURL: null,
+          lastURL: null
+        };
+        return this.status = noList;
+      }
     }
-    return _results;
+  };
+  currentPage.prototype.set = function(obj) {
+    Ti.API.info("currentPage.set start. obj is " + obj.label);
+    if (this.exists(obj.label) !== true && obj.label !== "undefined") {
+      this.lists.push(obj);
+    } else {
+      this.edit(obj);
+    }
+    return this.status = obj;
+  };
+  currentPage.prototype.edit = function(obj) {
+    var list, _i, _len, _ref;
+    Ti.API.info("currentPage.edit start");
+    _ref = this.lists;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      list = _ref[_i];
+      if (list.label === obj.label) {
+        list.label = obj.label;
+        list.nextURL = obj.nextURL;
+        list.lastURL = obj.lastURL;
+      }
+    }
+    return Ti.API.info("currentPage.edit done. nextURL is " + list.nextURL);
   };
   currentPage.prototype.showLists = function() {
-    return this.lists;
+    return Ti.API.info(this.lists);
+  };
+  currentPage.prototype.showCurrentStatus = function() {
+    return Ti.API.info(this.status);
   };
   return currentPage;
 })();

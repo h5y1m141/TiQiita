@@ -18,6 +18,7 @@ qiitaController = (function() {
           Ti.App.Properties.setString('nextPageURL', link["url"]);
         }
       }
+      pageController.showCurrentStatus();
       pageController.showLists();
       _obj = {
         label: 'storedStocks',
@@ -37,38 +38,30 @@ qiitaController = (function() {
     });
   };
   qiitaController.prototype.loadOldEntry = function(storedTo) {
-    var MAXITEMCOUNT, url;
-    url = Ti.App.Properties.getString('nextPageURL');
-    actInd.backgroundColor = '#222';
-    actInd.opacity = 1.0;
-    actInd.zIndex = 10;
-    actInd.show();
+    var MAXITEMCOUNT, currentPage;
     MAXITEMCOUNT = 20;
-    qiita.getNextFeed(url, storedTo, function(result) {
-      var json, lastIndex, r, _i, _len, _obj;
-      Ti.API.info("getNextFeed start. result is " + result.length);
-      pageController.showLists();
-      _obj = {
-        label: storedTo,
-        nextURL: url,
-        lastURL: null
-      };
-      pageController.set(_obj);
-      pageController.showLists();
-      if (result.length !== MAXITEMCOUNT) {
-        Ti.API.info("loadOldEntry hide");
-        t.hideLastRow();
-      } else {
-        Ti.API.info("loadOldEntry show");
-        for (_i = 0, _len = result.length; _i < _len; _i++) {
-          json = result[_i];
-          r = t.createRow(json);
-          lastIndex = t.lastRowIndex();
-          t.insertRow(lastIndex, r);
+    currentPage = pageController.use(storedTo);
+    pageController.showCurrentStatus();
+    if (currentPage.nextURL !== null) {
+      qiita.getNextFeed(currentPage.nextURL, storedTo, function(result) {
+        var json, lastIndex, r, _i, _len, _results;
+        Ti.API.info("getNextFeed start. result is " + result.length);
+        if (result.length !== MAXITEMCOUNT) {
+          Ti.API.info("loadOldEntry hide");
+          return t.hideLastRow();
+        } else {
+          Ti.API.info("loadOldEntry show");
+          _results = [];
+          for (_i = 0, _len = result.length; _i < _len; _i++) {
+            json = result[_i];
+            r = t.createRow(json);
+            lastIndex = t.lastRowIndex();
+            _results.push(t.insertRow(lastIndex, r));
+          }
+          return _results;
         }
-      }
-      return actInd.hide();
-    });
+      });
+    }
     return true;
   };
   qiitaController.prototype.getFeedByTag = function(showFlg, tag) {
@@ -111,17 +104,6 @@ qiitaController = (function() {
   };
   qiitaController.prototype.selectMenu = function(menuName) {
     return commandController.useMenu(menuName);
-  };
-  qiitaController.prototype.currentPage = function(label, nextURL) {
-    var currentPage;
-    currentPage = {
-      label: storedTo,
-      nextURL: nextURL
-    };
-    return Ti.App.Properties.setString("currentPage", JSON.stringify(currentPage));
-  };
-  qiitaController.prototype.getCurrentPage = function() {
-    return JSON.parse(Ti.App.Properties.getString("currentPage"));
   };
   qiitaController.prototype.webViewContentsUpdate = function(body) {
     return webview.contentsUpdate(body);

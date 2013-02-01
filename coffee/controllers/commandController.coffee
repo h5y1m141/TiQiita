@@ -11,9 +11,8 @@ class commandController
     @menu.addCommands("storedStocks",new stocksCommand())
     @menu.addCommands("config",new configCommand())
     @menu.addCommands("followingTags", new followingTagsCommand())
-    # feedByTagCommand = require("model/getFeedByTagCommand")    
-    # @menu.addCommands("followinTagSSH", new feedByTagCommand("followinTagSSH"
-  ))
+
+
     
   useMenu:(commandLabel) ->
 
@@ -35,9 +34,16 @@ class commandController
     currentValue = progressBar.value
     Ti.API.info "value check. max is #{max} and currentValue is #{currentValue}"
     if currentValue is max
+      Ti.API.info "countUp done!!!"
       direction = "vertical"
       Ti.App.Properties.setBool 'stateMainTableSlide',true
       controller.slideMainTable(direction)
+      
+      pageController.useStoredStock()
+      Ti.API.info "pageController.showCurrentStatus()"
+      pageController.showLists()
+      pageController.showCurrentStatus()
+
     else  
       progressBar.value = progressBar.value+1
       

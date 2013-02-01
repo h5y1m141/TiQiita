@@ -9,7 +9,6 @@ followingTagsCommand = (function() {
       for (_i = 0, _len = result.length; _i < _len; _i++) {
         json = result[_i];
         followinTags.push(json.url_name);
-        Ti.API.info("commandController.applyFeedByTagCommand run!! tagName is " + json.url_name);
         commandController.applyFeedByTagCommand(json.url_name);
       }
       commandController.countUp(progressBar);

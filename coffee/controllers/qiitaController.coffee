@@ -4,9 +4,6 @@ class qiitaController
     @message =
       network:
         timeout:"ネットワーク接続できないかサーバがダウンしてるようです"
-
-    
-
     
   loadEntry: () ->
     
@@ -16,6 +13,7 @@ class qiitaController
         if link["rel"] == 'next'
           Ti.App.Properties.setString('nextPageURL',link["url"])
           
+      pageController.showCurrentStatus()          
       pageController.showLists()
       _obj = {label:'storedStocks',nextURL:link["url"],lastURL:null}
       pageController.set(_obj)
@@ -29,35 +27,26 @@ class qiitaController
     )  
     
   loadOldEntry: (storedTo) ->
-    url = Ti.App.Properties.getString('nextPageURL')
+    MAXITEMCOUNT = 20
+    currentPage = pageController.use(storedTo)
+    pageController.showCurrentStatus()
     
-    actInd.backgroundColor = '#222'
-    actInd.opacity = 1.0
-    actInd.zIndex = 10
-    actInd.show()
-    MAXITEMCOUNT = 20  
-    qiita.getNextFeed(url,storedTo,(result) ->
-      Ti.API.info "getNextFeed start. result is #{result.length}"
-      pageController.showLists()
-      _obj = {label:storedTo,nextURL:url,lastURL:null}
-      pageController.set(_obj)
-      pageController.showLists()
+    if currentPage.nextURL isnt null
+      qiita.getNextFeed(currentPage.nextURL,storedTo,(result) ->
+        Ti.API.info "getNextFeed start. result is #{result.length}"
 
-      # ここで投稿件数をチェックして、20件以下だったら過去のを
-      # 読み込むrowを非表示にすればOK
-      if result.length isnt MAXITEMCOUNT
-        Ti.API.info "loadOldEntry hide"
-        t.hideLastRow()
-      else
-        Ti.API.info "loadOldEntry show"
-        for json in result
-          r = t.createRow(json)
-          lastIndex = t.lastRowIndex()
-          t.insertRow(lastIndex,r)
-          
-      actInd.hide()
-        
-    )
+        # ここで投稿件数をチェックして、20件以下だったら過去のを
+        # 読み込むrowを非表示にすればOK
+        if result.length isnt MAXITEMCOUNT
+          Ti.API.info "loadOldEntry hide"
+          t.hideLastRow()
+        else
+          Ti.API.info "loadOldEntry show"
+          for json in result
+            r = t.createRow(json)
+            lastIndex = t.lastRowIndex()
+            t.insertRow(lastIndex,r)
+      )
     return true
     
   getFeedByTag:(showFlg,tag) ->
@@ -102,14 +91,6 @@ class qiitaController
   selectMenu:(menuName) ->
     return commandController.useMenu menuName
 
-
-  currentPage:(label,nextURL) ->
-    currentPage =
-      label:storedTo
-      nextURL:nextURL
-    return Ti.App.Properties.setString "currentPage", JSON.stringify(currentPage)  
-  getCurrentPage:() ->
-    return JSON.parse(Ti.App.Properties.getString("currentPage"))
 
   webViewContentsUpdate: (body) ->
     return webview.contentsUpdate(body)

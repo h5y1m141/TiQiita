@@ -1,7 +1,7 @@
 var commandController;
 commandController = (function() {
   function commandController() {
-    var Menu, configCommand, feedByTagCommand, followingTagsCommand, myStocksCommand, stocksCommand;
+    var Menu, configCommand, followingTagsCommand, myStocksCommand, stocksCommand;
     Menu = require("controllers/menu");
     this.menu = new Menu();
     myStocksCommand = require("model/getMyStocksCommand");
@@ -12,8 +12,6 @@ commandController = (function() {
     this.menu.addCommands("storedStocks", new stocksCommand());
     this.menu.addCommands("config", new configCommand());
     this.menu.addCommands("followingTags", new followingTagsCommand());
-    feedByTagCommand = require("model/getFeedByTagCommand");
-    this.menu.addCommands("followinTagSSH", new feedByTagCommand("followinTagSSH"));
   }
   commandController.prototype.useMenu = function(commandLabel) {
     return this.menu.run(commandLabel);
@@ -30,9 +28,14 @@ commandController = (function() {
     currentValue = progressBar.value;
     Ti.API.info("value check. max is " + max + " and currentValue is " + currentValue);
     if (currentValue === max) {
+      Ti.API.info("countUp done!!!");
       direction = "vertical";
       Ti.App.Properties.setBool('stateMainTableSlide', true);
       controller.slideMainTable(direction);
+      pageController.useStoredStock();
+      Ti.API.info("pageController.showCurrentStatus()");
+      pageController.showLists();
+      pageController.showCurrentStatus();
     } else {
       progressBar.value = progressBar.value + 1;
     }

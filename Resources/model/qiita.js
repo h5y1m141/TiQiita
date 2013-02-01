@@ -119,24 +119,15 @@ Qiita = (function() {
     Ti.API.info(parameter.method + ":" + parameter.url);
     xhr.open(parameter.method, parameter.url);
     xhr.onload = function() {
-      var json, link, relLink, responseHeaders, _i, _len;
+      var json, relLink, responseHeaders;
       json = JSON.parse(this.responseText);
       if (storedTo !== false) {
         self._storedStocks(storedTo, this.responseText);
         responseHeaders = this.responseHeaders;
         if (responseHeaders.Link) {
           relLink = self._convertLinkHeaderToJSON(responseHeaders.Link);
-          for (_i = 0, _len = relLink.length; _i < _len; _i++) {
-            link = relLink[_i];
-            if (link["rel"] === 'next') {
-              Ti.API.info(link["url"]);
-              Ti.App.Properties.setString('nextPageURL', link["url"]);
-            } else if (link["rel"] === 'last') {
-              Ti.App.Properties.setString('lastPageURL', link["url"]);
-            } else {
-              Ti.API.info("done");
-            }
-          }
+          Ti.API.info("start self._parsedResponseHeader. storedTo is " + storedTo);
+          self._parsedResponseHeader(relLink, storedTo);
         } else {
           relLink = null;
         }
@@ -171,6 +162,25 @@ Qiita = (function() {
     _ = require("lib/underscore-1.4.3.min");
     object1 = object1.concat(object2);
     return _(object1).sortBy("created_at");
+  };
+  Qiita.prototype._parsedResponseHeader = function(header, storedTo) {
+    var lastURL, link, nextURL, _i, _len, _obj;
+    for (_i = 0, _len = header.length; _i < _len; _i++) {
+      link = header[_i];
+      if (link["rel"] === 'next') {
+        nextURL = link["url"];
+      } else if (link["rel"] === 'last') {
+        lastURL = link["url"];
+      } else {
+        Ti.API.info("done");
+      }
+    }
+    _obj = {
+      label: storedTo,
+      nextURL: nextURL,
+      lastURL: lastURL
+    };
+    return pageController.set(_obj);
   };
   Qiita.prototype.isConnected = function() {
     return Ti.Network.online;

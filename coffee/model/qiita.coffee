@@ -158,19 +158,11 @@ class Qiita
 
         # ページネーションに必要となる
         # 次ページと最終ページのURLのハンドリング処理
-
         responseHeaders = @.responseHeaders
-        
         if responseHeaders.Link
           relLink = self._convertLinkHeaderToJSON(responseHeaders.Link)
-          for link in relLink
-            if link["rel"] == 'next'
-              Ti.API.info link["url"]
-              Ti.App.Properties.setString('nextPageURL',link["url"])
-            else if link["rel"] == 'last'
-              Ti.App.Properties.setString('lastPageURL',link["url"])
-            else
-              Ti.API.info "done"
+          Ti.API.info "start self._parsedResponseHeader. storedTo is #{storedTo}"
+          self._parsedResponseHeader(relLink,storedTo)
         else
           relLink = null
 
@@ -209,7 +201,20 @@ class Qiita
     object1 = object1.concat object2
     return _(object1).sortBy("created_at")
 
+  _parsedResponseHeader:(header,storedTo) ->
 
+    for link in header
+      if link["rel"] is 'next'
+        nextURL = link["url"]
+      else if link["rel"] is 'last'
+        lastURL = link["url"]
+      else
+        Ti.API.info "done"
+      
+    _obj = {label:storedTo,nextURL:nextURL,lastURL:lastURL}
+
+    
+    return pageController.set(_obj)    
   
   isConnected:() ->
     
