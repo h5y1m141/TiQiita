@@ -1,6 +1,8 @@
 moment = require('lib/moment.min')
 momentja = require('lib/momentja')
 Qiita = require('model/qiita')
+Monglo = require('ti.monglodb').Monglo
+qiitaLocalItems = Monglo('qiitaItems')
 tableView = require('ui/tableView')
 menuTable = require('ui/menuTable')
 StatusView = require('ui/statusView')

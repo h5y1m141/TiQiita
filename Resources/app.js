@@ -1,7 +1,9 @@
-var CommandController, PageController, ProgressBar, Qiita, StatusView, actInd, activityIndicator, commandController, controller, defaultState, direction, listBtn, mainTable, mainWindow, menu, menuTable, moment, momentja, pageController, progressBar, qiita, qiitaController, refreshBtn, slideState, statusView, t, tab, tabGroup, tableView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win;
+var CommandController, Monglo, PageController, ProgressBar, Qiita, StatusView, actInd, activityIndicator, commandController, controller, defaultState, direction, listBtn, mainTable, mainWindow, menu, menuTable, moment, momentja, pageController, progressBar, qiita, qiitaController, qiitaLocalItems, refreshBtn, slideState, statusView, t, tab, tabGroup, tableView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win;
 moment = require('lib/moment.min');
 momentja = require('lib/momentja');
 Qiita = require('model/qiita');
+Monglo = require('ti.monglodb').Monglo;
+qiitaLocalItems = Monglo('qiitaItems');
 tableView = require('ui/tableView');
 menuTable = require('ui/menuTable');
 StatusView = require('ui/statusView');
