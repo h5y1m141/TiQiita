@@ -16,6 +16,7 @@ class pageController
   useStoredMyStock:() ->
     statusObj = @pageStatus.lists[1]
     return @pageStatus.use(statusObj)
+    
   use:(storedTo) ->
     return @pageStatus.use(storedTo)
     

@@ -28,8 +28,8 @@ class qiitaController
     
   loadOldEntry: (storedTo) ->
     MAXITEMCOUNT = 20
-    currentPage = pageController.use(storedTo)
-    pageController.showCurrentStatus()
+    currentPage = pageController.use storedTo
+
     
     if currentPage.nextURL isnt null
       qiita.getNextFeed(currentPage.nextURL,storedTo,(result) ->
@@ -89,6 +89,7 @@ class qiitaController
     else
       return 
   selectMenu:(menuName) ->
+    Ti.API.info "qiitaController.selectMenu start. menuName is #{menuName}"
     return commandController.useMenu menuName
 
 

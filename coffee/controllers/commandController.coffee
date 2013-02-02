@@ -15,37 +15,41 @@ class commandController
 
     
   useMenu:(commandLabel) ->
-
-    @menu.run(commandLabel)
+    Ti.API.info "commandController.useMenu start. commandLabel is #{commandLabel}"
+    pageController.showCurrentStatus()
+    pageController.use commandLabel
+    pageController.showCurrentStatus()
+    
+    @menu.run commandLabel
     
   applyFeedByTagCommand:(tagName) ->
     # 自分がフォローしてるタグの情報をQiitaAPI利用して
     # 取得してるが非同期で処理してるため必ずしも
     # constructor内でタグに該当するコマンドを割り当てると
-    # followinTagsがnullになってる場合があるため
-    # followinTagsの値をチェックした上で以下を実施する
+    # followingTagsがnullになってる場合があるため
+    # followingTagsの値をチェックした上で以下を実施する
     feedByTagCommand = require("model/getFeedByTagCommand")    
-    @menu.addCommands("followinTag#{tagName}", new feedByTagCommand(tagName))
+    @menu.addCommands("followingTag#{tagName}", new feedByTagCommand(tagName))
     
     return true
     
   countUp:(progressBar) ->
     max = progressBar.max-1
-    currentValue = progressBar.value
+    currentValue = progressBar.value+2
     Ti.API.info "value check. max is #{max} and currentValue is #{currentValue}"
-    if currentValue is max
+    if currentValue isnt max
+      progressBar.value = progressBar.value+1
+    else
       Ti.API.info "countUp done!!!"
       direction = "vertical"
       Ti.App.Properties.setBool 'stateMainTableSlide',true
       controller.slideMainTable(direction)
-      
-      pageController.useStoredStock()
       Ti.API.info "pageController.showCurrentStatus()"
       pageController.showLists()
+      pageController.useStoredStock()
       pageController.showCurrentStatus()
+    
 
-    else  
-      progressBar.value = progressBar.value+1
       
     return true
   

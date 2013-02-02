@@ -14,6 +14,7 @@ class getStocksCommand
     
   getFeed:() ->
     rows = []
+    value = @value
     qiita.getFeed( (result,links) ->
       for link in links
         if link["rel"] == 'next'
@@ -21,11 +22,12 @@ class getStocksCommand
         else if link["rel"] == 'last'
           lastURL = link["url"]
           
-      _obj = {label:@value,nextURL:nextURL,lastURL:lastURL}
+      _obj = {label:value,nextURL:nextURL,lastURL:lastURL}
+
       pageController.set(_obj)
       commandController.countUp(progressBar)
       rows.push(t.createRow(json)) for json in result
-      rows.push(t.createRowForLoadOldEntry(@value))
+      rows.push(t.createRowForLoadOldEntry(value))
       mainTable.setData rows
 
       return true

@@ -27,6 +27,7 @@ class tableView
        else if e.rowData.className is "config"
         controller.login e.rowData
        else
+        Ti.API.info "tableView eventListener start. storedTo is #{e.rowData.storedTo}"
         storedTo = e.rowData.storedTo
         controller.loadOldEntry storedTo
     )

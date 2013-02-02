@@ -19,8 +19,9 @@ getStocksCommand = (function() {
     return mainTable.setData(result);
   };
   getStocksCommand.prototype.getFeed = function() {
-    var rows;
+    var rows, value;
     rows = [];
+    value = this.value;
     return qiita.getFeed(function(result, links) {
       var json, lastURL, link, nextURL, _i, _j, _len, _len2, _obj;
       for (_i = 0, _len = links.length; _i < _len; _i++) {
@@ -32,7 +33,7 @@ getStocksCommand = (function() {
         }
       }
       _obj = {
-        label: this.value,
+        label: value,
         nextURL: nextURL,
         lastURL: lastURL
       };
@@ -42,7 +43,7 @@ getStocksCommand = (function() {
         json = result[_j];
         rows.push(t.createRow(json));
       }
-      rows.push(t.createRowForLoadOldEntry(this.value));
+      rows.push(t.createRowForLoadOldEntry(value));
       mainTable.setData(rows);
       return true;
     });

@@ -41,7 +41,6 @@ qiitaController = (function() {
     var MAXITEMCOUNT, currentPage;
     MAXITEMCOUNT = 20;
     currentPage = pageController.use(storedTo);
-    pageController.showCurrentStatus();
     if (currentPage.nextURL !== null) {
       qiita.getNextFeed(currentPage.nextURL, storedTo, function(result) {
         var json, lastIndex, r, _i, _len, _results;
@@ -103,6 +102,7 @@ qiitaController = (function() {
     }
   };
   qiitaController.prototype.selectMenu = function(menuName) {
+    Ti.API.info("qiitaController.selectMenu start. menuName is " + menuName);
     return commandController.useMenu(menuName);
   };
   qiitaController.prototype.webViewContentsUpdate = function(body) {
