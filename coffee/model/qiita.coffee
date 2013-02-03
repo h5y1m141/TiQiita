@@ -98,7 +98,7 @@ class Qiita
     # JSONが含まれた配列をそのままTi.App.Properties.setList()
     # することが出来ないようなので、setStringを利用してキャッシュする
     cachedItems = Ti.App.Properties.getString(_storedTo)
-    Ti.API.info cachedItems
+    Ti.API.info "_storedStocks start. cachedItems is #{cachedItems}"
     stocks = JSON.parse(cachedItems)
 
     Ti.API.info stocks.length if stocks isnt null
@@ -147,10 +147,9 @@ class Qiita
 
       # アプリ起動中にキャッシュしたい情報かどうかをこのstoredToパラメータ
       # にて行う。
-      # 具体的には、次のページのURL情報やローカルのDB的にキャッシュしたい
-      # 場合にはtrueにしてる
 
       if storedTo isnt false
+        Ti.API.info "start _storedStocks #{storedTo}"
         # QiitaAPIから取得した投稿情報をTi.App.Propertiesに都度突っ込み
         # これをローカルDB的に活用する
         
@@ -233,10 +232,7 @@ class Qiita
     
   getFollowingTags: (callback) ->
     param = @parameter.followingTags
-    # 自分がフォローしてるタグの情報はAppPropertiesでキャッシュしたくないので
-    # ２番めの引数をfalseにして対応
-
-    @._request(param,false,callback)
+    @._request(param,"followingTags",callback)
     # @._mockObject("followingTags",false,callback)
   getFeed:(callback) ->
     param = @parameter.feed

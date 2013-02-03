@@ -29,7 +29,7 @@ commandController = (function() {
   commandController.prototype.countUp = function(progressBar) {
     var currentValue, direction, max;
     max = progressBar.max - 1;
-    currentValue = progressBar.value + 2;
+    currentValue = progressBar.value + 1;
     Ti.API.info("value check. max is " + max + " and currentValue is " + currentValue);
     if (currentValue !== max) {
       progressBar.value = progressBar.value + 1;

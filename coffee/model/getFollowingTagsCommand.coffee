@@ -5,6 +5,7 @@ class followingTagsCommand
 
     qiita.getFollowingTags( (result) ->
       for json in result
+
         commandController.applyFeedByTagCommand json.url_name
         
       

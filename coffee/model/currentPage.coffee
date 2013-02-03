@@ -2,12 +2,12 @@ class currentPage
   constructor: () ->
     @lists = []
     @status = null
+    fsStore = require('lib/fs-store')
+    qiitaDB.use('store', fsStore)
+    qiitaDB.collection('localItems')
+    @localItems = qiitaDB.collection
     
-  exists:(label) ->
-    for list in @lists
-      Ti.API.info "currentPage exists. list.label is #{list.label}"
-      if list.label is label
-        return true
+
   use:(label) ->
     Ti.API.info "currentPage.use() start. label is #{label} @lists is #{@lists.length} @status is #{@status}"
 
@@ -24,25 +24,23 @@ class currentPage
         
   set:(obj) ->
     Ti.API.info "currentPage.set start. obj is #{obj.label}"
-    if @.exists(obj.label) isnt true and obj.label isnt "undefined"
-      Ti.API.info "currentPage @lists.push start. obj label is #{obj.label}"
-      @lists.push(obj)
-    else
-      @.edit(obj)
-
-    return @status = obj.label  
+    # qiitaDB.localItems.findOne({"label":obj.label}, (err,doc) ->
+    #   if doc is null
+    #     qiitaDB.localItems.insert(obj,(err, doc) ->
+    #       Ti.API.info "local stored. doc is #{doc}"
+    #     )
+    #   else
+    #     qiitaDB.localItems.update
+    #       label: obj.label
+    #     ,
+    #     $set:
+    #       label: obj.label
+    #       nextURL: obj.nextURL
+    #       lastURL: obj.lastURL
+          
+    #   return @status = obj.label  
+    # )
       
-  edit:(obj) ->
-    Ti.API.info "currentPage.edit start"
-    for list in @lists
-      if list.label is obj.label
-        list.label   = obj.label
-        list.nextURL = obj.nextURL
-        list.lastURL = obj.lastURL
-        
-    Ti.API.info "currentPage.edit done. label is #{list.label} . nextURL is #{list.nextURL} @lists length is #{@lists.length}"
-
-    return true
     
   showLists:() ->
     Ti.API.info @lists

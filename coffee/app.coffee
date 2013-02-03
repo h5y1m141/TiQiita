@@ -2,7 +2,7 @@ moment = require('lib/moment.min')
 momentja = require('lib/momentja')
 Qiita = require('model/qiita')
 Monglo = require('ti.monglodb').Monglo
-qiitaLocalItems = Monglo('qiitaItems')
+qiitaDB = Monglo('qiitaItems')
 tableView = require('ui/tableView')
 menuTable = require('ui/menuTable')
 StatusView = require('ui/statusView')
@@ -83,10 +83,10 @@ else
   direction = "vertical"
   controller.slideMainTable(direction)
   commandController.useMenu "storedStocks"
-  # commandController.useMenu "storedMyStocks"
+  commandController.useMenu "storedMyStocks"
   commandController.useMenu "followingTags"
   
-
+    
   
   webWindow = new win()
   webWindow.backButtonTitle = '戻る'

@@ -21,7 +21,6 @@ class getStocksCommand
           nextURL = link["url"]
         else if link["rel"] == 'last'
           lastURL = link["url"]
-          
       _obj = {label:value,nextURL:nextURL,lastURL:lastURL}
 
       pageController.set(_obj)

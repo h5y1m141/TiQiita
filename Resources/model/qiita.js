@@ -95,7 +95,7 @@ Qiita = (function() {
   Qiita.prototype._storedStocks = function(_storedTo, strItems) {
     var cachedItems, length, merge, result, stocks;
     cachedItems = Ti.App.Properties.getString(_storedTo);
-    Ti.API.info(cachedItems);
+    Ti.API.info("_storedStocks start. cachedItems is " + cachedItems);
     stocks = JSON.parse(cachedItems);
     if (stocks !== null) {
       Ti.API.info(stocks.length);
@@ -122,6 +122,7 @@ Qiita = (function() {
       var json, relLink, responseHeaders;
       json = JSON.parse(this.responseText);
       if (storedTo !== false) {
+        Ti.API.info("start _storedStocks " + storedTo);
         self._storedStocks(storedTo, this.responseText);
         responseHeaders = this.responseHeaders;
         if (responseHeaders.Link) {
@@ -203,7 +204,7 @@ Qiita = (function() {
   Qiita.prototype.getFollowingTags = function(callback) {
     var param;
     param = this.parameter.followingTags;
-    return this._request(param, false, callback);
+    return this._request(param, "followingTags", callback);
   };
   Qiita.prototype.getFeed = function(callback) {
     var param;
