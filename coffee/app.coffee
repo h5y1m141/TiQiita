@@ -39,7 +39,7 @@ Ti.App.Properties.setString "storedMyStocks",null
 
 
 ## フォローしてるタグ
-Ti.App.Properties.setList "followinTags",null
+Ti.App.Properties.setList "followingTags",null
 
 # Jasmine
 # 

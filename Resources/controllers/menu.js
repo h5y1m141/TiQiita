@@ -21,6 +21,7 @@ Menu = (function() {
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       command = _ref[_i];
+      Ti.API.info("" + commandLabel + " and " + command.commandLabel);
       _results.push(command.commandLabel === commandLabel ? (Ti.API.info("Menu.run. command is " + command.commandLabel), command.command.execute()) : void 0);
     }
     return _results;

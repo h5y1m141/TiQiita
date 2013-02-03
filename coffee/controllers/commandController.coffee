@@ -19,7 +19,7 @@ class commandController
     pageController.showCurrentStatus()
     pageController.use commandLabel
     pageController.showCurrentStatus()
-    
+    @menu.showCommands()
     @menu.run commandLabel
     
   applyFeedByTagCommand:(tagName) ->

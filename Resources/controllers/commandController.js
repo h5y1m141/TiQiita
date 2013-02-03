@@ -18,6 +18,7 @@ commandController = (function() {
     pageController.showCurrentStatus();
     pageController.use(commandLabel);
     pageController.showCurrentStatus();
+    this.menu.showCommands();
     return this.menu.run(commandLabel);
   };
   commandController.prototype.applyFeedByTagCommand = function(tagName) {

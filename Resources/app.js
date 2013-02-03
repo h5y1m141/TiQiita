@@ -26,7 +26,7 @@ controller = new qiitaController();
 Ti.App.Properties.setBool('stateMainTableSlide', false);
 Ti.App.Properties.setString("storedStocks", null);
 Ti.App.Properties.setString("storedMyStocks", null);
-Ti.App.Properties.setList("followinTags", null);
+Ti.App.Properties.setList("followingTags", null);
 testsEnabled = false;
 if (testsEnabled === true) {
   require('test/tests');
