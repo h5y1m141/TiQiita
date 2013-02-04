@@ -98,7 +98,7 @@ class Qiita
     # JSONが含まれた配列をそのままTi.App.Properties.setList()
     # することが出来ないようなので、setStringを利用してキャッシュする
     cachedItems = Ti.App.Properties.getString(_storedTo)
-    Ti.API.info "_storedStocks start. cachedItems is #{cachedItems}"
+
     stocks = JSON.parse(cachedItems)
 
     Ti.API.info stocks.length if stocks isnt null
@@ -209,11 +209,12 @@ class Qiita
         lastURL = link["url"]
       else
         Ti.API.info "done"
+        
+    if storedTo isnt "followingTags"
+      _obj = {label:storedTo,nextURL:nextURL,lastURL:lastURL}
+      pageController.set(_obj)
       
-    _obj = {label:storedTo,nextURL:nextURL,lastURL:lastURL}
-
-    
-    return pageController.set(_obj)    
+    return true
   
   isConnected:() ->
     

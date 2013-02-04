@@ -10,12 +10,17 @@ class pageController
     return @pageStatus.showCurrentStatus()
      
   useStoredStock:() ->
-    statusObj = @pageStatus.lists[0]
-    return @pageStatus.use(statusObj)
+    lists = @pageStatus.lists
+    for list in lists
+      if list.label = "storedStocks"
+        return @pageStatus.use(list.label)
     
   useStoredMyStock:() ->
-    statusObj = @pageStatus.lists[1]
-    return @pageStatus.use(statusObj)
+    lists = @pageStatus.lists
+    for list in lists
+      if list.label = "storedMyStocks"
+        return @pageStatus.use(list.label)
+
     
   use:(storedTo) ->
     return @pageStatus.use(storedTo)
@@ -23,6 +28,11 @@ class pageController
     
   set:(obj) ->
     return @pageStatus.set(obj)
-
+    
+  getStatus:() ->
+    return @pageStatus.status
+    
+  getList:() ->
+    return @pageStatus.getList()
 
 module.exports = pageController

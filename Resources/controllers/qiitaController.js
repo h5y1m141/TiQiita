@@ -9,39 +9,18 @@ qiitaController = (function() {
     };
   }
   qiitaController.prototype.loadEntry = function() {
-    return qiita.getFeed(function(result, links) {
-      var json, link, rows, _i, _j, _len, _len2, _obj;
-      rows = [];
-      for (_i = 0, _len = links.length; _i < _len; _i++) {
-        link = links[_i];
-        if (link["rel"] === 'next') {
-          Ti.App.Properties.setString('nextPageURL', link["url"]);
-        }
-      }
-      pageController.showCurrentStatus();
-      pageController.showLists();
-      _obj = {
-        label: 'storedStocks',
-        nextURL: link["url"],
-        lastURL: null
-      };
-      pageController.set(_obj);
-      pageController.showLists();
-      for (_j = 0, _len2 = result.length; _j < _len2; _j++) {
-        json = result[_j];
-        rows.push(t.createRow(json));
-      }
-      rows.push(t.createRowForLoadOldEntry('storedStocks'));
-      mainTable.setData(rows);
-      actInd.hide();
-      return true;
-    });
+    Ti.API.info("qiitaController.loadEntry()");
+    return commandController.useMenu('storedStocks');
   };
   qiitaController.prototype.loadOldEntry = function(storedTo) {
-    var MAXITEMCOUNT, currentPage;
+    var MAXITEMCOUNT, currentPage, currentPageItem;
     MAXITEMCOUNT = 20;
-    currentPage = pageController.use(storedTo);
-    if (currentPage.nextURL !== null) {
+    currentPage = Ti.App.Properties.getString("currentPage");
+    Ti.API.info("currentPage is " + currentPage);
+    pageController.use(currentPage);
+    currentPageItem = pageController.getList();
+    Ti.API.info("currentPageItem nextURL is " + currentPageItem.nextURL);
+    if (currentPageItem.nextURL !== null) {
       qiita.getNextFeed(currentPage.nextURL, storedTo, function(result) {
         var json, lastIndex, r, _i, _len, _results;
         Ti.API.info("getNextFeed start. result is " + result.length);

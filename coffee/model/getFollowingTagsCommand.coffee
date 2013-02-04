@@ -9,7 +9,7 @@ class followingTagsCommand
         commandController.applyFeedByTagCommand json.url_name
         
       
-      # commandController.countUp(progressBar)
+      commandController.countUp(progressBar)
       return true
     )
     

@@ -2,44 +2,36 @@ class currentPage
   constructor: () ->
     @lists = []
     @status = null
-    fsStore = require('lib/fs-store')
-    qiitaDB.use('store', fsStore)
-    qiitaDB.collection('localItems')
-    @localItems = qiitaDB.collection
-    
+    @item = {}
 
+  
   use:(label) ->
-    Ti.API.info "currentPage.use() start. label is #{label} @lists is #{@lists.length} @status is #{@status}"
+    Ti.API.info "currentPage.use() start. label is #{label} @lists is #{@lists.length} "
+    if @lists.length is 0
+      @status = label
+    else
+      for list in @lists
+        if list.label is label
+          @status = list.label
+          @item = list
 
-    for list in @lists
-      Ti.API.info "currentPage.use loop. list.label is #{list.label}"
-      if list.label is label
-        @status = list.label
-      # else
-      #   noList = {label:"noList",nextURL:null,lastURL:null}
-      #   @status = noList.label
-
-    Ti.API.info "currentPage done @status is #{@status}"
+    Ti.API.info "currentPage done @item is #{@item}"
       
         
   set:(obj) ->
-    Ti.API.info "currentPage.set start. obj is #{obj.label}"
-    # qiitaDB.localItems.findOne({"label":obj.label}, (err,doc) ->
-    #   if doc is null
-    #     qiitaDB.localItems.insert(obj,(err, doc) ->
-    #       Ti.API.info "local stored. doc is #{doc}"
-    #     )
-    #   else
-    #     qiitaDB.localItems.update
-    #       label: obj.label
-    #     ,
-    #     $set:
-    #       label: obj.label
-    #       nextURL: obj.nextURL
-    #       lastURL: obj.lastURL
-          
-    #   return @status = obj.label  
-    # )
+    _ = require("lib/underscore-min")
+
+    matchItems = _.where(@lists, {"label":obj.label})
+    if matchItems.length is 0
+      @lists.push obj
+      @item = list
+    else
+      for list in @lists
+        if list.label is obj.label
+          list.nextURL = obj.nextURL
+          list.lastURL = obj.lastURL
+    
+    Ti.API.info "obj nextURL is #{obj.nextURL} and matchItems is #{matchItems} and @lists is #{@lists}"
       
     
   showLists:() ->
@@ -47,5 +39,18 @@ class currentPage
     
   showCurrentStatus:() ->
     Ti.API.info @status
+    
+  getList:() ->
+    Ti.API.info "currentPage getList start @lists is #{@lists} and @status is #{@status}"
+    for list in @lists
+      Ti.API.info list.label
+      if list.label is @status
+        obj = list
+      else
+        noList = {label:"noList",nextURL:null,lastURL:null}
+        obj = noList.label
+        
+    
+    return obj
     
 module.exports = currentPage  

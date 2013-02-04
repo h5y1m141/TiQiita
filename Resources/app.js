@@ -1,13 +1,13 @@
-var CommandController, Monglo, PageController, ProgressBar, Qiita, StatusView, actInd, activityIndicator, commandController, controller, defaultState, direction, listBtn, mainTable, mainWindow, menu, menuTable, moment, momentja, pageController, progressBar, qiita, qiitaController, qiitaDB, refreshBtn, slideState, statusView, t, tab, tabGroup, tableView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win;
+var AlertView, CommandController, PageController, ProgressBar, Qiita, StatusView, actInd, activityIndicator, alertView, commandController, controller, defaultState, direction, listBtn, mainTable, mainWindow, menu, menuTable, moment, momentja, pageController, progressBar, qiita, qiitaController, refreshBtn, slideState, statusView, t, tab, tabGroup, tableView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win;
 moment = require('lib/moment.min');
 momentja = require('lib/momentja');
 Qiita = require('model/qiita');
-Monglo = require('ti.monglodb').Monglo;
-qiitaDB = Monglo('qiitaItems');
 tableView = require('ui/tableView');
 menuTable = require('ui/menuTable');
 StatusView = require('ui/statusView');
 statusView = new StatusView();
+AlertView = require('ui/alertView');
+alertView = new AlertView();
 ProgressBar = require('ui/progressBar');
 progressBar = new ProgressBar();
 qiitaController = require('controllers/qiitaController');
@@ -55,6 +55,7 @@ if (testsEnabled === true) {
   progressBar.show();
   statusView.add(progressBar);
   mainWindow.add(statusView);
+  mainWindow.add(alertView.getAlertView());
   mainWindow.leftNavButton = listBtn;
   mainWindow.rightNavButton = refreshBtn;
   direction = "vertical";

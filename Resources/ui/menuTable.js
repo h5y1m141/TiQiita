@@ -47,7 +47,7 @@ menuTable = (function() {
       configAccountLabel.left = 35;
       configRow = Ti.UI.createTableViewRow(rowColorTheme);
       configRow.addEventListener('click', function(e) {
-        return slideEvent();
+        return slideEvent(e.rowData.className);
       });
       configRow.className = "config";
       configRow.add(configBtn);
@@ -68,7 +68,7 @@ menuTable = (function() {
       stockLabel.left = 35;
       stockRow = Ti.UI.createTableViewRow(rowColorTheme);
       stockRow.addEventListener('click', function(e) {
-        return slideEvent();
+        return slideEvent(e.rowData.className);
       });
       stockRow.className = "storedMyStocks";
       stockRow.add(stockBtn);
@@ -106,9 +106,10 @@ menuTable = (function() {
         }
       }
     };
-    slideEvent = function(currentMenu) {
+    slideEvent = function(storedTo) {
       var direction;
       Ti.App.Properties.setBool("stateMainTableSlide", true);
+      Ti.App.Properties.setString("currentPage", storedTo);
       direction = "horizontal";
       return controller.slideMainTable(direction);
     };
@@ -136,7 +137,7 @@ menuTable = (function() {
       allLabelRow.backgroundColor = qiitaColor;
       allLabelRow.selectedBackgroundColor = backgroundColorSub;
       allLabelRow.addEventListener('click', function(e) {
-        return slideEvent();
+        return slideEvent(e.rowData.className);
       });
       allStockBtn = Ti.UI.createImageView({
         image: "ui/image/light_list.png",
@@ -168,7 +169,7 @@ menuTable = (function() {
         followingTags.push(json.url_name);
         menuRow.addEventListener('click', function(e) {
           e.row.backgroundColor = qiitaColor;
-          return slideEvent();
+          return slideEvent(e.rowData.className);
         });
         textLabel = Ti.UI.createLabel({
           width: 150,

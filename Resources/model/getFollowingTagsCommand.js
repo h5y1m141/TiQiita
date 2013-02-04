@@ -8,6 +8,7 @@ followingTagsCommand = (function() {
         json = result[_i];
         commandController.applyFeedByTagCommand(json.url_name);
       }
+      commandController.countUp(progressBar);
       return true;
     });
   };

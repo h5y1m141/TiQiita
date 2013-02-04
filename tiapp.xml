@@ -53,6 +53,5 @@
     </mobileweb>
     <modules>
         <module platform="commonjs" version="2.2.0">ti.cloud</module>
-	<module platform="iphone" version="0.1.4">ti.monglodb</module>
     </modules>
 </ti:app>

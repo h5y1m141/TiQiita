@@ -95,7 +95,6 @@ Qiita = (function() {
   Qiita.prototype._storedStocks = function(_storedTo, strItems) {
     var cachedItems, length, merge, result, stocks;
     cachedItems = Ti.App.Properties.getString(_storedTo);
-    Ti.API.info("_storedStocks start. cachedItems is " + cachedItems);
     stocks = JSON.parse(cachedItems);
     if (stocks !== null) {
       Ti.API.info(stocks.length);
@@ -176,12 +175,15 @@ Qiita = (function() {
         Ti.API.info("done");
       }
     }
-    _obj = {
-      label: storedTo,
-      nextURL: nextURL,
-      lastURL: lastURL
-    };
-    return pageController.set(_obj);
+    if (storedTo !== "followingTags") {
+      _obj = {
+        label: storedTo,
+        nextURL: nextURL,
+        lastURL: lastURL
+      };
+      pageController.set(_obj);
+    }
+    return true;
   };
   Qiita.prototype.isConnected = function() {
     return Ti.Network.online;

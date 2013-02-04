@@ -1,12 +1,13 @@
 moment = require('lib/moment.min')
 momentja = require('lib/momentja')
 Qiita = require('model/qiita')
-Monglo = require('ti.monglodb').Monglo
-qiitaDB = Monglo('qiitaItems')
 tableView = require('ui/tableView')
 menuTable = require('ui/menuTable')
 StatusView = require('ui/statusView')
 statusView = new StatusView()
+AlertView = require('ui/alertView')
+alertView = new AlertView()
+
 ProgressBar = require('ui/progressBar')
 progressBar = new ProgressBar()
 
@@ -76,6 +77,9 @@ else
   progressBar.show()
   statusView.add progressBar
   mainWindow.add statusView
+
+  # alertView.show()
+  mainWindow.add alertView.getAlertView()
   mainWindow.leftNavButton  = listBtn
   mainWindow.rightNavButton  = refreshBtn
   

@@ -46,7 +46,8 @@ class menuTable
       configRow = Ti.UI.createTableViewRow(rowColorTheme)
         
       configRow.addEventListener('click',(e) ->
-        slideEvent()
+
+        slideEvent(e.rowData.className)
       )
     
       configRow.className = "config"
@@ -69,7 +70,8 @@ class menuTable
 
       stockRow = Ti.UI.createTableViewRow(rowColorTheme)
       stockRow.addEventListener('click',(e) ->
-        slideEvent()
+        # alert e.rowData.className
+        slideEvent(e.rowData.className)
       )
       stockRow.className = "storedMyStocks"
       stockRow.add stockBtn
@@ -111,9 +113,10 @@ class menuTable
         if value.length isnt 0
           return t.createRow(items[i])
 
-    slideEvent = (currentMenu) ->
+    slideEvent = (storedTo) ->
         
       Ti.App.Properties.setBool("stateMainTableSlide",true)
+      Ti.App.Properties.setString("currentPage", storedTo)
       # controller.slideMainTableを呼び出して
       # スライド状態から標準状態に画面を戻す
       direction = "horizontal"
@@ -145,7 +148,7 @@ class menuTable
       allLabelRow.selectedBackgroundColor = backgroundColorSub
 
       allLabelRow.addEventListener('click',(e)->
-        slideEvent()
+        slideEvent(e.rowData.className)
       )
       
       allStockBtn = Ti.UI.createImageView
@@ -182,7 +185,7 @@ class menuTable
         # 標準状態に戻す
         menuRow.addEventListener('click',(e)->
           e.row.backgroundColor = qiitaColor
-          slideEvent()
+          slideEvent(e.rowData.className)
         )
         # c++のようなタグの場合、url_nameを参照するとHTMLエンコード
         # されている表記になってしまうためラベルの表示にはname

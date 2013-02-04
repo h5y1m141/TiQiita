@@ -6,32 +6,19 @@ class qiitaController
         timeout:"ネットワーク接続できないかサーバがダウンしてるようです"
     
   loadEntry: () ->
-    
-    qiita.getFeed( (result,links) ->
-      rows = []
-      for link in links
-        if link["rel"] == 'next'
-          Ti.App.Properties.setString('nextPageURL',link["url"])
-          
-      pageController.showCurrentStatus()          
-      pageController.showLists()
-      _obj = {label:'storedStocks',nextURL:link["url"],lastURL:null}
-      pageController.set(_obj)
-      pageController.showLists()
-          
-      rows.push(t.createRow(json)) for json in result
-      rows.push(t.createRowForLoadOldEntry('storedStocks'))
-      mainTable.setData rows
-      actInd.hide()
-      return true
-    )  
+    Ti.API.info "qiitaController.loadEntry()"
+    commandController.useMenu 'storedStocks'
     
   loadOldEntry: (storedTo) ->
     MAXITEMCOUNT = 20
-    currentPage = pageController.use storedTo
-
+    currentPage = Ti.App.Properties.getString "currentPage"
+    Ti.API.info "currentPage is #{currentPage}"
+    pageController.use currentPage
+    # pageController.use storedTo
+    currentPageItem = pageController.getList()
+    Ti.API.info "currentPageItem nextURL is #{currentPageItem.nextURL}"
     
-    if currentPage.nextURL isnt null
+    if currentPageItem.nextURL isnt null
       qiita.getNextFeed(currentPage.nextURL,storedTo,(result) ->
         Ti.API.info "getNextFeed start. result is #{result.length}"
 

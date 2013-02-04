@@ -14,7 +14,7 @@ class Menu
     
   run:(commandLabel) ->
     for command in @commands
-      Ti.API.info "#{commandLabel} and #{command.commandLabel}"
+
       if command.commandLabel is commandLabel
         Ti.API.info "Menu.run. command is #{command.commandLabel}"
         command.command.execute()

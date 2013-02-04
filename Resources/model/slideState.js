@@ -23,8 +23,11 @@ slideState = (function() {
     return Ti.API.info("この状態では何もしない");
   };
   slideState.prototype.moveBackward = function() {
+    var page;
     Ti.API.info("ACTION: スライドから標準状態に戻る。水平方向");
     Ti.App.Properties.setBool("stateMainTableSlide", false);
+    page = Ti.App.Properties.getString("currentPage");
+    Ti.API.info("ACTION: 現在のページ " + page);
     mainTable.touchEnabled = true;
     mainTable.setOpacity(1.0);
     mainTable.animate({

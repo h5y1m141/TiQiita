@@ -22,31 +22,17 @@ getStocksCommand = (function() {
     var rows, value;
     rows = [];
     value = this.value;
-    return qiita.getFeed(function(result, links) {
-      var json, lastURL, link, nextURL, _i, _j, _len, _len2, _obj;
-      for (_i = 0, _len = links.length; _i < _len; _i++) {
-        link = links[_i];
-        if (link["rel"] === 'next') {
-          nextURL = link["url"];
-        } else if (link["rel"] === 'last') {
-          lastURL = link["url"];
-        }
-      }
-      _obj = {
-        label: value,
-        nextURL: nextURL,
-        lastURL: lastURL
-      };
-      pageController.set(_obj);
+    qiita.getFeed(function(result, links) {
+      var json, _i, _len;
       commandController.countUp(progressBar);
-      for (_j = 0, _len2 = result.length; _j < _len2; _j++) {
-        json = result[_j];
+      for (_i = 0, _len = result.length; _i < _len; _i++) {
+        json = result[_i];
         rows.push(t.createRow(json));
       }
       rows.push(t.createRowForLoadOldEntry(value));
-      mainTable.setData(rows);
-      return true;
+      return mainTable.setData(rows);
     });
+    return true;
   };
   return getStocksCommand;
 })();
