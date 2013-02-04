@@ -4,7 +4,7 @@ class alertView
       zIndex:5
       width: 320
       height: 80
-      top:0
+      top:-80
       left:0
       backgroundGradient:
         type: "linear"
@@ -48,7 +48,7 @@ class alertView
       
     @alertView.add warnImage
     @alertView.add @message
-    
+    @alertView.hide()
     return true
 
   editMessage:(value) ->
@@ -60,4 +60,28 @@ class alertView
   show:() ->
     return @alertView.show()
     
+  animate:() ->
+    @alertView.show()
+    # mainTable.top = 0
+    statusView.top = -50
+    progressBar.hide()
+    @alertView.animate({
+        duration:800
+        top:0
+    },() =>
+      @alertView.animate({
+        duration:600
+        top:1
+      },() =>
+        @alertView.animate({
+          duration:800
+          top:-80
+        },() =>
+          @alertView.hide()
+        )
+      )
+    )
+
+
+        
 module.exports = alertView

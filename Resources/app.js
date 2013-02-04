@@ -58,11 +58,16 @@ if (testsEnabled === true) {
   mainWindow.add(alertView.getAlertView());
   mainWindow.leftNavButton = listBtn;
   mainWindow.rightNavButton = refreshBtn;
-  direction = "vertical";
-  controller.slideMainTable(direction);
-  commandController.useMenu("storedStocks");
-  commandController.useMenu("storedMyStocks");
-  commandController.useMenu("followingTags");
+  if (controller.networkStatus() === false) {
+    alertView.editMessage("ネットワークが利用できない状態です。ご利用の端末のネットワーク設定を再度ご確認ください");
+    alertView.animate();
+  } else {
+    direction = "vertical";
+    controller.slideMainTable(direction);
+    commandController.useMenu("storedStocks");
+    commandController.useMenu("storedMyStocks");
+    commandController.useMenu("followingTags");
+  }
   webWindow = new win();
   webWindow.backButtonTitle = '戻る';
   webview = new webView();

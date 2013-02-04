@@ -78,17 +78,23 @@ else
   statusView.add progressBar
   mainWindow.add statusView
 
-  # alertView.show()
+
   mainWindow.add alertView.getAlertView()
   mainWindow.leftNavButton  = listBtn
   mainWindow.rightNavButton  = refreshBtn
-  
-  # direction = "horizontal"
-  direction = "vertical"
-  controller.slideMainTable(direction)
-  commandController.useMenu "storedStocks"
-  commandController.useMenu "storedMyStocks"
-  commandController.useMenu "followingTags"
+
+  if controller.networkStatus() is false
+    alertView.editMessage("ネットワークが利用できない状態です。ご利用の端末のネットワーク設定を再度ご確認ください")
+
+    alertView.animate()
+    
+  else  
+    # direction = "horizontal"
+    direction = "vertical"
+    controller.slideMainTable(direction)
+    commandController.useMenu "storedStocks"
+    commandController.useMenu "storedMyStocks"
+    commandController.useMenu "followingTags"
   
     
   

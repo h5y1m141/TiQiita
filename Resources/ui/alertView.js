@@ -1,4 +1,5 @@
 var alertView;
+var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 alertView = (function() {
   function alertView() {
     var warnImage;
@@ -6,7 +7,7 @@ alertView = (function() {
       zIndex: 5,
       width: 320,
       height: 80,
-      top: 0,
+      top: -80,
       left: 0,
       backgroundGradient: {
         type: "linear",
@@ -53,6 +54,7 @@ alertView = (function() {
     });
     this.alertView.add(warnImage);
     this.alertView.add(this.message);
+    this.alertView.hide();
     return true;
   }
   alertView.prototype.editMessage = function(value) {
@@ -63,6 +65,27 @@ alertView = (function() {
   };
   alertView.prototype.show = function() {
     return this.alertView.show();
+  };
+  alertView.prototype.animate = function() {
+    this.alertView.show();
+    statusView.top = -50;
+    progressBar.hide();
+    return this.alertView.animate({
+      duration: 800,
+      top: 0
+    }, __bind(function() {
+      return this.alertView.animate({
+        duration: 600,
+        top: 1
+      }, __bind(function() {
+        return this.alertView.animate({
+          duration: 800,
+          top: -80
+        }, __bind(function() {
+          return this.alertView.hide();
+        }, this));
+      }, this));
+    }, this));
   };
   return alertView;
 })();

@@ -2,11 +2,6 @@ var qiitaController;
 qiitaController = (function() {
   function qiitaController() {
     this.state = new defaultState();
-    this.message = {
-      network: {
-        timeout: "ネットワーク接続できないかサーバがダウンしてるようです"
-      }
-    };
   }
   qiitaController.prototype.loadEntry = function() {
     Ti.API.info("qiitaController.loadEntry()");
@@ -164,6 +159,9 @@ qiitaController = (function() {
       return actInd.hide();
     });
     return true;
+  };
+  qiitaController.prototype.networkStatus = function() {
+    return qiita.isConnected();
   };
   return qiitaController;
 })();

@@ -45,10 +45,9 @@ class commandController
       pageController.useStoredStock()
       Ti.API.info "pageController.showCurrentStatus()"      
       pageController.showCurrentStatus()
-    
-
       
     return true
-  
+
+
           
 module.exports = commandController

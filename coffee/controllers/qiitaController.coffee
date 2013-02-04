@@ -1,9 +1,7 @@
 class qiitaController
   constructor: () ->
     @state = new defaultState()
-    @message =
-      network:
-        timeout:"ネットワーク接続できないかサーバがダウンしてるようです"
+
     
   loadEntry: () ->
     Ti.API.info "qiitaController.loadEntry()"
@@ -170,8 +168,9 @@ class qiitaController
     # Ti.API.info "login success: token is #{token}"
     
     return true
-
-                  
+    
+  networkStatus:() ->
+    return qiita.isConnected()
 
 
 module.exports = qiitaController
