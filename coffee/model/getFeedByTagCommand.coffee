@@ -28,16 +28,6 @@ class getFeedByTagCommand
     storedTo = "followingTag#{@tagName}" 
     
     qiita.getFeedByTag(@tagName, (result,links) ->
-
-      for link in links
-        if link["rel"] == 'next'
-          nextURL = link["url"]
-        else if link["rel"] == 'last'
-          lastURL = link["url"]
-
-      _obj = {label:storedTo,nextURL:nextURL,lastURL:lastURL}
-      pageController.set(_obj)
-
       rows.push(t.createRow(json)) for json in result
       
       if result.length isnt MAXITEMCOUNT

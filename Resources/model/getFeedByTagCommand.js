@@ -29,23 +29,9 @@ getFeedByTagCommand = (function() {
     MAXITEMCOUNT = 20;
     storedTo = "followingTag" + this.tagName;
     qiita.getFeedByTag(this.tagName, function(result, links) {
-      var json, lastURL, link, nextURL, _i, _j, _len, _len2, _obj;
-      for (_i = 0, _len = links.length; _i < _len; _i++) {
-        link = links[_i];
-        if (link["rel"] === 'next') {
-          nextURL = link["url"];
-        } else if (link["rel"] === 'last') {
-          lastURL = link["url"];
-        }
-      }
-      _obj = {
-        label: storedTo,
-        nextURL: nextURL,
-        lastURL: lastURL
-      };
-      pageController.set(_obj);
-      for (_j = 0, _len2 = result.length; _j < _len2; _j++) {
-        json = result[_j];
+      var json, _i, _len;
+      for (_i = 0, _len = result.length; _i < _len; _i++) {
+        json = result[_i];
         rows.push(t.createRow(json));
       }
       if (result.length !== MAXITEMCOUNT) {
