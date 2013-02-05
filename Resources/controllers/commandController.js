@@ -15,8 +15,6 @@ commandController = (function() {
   }
   commandController.prototype.useMenu = function(commandLabel) {
     Ti.API.info("commandController.useMenu start. commandLabel is " + commandLabel);
-    pageController.use(commandLabel);
-    this.menu.showCommands();
     return this.menu.run(commandLabel);
   };
   commandController.prototype.applyFeedByTagCommand = function(tagName) {
@@ -28,18 +26,14 @@ commandController = (function() {
   commandController.prototype.countUp = function(progressBar) {
     var currentValue, direction, max;
     max = progressBar.max - 1;
-    currentValue = progressBar.value;
+    currentValue = progressBar.value + 1;
     Ti.API.info("value check. max is " + max + " and currentValue is " + currentValue);
     if (currentValue !== max) {
       progressBar.value = progressBar.value + 1;
     } else {
-      Ti.API.info("countUp done!!!");
       direction = "vertical";
       Ti.App.Properties.setBool('stateMainTableSlide', true);
       controller.slideMainTable(direction);
-      pageController.useStoredStock();
-      Ti.API.info("pageController.showCurrentStatus()");
-      pageController.showCurrentStatus();
     }
     return true;
   };

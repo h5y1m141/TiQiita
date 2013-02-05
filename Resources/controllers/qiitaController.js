@@ -8,15 +8,13 @@ qiitaController = (function() {
     return commandController.useMenu('storedStocks');
   };
   qiitaController.prototype.loadOldEntry = function(storedTo) {
-    var MAXITEMCOUNT, currentPage, currentPageItem;
+    var MAXITEMCOUNT, currentPage, nextURL;
     MAXITEMCOUNT = 20;
     currentPage = Ti.App.Properties.getString("currentPage");
-    Ti.API.info("currentPage is " + currentPage);
-    pageController.use(currentPage);
-    currentPageItem = pageController.getList();
-    Ti.API.info("currentPageItem nextURL is " + currentPageItem.nextURL);
-    if (currentPageItem.nextURL !== null) {
-      qiita.getNextFeed(currentPage.nextURL, storedTo, function(result) {
+    nextURL = Ti.App.Properties.getString("" + currentPage + "nextURL");
+    Ti.API.info(nextURL);
+    if (nextURL !== null) {
+      qiita.getNextFeed(nextURL, storedTo, function(result) {
         var json, lastIndex, r, _i, _len, _results;
         Ti.API.info("getNextFeed start. result is " + result.length);
         if (result.length !== MAXITEMCOUNT) {

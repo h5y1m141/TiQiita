@@ -164,7 +164,7 @@ Qiita = (function() {
     return _(object1).sortBy("created_at");
   };
   Qiita.prototype._parsedResponseHeader = function(header, storedTo) {
-    var lastURL, link, nextURL, _i, _len, _obj;
+    var lastURL, link, nextURL, _i, _len;
     for (_i = 0, _len = header.length; _i < _len; _i++) {
       link = header[_i];
       if (link["rel"] === 'next') {
@@ -176,12 +176,8 @@ Qiita = (function() {
       }
     }
     if (storedTo !== "followingTags") {
-      _obj = {
-        label: storedTo,
-        nextURL: nextURL,
-        lastURL: lastURL
-      };
-      pageController.set(_obj);
+      Ti.App.Properties.setString("" + storedTo + "nextURL", nextURL);
+      Ti.API.info("" + storedTo + "nextURL is " + nextURL + " and storedTo is " + storedTo);
     }
     return true;
   };

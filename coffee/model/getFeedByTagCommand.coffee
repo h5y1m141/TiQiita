@@ -4,7 +4,7 @@ class getFeedByTagCommand
 
     
   execute:() ->
-    storedTo = "followinTag#{@tagName}"
+    storedTo = "followingTag#{@tagName}"
     Ti.API.info "getFeedByTagCommand execute! storedTo is #{storedTo}"
     result = []
     items = JSON.parse(Ti.App.Properties.getString(storedTo))
@@ -25,7 +25,7 @@ class getFeedByTagCommand
   getFeedByTag:(showFlg) ->
     rows = []
     MAXITEMCOUNT = 20 # 1リクエスト辺りに読み込まれる最大件数
-    storedTo = "followinTag#{@tagName}" 
+    storedTo = "followingTag#{@tagName}" 
     
     qiita.getFeedByTag(@tagName, (result,links) ->
 

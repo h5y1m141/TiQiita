@@ -16,8 +16,6 @@ class commandController
     
   useMenu:(commandLabel) ->
     Ti.API.info "commandController.useMenu start. commandLabel is #{commandLabel}"
-    pageController.use commandLabel
-    @menu.showCommands()
     @menu.run commandLabel
     
   applyFeedByTagCommand:(tagName) ->
@@ -33,18 +31,16 @@ class commandController
     
   countUp:(progressBar) ->
     max = progressBar.max-1
-    currentValue = progressBar.value
+    currentValue = progressBar.value+1
     Ti.API.info "value check. max is #{max} and currentValue is #{currentValue}"
     if currentValue isnt max
       progressBar.value = progressBar.value+1
     else
-      Ti.API.info "countUp done!!!"
       direction = "vertical"
       Ti.App.Properties.setBool 'stateMainTableSlide',true
       controller.slideMainTable(direction)
-      pageController.useStoredStock()
-      Ti.API.info "pageController.showCurrentStatus()"      
-      pageController.showCurrentStatus()
+
+
       
     return true
 

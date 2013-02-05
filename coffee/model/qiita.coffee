@@ -211,8 +211,9 @@ class Qiita
         Ti.API.info "done"
         
     if storedTo isnt "followingTags"
-      _obj = {label:storedTo,nextURL:nextURL,lastURL:lastURL}
-      pageController.set(_obj)
+      Ti.App.Properties.setString "#{storedTo}nextURL", nextURL
+      Ti.API.info "#{storedTo}nextURL is #{nextURL} and storedTo is #{storedTo}"
+
       
     return true
   

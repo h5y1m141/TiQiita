@@ -5,7 +5,7 @@ getFeedByTagCommand = (function() {
   }
   getFeedByTagCommand.prototype.execute = function() {
     var items, json, result, showFlg, storedTo, _i, _len;
-    storedTo = "followinTag" + this.tagName;
+    storedTo = "followingTag" + this.tagName;
     Ti.API.info("getFeedByTagCommand execute! storedTo is " + storedTo);
     result = [];
     items = JSON.parse(Ti.App.Properties.getString(storedTo));
@@ -27,7 +27,7 @@ getFeedByTagCommand = (function() {
     var MAXITEMCOUNT, rows, storedTo;
     rows = [];
     MAXITEMCOUNT = 20;
-    storedTo = "followinTag" + this.tagName;
+    storedTo = "followingTag" + this.tagName;
     qiita.getFeedByTag(this.tagName, function(result, links) {
       var json, lastURL, link, nextURL, _i, _j, _len, _len2, _obj;
       for (_i = 0, _len = links.length; _i < _len; _i++) {

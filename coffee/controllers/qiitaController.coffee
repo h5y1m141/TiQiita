@@ -10,14 +10,13 @@ class qiitaController
   loadOldEntry: (storedTo) ->
     MAXITEMCOUNT = 20
     currentPage = Ti.App.Properties.getString "currentPage"
-    Ti.API.info "currentPage is #{currentPage}"
-    pageController.use currentPage
-    # pageController.use storedTo
-    currentPageItem = pageController.getList()
-    Ti.API.info "currentPageItem nextURL is #{currentPageItem.nextURL}"
+    nextURL = Ti.App.Properties.getString "#{currentPage}nextURL"
+    Ti.API.info nextURL
+
+
     
-    if currentPageItem.nextURL isnt null
-      qiita.getNextFeed(currentPage.nextURL,storedTo,(result) ->
+    if nextURL isnt null
+      qiita.getNextFeed(nextURL,storedTo,(result) ->
         Ti.API.info "getNextFeed start. result is #{result.length}"
 
         # ここで投稿件数をチェックして、20件以下だったら過去のを
