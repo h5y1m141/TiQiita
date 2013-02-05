@@ -12,8 +12,6 @@ ProgressBar = require('ui/progressBar')
 progressBar = new ProgressBar()
 
 qiitaController = require('controllers/qiitaController')
-PageController = require('controllers/pageController')
-pageController = new PageController()
 CommandController = require("controllers/commandController")
 commandController = new CommandController()
 
@@ -38,9 +36,13 @@ Ti.App.Properties.setString "storedStocks",null
 Ti.App.Properties.setString "storedMyStocks",null
 
 
-
 ## フォローしてるタグ
 Ti.App.Properties.setList "followingTags",null
+
+## 起動時には、投稿情報一覧を現在ページとしてステータス管理したいので
+## currentPageにstoredStocksをセット
+
+Ti.App.Properties.setString "currentPage","storedStocks"
 
 # Jasmine
 # 

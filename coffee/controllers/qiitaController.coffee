@@ -4,15 +4,22 @@ class qiitaController
 
     
   loadEntry: () ->
-    Ti.API.info "qiitaController.loadEntry()"
-    commandController.useMenu 'storedStocks'
+    currentPage = Ti.App.Properties.getString "currentPage"
+
+    # 現在ページのパラメータを引数に該当キャッシュをクリアーして
+    # 該当コマンド実行することで再度QiitaAPIにアクセス可能になる
+
+    Ti.App.Properties.setString currentPage, null
+    items = JSON.parse(Ti.App.Properties.getString(currentPage))
+    
+    Ti.API.info items
+    commandController.useMenu currentPage
     
   loadOldEntry: (storedTo) ->
     MAXITEMCOUNT = 20
     currentPage = Ti.App.Properties.getString "currentPage"
     nextURL = Ti.App.Properties.getString "#{currentPage}nextURL"
     Ti.API.info nextURL
-
 
     
     if nextURL isnt null

@@ -9,17 +9,17 @@ class pageController
   showCurrentStatus:() ->
     return @pageStatus.showCurrentStatus()
      
-  useStoredStock:() ->
-    lists = @pageStatus.lists
-    for list in lists
-      if list.label = "storedStocks"
-        return @pageStatus.use(list.label)
+  # useStoredStock:() ->
+  #   lists = @pageStatus.lists
+  #   for list in lists
+  #     if list.label = "storedStocks"
+  #       return @pageStatus.use(list.label)
     
-  useStoredMyStock:() ->
-    lists = @pageStatus.lists
-    for list in lists
-      if list.label = "storedMyStocks"
-        return @pageStatus.use(list.label)
+  # useStoredMyStock:() ->
+  #   lists = @pageStatus.lists
+  #   for list in lists
+  #     if list.label = "storedMyStocks"
+  #       return @pageStatus.use(list.label)
 
     
   use:(storedTo) ->

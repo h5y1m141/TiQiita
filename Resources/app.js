@@ -1,4 +1,4 @@
-var AlertView, CommandController, PageController, ProgressBar, Qiita, StatusView, actInd, activityIndicator, alertView, commandController, controller, defaultState, direction, listBtn, mainTable, mainWindow, menu, menuTable, moment, momentja, pageController, progressBar, qiita, qiitaController, refreshBtn, slideState, statusView, t, tab, tabGroup, tableView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win;
+var AlertView, CommandController, ProgressBar, Qiita, StatusView, actInd, activityIndicator, alertView, commandController, controller, defaultState, direction, listBtn, mainTable, mainWindow, menu, menuTable, moment, momentja, progressBar, qiita, qiitaController, refreshBtn, slideState, statusView, t, tab, tabGroup, tableView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win;
 moment = require('lib/moment.min');
 momentja = require('lib/momentja');
 Qiita = require('model/qiita');
@@ -11,8 +11,6 @@ alertView = new AlertView();
 ProgressBar = require('ui/progressBar');
 progressBar = new ProgressBar();
 qiitaController = require('controllers/qiitaController');
-PageController = require('controllers/pageController');
-pageController = new PageController();
 CommandController = require("controllers/commandController");
 commandController = new CommandController();
 defaultState = require("model/defaultState");
@@ -27,6 +25,7 @@ Ti.App.Properties.setBool('stateMainTableSlide', false);
 Ti.App.Properties.setString("storedStocks", null);
 Ti.App.Properties.setString("storedMyStocks", null);
 Ti.App.Properties.setList("followingTags", null);
+Ti.App.Properties.setString("currentPage", "storedStocks");
 testsEnabled = false;
 if (testsEnabled === true) {
   require('test/tests');

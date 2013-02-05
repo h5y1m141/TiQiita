@@ -25,7 +25,6 @@ getMyStocksCommand = (function() {
     value = this.value;
     qiita.getMyStocks(function(result, links) {
       var json, _i, _len;
-      commandController.countUp(progressBar);
       for (_i = 0, _len = result.length; _i < _len; _i++) {
         json = result[_i];
         rows.push(t.createRow(json));

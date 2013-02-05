@@ -4,8 +4,12 @@ qiitaController = (function() {
     this.state = new defaultState();
   }
   qiitaController.prototype.loadEntry = function() {
-    Ti.API.info("qiitaController.loadEntry()");
-    return commandController.useMenu('storedStocks');
+    var currentPage, items;
+    currentPage = Ti.App.Properties.getString("currentPage");
+    Ti.App.Properties.setString(currentPage, null);
+    items = JSON.parse(Ti.App.Properties.getString(currentPage));
+    Ti.API.info(items);
+    return commandController.useMenu(currentPage);
   };
   qiitaController.prototype.loadOldEntry = function(storedTo) {
     var MAXITEMCOUNT, currentPage, nextURL;
