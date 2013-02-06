@@ -11,8 +11,11 @@ class qiitaController
 
     Ti.App.Properties.setString currentPage, null
     items = JSON.parse(Ti.App.Properties.getString(currentPage))
-    
-    Ti.API.info items
+
+    direction = "vertical"
+    progressBar.max = 1
+    progressBar.value = 0
+    @.slideMainTable(direction)
     commandController.useMenu currentPage
     
   loadOldEntry: (storedTo) ->

@@ -11,6 +11,8 @@ alertView = new AlertView()
 ProgressBar = require('ui/progressBar')
 progressBar = new ProgressBar()
 
+MainContoroller = require('controllers/mainContoroller')
+mainContoroller = new MainContoroller()
 qiitaController = require('controllers/qiitaController')
 CommandController = require("controllers/commandController")
 commandController = new CommandController()
@@ -85,21 +87,6 @@ else
   mainWindow.leftNavButton  = listBtn
   mainWindow.rightNavButton  = refreshBtn
 
-  if controller.networkStatus() is false
-    alertView.editMessage("ネットワークが利用できない状態です。ご利用の端末のネットワーク設定を再度ご確認ください")
-
-    alertView.animate()
-    
-  else  
-    # direction = "horizontal"
-    direction = "vertical"
-    controller.slideMainTable(direction)
-    commandController.useMenu "storedStocks"
-    # commandController.useMenu "storedMyStocks"
-    commandController.useMenu "followingTags"
-  
-    
-  
   webWindow = new win()
   webWindow.backButtonTitle = '戻る'
 
@@ -112,6 +99,8 @@ else
   webWindow.add webViewContents
   webWindow.add actInd
 
+  mainContoroller.init()
+  
   tabGroup = Ti.UI.createTabGroup()
   tabGroup.tabBarVisible = false
   tab = Ti.UI.createTab

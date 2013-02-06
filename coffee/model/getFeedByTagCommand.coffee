@@ -28,8 +28,8 @@ class getFeedByTagCommand
     storedTo = "followingTag#{@tagName}" 
     
     qiita.getFeedByTag(@tagName, (result,links) ->
+      commandController.countUp(progressBar)
       rows.push(t.createRow(json)) for json in result
-      
       if result.length isnt MAXITEMCOUNT
         Ti.API.info "loadOldEntry hide"
       else

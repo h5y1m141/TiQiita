@@ -1,4 +1,4 @@
-var AlertView, CommandController, ProgressBar, Qiita, StatusView, actInd, activityIndicator, alertView, commandController, controller, defaultState, direction, listBtn, mainTable, mainWindow, menu, menuTable, moment, momentja, progressBar, qiita, qiitaController, refreshBtn, slideState, statusView, t, tab, tabGroup, tableView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win;
+var AlertView, CommandController, MainContoroller, ProgressBar, Qiita, StatusView, actInd, activityIndicator, alertView, commandController, controller, defaultState, listBtn, mainContoroller, mainTable, mainWindow, menu, menuTable, moment, momentja, progressBar, qiita, qiitaController, refreshBtn, slideState, statusView, t, tab, tabGroup, tableView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win;
 moment = require('lib/moment.min');
 momentja = require('lib/momentja');
 Qiita = require('model/qiita');
@@ -10,6 +10,8 @@ AlertView = require('ui/alertView');
 alertView = new AlertView();
 ProgressBar = require('ui/progressBar');
 progressBar = new ProgressBar();
+MainContoroller = require('controllers/mainContoroller');
+mainContoroller = new MainContoroller();
 qiitaController = require('controllers/qiitaController');
 CommandController = require("controllers/commandController");
 commandController = new CommandController();
@@ -57,15 +59,6 @@ if (testsEnabled === true) {
   mainWindow.add(alertView.getAlertView());
   mainWindow.leftNavButton = listBtn;
   mainWindow.rightNavButton = refreshBtn;
-  if (controller.networkStatus() === false) {
-    alertView.editMessage("ネットワークが利用できない状態です。ご利用の端末のネットワーク設定を再度ご確認ください");
-    alertView.animate();
-  } else {
-    direction = "vertical";
-    controller.slideMainTable(direction);
-    commandController.useMenu("storedStocks");
-    commandController.useMenu("followingTags");
-  }
   webWindow = new win();
   webWindow.backButtonTitle = '戻る';
   webview = new webView();
@@ -74,6 +67,7 @@ if (testsEnabled === true) {
   webWindow.add(webViewHeader);
   webWindow.add(webViewContents);
   webWindow.add(actInd);
+  mainContoroller.init();
   tabGroup = Ti.UI.createTabGroup();
   tabGroup.tabBarVisible = false;
   tab = Ti.UI.createTab({

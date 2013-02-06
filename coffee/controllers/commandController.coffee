@@ -31,11 +31,12 @@ class commandController
     
   countUp:(progressBar) ->
     max = progressBar.max-1
-    currentValue = progressBar.value+1
+    currentValue = progressBar.value
     Ti.API.info "value check. max is #{max} and currentValue is #{currentValue}"
-    if currentValue isnt max
+    if currentValue < max
       progressBar.value = progressBar.value+1
     else
+      progressBar.value = progressBar.value+1
       direction = "vertical"
       Ti.App.Properties.setBool 'stateMainTableSlide',true
       controller.slideMainTable(direction)

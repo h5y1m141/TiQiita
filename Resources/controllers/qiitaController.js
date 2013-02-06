@@ -4,11 +4,14 @@ qiitaController = (function() {
     this.state = new defaultState();
   }
   qiitaController.prototype.loadEntry = function() {
-    var currentPage, items;
+    var currentPage, direction, items;
     currentPage = Ti.App.Properties.getString("currentPage");
     Ti.App.Properties.setString(currentPage, null);
     items = JSON.parse(Ti.App.Properties.getString(currentPage));
-    Ti.API.info(items);
+    direction = "vertical";
+    progressBar.max = 1;
+    progressBar.value = 0;
+    this.slideMainTable(direction);
     return commandController.useMenu(currentPage);
   };
   qiitaController.prototype.loadOldEntry = function(storedTo) {
