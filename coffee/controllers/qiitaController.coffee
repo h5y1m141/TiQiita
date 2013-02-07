@@ -13,8 +13,6 @@ class qiitaController
     items = JSON.parse(Ti.App.Properties.getString(currentPage))
 
     direction = "vertical"
-    progressBar.max = 1
-    progressBar.value = 0
     @.slideMainTable(direction)
     commandController.useMenu currentPage
     
@@ -22,6 +20,9 @@ class qiitaController
     MAXITEMCOUNT = 20
     currentPage = Ti.App.Properties.getString "currentPage"
     nextURL = Ti.App.Properties.getString "#{currentPage}nextURL"
+    direction = "vertical"
+    @.slideMainTable(direction)
+
     Ti.API.info nextURL
 
     
@@ -42,13 +43,6 @@ class qiitaController
             t.insertRow(lastIndex,r)
       )
     return true
-    
-  getFeedByTag:(showFlg,tag) ->
-    qiita.getFeedByTag(tag (result) ->
-
-      return true
-    )
-      
     
   stockItemToQiita: (uuid) ->
     uuid = Ti.App.Properties.getString('stockUUID')

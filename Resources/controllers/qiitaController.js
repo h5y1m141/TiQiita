@@ -10,16 +10,16 @@ qiitaController = (function() {
     Ti.App.Properties.setString(currentPage, null);
     items = JSON.parse(Ti.App.Properties.getString(currentPage));
     direction = "vertical";
-    progressBar.max = 1;
-    progressBar.value = 0;
     this.slideMainTable(direction);
     return commandController.useMenu(currentPage);
   };
   qiitaController.prototype.loadOldEntry = function(storedTo) {
-    var MAXITEMCOUNT, currentPage, nextURL;
+    var MAXITEMCOUNT, currentPage, direction, nextURL;
     MAXITEMCOUNT = 20;
     currentPage = Ti.App.Properties.getString("currentPage");
     nextURL = Ti.App.Properties.getString("" + currentPage + "nextURL");
+    direction = "vertical";
+    this.slideMainTable(direction);
     Ti.API.info(nextURL);
     if (nextURL !== null) {
       qiita.getNextFeed(nextURL, storedTo, function(result) {
@@ -42,11 +42,6 @@ qiitaController = (function() {
       });
     }
     return true;
-  };
-  qiitaController.prototype.getFeedByTag = function(showFlg, tag) {
-    return qiita.getFeedByTag(tag(function(result) {
-      return true;
-    }));
   };
   qiitaController.prototype.stockItemToQiita = function(uuid) {
     uuid = Ti.App.Properties.getString('stockUUID');
