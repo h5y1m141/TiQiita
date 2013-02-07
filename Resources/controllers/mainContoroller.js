@@ -4,7 +4,7 @@ mainContoroller = (function() {
   mainContoroller.prototype.init = function() {
     var direction;
     if (controller.networkStatus() === false) {
-      alertView.editMessage("ネットワークが利用できない状態です。ご利用の端末のネットワーク設定を再度ご確認ください");
+      alertView.editMessage("ネットワーク接続出来ません。ネットワーク設定を再度ご確認ください");
       alertView.animate();
     } else {
       direction = "vertical";
@@ -14,6 +14,20 @@ mainContoroller = (function() {
       commandController.useMenu("followingTags");
     }
     return true;
+  };
+  mainContoroller.prototype.networkConnectionCheck = function(callback) {
+    var currentPage, direction;
+    if (controller.networkStatus() === false) {
+      alertView.editMessage("ネットワーク接続出来ません。ネットワーク設定を再度ご確認ください");
+      alertView.animate();
+      direction = "vertical";
+      Ti.App.Properties.setBool('stateMainTableSlide', true);
+      currentPage = Ti.App.Properties.getString("currentPage");
+      Ti.API.info("mainContoroller.networkConnectionCheck " + currentPage);
+      return controller.slideMainTable(direction);
+    } else {
+      return callback();
+    }
   };
   return mainContoroller;
 })();

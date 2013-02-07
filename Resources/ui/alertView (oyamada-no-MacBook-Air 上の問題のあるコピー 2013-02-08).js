@@ -4,7 +4,7 @@ alertView = (function() {
   function alertView() {
     var warnImage;
     this.alertView = Titanium.UI.createView({
-      zIndex: 20,
+      zIndex: 5,
       width: 320,
       height: 80,
       top: -80,
@@ -38,7 +38,7 @@ alertView = (function() {
       height: 50,
       top: 10,
       left: 5,
-      image: "ui/image/light_warn@2x.png"
+      image: "ui/image/dark_warn@2x.png"
     });
     this.message = Ti.UI.createLabel({
       text: "ネットワークが利用できないかQiitaのサーバがダウンしてるようです。",

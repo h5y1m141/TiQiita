@@ -10,6 +10,8 @@ defaultState = (function() {
   };
   defaultState.prototype.moveDown = function() {
     Ti.API.info("ACTION: スライド開始");
+    progressBar.value = 0;
+    progressBar.show();
     Ti.App.Properties.setBool("stateMainTableSlide", true);
     statusView.animate({
       duration: 400,

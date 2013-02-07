@@ -6,7 +6,7 @@ progressBar = (function() {
       top: 0,
       height: 30,
       width: 200,
-      zIndex: 20,
+      zIndex: 10,
       min: 0,
       max: 1,
       value: 0,

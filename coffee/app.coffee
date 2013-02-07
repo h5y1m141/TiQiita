@@ -72,7 +72,9 @@ else
     systemButton: Titanium.UI.iPhone.SystemButton.REFRESH
     
   refreshBtn.addEventListener('click',()->
-    controller.loadEntry()
+    mainContoroller.networkConnectionCheck(()->
+      controller.loadEntry()
+    )
   )
   menu = new menuTable()
   

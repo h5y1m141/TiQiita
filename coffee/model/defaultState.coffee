@@ -10,6 +10,8 @@ class defaultState
     return new defaultState()
   moveDown: () ->
     Ti.API.info "ACTION: スライド開始"
+    progressBar.value = 0
+    progressBar.show()    
     Ti.App.Properties.setBool "stateMainTableSlide",true
     statusView.animate({
         duration:400

@@ -1,7 +1,7 @@
 class alertView
   constructor:() ->
     @alertView =Titanium.UI.createView
-      zIndex:5
+      zIndex:20
       width: 320
       height: 80
       top:-80
@@ -33,7 +33,7 @@ class alertView
       height:50
       top:10
       left:5
-      image:"ui/image/dark_warn@2x.png"
+      image:"ui/image/light_warn@2x.png"
       
     @message = Ti.UI.createLabel
       text:"ネットワークが利用できないかQiitaのサーバがダウンしてるようです。"
@@ -66,15 +66,15 @@ class alertView
     statusView.top = -50
     progressBar.hide()
     @alertView.animate({
-        duration:800
+        duration:600
         top:0
     },() =>
       @alertView.animate({
-        duration:600
+        duration:2000
         top:1
       },() =>
         @alertView.animate({
-          duration:800
+          duration:600
           top:-80
         },() =>
           @alertView.hide()

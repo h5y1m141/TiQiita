@@ -47,7 +47,9 @@ if (testsEnabled === true) {
     systemButton: Titanium.UI.iPhone.SystemButton.REFRESH
   });
   refreshBtn.addEventListener('click', function() {
-    return controller.loadEntry();
+    return mainContoroller.networkConnectionCheck(function() {
+      return controller.loadEntry();
+    });
   });
   menu = new menuTable();
   mainWindow.add(actInd);

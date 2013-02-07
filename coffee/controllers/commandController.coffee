@@ -6,11 +6,12 @@ class commandController
     stocksCommand = require("model/getStocksCommand")
     configCommand = require("model/configCommand")
     followingTagsCommand = require("model/getFollowingTagsCommand")
-    
+    loginCommand = require("model/loginCommand")
     @menu.addCommands("storedMyStocks",new myStocksCommand())
     @menu.addCommands("storedStocks",new stocksCommand())
     @menu.addCommands("config",new configCommand())
     @menu.addCommands("followingTags", new followingTagsCommand())
+    @menu.addCommands("qiitaLogin", new loginCommand())
 
 
     

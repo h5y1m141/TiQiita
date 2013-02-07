@@ -110,13 +110,15 @@ class configMenu
     row3.add label3
     row3.addEventListener('click',(e) ->
 
-      actInd.message = "ログインしています"
-      actInd.show()
-      requestParam = {
-        url_name: Ti.App.Properties.getString('QiitaLoginID'),
-        password: Ti.App.Properties.getString('QiitaLoginPassword')
-      }
-      controller.login(requestParam)
+      # actInd.message = "ログインしています"
+      # actInd.show()
+      # requestParam = {
+      #   url_name: Ti.App.Properties.getString('QiitaLoginID'),
+      #   password: Ti.App.Properties.getString('QiitaLoginPassword')
+      # }
+      # controller.login(requestParam)
+
+      commandController.useMenu "qiitaLogin"
     )
     loginGroup.add row3
     tableView = Ti.UI.createTableView
