@@ -1,8 +1,8 @@
-var AlertView, CommandController, MainContoroller, ProgressBar, Qiita, StatusView, actInd, activityIndicator, alertView, commandController, controller, defaultState, listBtn, mainContoroller, mainTable, mainWindow, menu, menuTable, moment, momentja, progressBar, qiita, qiitaController, refreshBtn, slideState, statusView, t, tab, tabGroup, tableView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win;
+var AlertView, CommandController, MainContoroller, MainTable, ProgressBar, Qiita, StatusView, actInd, activityIndicator, alertView, commandController, controller, defaultState, listBtn, mainContoroller, mainTable, mainTableView, mainWindow, menu, menuTable, moment, momentja, progressBar, qiita, qiitaController, refreshBtn, slideState, statusView, tab, tabGroup, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win;
 moment = require('lib/moment.min');
 momentja = require('lib/momentja');
 Qiita = require('model/qiita');
-tableView = require('ui/tableView');
+MainTable = require('ui/mainTable');
 menuTable = require('ui/menuTable');
 StatusView = require('ui/statusView');
 statusView = new StatusView();
@@ -20,7 +20,7 @@ slideState = require("model/slideState");
 webView = require('ui/webView');
 win = require('ui/window');
 activityIndicator = require('ui/activityIndicator');
-t = new tableView();
+mainTableView = new MainTable();
 qiita = new Qiita();
 controller = new qiitaController();
 Ti.App.Properties.setBool('stateMainTableSlide', false);
@@ -32,7 +32,7 @@ testsEnabled = false;
 if (testsEnabled === true) {
   require('test/tests');
 } else {
-  mainTable = t.getTable();
+  mainTable = mainTableView.getTable();
   mainWindow = new win();
   actInd = new activityIndicator();
   listBtn = Ti.UI.createButton({

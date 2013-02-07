@@ -11,8 +11,8 @@ class getFeedByTagCommand
 
     if items isnt null
       Ti.API.info "cache loaded. items is #{items.length}"
-      result.push(t.createRow(json)) for json in items
-      result.push(t.createRowForLoadOldEntry(storedTo))
+      result.push(mainTableView.createRow(json)) for json in items
+      result.push(mainTableView.createRowForLoadOldEntry(storedTo))
       
     else
       Ti.API.info "#{storedTo} isn't cached so that get items via Qiita API"
@@ -32,12 +32,12 @@ class getFeedByTagCommand
     controller.slideMainTable(direction)
     
     qiita.getFeedByTag(@tagName, (result,links) ->
-      rows.push(t.createRow(json)) for json in result
+      rows.push(mainTableView.createRow(json)) for json in result
       if result.length isnt MAXITEMCOUNT
         Ti.API.info "loadOldEntry hide"
       else
         Ti.API.info "loadOldEntry show"
-        rows.push(t.createRowForLoadOldEntry(storedTo))
+        rows.push(mainTableView.createRowForLoadOldEntry(storedTo))
         
       Ti.App.Properties.setBool "stateMainTableSlide",false
       mainTable.setData rows

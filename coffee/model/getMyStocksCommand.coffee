@@ -6,8 +6,8 @@ class getMyStocksCommand
     items = JSON.parse(Ti.App.Properties.getString(@value))
 
     if items isnt null
-      result.push(t.createRow(json)) for json in items
-      result.push(t.createRowForLoadOldEntry(@value))
+      result.push(mainTableView.createRow(json)) for json in items
+      result.push(mainTableView.createRowForLoadOldEntry(@value))
       
     else
       @.getMyStocks()
@@ -26,13 +26,13 @@ class getMyStocksCommand
 
     qiita.getMyStocks( (result,links) ->
 
-      rows.push(t.createRow(json)) for json in result
+      rows.push(mainTableView.createRow(json)) for json in result
       
       if result.length isnt MAXITEMCOUNT
         Ti.API.info "loadOldEntry hide"
       else
         Ti.API.info "loadOldEntry show"
-        rows.push(t.createRowForLoadOldEntry(value))
+        rows.push(mainTableView.createRowForLoadOldEntry(value))
         
       Ti.App.Properties.setBool "stateMainTableSlide",false
       mainTable.setData rows

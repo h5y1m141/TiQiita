@@ -13,9 +13,9 @@ getFeedByTagCommand = (function() {
       Ti.API.info("cache loaded. items is " + items.length);
       for (_i = 0, _len = items.length; _i < _len; _i++) {
         json = items[_i];
-        result.push(t.createRow(json));
+        result.push(mainTableView.createRow(json));
       }
-      result.push(t.createRowForLoadOldEntry(storedTo));
+      result.push(mainTableView.createRowForLoadOldEntry(storedTo));
     } else {
       Ti.API.info("" + storedTo + " isn't cached so that get items via Qiita API");
       this.getFeedByTag();
@@ -34,13 +34,13 @@ getFeedByTagCommand = (function() {
       var json, _i, _len;
       for (_i = 0, _len = result.length; _i < _len; _i++) {
         json = result[_i];
-        rows.push(t.createRow(json));
+        rows.push(mainTableView.createRow(json));
       }
       if (result.length !== MAXITEMCOUNT) {
         Ti.API.info("loadOldEntry hide");
       } else {
         Ti.API.info("loadOldEntry show");
-        rows.push(t.createRowForLoadOldEntry(storedTo));
+        rows.push(mainTableView.createRowForLoadOldEntry(storedTo));
       }
       Ti.App.Properties.setBool("stateMainTableSlide", false);
       return mainTable.setData(rows);

@@ -10,9 +10,9 @@ getMyStocksCommand = (function() {
     if (items !== null) {
       for (_i = 0, _len = items.length; _i < _len; _i++) {
         json = items[_i];
-        result.push(t.createRow(json));
+        result.push(mainTableView.createRow(json));
       }
-      result.push(t.createRowForLoadOldEntry(this.value));
+      result.push(mainTableView.createRowForLoadOldEntry(this.value));
     } else {
       this.getMyStocks();
     }
@@ -30,13 +30,13 @@ getMyStocksCommand = (function() {
       var json, _i, _len;
       for (_i = 0, _len = result.length; _i < _len; _i++) {
         json = result[_i];
-        rows.push(t.createRow(json));
+        rows.push(mainTableView.createRow(json));
       }
       if (result.length !== MAXITEMCOUNT) {
         Ti.API.info("loadOldEntry hide");
       } else {
         Ti.API.info("loadOldEntry show");
-        rows.push(t.createRowForLoadOldEntry(value));
+        rows.push(mainTableView.createRowForLoadOldEntry(value));
       }
       Ti.App.Properties.setBool("stateMainTableSlide", false);
       return mainTable.setData(rows);

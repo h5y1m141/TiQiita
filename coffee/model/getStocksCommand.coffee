@@ -5,8 +5,8 @@ class getStocksCommand
     result = []
     items = JSON.parse(Ti.App.Properties.getString(@value))
     if items isnt null
-      result.push(t.createRow(json)) for json in items
-      result.push(t.createRowForLoadOldEntry(@value))
+      result.push(mainTableView.createRow(json)) for json in items
+      result.push(mainTableView.createRowForLoadOldEntry(@value))
       
     else
       @.getFeed()
@@ -20,8 +20,8 @@ class getStocksCommand
     value = @value
     qiita.getFeed( (result,links) ->
 
-      rows.push(t.createRow(json)) for json in result
-      rows.push(t.createRowForLoadOldEntry(value))
+      rows.push(mainTableView.createRow(json)) for json in result
+      rows.push(mainTableView.createRowForLoadOldEntry(value))
       
       mainTable.setData rows
       Ti.App.Properties.setBool "stateMainTableSlide",false

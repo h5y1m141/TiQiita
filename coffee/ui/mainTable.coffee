@@ -1,4 +1,4 @@
-class tableView
+class mainTable
   constructor: () ->
     @table = Ti.UI.createTableView
       backgroundColor:'#ededed'
@@ -143,6 +143,6 @@ class tableView
     row.storedTo = storedTo
     return row
     
-module.exports = tableView
+module.exports = mainTable
 
 

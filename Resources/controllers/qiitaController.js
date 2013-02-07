@@ -27,15 +27,15 @@ qiitaController = (function() {
         Ti.API.info("getNextFeed start. result is " + result.length);
         if (result.length !== MAXITEMCOUNT) {
           Ti.API.info("loadOldEntry hide");
-          return t.hideLastRow();
+          return mainTableView.hideLastRow();
         } else {
           Ti.API.info("loadOldEntry show");
           _results = [];
           for (_i = 0, _len = result.length; _i < _len; _i++) {
             json = result[_i];
-            r = t.createRow(json);
-            lastIndex = t.lastRowIndex();
-            _results.push(t.insertRow(lastIndex, r));
+            r = mainTableView.createRow(json);
+            lastIndex = mainTableView.lastRowIndex();
+            _results.push(mainTableView.insertRow(lastIndex, r));
           }
           return _results;
         }

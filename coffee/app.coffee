@@ -1,7 +1,7 @@
 moment = require('lib/moment.min')
 momentja = require('lib/momentja')
 Qiita = require('model/qiita')
-tableView = require('ui/tableView')
+MainTable = require('ui/mainTable')
 menuTable = require('ui/menuTable')
 StatusView = require('ui/statusView')
 statusView = new StatusView()
@@ -24,7 +24,8 @@ webView = require('ui/webView')
 win = require('ui/window')
 activityIndicator = require('ui/activityIndicator')
 
-t = new tableView()
+mainTableView = new MainTable()
+
 qiita = new Qiita()
 controller = new qiitaController()
 
@@ -56,7 +57,7 @@ if testsEnabled is true
 else
 
   # 投稿一覧情報を取得
-  mainTable = t.getTable()
+  mainTable = mainTableView.getTable()
   mainWindow = new win()
   actInd = new activityIndicator()
   listBtn = Ti.UI.createButton

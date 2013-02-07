@@ -34,13 +34,13 @@ class qiitaController
         # 読み込むrowを非表示にすればOK
         if result.length isnt MAXITEMCOUNT
           Ti.API.info "loadOldEntry hide"
-          t.hideLastRow()
+          mainTableView.hideLastRow()
         else
           Ti.API.info "loadOldEntry show"
           for json in result
-            r = t.createRow(json)
-            lastIndex = t.lastRowIndex()
-            t.insertRow(lastIndex,r)
+            r = mainTableView.createRow(json)
+            lastIndex = mainTableView.lastRowIndex()
+            mainTableView.insertRow(lastIndex,r)
       )
     return true
     
