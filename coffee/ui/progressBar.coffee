@@ -6,7 +6,7 @@ class progressBar
       width: 200
       zIndex:20
       min: 0
-      max: 2
+      max: 1
       value: 0
       color: "#fff"
       message: "Downloading...."

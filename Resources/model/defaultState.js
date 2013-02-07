@@ -5,7 +5,8 @@ defaultState = (function() {
     return "STATE: 標準状態";
   };
   defaultState.prototype.moveUP = function() {
-    return Ti.API.info("この状態では何もしない");
+    Ti.API.info("STATE: 標準状態この状態では何もしない");
+    return new defaultState();
   };
   defaultState.prototype.moveDown = function() {
     Ti.API.info("ACTION: スライド開始");
@@ -22,7 +23,9 @@ defaultState = (function() {
     });
     return new slideState();
   };
-  defaultState.prototype.moveBackward = function() {};
+  defaultState.prototype.moveBackward = function() {
+    "STATE: 標準状態";    return new defaultState();
+  };
   defaultState.prototype.moveForward = function() {
     Ti.API.info("ACTION: スライド開始");
     Ti.App.Properties.setBool("stateMainTableSlide", true);

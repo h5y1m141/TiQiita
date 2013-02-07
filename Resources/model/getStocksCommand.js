@@ -24,13 +24,13 @@ getStocksCommand = (function() {
     value = this.value;
     qiita.getFeed(function(result, links) {
       var json, _i, _len;
-      commandController.countUp(progressBar);
       for (_i = 0, _len = result.length; _i < _len; _i++) {
         json = result[_i];
         rows.push(t.createRow(json));
       }
       rows.push(t.createRowForLoadOldEntry(value));
-      return mainTable.setData(rows);
+      mainTable.setData(rows);
+      return Ti.App.Properties.setBool("stateMainTableSlide", false);
     });
     return true;
   };

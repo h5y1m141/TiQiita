@@ -139,6 +139,15 @@ class Qiita
     #   controller.logging(logData)
       
     xhr = Ti.Network.createHTTPClient()
+    
+    xhr.ondatastream = (e) ->
+      if storedTo isnt "followingTags"
+        if Math.round(e.progress * 100) <= 100
+        
+          Ti.API.info "xhr.ondatastream start progress is #{Math.round(e.progress * 100)}"
+          progressBar.value = e.progress
+
+          commandController.countUp()
 
     Ti.API.info parameter.method + ":" + parameter.url
     xhr.open(parameter.method,parameter.url)
@@ -170,6 +179,7 @@ class Qiita
     xhr.onerror = (e) ->
       error = JSON.parse(e)
       controller.errorHandle(error.error)
+      
       
     xhr.timeout = 5000
     xhr.send()

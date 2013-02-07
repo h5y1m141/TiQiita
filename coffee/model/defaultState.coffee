@@ -6,7 +6,8 @@ class defaultState
   sayState: () ->
     return "STATE: 標準状態"
   moveUP: () ->
-    Ti.API.info "この状態では何もしない"
+    Ti.API.info "STATE: 標準状態この状態では何もしない"
+    return new defaultState()
   moveDown: () ->
     Ti.API.info "ACTION: スライド開始"
     Ti.App.Properties.setBool "stateMainTableSlide",true
@@ -24,8 +25,8 @@ class defaultState
     return new slideState()
     
   moveBackward: () ->
-
-    # return new defaultState()
+    "STATE: 標準状態"
+    return new defaultState()
   moveForward: () ->
     Ti.API.info "ACTION: スライド開始"
     Ti.App.Properties.setBool "stateMainTableSlide",true

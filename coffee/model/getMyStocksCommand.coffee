@@ -8,18 +8,20 @@ class getMyStocksCommand
     if items isnt null
       result.push(t.createRow(json)) for json in items
       result.push(t.createRowForLoadOldEntry(@value))
+      
     else
-
       @.getMyStocks()
       
-    mainTable.setData result    
+    mainTable.setData result  
+
+    
       
   getMyStocks:() ->
     rows = []
     MAXITEMCOUNT = 20 # 1リクエスト辺りに読み込まれる最大件数
     value = @value
     qiita.getMyStocks( (result,links) ->
-      commandController.countUp(progressBar)
+
       rows.push(t.createRow(json)) for json in result
       
       if result.length isnt MAXITEMCOUNT
@@ -27,7 +29,9 @@ class getMyStocksCommand
       else
         Ti.API.info "loadOldEntry show"
         rows.push(t.createRowForLoadOldEntry(value))
-        mainTable.setData rows
+        
+      Ti.App.Properties.setBool "stateMainTableSlide",false
+      mainTable.setData rows
     )
 
     return true

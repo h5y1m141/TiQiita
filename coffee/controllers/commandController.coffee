@@ -29,22 +29,10 @@ class commandController
     
     return true
     
-  countUp:(progressBar) ->
-    max = progressBar.max-1
-    currentValue = progressBar.value
-    Ti.API.info "value check. max is #{max} and currentValue is #{currentValue}"
-    if currentValue < max
-      progressBar.value = progressBar.value+1
-    else
-      progressBar.value = progressBar.value+1
-      direction = "vertical"
-      Ti.App.Properties.setBool 'stateMainTableSlide',true
-      controller.slideMainTable(direction)
-
-
-      
-    return true
-
+  countUp:() ->
+    direction = "vertical"
+    Ti.App.Properties.setBool 'stateMainTableSlide',true
+    return controller.slideMainTable(direction)
 
           
 module.exports = commandController

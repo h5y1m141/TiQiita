@@ -10,7 +10,6 @@ followingTagsCommand = (function() {
         Ti.App.Properties.setString("followingTag" + json.url_name + "nextURL", null);
         commandController.applyFeedByTagCommand(json.url_name);
       }
-      commandController.countUp(progressBar);
       return true;
     });
   };

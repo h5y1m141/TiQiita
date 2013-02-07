@@ -115,6 +115,15 @@ Qiita = (function() {
     var self, xhr;
     self = this;
     xhr = Ti.Network.createHTTPClient();
+    xhr.ondatastream = function(e) {
+      if (storedTo !== "followingTags") {
+        if (Math.round(e.progress * 100) <= 100) {
+          Ti.API.info("xhr.ondatastream start progress is " + (Math.round(e.progress * 100)));
+          progressBar.value = e.progress;
+          return commandController.countUp();
+        }
+      }
+    };
     Ti.API.info(parameter.method + ":" + parameter.url);
     xhr.open(parameter.method, parameter.url);
     xhr.onload = function() {

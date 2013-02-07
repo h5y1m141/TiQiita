@@ -4,7 +4,7 @@ getFeedByTagCommand = (function() {
     this.tagName = tagName;
   }
   getFeedByTagCommand.prototype.execute = function() {
-    var items, json, result, showFlg, storedTo, _i, _len;
+    var items, json, result, storedTo, _i, _len;
     storedTo = "followingTag" + this.tagName;
     Ti.API.info("getFeedByTagCommand execute! storedTo is " + storedTo);
     result = [];
@@ -18,19 +18,17 @@ getFeedByTagCommand = (function() {
       result.push(t.createRowForLoadOldEntry(storedTo));
     } else {
       Ti.API.info("" + storedTo + " isn't cached so that get items via Qiita API");
-      showFlg = true;
-      this.getFeedByTag(showFlg);
+      this.getFeedByTag();
     }
     return mainTable.setData(result);
   };
-  getFeedByTagCommand.prototype.getFeedByTag = function(showFlg) {
+  getFeedByTagCommand.prototype.getFeedByTag = function() {
     var MAXITEMCOUNT, rows, storedTo;
     rows = [];
     MAXITEMCOUNT = 20;
     storedTo = "followingTag" + this.tagName;
     qiita.getFeedByTag(this.tagName, function(result, links) {
       var json, _i, _len;
-      commandController.countUp(progressBar);
       for (_i = 0, _len = result.length; _i < _len; _i++) {
         json = result[_i];
         rows.push(t.createRow(json));
@@ -41,11 +39,8 @@ getFeedByTagCommand = (function() {
         Ti.API.info("loadOldEntry show");
         rows.push(t.createRowForLoadOldEntry(storedTo));
       }
-      if (showFlg === true) {
-        return mainTable.setData(rows);
-      } else {
-        return null;
-      }
+      Ti.App.Properties.setBool("stateMainTableSlide", false);
+      return mainTable.setData(rows);
     });
     return true;
   };

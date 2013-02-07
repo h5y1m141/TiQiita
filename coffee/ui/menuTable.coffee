@@ -70,7 +70,7 @@ class menuTable
 
       stockRow = Ti.UI.createTableViewRow(rowColorTheme)
       stockRow.addEventListener('click',(e) ->
-        # alert e.rowData.className
+
         slideEvent(e.rowData.className)
       )
       stockRow.className = "storedMyStocks"

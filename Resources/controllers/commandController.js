@@ -23,20 +23,11 @@ commandController = (function() {
     this.menu.addCommands("followingTag" + tagName, new feedByTagCommand(tagName));
     return true;
   };
-  commandController.prototype.countUp = function(progressBar) {
-    var currentValue, direction, max;
-    max = progressBar.max - 1;
-    currentValue = progressBar.value;
-    Ti.API.info("value check. max is " + max + " and currentValue is " + currentValue);
-    if (currentValue < max) {
-      progressBar.value = progressBar.value + 1;
-    } else {
-      progressBar.value = progressBar.value + 1;
-      direction = "vertical";
-      Ti.App.Properties.setBool('stateMainTableSlide', true);
-      controller.slideMainTable(direction);
-    }
-    return true;
+  commandController.prototype.countUp = function() {
+    var direction;
+    direction = "vertical";
+    Ti.App.Properties.setBool('stateMainTableSlide', true);
+    return controller.slideMainTable(direction);
   };
   return commandController;
 })();

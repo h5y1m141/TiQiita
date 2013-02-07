@@ -6,6 +6,7 @@ qiitaController = (function() {
   qiitaController.prototype.loadEntry = function() {
     var currentPage, direction, items;
     currentPage = Ti.App.Properties.getString("currentPage");
+    Ti.API.info("qiitaController.loadEntry start. currentPage is " + currentPage);
     Ti.App.Properties.setString(currentPage, null);
     items = JSON.parse(Ti.App.Properties.getString(currentPage));
     direction = "vertical";

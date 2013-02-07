@@ -8,7 +8,9 @@ class mainContoroller
     else  
       # direction = "horizontal"
       direction = "vertical"
+      Ti.App.Properties.setBool 'stateMainTableSlide',false
       controller.slideMainTable(direction)
+      
       commandController.useMenu "storedStocks"
       commandController.useMenu "followingTags"
       

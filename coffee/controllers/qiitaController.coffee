@@ -5,7 +5,7 @@ class qiitaController
     
   loadEntry: () ->
     currentPage = Ti.App.Properties.getString "currentPage"
-
+    Ti.API.info "qiitaController.loadEntry start. currentPage is #{currentPage}"
     # 現在ページのパラメータを引数に該当キャッシュをクリアーして
     # 該当コマンド実行することで再度QiitaAPIにアクセス可能になる
 
@@ -72,6 +72,7 @@ class qiitaController
   slideMainTable: (direction) ->
     slideState = Ti.App.Properties.getBool("stateMainTableSlide") 
     Ti.API.info "direction is #{direction}.slideState is #{slideState}"
+
     if slideState is false and direction is "horizontal"
       @state = @state.moveForward()
     else if slideState is true and direction is "horizontal"

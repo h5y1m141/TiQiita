@@ -20,7 +20,8 @@ slideState = (function() {
     return new defaultState();
   };
   slideState.prototype.moveDown = function() {
-    return Ti.API.info("この状態では何もしない");
+    Ti.API.info("STATE: スライド状態この状態では何もしない");
+    return new slideState();
   };
   slideState.prototype.moveBackward = function() {
     var page;
@@ -37,7 +38,8 @@ slideState = (function() {
     return new defaultState();
   };
   slideState.prototype.moveForward = function() {
-    return Ti.API.info("この状態では何もしない");
+    Ti.API.info("この状態では何もしない");
+    return new slideState();
   };
   return slideState;
 })();

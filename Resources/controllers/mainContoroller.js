@@ -8,6 +8,7 @@ mainContoroller = (function() {
       alertView.animate();
     } else {
       direction = "vertical";
+      Ti.App.Properties.setBool('stateMainTableSlide', false);
       controller.slideMainTable(direction);
       commandController.useMenu("storedStocks");
       commandController.useMenu("followingTags");

@@ -21,7 +21,8 @@ class slideState
 
     return new defaultState()
   moveDown: () ->    
-    Ti.API.info "この状態では何もしない"    
+    Ti.API.info "STATE: スライド状態この状態では何もしない"
+    return new slideState()
   moveBackward: () ->
     Ti.API.info "ACTION: スライドから標準状態に戻る。水平方向"
     Ti.App.Properties.setBool "stateMainTableSlide",false
@@ -41,6 +42,6 @@ class slideState
     
   moveForward: () ->
     Ti.API.info "この状態では何もしない"
-    
+    return new slideState()
     
 module.exports = slideState

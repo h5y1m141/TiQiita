@@ -13,33 +13,32 @@ class getFeedByTagCommand
       Ti.API.info "cache loaded. items is #{items.length}"
       result.push(t.createRow(json)) for json in items
       result.push(t.createRowForLoadOldEntry(storedTo))
-
+      
     else
       Ti.API.info "#{storedTo} isn't cached so that get items via Qiita API"
-      showFlg = true
-      @.getFeedByTag(showFlg)
-
-    mainTable.setData result      
+      @.getFeedByTag()
+      
+    mainTable.setData result  
 
     
-  getFeedByTag:(showFlg) ->
+
+    
+  getFeedByTag:() ->
     rows = []
     MAXITEMCOUNT = 20 # 1リクエスト辺りに読み込まれる最大件数
     storedTo = "followingTag#{@tagName}" 
     
     qiita.getFeedByTag(@tagName, (result,links) ->
-      commandController.countUp(progressBar)
       rows.push(t.createRow(json)) for json in result
       if result.length isnt MAXITEMCOUNT
         Ti.API.info "loadOldEntry hide"
       else
         Ti.API.info "loadOldEntry show"
         rows.push(t.createRowForLoadOldEntry(storedTo))
+        
+      Ti.App.Properties.setBool "stateMainTableSlide",false
+      mainTable.setData rows
 
-      if showFlg is true
-        return mainTable.setData rows
-      else
-        return null
     )
     return true
       
