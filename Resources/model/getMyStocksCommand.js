@@ -19,10 +19,13 @@ getMyStocksCommand = (function() {
     return mainTable.setData(result);
   };
   getMyStocksCommand.prototype.getMyStocks = function() {
-    var MAXITEMCOUNT, rows, value;
+    var MAXITEMCOUNT, direction, rows, value;
     rows = [];
     MAXITEMCOUNT = 20;
     value = this.value;
+    direction = "vertical";
+    Ti.App.Properties.setBool('stateMainTableSlide', false);
+    controller.slideMainTable(direction);
     qiita.getMyStocks(function(result, links) {
       var json, _i, _len;
       for (_i = 0, _len = result.length; _i < _len; _i++) {

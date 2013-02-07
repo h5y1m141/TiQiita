@@ -27,6 +27,9 @@ class getFeedByTagCommand
     rows = []
     MAXITEMCOUNT = 20 # 1リクエスト辺りに読み込まれる最大件数
     storedTo = "followingTag#{@tagName}" 
+    direction = "vertical"
+    Ti.App.Properties.setBool 'stateMainTableSlide',false
+    controller.slideMainTable(direction)
     
     qiita.getFeedByTag(@tagName, (result,links) ->
       rows.push(t.createRow(json)) for json in result
