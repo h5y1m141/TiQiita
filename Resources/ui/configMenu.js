@@ -106,6 +106,7 @@ configMenu = (function() {
     });
     loginGroup.add(row3);
     tableView = Ti.UI.createTableView({
+      zIndex: 5,
       data: [groupData, loginGroup],
       style: Ti.UI.iPhone.TableViewStyle.GROUPED,
       top: 0,

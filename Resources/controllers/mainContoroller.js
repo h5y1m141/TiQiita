@@ -1,11 +1,13 @@
 var mainContoroller;
 mainContoroller = (function() {
-  function mainContoroller() {}
+  function mainContoroller() {
+    this.networkDisconnectedMessage = "ネットワーク接続出来ません。ネットワーク設定を再度ご確認ください";
+    this.authenticationFailMessage = "ユーザIDかパスワードに誤りがあるためログインできません";
+  }
   mainContoroller.prototype.init = function() {
     var direction;
     if (controller.networkStatus() === false) {
-      alertView.editMessage("ネットワーク接続出来ません。ネットワーク設定を再度ご確認ください");
-      alertView.animate();
+      this._alertViewShow(this.networkDisconnectedMessage);
     } else {
       direction = "vertical";
       Ti.App.Properties.setBool('stateMainTableSlide', false);
@@ -18,8 +20,7 @@ mainContoroller = (function() {
   mainContoroller.prototype.networkConnectionCheck = function(callback) {
     var currentPage, direction;
     if (controller.networkStatus() === false) {
-      alertView.editMessage("ネットワーク接続出来ません。ネットワーク設定を再度ご確認ください");
-      alertView.animate();
+      this._alertViewShow(this.networkDisconnectedMessage);
       direction = "vertical";
       Ti.App.Properties.setBool('stateMainTableSlide', true);
       currentPage = Ti.App.Properties.getString("currentPage");
@@ -28,6 +29,19 @@ mainContoroller = (function() {
     } else {
       return callback();
     }
+  };
+  mainContoroller.prototype.authenticationCheck = function(callback) {
+    var token;
+    token = Ti.App.Properties.getString('QiitaToken');
+    if (token === null) {
+      return this._alertViewShow(this.authenticationFailMessage);
+    } else {
+      return callback();
+    }
+  };
+  mainContoroller.prototype._alertViewShow = function(messsage) {
+    alertView.editMessage(messsage);
+    return alertView.animate();
   };
   return mainContoroller;
 })();

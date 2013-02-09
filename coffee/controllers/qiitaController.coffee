@@ -125,8 +125,8 @@ class qiitaController
     
     
   errorHandle: (param) ->
-    Ti.API.info @message.network.timeout
-    return actInd.hide()
+    alertView.editMessage errorMessage
+    alertView.animate()
 
     
   logging:(logData) ->
@@ -156,24 +156,30 @@ class qiitaController
   login:(param) ->
 
     qiita._auth(param, (token)->
-      actInd.backgroundColor = '#222'
-      actInd.zIndex = 10
-      actInd.show()
       if token is null
         alert "ユーザIDかパスワードが間違ってます"
       else
         alert "認証出来ました"
         Ti.App.Properties.setString('QiitaLoginID', param.url_name)
         Ti.App.Properties.setString('QiitaLoginPassword', param.password)
-        
-      actInd.hide()
       
     )
     
-    # Ti.API.info "login success: token is #{token}"
     
     return true
     
+  loginFail:(errorMessage) ->
+    direction = "horizontal"
+    Ti.App.Properties.setBool 'stateMainTableSlide',false
+    @.slideMainTable(direction)
+    
+    alertView.editMessage "ログイン失敗。Qiitaサーバからのエラーメッセージ:#{errorMessage}"
+    alertView.animate()
+    # direction = "vertical"
+    # Ti.App.Properties.setBool 'stateMainTableSlide',false
+    # @.slideMainTable(direction)
+    
+        
   networkStatus:() ->
     return qiita.isConnected()
 

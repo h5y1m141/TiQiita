@@ -55,7 +55,7 @@ testsEnabled = false
 if testsEnabled is true
   require('test/tests')
 else
-
+  
   # 投稿一覧情報を取得
   mainTable = mainTableView.getTable()
   mainWindow = new win()
@@ -76,6 +76,7 @@ else
       controller.loadEntry()
     )
   )
+  mainContoroller.init()
   menu = new menuTable()
   
   mainWindow.add actInd
@@ -102,7 +103,7 @@ else
   webWindow.add webViewContents
   webWindow.add actInd
 
-  mainContoroller.init()
+
   
   tabGroup = Ti.UI.createTabGroup()
   tabGroup.tabBarVisible = false

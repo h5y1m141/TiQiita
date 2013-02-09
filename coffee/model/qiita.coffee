@@ -61,6 +61,7 @@ class Qiita
       error = JSON.parse(@.responseText)
       Ti.API.info error.error
       Ti.App.Properties.setString('QiitaTokenFail', error.error)
+      # controller.loginFail error.error
       token = null      
       callback(token)  
             
@@ -151,6 +152,8 @@ class Qiita
 
     Ti.API.info parameter.method + ":" + parameter.url
     xhr.open(parameter.method,parameter.url)
+    
+    
     xhr.onload = ->
       json = JSON.parse(@.responseText)
 
@@ -175,10 +178,12 @@ class Qiita
           relLink = null
 
       callback(json,relLink)
-      
+
     xhr.onerror = (e) ->
-      error = JSON.parse(e)
-      controller.errorHandle(error.error)
+      Ti.API.info "status code: #{@.status}"
+      error = JSON.parse(@.responseText)
+      Ti.API.info error.error
+            
       
       
     xhr.timeout = 5000

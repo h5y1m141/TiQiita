@@ -145,8 +145,9 @@ Qiita = (function() {
     };
     xhr.onerror = function(e) {
       var error;
-      error = JSON.parse(e);
-      return controller.errorHandle(error.error);
+      Ti.API.info("status code: " + this.status);
+      error = JSON.parse(this.responseText);
+      return Ti.API.info(error.error);
     };
     xhr.timeout = 5000;
     return xhr.send();

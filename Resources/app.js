@@ -51,6 +51,7 @@ if (testsEnabled === true) {
       return controller.loadEntry();
     });
   });
+  mainContoroller.init();
   menu = new menuTable();
   mainWindow.add(actInd);
   mainWindow.add(mainTable);
@@ -69,7 +70,6 @@ if (testsEnabled === true) {
   webWindow.add(webViewHeader);
   webWindow.add(webViewContents);
   webWindow.add(actInd);
-  mainContoroller.init();
   tabGroup = Ti.UI.createTabGroup();
   tabGroup.tabBarVisible = false;
   tab = Ti.UI.createTab({
