@@ -185,6 +185,7 @@ class Qiita
     xhr.onerror = (e) ->
       Ti.API.info "status code: #{@.status}"
       error = JSON.parse(@.responseText)
+      Ti.App.Properties.setBool "#{storedTo}Error", true
       Ti.API.info error.error
             
       

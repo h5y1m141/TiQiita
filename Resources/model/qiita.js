@@ -152,6 +152,7 @@ Qiita = (function() {
       var error;
       Ti.API.info("status code: " + this.status);
       error = JSON.parse(this.responseText);
+      Ti.App.Properties.setBool("" + storedTo + "Error", true);
       return Ti.API.info(error.error);
     };
     xhr.timeout = 5000;

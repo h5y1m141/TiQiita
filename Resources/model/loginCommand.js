@@ -13,7 +13,8 @@ loginCommand = (function() {
       } else {
         alert("認証出来ました");
         Ti.App.Properties.setString('QiitaLoginID', param.url_name);
-        return Ti.App.Properties.setString('QiitaLoginPassword', param.password);
+        Ti.App.Properties.setString('QiitaLoginPassword', param.password);
+        return menuTable.refreshMenu();
       }
     });
     return true;

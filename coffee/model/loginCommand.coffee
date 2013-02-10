@@ -17,6 +17,7 @@ class loginCommand
 
         Ti.App.Properties.setString('QiitaLoginID', param.url_name)
         Ti.App.Properties.setString('QiitaLoginPassword', param.password)
+        menuTable.refreshMenu()
 
     )
     

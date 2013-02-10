@@ -180,17 +180,17 @@ class menuTable
     qiita.getFollowingTags( (result,links)=>
       # Qiita利用してるユーザによってはフォローしてるタグが0という
       # ケースも考えられる
-      Ti.API.info result
-      if result.length is 0
+      errorFlg = Ti.App.Properties.getBool "followingTagsError"
+      if result.length is 0 or errorFlg is true
         rows = [@.makeAllLabelRow(),  @.makeStockRow(), @.makeConfigRow()]
-        @table.setData rows        
+        @table.setData rows
       else
         rows = [@.makeAllLabelRow(),  @.makeStockRow(), @.makeTagRow()]
         followingTags = []  
         for json in result
           menuRow = Ti.UI.createTableViewRow(@rowColorTheme)
-          followingTags.push(json.url_name)       
-          
+          followingTags.push(json.url_name)
+                    
           # 該当するタグが選択された時には背景色を変更しつつ
           # 標準状態に戻す
           menuRow.addEventListener('click',(e)->

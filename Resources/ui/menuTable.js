@@ -170,9 +170,9 @@ menuTable = (function() {
   };
   menuTable.prototype.refreshMenu = function() {
     return qiita.getFollowingTags(__bind(function(result, links) {
-      var followingTags, json, menuRow, rows, textLabel, _i, _len;
-      Ti.API.info(result);
-      if (result.length === 0) {
+      var errorFlg, followingTags, json, menuRow, rows, textLabel, _i, _len;
+      errorFlg = Ti.App.Properties.getBool("followingTagsError");
+      if (result.length === 0 || errorFlg === true) {
         rows = [this.makeAllLabelRow(), this.makeStockRow(), this.makeConfigRow()];
         return this.table.setData(rows);
       } else {
