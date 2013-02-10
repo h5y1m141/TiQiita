@@ -5,15 +5,27 @@ mainContoroller = (function() {
     this.authenticationFailMessage = "ユーザIDかパスワードに誤りがあるためログインできません";
   }
   mainContoroller.prototype.init = function() {
-    var direction;
+    var ConfigMenu, configMenu, configWindow, direction, loginID, password;
+    loginID = Ti.App.Properties.getString('QiitaLoginID');
+    password = Ti.App.Properties.getString('QiitaLoginPassword');
     if (controller.networkStatus() === false) {
       this._alertViewShow(this.networkDisconnectedMessage);
+    } else if (loginID === null || password === null) {
+      ConfigMenu = require("ui/configMenu");
+      configMenu = new ConfigMenu();
+      configWindow = new win();
+      configWindow.title = "アカウント情報";
+      configWindow.backButtonTitle = '戻る';
+      configWindow.add(configMenu);
+      tab.window = configWindow;
+      tabGroup.open();
     } else {
+      this.createMainWindow();
+      this.refreshMenuTable();
       direction = "vertical";
       Ti.App.Properties.setBool('stateMainTableSlide', false);
       controller.slideMainTable(direction);
       commandController.useMenu("storedStocks");
-      commandController.useMenu("followingTags");
     }
     return true;
   };
@@ -42,6 +54,38 @@ mainContoroller = (function() {
   mainContoroller.prototype._alertViewShow = function(messsage) {
     alertView.editMessage(messsage);
     return alertView.animate();
+  };
+  mainContoroller.prototype.createMainWindow = function() {
+    var listBtn, refreshBtn;
+    listBtn = Ti.UI.createButton({
+      systemButton: Titanium.UI.iPhone.SystemButton.BOOKMARKS
+    });
+    listBtn.addEventListener('click', function() {
+      var direction;
+      direction = "horizontal";
+      return controller.slideMainTable(direction);
+    });
+    refreshBtn = Ti.UI.createButton({
+      systemButton: Titanium.UI.iPhone.SystemButton.REFRESH
+    });
+    refreshBtn.addEventListener('click', function() {
+      return mainContoroller.networkConnectionCheck(function() {
+        return controller.loadEntry();
+      });
+    });
+    mainWindow.add(actInd);
+    mainWindow.add(mainTable);
+    mainWindow.add(menu);
+    progressBar.show();
+    statusView.add(progressBar);
+    mainWindow.add(statusView);
+    mainWindow.add(alertView.getAlertView());
+    mainWindow.leftNavButton = listBtn;
+    mainWindow.rightNavButton = refreshBtn;
+    return tabGroup.open();
+  };
+  mainContoroller.prototype.refreshMenuTable = function() {
+    return menuTable.refreshMenu();
   };
   return mainContoroller;
 })();

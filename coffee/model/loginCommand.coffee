@@ -6,11 +6,12 @@ class loginCommand
     param =
       url_name: Ti.App.Properties.getString('QiitaLoginID'),
       password: Ti.App.Properties.getString('QiitaLoginPassword')
-
     qiita._auth(param, (token)->
-
+      
       if token is null
+
         alert "ユーザIDかパスワードが間違ってます"
+        
       else
         alert "認証出来ました"
 

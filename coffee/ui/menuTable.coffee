@@ -39,7 +39,11 @@ class menuTable
     )
     
     rows = [@.makeAllLabelRow(), @.makeConfigRow()]
+
     @table.setData rows
+
+    
+  getMenu:() ->
     return @table
     
   makeAllLabelRow:() ->
@@ -172,46 +176,49 @@ class menuTable
       if menuRow.backgroundColor isnt @backgroundColorSub
         menuRow.backgroundColor = @backgroundColorSub
 
-  build:() ->
+  refreshMenu:() ->
     qiita.getFollowingTags( (result,links)=>
-      
-      rows = [@.makeAllLabelRow(),  @.makeStockRow(), @.makeTagRow()]
-      # 自分がフォローしてるタグ一覧をTi.App.PropertiesSetList followingTags
-      # としてセットするために以下配列に取得するタグ名を格納
-      followingTags = []  
-      for json in result
-        menuRow = Ti.UI.createTableViewRow(@rowColorTheme)
-        followingTags.push(json.url_name)       
-        
-        # 該当するタグが選択された時には背景色を変更しつつ
-        # 標準状態に戻す
-        menuRow.addEventListener('click',(e)->
-          e.row.backgroundColor = @qiitaColor
-          @.slideEvent(e.rowData.className)
-        )
-        # c++のようなタグの場合、url_nameを参照するとHTMLエンコード
-        # されている表記になってしまうためラベルの表示にはname
-        # プロパティを設定しclassNameはQiitaAPI呼び出す時の処理で
-        # url_name利用したほうが都合良いためそちらを参照
-        textLabel = Ti.UI.createLabel
-          width:150
-          height:40
-          top:1
-          left:20
-          wordWrap:true
-          color:'#fff'
-          font:
-            fontSize:12
-            fontWeight:'bold'
-          text:json.name
-        menuRow.add textLabel
-        menuRow.className = "followingTag#{json.url_name}"
-        rows.push menuRow
-        
+      # Qiita利用してるユーザによってはフォローしてるタグが0という
+      # ケースも考えられる
+      Ti.API.info result
+      if result.length is 0
+        rows = [@.makeAllLabelRow(),  @.makeStockRow(), @.makeConfigRow()]
+        @table.setData rows        
+      else
+        rows = [@.makeAllLabelRow(),  @.makeStockRow(), @.makeTagRow()]
+        followingTags = []  
+        for json in result
+          menuRow = Ti.UI.createTableViewRow(@rowColorTheme)
+          followingTags.push(json.url_name)       
+          
+          # 該当するタグが選択された時には背景色を変更しつつ
+          # 標準状態に戻す
+          menuRow.addEventListener('click',(e)->
+            e.row.backgroundColor = @qiitaColor
+            @.slideEvent(e.rowData.className)
+          )
+          # c++のようなタグの場合、url_nameを参照するとHTMLエンコード
+          # されている表記になってしまうためラベルの表示にはname
+          # プロパティを設定しclassNameはQiitaAPI呼び出す時の処理で
+          # url_name利用したほうが都合良いためそちらを参照
+          textLabel = Ti.UI.createLabel
+            width:150
+            height:40
+            top:1
+            left:20
+            wordWrap:true
+            color:'#fff'
+            font:
+              fontSize:12
+              fontWeight:'bold'
+            text:json.name
+          menuRow.add textLabel
+          menuRow.className = "followingTag#{json.url_name}"
+          rows.push menuRow
+          
 
-      rows.push @.makeConfigRow()
-      table.setData rows
-      
+        rows.push @.makeConfigRow()
+        @table.setData rows
     )    
         
     

@@ -1,35 +1,3 @@
-moment = require('lib/moment.min')
-momentja = require('lib/momentja')
-Qiita = require('model/qiita')
-MainTable = require('ui/mainTable')
-menuTable = require('ui/menuTable')
-StatusView = require('ui/statusView')
-statusView = new StatusView()
-AlertView = require('ui/alertView')
-alertView = new AlertView()
-
-ProgressBar = require('ui/progressBar')
-progressBar = new ProgressBar()
-
-MainContoroller = require('controllers/mainContoroller')
-mainContoroller = new MainContoroller()
-qiitaController = require('controllers/qiitaController')
-CommandController = require("controllers/commandController")
-commandController = new CommandController()
-
-defaultState = require("model/defaultState")
-slideState = require("model/slideState")
-
-webView = require('ui/webView')
-win = require('ui/window')
-activityIndicator = require('ui/activityIndicator')
-
-mainTableView = new MainTable()
-
-qiita = new Qiita()
-controller = new qiitaController()
-
-
 # Ti.App.Propertiesの初期化  
 ## クリックイベント時の状態管理のために以下利用
 Ti.App.Properties.setBool 'stateMainTableSlide',false
@@ -47,67 +15,76 @@ Ti.App.Properties.setList "followingTags",null
 
 Ti.App.Properties.setString "currentPage","storedStocks"
 
-# Jasmine
-# 
+# 起動時に一旦tokenをリセット。
+# アカウントを切り替えて利用してる人や、フォローしてるタグの
+# 情報が変わってる可能性あるため
+Ti.App.Properties.setString 'QiitaToken',null
+# Jasmine利用してテスト実行するかどうかのフラグ。
+# trueにすることで、メインのアプリは起動せずに
+# Jasmineのテストが実行される
 testsEnabled = false
+
+
+# 外部のライブラリ読み込み 
+moment = require('lib/moment.min')
+momentja = require('lib/momentja')
+
+# 以下はmodelの読み込み
+defaultState = require("model/defaultState")
+slideState = require("model/slideState")
+Qiita = require('model/qiita')
+
+qiita = new Qiita()
+
+# 以下からコントローラー読み込み
+MainContoroller = require('controllers/mainContoroller')
+qiitaController = require('controllers/qiitaController')
+CommandController = require("controllers/commandController")
+controller = new qiitaController()
+mainContoroller = new MainContoroller()
+commandController = new CommandController()
+
+
+# UI関連のファイル郡読み込み
+MainTable = require('ui/mainTable')
+MenuTable = require('ui/menuTable')
+StatusView = require('ui/statusView')
+AlertView = require('ui/alertView')
+ProgressBar = require('ui/progressBar')
+webView = require('ui/webView')
+win = require('ui/window')
+activityIndicator = require('ui/activityIndicator')
+
+statusView = new StatusView()
+alertView = new AlertView()
+progressBar = new ProgressBar()
+mainTableView = new MainTable()
+mainTable = mainTableView.getTable()
+mainWindow = new win()
+actInd = new activityIndicator()
+menuTable = new MenuTable()
+menu = menuTable.getMenu()
+webWindow = new win()
+webWindow.backButtonTitle = '戻る'
+
+# あらかじめwebviewを生成しておかないと、メイン画面から
+# 遷移した時にもたつく原因になるために以下を実施している    
+webview = new webView()
+webViewHeader = webview.retreiveWebViewHeader()
+webViewContents = webview.retreiveWebView()
+webWindow.add webViewHeader
+webWindow.add webViewContents
+webWindow.add actInd
+
+tabGroup = Ti.UI.createTabGroup()
+tabGroup.tabBarVisible = false
+tab = Ti.UI.createTab
+  window: mainWindow
+tabGroup.addTab tab
+
 
 
 if testsEnabled is true
   require('test/tests')
 else
-  
-  # 投稿一覧情報を取得
-  mainTable = mainTableView.getTable()
-  mainWindow = new win()
-  actInd = new activityIndicator()
-  listBtn = Ti.UI.createButton
-    systemButton: Titanium.UI.iPhone.SystemButton.BOOKMARKS
-    
-  listBtn.addEventListener('click',()->
-    direction = "horizontal"
-    controller.slideMainTable(direction)
-  )
-  
-  refreshBtn = Ti.UI.createButton
-    systemButton: Titanium.UI.iPhone.SystemButton.REFRESH
-    
-  refreshBtn.addEventListener('click',()->
-    mainContoroller.networkConnectionCheck(()->
-      controller.loadEntry()
-    )
-  )
   mainContoroller.init()
-  menu = new menuTable()
-  
-  mainWindow.add actInd
-  mainWindow.add mainTable
-  mainWindow.add menu
-  progressBar.show()
-  statusView.add progressBar
-  mainWindow.add statusView
-
-
-  mainWindow.add alertView.getAlertView()
-  mainWindow.leftNavButton  = listBtn
-  mainWindow.rightNavButton  = refreshBtn
-
-  webWindow = new win()
-  webWindow.backButtonTitle = '戻る'
-
-  # あらかじめwebviewを生成しておかないと、メイン画面から
-  # 遷移した時にもたつく原因になるために以下を実施している    
-  webview = new webView()
-  webViewHeader = webview.retreiveWebViewHeader()
-  webViewContents = webview.retreiveWebView()
-  webWindow.add webViewHeader
-  webWindow.add webViewContents
-  webWindow.add actInd
-
-
-  
-  tabGroup = Ti.UI.createTabGroup()
-  tabGroup.tabBarVisible = false
-  tab = Ti.UI.createTab
-    window: mainWindow
-  tabGroup.addTab tab
-  tabGroup.open()

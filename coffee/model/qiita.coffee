@@ -4,8 +4,11 @@ class Qiita
     file = configJSON.read().toString()
     
     @config = JSON.parse(file)
-    
-    @user_name = @config.url_name
+    QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID')
+    if QiitaLoginID is null
+      @user_name = @config.url_name
+    else
+      @user_name = QiitaLoginID
     @parameter =
       stocks:
         url:"https://qiita.com/api/v1/users/#{@user_name}/stocks"

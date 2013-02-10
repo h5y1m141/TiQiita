@@ -1,11 +1,16 @@
 var Qiita;
 Qiita = (function() {
   function Qiita() {
-    var configJSON, file;
+    var QiitaLoginID, configJSON, file;
     configJSON = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'config/login.json');
     file = configJSON.read().toString();
     this.config = JSON.parse(file);
-    this.user_name = this.config.url_name;
+    QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID');
+    if (QiitaLoginID === null) {
+      this.user_name = this.config.url_name;
+    } else {
+      this.user_name = QiitaLoginID;
+    }
     this.parameter = {
       stocks: {
         url: "https://qiita.com/api/v1/users/" + this.user_name + "/stocks",
