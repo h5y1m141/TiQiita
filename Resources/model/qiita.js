@@ -153,7 +153,7 @@ Qiita = (function() {
       Ti.API.info("status code: " + this.status);
       error = JSON.parse(this.responseText);
       Ti.App.Properties.setBool("" + storedTo + "Error", true);
-      return Ti.API.info(error.error);
+      return Ti.API.info("_request method error." + error.error);
     };
     xhr.timeout = 5000;
     return xhr.send();
@@ -217,7 +217,10 @@ Qiita = (function() {
   };
   Qiita.prototype.getFollowingTags = function(callback) {
     var param;
-    param = this.parameter.followingTags;
+    param = {
+      url: "https://qiita.com/api/v1/users/" + this.user_name + "/following_tags",
+      method: 'GET'
+    };
     return this._request(param, "followingTags", callback);
   };
   Qiita.prototype.getFeed = function(callback) {
@@ -289,6 +292,12 @@ Qiita = (function() {
       alertDialog.setTitle("Qiitaへのストックが完了しました");
       return alertDialog.show();
     };
+  };
+  Qiita.prototype.setRequestParameter = function(name) {
+    Ti.API.info("setRequestParameter start.user name id " + this.user_name + " and name is " + name);
+    this.user_name = name;
+    Ti.API.info("setRequestParameter done." + this.parameter.followingTag);
+    return true;
   };
   return Qiita;
 })();

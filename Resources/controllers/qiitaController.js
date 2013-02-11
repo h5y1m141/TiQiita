@@ -87,13 +87,15 @@ qiitaController = (function() {
     return webview.headerUpdate(json);
   };
   qiitaController.prototype.moveToConfigWindow = function() {
-    var configMenu, configWindow, menu;
+    var configMenu, configWindow, currentPage, menu;
     configMenu = require("ui/configMenu");
     menu = new configMenu();
     configWindow = new win();
     configWindow.title = "アカウント情報";
     configWindow.backButtonTitle = '戻る';
     configWindow.add(menu);
+    currentPage = Ti.App.Properties.getString("currentPage");
+    Ti.API.info("moveToConfigWindow start currentPage is " + currentPage);
     return tab.open(configWindow);
   };
   qiitaController.prototype.moveToWebViewWindow = function() {

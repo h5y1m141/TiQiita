@@ -4,11 +4,13 @@ class Qiita
     file = configJSON.read().toString()
     
     @config = JSON.parse(file)
-    QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID')
+    QiitaLoginID = Ti.App.Properties.getString 'QiitaLoginID'
+
     if QiitaLoginID is null
       @user_name = @config.url_name
     else
       @user_name = QiitaLoginID
+
     @parameter =
       stocks:
         url:"https://qiita.com/api/v1/users/#{@user_name}/stocks"
@@ -186,7 +188,7 @@ class Qiita
       Ti.API.info "status code: #{@.status}"
       error = JSON.parse(@.responseText)
       Ti.App.Properties.setBool "#{storedTo}Error", true
-      Ti.API.info error.error
+      Ti.API.info "_request method error.#{error.error}"
             
       
       
@@ -252,7 +254,11 @@ class Qiita
     @._request(param,false,callback)
     
   getFollowingTags: (callback) ->
-    param = @parameter.followingTags
+    # param = @parameter.followingTags
+    param =
+      url:"https://qiita.com/api/v1/users/#{@user_name}/following_tags"
+      method:'GET'
+    
     @._request(param,"followingTags",callback)
     # @._mockObject("followingTags",false,callback)
   getFeed:(callback) ->
@@ -330,7 +336,11 @@ class Qiita
       alertDialog.setTitle "Qiitaへのストックが完了しました"
       alertDialog.show()
 
-      
+  setRequestParameter:(name) ->
+    Ti.API.info "setRequestParameter start.user name id #{@user_name} and name is #{name}"
+    @user_name = name
+    Ti.API.info "setRequestParameter done.#{@parameter.followingTag}"
+    return true      
       
       
         

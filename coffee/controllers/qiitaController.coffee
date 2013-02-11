@@ -97,6 +97,8 @@ class qiitaController
     configWindow.title = "アカウント情報"
     configWindow.backButtonTitle = '戻る'
     configWindow.add menu
+    currentPage = Ti.App.Properties.getString "currentPage"
+    Ti.API.info "moveToConfigWindow start currentPage is #{currentPage}"
     return tab.open(configWindow)
 
               

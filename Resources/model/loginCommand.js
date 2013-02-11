@@ -8,12 +8,15 @@ loginCommand = (function() {
       password: Ti.App.Properties.getString('QiitaLoginPassword')
     };
     qiita._auth(param, function(token) {
+      var logindID;
       if (token === null) {
         return alert("ユーザIDかパスワードが間違ってます");
       } else {
         alert("認証出来ました");
         Ti.App.Properties.setString('QiitaLoginID', param.url_name);
         Ti.App.Properties.setString('QiitaLoginPassword', param.password);
+        logindID = Ti.App.Properties.getString('QiitaLoginID');
+        qiita.setRequestParameter(logindID);
         return menuTable.refreshMenu();
       }
     });

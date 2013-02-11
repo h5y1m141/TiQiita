@@ -181,6 +181,7 @@ class menuTable
       # Qiita利用してるユーザによってはフォローしてるタグが0という
       # ケースも考えられる
       errorFlg = Ti.App.Properties.getBool "followingTagsError"
+
       if result.length is 0 or errorFlg is true
         rows = [@.makeAllLabelRow(),  @.makeStockRow(), @.makeConfigRow()]
         @table.setData rows

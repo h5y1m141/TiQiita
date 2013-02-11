@@ -227,8 +227,6 @@ class mainContoroller
     commandController.useMenu "storedStocks"
     
   refreshMenuTable:() ->
-    # Ti.API.info menuTable
-
     return menuTable.refreshMenu()
 
 module.exports = mainContoroller  
