@@ -40,7 +40,7 @@ menuTable = (function() {
       this.table.data[0].rows[curretRowIndex].backgroundColor = this.qiitaColor;
       return controller.selectMenu(this.table.data[0].rows[curretRowIndex].className);
     }, this));
-    rows = [this.makeAllLabelRow(), this.makeConfigRow()];
+    rows = [this.makeAllLabelRow()];
     this.table.setData(rows);
   }
   menuTable.prototype.getMenu = function() {
@@ -173,7 +173,7 @@ menuTable = (function() {
       var errorFlg, followingTags, json, menuRow, rows, textLabel, _i, _len;
       errorFlg = Ti.App.Properties.getBool("followingTagsError");
       if (result.length === 0 || errorFlg === true) {
-        rows = [this.makeAllLabelRow(), this.makeStockRow(), this.makeConfigRow()];
+        rows = [this.makeAllLabelRow(), this.makeStockRow()];
         return this.table.setData(rows);
       } else {
         rows = [this.makeAllLabelRow(), this.makeStockRow(), this.makeTagRow()];
@@ -182,10 +182,10 @@ menuTable = (function() {
           json = result[_i];
           menuRow = Ti.UI.createTableViewRow(this.rowColorTheme);
           followingTags.push(json.url_name);
-          menuRow.addEventListener('click', function(e) {
+          menuRow.addEventListener('click', __bind(function(e) {
             e.row.backgroundColor = this.qiitaColor;
             return this.slideEvent(e.rowData.className);
-          });
+          }, this));
           textLabel = Ti.UI.createLabel({
             width: 150,
             height: 40,
@@ -203,7 +203,6 @@ menuTable = (function() {
           menuRow.className = "followingTag" + json.url_name;
           rows.push(menuRow);
         }
-        rows.push(this.makeConfigRow());
         return this.table.setData(rows);
       }
     }, this));

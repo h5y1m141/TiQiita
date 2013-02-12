@@ -68,11 +68,17 @@ class configMenu
       keyboardType:Ti.UI.KEYBOARD_ASCII
       returnKeyType:Ti.UI.RETURNKEY_DEFAULT
       borderStyle:Ti.UI.INPUT_BORDERSTYLE_ROUNDED
+      enableReturnKey:true
       passwordMask:true
       autocorrect:false
       
     textField2.addEventListener('change',(e) ->
       Ti.App.Properties.setString('QiitaLoginPassword',e.value)
+    )
+
+    textField2.addEventListener('blur',(e) ->
+      actInd.show()
+      commandController.useMenu "qiitaLogin"
     )
 
     row2.add label2
@@ -88,37 +94,40 @@ class configMenu
     groupData.add row1
     groupData.add row2
 
-    loginGroup = Ti.UI.createTableViewSection()
+    # loginGroup = Ti.UI.createTableViewSection()
 
-    row3 = Ti.UI.createTableViewRow
-      width: 320
-      height:50
-      backgroundColor:'#59BB0C'
+    # row3 = Ti.UI.createTableViewRow
+    #   width: 320
+    #   height:50
+    #   backgroundColor:'#59BB0C'
       
-    label3 = Ti.UI.createLabel
-      color:"#fff"
-      top:5
-      left:5
-      width:300
-      height:40
-      textAlign:1
-      font:
-        fontSize:18
-        fontWeight:'bold'
-      text:"ログインする"
+    # label3 = Ti.UI.createLabel
+    #   color:"#fff"
+    #   top:5
+    #   left:5
+    #   width:300
+    #   height:40
+    #   textAlign:1
+    #   font:
+    #     fontSize:18
+    #     fontWeight:'bold'
+    #   text:"ログインする"
 
-    row3.add label3
-    row3.addEventListener('click',(e) ->
+    # row3.add label3
+    # row3.addEventListener('click',(e) ->
+      
+    #   commandController.useMenu "qiitaLogin"
+    # )
+    # loginGroup.add row3
 
-      commandController.useMenu "qiitaLogin"
-    )
-    loginGroup.add row3
     tableView = Ti.UI.createTableView
       zIndex:5
-      data: [groupData,loginGroup]
+      # data: [groupData,loginGroup]
+      data: [groupData]
       style: Ti.UI.iPhone.TableViewStyle.GROUPED
       top: 0
       width: 320
+      height:160
       
       
     return tableView

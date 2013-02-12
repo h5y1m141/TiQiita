@@ -122,7 +122,7 @@ class qiitaController
     )
     webview.show()
     webWindow.rightNavButton = actionBtn
-    return tab.open(webWindow)
+    return mainTab.open(webWindow)
 
     
     

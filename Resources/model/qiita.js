@@ -24,16 +24,8 @@ Qiita = (function() {
         url: "https://qiita.com/api/v1/items",
         method: 'GET'
       },
-      followingUsers: {
-        url: "https://qiita.com/api/v1/users/" + this.user_name + "/following_users",
-        method: 'GET'
-      },
       followingTags: {
-        url: "https://qiita.com/api/v1/users/" + this.user_name + "/following_tags",
-        method: 'GET'
-      },
-      tags: {
-        url: "https://qiita.com/api/v1/tags",
+        url: "https://qiita.com/api/v1/users/" + this.user_name + "/following_tags?per_page=100",
         method: 'GET'
       }
     };
@@ -53,6 +45,7 @@ Qiita = (function() {
         password: this.config.password
       };
     }
+    Ti.API.info("qiita._auth requestParam url_name is " + requestParam.url_name);
     xhr = Ti.Network.createHTTPClient();
     xhr.open('POST', 'https://qiita.com/api/v1/auth');
     xhr.onload = function() {
@@ -249,6 +242,7 @@ Qiita = (function() {
   Qiita.prototype.getMyStocks = function(callback) {
     var param, token;
     token = Ti.App.Properties.getString('QiitaToken');
+    Ti.API.info("getMyStocks start. token is " + token);
     if (token === null) {
       this._auth();
     }
@@ -256,7 +250,7 @@ Qiita = (function() {
       url: this.parameter.myStocks.url + ("?token=" + token),
       method: this.parameter.myStocks.method
     };
-    return this._request(param, 'storedMyStocks', callback);
+    return this._request(param, "storedMyStocks", callback);
   };
   Qiita.prototype.getMyFeed = function(callback) {
     var param, token;

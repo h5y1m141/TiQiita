@@ -120,7 +120,7 @@ qiitaController = (function() {
     });
     webview.show();
     webWindow.rightNavButton = actionBtn;
-    return tab.open(webWindow);
+    return mainTab.open(webWindow);
   };
   qiitaController.prototype.errorHandle = function(param) {
     alertView.editMessage(errorMessage);

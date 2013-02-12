@@ -1,7 +1,7 @@
 var configMenu;
 configMenu = (function() {
   function configMenu() {
-    var QiitaLoginID, QiitaLoginPassword, groupData, label1, label2, label3, loginGroup, row1, row2, row3, tableView, textField1, textField2;
+    var QiitaLoginID, QiitaLoginPassword, groupData, label1, label2, row1, row2, tableView, textField1, textField2;
     groupData = Ti.UI.createTableViewSection();
     QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID');
     QiitaLoginPassword = Ti.App.Properties.getString('QiitaLoginPassword');
@@ -64,11 +64,16 @@ configMenu = (function() {
       keyboardType: Ti.UI.KEYBOARD_ASCII,
       returnKeyType: Ti.UI.RETURNKEY_DEFAULT,
       borderStyle: Ti.UI.INPUT_BORDERSTYLE_ROUNDED,
+      enableReturnKey: true,
       passwordMask: true,
       autocorrect: false
     });
     textField2.addEventListener('change', function(e) {
       return Ti.App.Properties.setString('QiitaLoginPassword', e.value);
+    });
+    textField2.addEventListener('blur', function(e) {
+      actInd.show();
+      return commandController.useMenu("qiitaLogin");
     });
     row2.add(label2);
     row2.add(textField2);
@@ -81,36 +86,13 @@ configMenu = (function() {
     }
     groupData.add(row1);
     groupData.add(row2);
-    loginGroup = Ti.UI.createTableViewSection();
-    row3 = Ti.UI.createTableViewRow({
-      width: 320,
-      height: 50,
-      backgroundColor: '#59BB0C'
-    });
-    label3 = Ti.UI.createLabel({
-      color: "#fff",
-      top: 5,
-      left: 5,
-      width: 300,
-      height: 40,
-      textAlign: 1,
-      font: {
-        fontSize: 18,
-        fontWeight: 'bold'
-      },
-      text: "ログインする"
-    });
-    row3.add(label3);
-    row3.addEventListener('click', function(e) {
-      return commandController.useMenu("qiitaLogin");
-    });
-    loginGroup.add(row3);
     tableView = Ti.UI.createTableView({
       zIndex: 5,
-      data: [groupData, loginGroup],
+      data: [groupData],
       style: Ti.UI.iPhone.TableViewStyle.GROUPED,
       top: 0,
-      width: 320
+      width: 320,
+      height: 160
     });
     return tableView;
   }

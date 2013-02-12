@@ -4,8 +4,9 @@ class window
       title:'Qiita'
       barColor:'#59BB0C'
       navBarHidden: false
-      tabBarHidden: true
+      tabBarHidden: false
       
+
     return win
 
    

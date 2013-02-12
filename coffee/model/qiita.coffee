@@ -21,15 +21,9 @@ class Qiita
       feed:
         url:"https://qiita.com/api/v1/items"
         method:'GET'
-        
-      followingUsers:
-        url:"https://qiita.com/api/v1/users/#{@user_name}/following_users"
-        method:'GET'
+
       followingTags:
-        url:"https://qiita.com/api/v1/users/#{@user_name}/following_tags"
-        method:'GET'
-      tags:
-        url:"https://qiita.com/api/v1/tags"
+        url:"https://qiita.com/api/v1/users/#{@user_name}/following_tags?per_page=100"
         method:'GET'
 
 
@@ -48,7 +42,7 @@ class Qiita
         password: @config.password
       }
 
-      
+    Ti.API.info "qiita._auth requestParam url_name is #{requestParam.url_name}"
     xhr = Ti.Network.createHTTPClient()
 
     xhr.open('POST','https://qiita.com/api/v1/auth')
@@ -254,7 +248,7 @@ class Qiita
     @._request(param,false,callback)
     
   getFollowingTags: (callback) ->
-    # param = @parameter.followingTags
+
     param =
       url:"https://qiita.com/api/v1/users/#{@user_name}/following_tags"
       method:'GET'
@@ -286,18 +280,15 @@ class Qiita
 
   getMyStocks:(callback) ->
     token = Ti.App.Properties.getString('QiitaToken')
-
+    Ti.API.info "getMyStocks start. token is #{token}"
     if token is null
       @._auth()
 
     param = 
       url:@parameter.myStocks.url + "?token=#{token}"
       method:@parameter.myStocks.method
-
-    return @._request(param,'storedMyStocks',callback)
-    # @._mockObject("stocks",'storedMyStocks',callback)
-
       
+    @._request(param,"storedMyStocks",callback)
     
     
   getMyFeed:(callback) ->

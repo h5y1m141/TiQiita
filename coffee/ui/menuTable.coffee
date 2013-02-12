@@ -38,7 +38,7 @@ class menuTable
       controller.selectMenu @table.data[0].rows[curretRowIndex].className
     )
     
-    rows = [@.makeAllLabelRow(), @.makeConfigRow()]
+    rows = [@.makeAllLabelRow()]
 
     @table.setData rows
 
@@ -183,10 +183,10 @@ class menuTable
       errorFlg = Ti.App.Properties.getBool "followingTagsError"
 
       if result.length is 0 or errorFlg is true
-        rows = [@.makeAllLabelRow(),  @.makeStockRow(), @.makeConfigRow()]
+        rows = [@makeAllLabelRow(),  @makeStockRow()]
         @table.setData rows
       else
-        rows = [@.makeAllLabelRow(),  @.makeStockRow(), @.makeTagRow()]
+        rows = [@makeAllLabelRow(),  @makeStockRow(), @makeTagRow()]
         followingTags = []  
         for json in result
           menuRow = Ti.UI.createTableViewRow(@rowColorTheme)
@@ -194,9 +194,9 @@ class menuTable
                     
           # 該当するタグが選択された時には背景色を変更しつつ
           # 標準状態に戻す
-          menuRow.addEventListener('click',(e)->
+          menuRow.addEventListener('click',(e)=>
             e.row.backgroundColor = @qiitaColor
-            @.slideEvent(e.rowData.className)
+            @slideEvent(e.rowData.className)
           )
           # c++のようなタグの場合、url_nameを参照するとHTMLエンコード
           # されている表記になってしまうためラベルの表示にはname
@@ -216,9 +216,7 @@ class menuTable
           menuRow.add textLabel
           menuRow.className = "followingTag#{json.url_name}"
           rows.push menuRow
-          
 
-        rows.push @.makeConfigRow()
         @table.setData rows
     )    
         

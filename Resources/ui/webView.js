@@ -1,7 +1,7 @@
 var webView;
 webView = (function() {
   function webView() {
-    var file;
+    var bootstrapCSS, file, qiitaCSS;
     this.webViewHeaderContainer = Ti.UI.createLabel({
       top: 0,
       left: 0,
@@ -9,9 +9,11 @@ webView = (function() {
       height: 80,
       backgroundColor: '#141414'
     });
-    file = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'bootstrap.min.css');
+    file = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'ui/css/qiita.css');
     this.css = file.read();
-    this.htmlHeaderElement = '<html><head><meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1"><style type="text/css">#{css}</style></head>';
+    qiitaCSS = 'ui/css/qiitaColor.css';
+    bootstrapCSS = 'ui/css/bootstrap.min.css';
+    this.htmlHeaderElement = "<html><head><meta name='viewport' content='width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1'><link rel='stylesheet' href='" + qiitaCSS + "' type='text/css'></link></head>";
     this.web = Ti.UI.createWebView({
       top: 80,
       left: 0,

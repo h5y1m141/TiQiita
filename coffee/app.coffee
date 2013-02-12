@@ -7,7 +7,8 @@ Ti.App.Properties.setString "storedStocks",null
 Ti.App.Properties.setString "storedMyStocks",null
 
 
-## フォローしてるタグ
+## フォローしてるタグの有無と、タグのリスト
+Ti.App.Properties.getBool "followingTagsError", false
 Ti.App.Properties.setList "followingTags",null
 
 ## 起動時には、投稿情報一覧を現在ページとしてステータス管理したいので
@@ -54,6 +55,7 @@ ProgressBar = require('ui/progressBar')
 webView = require('ui/webView')
 win = require('ui/window')
 activityIndicator = require('ui/activityIndicator')
+ConfigMenu = require("ui/configMenu")
 
 statusView = new StatusView()
 alertView = new AlertView()
@@ -64,6 +66,8 @@ mainWindow = new win()
 actInd = new activityIndicator()
 menuTable = new MenuTable()
 menu = menuTable.getMenu()
+configMenu = new ConfigMenu()
+configWindow = new win()
 webWindow = new win()
 webWindow.backButtonTitle = '戻る'
 
@@ -76,13 +80,25 @@ webWindow.add webViewHeader
 webWindow.add webViewContents
 webWindow.add actInd
 
+configWindow.title = "Qiitaアカウント設定"
+configWindow.backgroundColor = '#fff'
+configWindow.add actInd
+QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID')
+QiitaLoginPassword = Ti.App.Properties.getString('QiitaLoginPassword')
+
 tabGroup = Ti.UI.createTabGroup()
 tabGroup.tabBarVisible = false
-tab = Ti.UI.createTab
+mainTab = Ti.UI.createTab
   window: mainWindow
-tabGroup.addTab tab
+  icon:"ui/image/light_home@2x.png"  
 
 
+configTab = Ti.UI.createTab
+  window: configWindow
+  icon:"ui/image/light_gear@2x.png"
+  
+tabGroup.addTab mainTab
+tabGroup.addTab configTab
 
 if testsEnabled is true
   require('test/tests')

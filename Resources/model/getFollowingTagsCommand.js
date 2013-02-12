@@ -2,7 +2,8 @@ var followingTagsCommand;
 followingTagsCommand = (function() {
   function followingTagsCommand() {}
   followingTagsCommand.prototype.execute = function() {
-    return qiita.getFollowingTags(function(result) {
+    Ti.API.info("followingTagsCommand start");
+    return qiita.getFollowingTags(function(result, links) {
       var json, _i, _len;
       for (_i = 0, _len = result.length; _i < _len; _i++) {
         json = result[_i];
