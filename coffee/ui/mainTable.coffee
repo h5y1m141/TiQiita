@@ -9,12 +9,14 @@ class mainTable
       top:0
 
             
-    @table.addEventListener('click',(e) ->
-
+    @table.addEventListener('click',(e) =>
       # TableViewの一番下に、過去投稿を読み込むためのボタンを
       # 配置しており、そのrowだけは投稿詳細画面に遷移させない
       # 詳細画面にいくかどうかはrowのclassNameの値をチェックする
-      
+
+      if controller.networkStatus() is false
+        mainContoroller._alertViewShow "ネットワーク接続出来ません。ネットワーク設定を再度ご確認ください"
+      else
       if e.rowData.className is 'entry'
         
         # 一覧画面から詳細画面に遷移した後、該当の投稿情報を
@@ -24,12 +26,13 @@ class mainTable
         controller.webViewContentsUpdate e.rowData.data.body
         controller.webViewHeaderUpdate e.rowData.data
         controller.moveToWebViewWindow()
-       else if e.rowData.className is "config"
+      else if e.rowData.className is "config"
         controller.login e.rowData
-       else
+      else
         Ti.API.info "tableView eventListener start. storedTo is #{e.rowData.storedTo}"
         storedTo = e.rowData.storedTo
         controller.loadOldEntry storedTo
+
     )
     
   getTable: ()->

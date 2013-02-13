@@ -10,7 +10,12 @@ mainContoroller = (function() {
     loginID = Ti.App.Properties.getString('QiitaLoginID');
     password = Ti.App.Properties.getString('QiitaLoginPassword');
     if (controller.networkStatus() === false) {
+      Ti.API.info("mainContoroller init fail because of network connection not established");
+      this.createMainWindow();
+      this.createConfigWindow();
       this._alertViewShow(this.networkDisconnectedMessage);
+      tabGroup.setActiveTab(0);
+      tabGroup.open();
     } else if (loginID === null || password === null || loginID === "" || password === "") {
       Ti.API.info("@createConfigWindow start");
       this.createConfigWindow();
@@ -60,6 +65,7 @@ mainContoroller = (function() {
   };
   mainContoroller.prototype.createConfigWindow = function() {
     configWindow.add(configMenu);
+    configWindow.add(alertView.getAlertView());
     return true;
   };
   mainContoroller.prototype.createMainWindow = function() {

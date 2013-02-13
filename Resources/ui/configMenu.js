@@ -72,8 +72,14 @@ configMenu = (function() {
       return Ti.App.Properties.setString('QiitaLoginPassword', e.value);
     });
     textField2.addEventListener('blur', function(e) {
-      actInd.show();
-      return commandController.useMenu("qiitaLogin");
+      var message;
+      if (controller.networkStatus() === false) {
+        message = mainContoroller.networkDisconnectedMessage;
+        return mainContoroller._alertViewShow(message);
+      } else {
+        actInd.show();
+        return commandController.useMenu("qiitaLogin");
+      }
     });
     row2.add(label2);
     row2.add(textField2);

@@ -1,4 +1,5 @@
 var mainTable;
+var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 mainTable = (function() {
   function mainTable() {
     this.table = Ti.UI.createTableView({
@@ -9,8 +10,13 @@ mainTable = (function() {
       left: 0,
       top: 0
     });
-    this.table.addEventListener('click', function(e) {
+    this.table.addEventListener('click', __bind(function(e) {
       var storedTo;
+      if (controller.networkStatus() === false) {
+        mainContoroller._alertViewShow("ネットワーク接続出来ません。ネットワーク設定を再度ご確認ください");
+      } else {
+
+      }
       if (e.rowData.className === 'entry') {
         controller.sessionItem(e.rowData.data);
         controller.webViewContentsUpdate(e.rowData.data.body);
@@ -23,7 +29,7 @@ mainTable = (function() {
         storedTo = e.rowData.storedTo;
         return controller.loadOldEntry(storedTo);
       }
-    });
+    }, this));
   }
   mainTable.prototype.getTable = function() {
     return this.table;

@@ -77,8 +77,12 @@ class configMenu
     )
 
     textField2.addEventListener('blur',(e) ->
-      actInd.show()
-      commandController.useMenu "qiitaLogin"
+      if controller.networkStatus() is false
+        message = mainContoroller.networkDisconnectedMessage
+        mainContoroller._alertViewShow message
+      else
+        actInd.show()
+        commandController.useMenu "qiitaLogin"
     )
 
     row2.add label2

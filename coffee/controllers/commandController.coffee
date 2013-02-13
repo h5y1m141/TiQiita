@@ -17,8 +17,8 @@ class commandController
     
   useMenu:(commandLabel) ->
     Ti.API.info "commandController.useMenu start. commandLabel is #{commandLabel}"
-
     @menu.run commandLabel
+
     
   applyFeedByTagCommand:(tagName) ->
     # 自分がフォローしてるタグの情報をQiitaAPI利用して

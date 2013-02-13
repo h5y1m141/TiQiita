@@ -9,7 +9,13 @@ class mainContoroller
 
 
     if controller.networkStatus() is false
+      Ti.API.info "mainContoroller init fail because of network connection not established"
+      @createMainWindow()
+      @createConfigWindow()
       @_alertViewShow @networkDisconnectedMessage
+      tabGroup.setActiveTab(0)
+      tabGroup.open()
+
     else if loginID is null or password is null or loginID is "" or password is ""
       Ti.API.info "@createConfigWindow start"
       @createConfigWindow()
@@ -61,6 +67,7 @@ class mainContoroller
   createConfigWindow:() ->
     
     configWindow.add configMenu
+    configWindow.add alertView.getAlertView()
     return true
     
         
