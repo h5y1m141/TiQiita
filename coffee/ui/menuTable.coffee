@@ -34,8 +34,8 @@ class menuTable
       curretRowIndex = e.index
       @.resetBackGroundColor(@table.data[0].rows)
       # クリックされたrowの色を'#59BB0C'に設定
-      @table.data[0].rows[curretRowIndex].backgroundColor = @qiitaColor
-      controller.selectMenu @table.data[0].rows[curretRowIndex].className
+      @table.data[0].rows[curretRowIndex].backgroundColor = @qiitaColor      
+      mainContoroller.selectMenu @table.data[0].rows[curretRowIndex].className
     )
     
     rows = [@.makeAllLabelRow()]
@@ -164,10 +164,11 @@ class menuTable
       
     Ti.App.Properties.setBool("stateMainTableSlide",true)
     Ti.App.Properties.setString("currentPage", storedTo)
-    # controller.slideMainTableを呼び出して
+    # slideMainTableを呼び出して
     # スライド状態から標準状態に画面を戻す
     direction = "horizontal"
-    controller.slideMainTable(direction)
+    mainContoroller.slideMainTable(direction)
+    
       
     # すべてのrowの背景色をデフォルト値に設定
   resetBackGroundColor: (menuRows) ->

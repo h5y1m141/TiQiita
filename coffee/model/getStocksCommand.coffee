@@ -18,13 +18,17 @@ class getStocksCommand
   getFeed:() ->
     rows = []
     value = @value
+    direction = "vertical"
+
     qiita.getFeed( (result,links) ->
 
       rows.push(mainTableView.createRow(json)) for json in result
       rows.push(mainTableView.createRowForLoadOldEntry(value))
       
       mainTable.setData rows
-      Ti.App.Properties.setBool "stateMainTableSlide",false
+      Ti.App.Properties.setBool "stateMainTableSlide",true
+      mainContoroller.slideMainTable(direction)
+      
       
     )
     return true

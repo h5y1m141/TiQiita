@@ -41,9 +41,7 @@ qiita = new Qiita()
 hatena.login()
 # 以下からコントローラー読み込み
 MainContoroller = require('controllers/mainContoroller')
-qiitaController = require('controllers/qiitaController')
 CommandController = require("controllers/commandController")
-controller = new qiitaController()
 mainContoroller = new MainContoroller()
 commandController = new CommandController()
 

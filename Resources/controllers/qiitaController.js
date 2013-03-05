@@ -1,8 +1,11 @@
 var qiitaController;
+
 qiitaController = (function() {
+
   function qiitaController() {
     this.state = new defaultState();
   }
+
   qiitaController.prototype.loadEntry = function() {
     var currentPage, direction, items;
     currentPage = Ti.App.Properties.getString("currentPage");
@@ -13,6 +16,7 @@ qiitaController = (function() {
     this.slideMainTable(direction);
     return commandController.useMenu(currentPage);
   };
+
   qiitaController.prototype.loadOldEntry = function(storedTo) {
     var MAXITEMCOUNT, currentPage, direction, nextURL;
     MAXITEMCOUNT = 20;
@@ -43,6 +47,7 @@ qiitaController = (function() {
     }
     return true;
   };
+
   qiitaController.prototype.stockItemToQiita = function(uuid) {
     uuid = Ti.App.Properties.getString('stockUUID');
     actInd.backgroundColor = '#222';
@@ -52,6 +57,7 @@ qiitaController = (function() {
     qiita.putStock(uuid);
     return true;
   };
+
   qiitaController.prototype.sessionItem = function(json) {
     Ti.API.info("start sessionItem. url is " + json.url + ". uuid is " + json.uuid);
     if (json) {
@@ -60,6 +66,7 @@ qiitaController = (function() {
       return Ti.App.Properties.setString('stockID', json.id);
     }
   };
+
   qiitaController.prototype.slideMainTable = function(direction) {
     var slideState;
     slideState = Ti.App.Properties.getBool("stateMainTableSlide");
@@ -76,16 +83,20 @@ qiitaController = (function() {
 
     }
   };
+
   qiitaController.prototype.selectMenu = function(menuName) {
     Ti.API.info("qiitaController.selectMenu start. menuName is " + menuName);
     return commandController.useMenu(menuName);
   };
+
   qiitaController.prototype.webViewContentsUpdate = function(body) {
     return webview.contentsUpdate(body);
   };
+
   qiitaController.prototype.webViewHeaderUpdate = function(json) {
     return webview.headerUpdate(json);
   };
+
   qiitaController.prototype.moveToConfigWindow = function() {
     var configMenu, configWindow, currentPage, menu;
     configMenu = require("ui/configMenu");
@@ -98,6 +109,7 @@ qiitaController = (function() {
     Ti.API.info("moveToConfigWindow start currentPage is " + currentPage);
     return tab.open(configWindow);
   };
+
   qiitaController.prototype.moveToWebViewWindow = function() {
     var actionBtn;
     actionBtn = Ti.UI.createButton({
@@ -122,10 +134,12 @@ qiitaController = (function() {
     webWindow.rightNavButton = actionBtn;
     return mainTab.open(webWindow);
   };
+
   qiitaController.prototype.errorHandle = function(param) {
     alertView.editMessage(errorMessage);
     return alertView.animate();
   };
+
   qiitaController.prototype.logging = function(logData) {
     var logFile, newDir;
     newDir = Ti.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, 'log');
@@ -147,6 +161,7 @@ qiitaController = (function() {
     }
     return true;
   };
+
   qiitaController.prototype.login = function(param) {
     qiita._auth(param, function(token) {
       if (token === null) {
@@ -159,6 +174,7 @@ qiitaController = (function() {
     });
     return true;
   };
+
   qiitaController.prototype.loginFail = function(errorMessage) {
     var direction;
     direction = "horizontal";
@@ -167,9 +183,13 @@ qiitaController = (function() {
     alertView.editMessage("ログイン失敗。Qiitaサーバからのエラーメッセージ:" + errorMessage);
     return alertView.animate();
   };
+
   qiitaController.prototype.networkStatus = function() {
     return qiita.isConnected();
   };
+
   return qiitaController;
+
 })();
+
 module.exports = qiitaController;

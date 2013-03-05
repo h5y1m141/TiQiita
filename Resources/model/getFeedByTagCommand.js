@@ -1,8 +1,11 @@
 var getFeedByTagCommand;
+
 getFeedByTagCommand = (function() {
+
   function getFeedByTagCommand(tagName) {
     this.tagName = tagName;
   }
+
   getFeedByTagCommand.prototype.execute = function() {
     var items, json, result, storedTo, _i, _len;
     storedTo = "followingTag" + this.tagName;
@@ -22,6 +25,7 @@ getFeedByTagCommand = (function() {
     }
     return mainTable.setData(result);
   };
+
   getFeedByTagCommand.prototype.getFeedByTag = function() {
     var MAXITEMCOUNT, direction, rows, storedTo;
     rows = [];
@@ -29,7 +33,7 @@ getFeedByTagCommand = (function() {
     storedTo = "followingTag" + this.tagName;
     direction = "vertical";
     Ti.App.Properties.setBool('stateMainTableSlide', false);
-    controller.slideMainTable(direction);
+    mainContoroller.slideMainTable(direction);
     qiita.getFeedByTag(this.tagName, function(result, links) {
       var json, _i, _len;
       for (_i = 0, _len = result.length; _i < _len; _i++) {
@@ -47,6 +51,9 @@ getFeedByTagCommand = (function() {
     });
     return true;
   };
+
   return getFeedByTagCommand;
+
 })();
+
 module.exports = getFeedByTagCommand;

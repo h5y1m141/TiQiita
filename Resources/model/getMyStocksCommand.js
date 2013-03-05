@@ -1,8 +1,11 @@
 var getMyStocksCommand;
+
 getMyStocksCommand = (function() {
+
   function getMyStocksCommand() {
     this.value = 'storedMyStocks';
   }
+
   getMyStocksCommand.prototype.execute = function() {
     var items, json, result, _i, _len;
     result = [];
@@ -18,14 +21,15 @@ getMyStocksCommand = (function() {
     }
     return mainTable.setData(result);
   };
+
   getMyStocksCommand.prototype.getMyStocks = function() {
     var MAXITEMCOUNT, direction, rows, value;
     rows = [];
     MAXITEMCOUNT = 20;
     value = this.value;
     direction = "vertical";
-    Ti.App.Properties.setBool('stateMainTableSlide', false);
-    controller.slideMainTable(direction);
+    Ti.App.Properties.setBool('stateMainTableSlide', true);
+    mainContoroller.slideMainTable(direction);
     qiita.getMyStocks(function(result, links) {
       var json, _i, _len;
       for (_i = 0, _len = result.length; _i < _len; _i++) {
@@ -38,11 +42,13 @@ getMyStocksCommand = (function() {
         Ti.API.info("loadOldEntry show");
         rows.push(mainTableView.createRowForLoadOldEntry(value));
       }
-      Ti.App.Properties.setBool("stateMainTableSlide", false);
       return mainTable.setData(rows);
     });
     return true;
   };
+
   return getMyStocksCommand;
+
 })();
+
 module.exports = getMyStocksCommand;

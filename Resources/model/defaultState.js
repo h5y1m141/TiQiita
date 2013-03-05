@@ -1,15 +1,20 @@
 var defaultState;
+
 defaultState = (function() {
+
   function defaultState() {}
+
   defaultState.prototype.sayState = function() {
-    return "STATE: 標準状態";
+    return "[STATE] 標準状態";
   };
+
   defaultState.prototype.moveUP = function() {
-    Ti.API.info("STATE: 標準状態この状態では何もしない");
+    Ti.API.info("[STATE] 標準状態この状態では何もしない");
     return new defaultState();
   };
+
   defaultState.prototype.moveDown = function() {
-    Ti.API.info("ACTION: スライド開始");
+    Ti.API.info("[ACTION] スライド開始");
     progressBar.value = 0;
     progressBar.show();
     Ti.App.Properties.setBool("stateMainTableSlide", true);
@@ -25,11 +30,14 @@ defaultState = (function() {
     });
     return new slideState();
   };
+
   defaultState.prototype.moveBackward = function() {
-    "STATE: 標準状態";    return new defaultState();
+    "[STATE] 標準状態";
+    return new defaultState();
   };
+
   defaultState.prototype.moveForward = function() {
-    Ti.API.info("ACTION: スライド開始");
+    Ti.API.info("[ACTION] スライド開始");
     Ti.App.Properties.setBool("stateMainTableSlide", true);
     mainTable.touchEnabled = false;
     mainTable.animate({
@@ -40,6 +48,9 @@ defaultState = (function() {
     });
     return new slideState();
   };
+
   return defaultState;
+
 })();
+
 module.exports = defaultState;

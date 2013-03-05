@@ -1,5 +1,7 @@
 var commandController;
+
 commandController = (function() {
+
   function commandController() {
     var Menu, configCommand, followingTagsCommand, loginCommand, myStocksCommand, stocksCommand;
     Menu = require("controllers/menu");
@@ -15,22 +17,28 @@ commandController = (function() {
     this.menu.addCommands("followingTags", new followingTagsCommand());
     this.menu.addCommands("qiitaLogin", new loginCommand());
   }
+
   commandController.prototype.useMenu = function(commandLabel) {
     Ti.API.info("commandController.useMenu start. commandLabel is " + commandLabel);
     return this.menu.run(commandLabel);
   };
+
   commandController.prototype.applyFeedByTagCommand = function(tagName) {
     var feedByTagCommand;
     feedByTagCommand = require("model/getFeedByTagCommand");
     this.menu.addCommands("followingTag" + tagName, new feedByTagCommand(tagName));
     return true;
   };
+
   commandController.prototype.countUp = function() {
     var direction;
     direction = "vertical";
     Ti.App.Properties.setBool('stateMainTableSlide', true);
-    return controller.slideMainTable(direction);
+    return mainController.slideMainTable(direction);
   };
+
   return commandController;
+
 })();
+
 module.exports = commandController;

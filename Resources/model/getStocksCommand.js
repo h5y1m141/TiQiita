@@ -1,8 +1,11 @@
 var getStocksCommand;
+
 getStocksCommand = (function() {
+
   function getStocksCommand() {
     this.value = 'storedStocks';
   }
+
   getStocksCommand.prototype.execute = function() {
     var items, json, result, _i, _len;
     result = [];
@@ -18,10 +21,12 @@ getStocksCommand = (function() {
     }
     return mainTable.setData(result);
   };
+
   getStocksCommand.prototype.getFeed = function() {
-    var rows, value;
+    var direction, rows, value;
     rows = [];
     value = this.value;
+    direction = "vertical";
     qiita.getFeed(function(result, links) {
       var json, _i, _len;
       for (_i = 0, _len = result.length; _i < _len; _i++) {
@@ -30,10 +35,14 @@ getStocksCommand = (function() {
       }
       rows.push(mainTableView.createRowForLoadOldEntry(value));
       mainTable.setData(rows);
-      return Ti.App.Properties.setBool("stateMainTableSlide", false);
+      Ti.App.Properties.setBool("stateMainTableSlide", true);
+      return mainContoroller.slideMainTable(direction);
     });
     return true;
   };
+
   return getStocksCommand;
+
 })();
+
 module.exports = getStocksCommand;

@@ -29,7 +29,7 @@ class getFeedByTagCommand
     storedTo = "followingTag#{@tagName}" 
     direction = "vertical"
     Ti.App.Properties.setBool 'stateMainTableSlide',false
-    controller.slideMainTable(direction)
+    mainContoroller.slideMainTable(direction)
     
     qiita.getFeedByTag(@tagName, (result,links) ->
       rows.push(mainTableView.createRow(json)) for json in result
