@@ -19,9 +19,10 @@ tmp
 /Resources/.DS_Store
 /Resources/ui/.DS_Store
 /.DS_Store
-/Resources/config.json
+/Resources/*
 /Resources/KS_nav_ui.png
 /Resources/KS_nav_views.png
 /Resources/bootstrap.min.css
 /Resources/eventManagement.js
 /certs/development.mobileprovision
+/coffee/controllers/qiitaController.coffee
