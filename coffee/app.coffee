@@ -34,9 +34,11 @@ momentja = require('lib/momentja')
 defaultState = require("model/defaultState")
 slideState = require("model/slideState")
 Qiita = require('model/qiita')
-
+Hatena = require('model/hatena')
+hatena = new Hatena()
 qiita = new Qiita()
 
+hatena.login()
 # 以下からコントローラー読み込み
 MainContoroller = require('controllers/mainContoroller')
 qiitaController = require('controllers/qiitaController')
