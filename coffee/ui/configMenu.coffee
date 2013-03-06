@@ -77,7 +77,7 @@ class configMenu
     )
 
     textField2.addEventListener('blur',(e) ->
-      if controller.networkStatus() is false
+      if qiita.isConnected() is false
         message = mainContoroller.networkDisconnectedMessage
         mainContoroller._alertViewShow message
       else

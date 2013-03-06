@@ -112,7 +112,8 @@ mainContoroller = (function() {
     direction = "vertical";
     Ti.App.Properties.setBool('stateMainTableSlide', false);
     this.slideMainTable(direction);
-    return commandController.useMenu("storedStocks");
+    commandController.useMenu("storedStocks");
+    return commandController.useMenu("followingTags");
   };
 
   mainContoroller.prototype.refreshMenuTable = function() {

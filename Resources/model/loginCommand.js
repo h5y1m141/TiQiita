@@ -1,6 +1,9 @@
 var loginCommand;
+
 loginCommand = (function() {
+
   function loginCommand() {}
+
   loginCommand.prototype.execute = function() {
     var param;
     param = {
@@ -32,6 +35,9 @@ loginCommand = (function() {
     });
     return true;
   };
+
   return loginCommand;
+
 })();
+
 module.exports = loginCommand;

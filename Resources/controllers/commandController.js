@@ -24,9 +24,15 @@ commandController = (function() {
   };
 
   commandController.prototype.applyFeedByTagCommand = function(tagName) {
-    var feedByTagCommand;
+    var feedByTagCommand, menu, param;
     feedByTagCommand = require("model/getFeedByTagCommand");
-    this.menu.addCommands("followingTag" + tagName, new feedByTagCommand(tagName));
+    param = {
+      commandLabel: "followingTag" + tagName,
+      command: new feedByTagCommand(tagName)
+    };
+    menu = Ti.App.Properties.getList("commandMenu");
+    menu.push(parm);
+    Ti.API.info(Ti.App.Properties.getList("commandMenu"));
     return true;
   };
 

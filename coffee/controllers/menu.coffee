@@ -2,6 +2,7 @@ class Menu
   constructor:() ->
     @commands = []
     
+    
   addCommands:(commandLabel,command) ->
     param = 
       commandLabel:commandLabel
