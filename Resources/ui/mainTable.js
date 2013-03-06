@@ -1,7 +1,9 @@
 var mainTable;
-var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
 mainTable = (function() {
+
   function mainTable() {
+    var _this = this;
     this.table = Ti.UI.createTableView({
       backgroundColor: '#ededed',
       separatorColor: '#999',
@@ -10,7 +12,7 @@ mainTable = (function() {
       left: 0,
       top: 0
     });
-    this.table.addEventListener('click', __bind(function(e) {
+    this.table.addEventListener('click', function(e) {
       var storedTo;
       if (controller.networkStatus() === false) {
         mainContoroller._alertViewShow("ネットワーク接続出来ません。ネットワーク設定を再度ご確認ください");
@@ -29,25 +31,30 @@ mainTable = (function() {
         storedTo = e.rowData.storedTo;
         return controller.loadOldEntry(storedTo);
       }
-    }, this));
+    });
   }
+
   mainTable.prototype.getTable = function() {
     return this.table;
   };
+
   mainTable.prototype.insertRow = function(index, row) {
     this.table.insertRowAfter(index, row, {
       animated: true
     });
     return true;
   };
+
   mainTable.prototype.hideLastRow = function() {
     var lastRow;
     lastRow = this.table.data[0].rows.length - 1;
     return this.table.deleteRow(lastRow);
   };
+
   mainTable.prototype.lastRowIndex = function() {
     return this.table.data[0].rows.length - 2;
   };
+
   mainTable.prototype.createRow = function(json) {
     var bodySummary, createdDate, handleName, iconImage, row, textLabel, updateTime;
     row = Ti.UI.createTableViewRow({
@@ -121,6 +128,7 @@ mainTable = (function() {
     row.tags = json.tags;
     return row;
   };
+
   mainTable.prototype.createRowForLoadOldEntry = function(storedTo) {
     var row, textLabel;
     row = Ti.UI.createTableViewRow({
@@ -150,6 +158,9 @@ mainTable = (function() {
     row.storedTo = storedTo;
     return row;
   };
+
   return mainTable;
+
 })();
+
 module.exports = mainTable;

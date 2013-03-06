@@ -1,5 +1,7 @@
 var configMenu;
+
 configMenu = (function() {
+
   function configMenu() {
     var QiitaLoginID, QiitaLoginPassword, groupData, label1, label2, row1, row2, tableView, textField1, textField2;
     groupData = Ti.UI.createTableViewSection();
@@ -102,6 +104,9 @@ configMenu = (function() {
     });
     return tableView;
   }
+
   return configMenu;
+
 })();
+
 module.exports = configMenu;
