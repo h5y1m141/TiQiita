@@ -1,12 +1,14 @@
 class Menu
   constructor:() ->
     @commands = []
+    # @commands = Ti.App.Properties.getList "TiQiitaMenu"
     
     
   addCommands:(commandLabel,command) ->
     param = 
       commandLabel:commandLabel
       command:command
+
     return @commands.push(param)
     
   showCommands:() ->

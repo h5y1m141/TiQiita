@@ -10,6 +10,8 @@ Ti.App.Properties.getBool("followingTagsError", false);
 
 Ti.App.Properties.setList("followingTags", null);
 
+Ti.App.Properties.setList("TiQiitaMenu", []);
+
 Ti.App.Properties.setString("currentPage", "storedStocks");
 
 Ti.App.Properties.setString('QiitaToken', null);

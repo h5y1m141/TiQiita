@@ -112,8 +112,7 @@ mainContoroller = (function() {
     direction = "vertical";
     Ti.App.Properties.setBool('stateMainTableSlide', false);
     this.slideMainTable(direction);
-    commandController.useMenu("storedStocks");
-    return commandController.useMenu("followingTags");
+    return commandController.useMenu("storedStocks");
   };
 
   mainContoroller.prototype.refreshMenuTable = function() {
@@ -132,7 +131,8 @@ mainContoroller = (function() {
   };
 
   mainContoroller.prototype.loadOldEntry = function(storedTo) {
-    var MAXITEMCOUNT, currentPage, direction, nextURL;
+    var MAXITEMCOUNT, currentPage, direction, nextURL,
+      _this = this;
     MAXITEMCOUNT = 20;
     currentPage = Ti.App.Properties.getString("currentPage");
     nextURL = Ti.App.Properties.getString("" + currentPage + "nextURL");
@@ -141,22 +141,20 @@ mainContoroller = (function() {
     Ti.API.info(nextURL);
     if (nextURL !== null) {
       qiita.getNextFeed(nextURL, storedTo, function(result) {
-        var json, lastIndex, r, _i, _len, _results;
+        var json, lastIndex, r, _i, _len;
         Ti.API.info("getNextFeed start. result is " + result.length);
         if (result.length !== MAXITEMCOUNT) {
-          Ti.API.info("loadOldEntry hide");
-          return mainTableView.hideLastRow();
+          mainTableView.hideLastRow();
         } else {
-          Ti.API.info("loadOldEntry show");
-          _results = [];
           for (_i = 0, _len = result.length; _i < _len; _i++) {
             json = result[_i];
             r = mainTableView.createRow(json);
             lastIndex = mainTableView.lastRowIndex();
-            _results.push(mainTableView.insertRow(lastIndex, r));
+            mainTableView.insertRow(lastIndex, r);
           }
-          return _results;
         }
+        direction = "vertical";
+        return _this.slideMainTable(direction);
       });
     }
     return true;

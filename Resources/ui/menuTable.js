@@ -189,18 +189,17 @@ menuTable = (function() {
   menuTable.prototype.refreshMenu = function() {
     var _this = this;
     return qiita.getFollowingTags(function(result, links) {
-      var errorFlg, followingTags, json, menuRow, rows, textLabel, _i, _len;
+      var errorFlg, json, menuRow, rows, textLabel, _i, _len;
       errorFlg = Ti.App.Properties.getBool("followingTagsError");
       if (result.length === 0 || errorFlg === true) {
         rows = [_this.makeAllLabelRow(), _this.makeStockRow()];
         return _this.table.setData(rows);
       } else {
         rows = [_this.makeAllLabelRow(), _this.makeStockRow(), _this.makeTagRow()];
-        followingTags = [];
         for (_i = 0, _len = result.length; _i < _len; _i++) {
           json = result[_i];
+          commandController.applyFeedByTagCommand(json.url_name);
           menuRow = Ti.UI.createTableViewRow(_this.rowColorTheme);
-          followingTags.push(json.url_name);
           menuRow.addEventListener('click', function(e) {
             e.row.backgroundColor = _this.qiitaColor;
             return _this.slideEvent(e.rowData.className);

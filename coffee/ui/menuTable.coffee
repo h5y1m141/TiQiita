@@ -188,10 +188,11 @@ class menuTable
         @table.setData rows
       else
         rows = [@makeAllLabelRow(),  @makeStockRow(), @makeTagRow()]
-        followingTags = []  
+        # followingTags = []  
         for json in result
+          commandController.applyFeedByTagCommand json.url_name
           menuRow = Ti.UI.createTableViewRow(@rowColorTheme)
-          followingTags.push(json.url_name)
+          # followingTags.push(json.url_name)
                     
           # 該当するタグが選択された時には背景色を変更しつつ
           # 標準状態に戻す

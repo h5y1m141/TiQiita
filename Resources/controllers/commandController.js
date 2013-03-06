@@ -14,7 +14,6 @@ commandController = (function() {
     this.menu.addCommands("storedMyStocks", new myStocksCommand());
     this.menu.addCommands("storedStocks", new stocksCommand());
     this.menu.addCommands("config", new configCommand());
-    this.menu.addCommands("followingTags", new followingTagsCommand());
     this.menu.addCommands("qiitaLogin", new loginCommand());
   }
 
@@ -24,15 +23,9 @@ commandController = (function() {
   };
 
   commandController.prototype.applyFeedByTagCommand = function(tagName) {
-    var feedByTagCommand, menu, param;
+    var feedByTagCommand;
     feedByTagCommand = require("model/getFeedByTagCommand");
-    param = {
-      commandLabel: "followingTag" + tagName,
-      command: new feedByTagCommand(tagName)
-    };
-    menu = Ti.App.Properties.getList("commandMenu");
-    menu.push(parm);
-    Ti.API.info(Ti.App.Properties.getList("commandMenu"));
+    this.menu.addCommands("followingTag" + tagName, new feedByTagCommand(tagName));
     return true;
   };
 

@@ -108,7 +108,7 @@ class mainContoroller
     @slideMainTable(direction)
 
     commandController.useMenu "storedStocks"
-    commandController.useMenu "followingTags"
+    # commandController.useMenu "followingTags"
 
 
     
@@ -139,20 +139,20 @@ class mainContoroller
     Ti.API.info nextURL
     
     if nextURL isnt null
-      qiita.getNextFeed(nextURL,storedTo,(result) ->
+      qiita.getNextFeed(nextURL,storedTo,(result) =>
         Ti.API.info "getNextFeed start. result is #{result.length}"
 
         # ここで投稿件数をチェックして、20件以下だったら過去のを
         # 読み込むrowを非表示にすればOK
         if result.length isnt MAXITEMCOUNT
-          Ti.API.info "loadOldEntry hide"
           mainTableView.hideLastRow()
         else
-          Ti.API.info "loadOldEntry show"
           for json in result
             r = mainTableView.createRow(json)
             lastIndex = mainTableView.lastRowIndex()
             mainTableView.insertRow(lastIndex,r)
+        direction = "vertical"
+        @slideMainTable(direction)
       )
     return true
 
