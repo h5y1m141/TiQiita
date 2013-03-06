@@ -4,78 +4,117 @@
 PROJECT_ROOT=${PROJECT_ROOT:-../}
 APP_DEVICE=${DEVICE_TYPE}
 TI_SDK_VERSION=`cat tiapp.xml | grep "<sdk-version>" | sed -e "s/<\/*sdk-version>//g"`
+TI_SDK_HIGHEST_VERSION=`ls  ~/library/Application\ Support/titanium/mobilesdk/osx | tail -1`
+IOS_SDK_VERSION=`cat tiapp.xml | grep "<ios-version>" | sed -e "s/[ \t]*<\/*ios-version>//g"`
 TI_DIR="Library/Application Support/Titanium"
 BUILD_TYPE=${BUILD_TYPE}
 TESTFLIGHT_ENABLED=${testflight}
 HOCKEY_ENABLED=${hockey}
-APK_ONLY=${justapk}
+APK_ONLY=${apkonly}
 RELEASE_NOTES=${notes}
 IPHONE_DEV_CERT=${cert}
+PROVISIONING_PROFILE_NAME=${profile_file}
+BUILD_ACTION=${action}
+PROFILE_TYPE=iphone_dev_name
+PACKAGE_APP=false
+NO_COLOR=${no_color}
 
-# Look all over for a titanium install
-for d in /Users/*
-do
-    if [ -d "$d/${TI_DIR}" ]
-    then
-        TI_DIR="$d/${TI_DIR}"
-        echo "[DEBUG] Titanium exists..."
+function pretty_print {
+	if [ $NO_COLOR ]
+	then
+		exec perl -pe ''
+	else
+		exec perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+	fi
+}
 
-        break
-    else
-        echo "[DEBUG] Titanium not found... Testing another directory"
-
-        # not the most efficient place to have this, but it gets the job done
-		if [ -d "/$TI_DIR" ]; then
-            TI_DIR="/${TI_DIR}"
-			echo "[DEBUG] Titanium found..."
-
-			break
-		fi
-    fi
-done
+[[ -z "$ANDROID_SDK_PATH" ]] && ANDROID_SDK_PATH="${HOME}/Android"
 
 # if no platform is set, use iphone as a default
 if [ "${APP_DEVICE}" == "" ]; then
 	APP_DEVICE="iphone"
 fi
 
+# only install|adhoc are supported as install actions
+if [ ! "${BUILD_ACTION}" == "install" ] && [ ! "${BUILD_ACTION}" == "adhoc" ]; then
+	echo ""
+	echo "[WARN] Only action=install and action=adhoc are supported. Choosing action=install." >&2
+	echo ""
+	BUILD_ACTION="install"
+fi
+
+if [ "${BUILD_ACTION}" == "adhoc" ]; then
+	PROFILE_TYPE=iphone_dist_name
+fi
+
+# provisioning profile name must be specified
+if [ "${PROVISIONING_PROFILE_NAME}" == "" ]; then
+	echo ""
+	echo "[WARN] Defaulting profile_file to 'development'." >&2
+	echo ""
+	PROVISIONING_PROFILE_NAME="development"
+fi
+
+
 # Make sure an SDK version is set
-if [ "${TI_SDK_VERSION}" == "" ]; then
-	if [ ! "${tisdk}" == "" ]; then
+if [[ -z "$TI_SDK_VERSION" ]]; then
+	if [[ -n "$tisdk" ]]; then
 		TI_SDK_VERSION="${tisdk}"
-	else
+	elif [ ! "${TI_SDK_HIGHEST_VERSION}" == "" ]; then
+    TI_SDK_VERSION="${TI_SDK_HIGHEST_VERSION}"
+  else
 		echo ""
-		echo "[ERROR] <sdk-version> is not defined in tiapp.xml, please define it, or add a tisdk argument to your command."
+		echo "[ERROR] <sdk-version> is not defined in tiapp.xml, please define it, or add a tisdk argument to your command." >&2
 		echo ""
 		exit 1
 	fi
 fi
 
-# Both iOS and Android SDKs are linked in this directory
-TI_ASSETS_DIR="$TI_DIR/mobilesdk/osx/$(echo $TI_SDK_VERSION)"
-
-# Make sure this version exists
-if [ -d "${TI_ASSETS_DIR}" ]; then
-	echo "[DEBUG] Titanium SDK $(echo $TI_SDK_VERSION) found..."
+if [[ -n "$TITANIUM_PATH" ]]; then
+	TI_DIR="$TITANIUM_PATH"
 else
-	echo "[ERROR] Titanium SDK $(echo $TI_SDK_VERSION) not found... "
+	# Look all over for a titanium install
+	search_locations=(
+		"${HOME}/Library/Application Support/Titanium"
+		"/Library/Application Support/Titanium"
+		"${HOME}/.titanium"
+	)
+	for d in "${search_locations[@]}"; do
+		if [[ -d "${d}/mobilesdk/osx/${TI_SDK_VERSION}" ]]; then
+			echo "[DEBUG] Found Titanium SDK for ${TI_SDK_VERSION} at $d"
+			TI_DIR="$d"
+			break
+		fi
+	done
+fi
+
+# Both iOS and Android SDKs are linked in this directory
+TI_ASSETS_DIR="${TI_DIR}/mobilesdk/osx/${TI_SDK_VERSION}"
+
+if [[ -d "$TI_ASSETS_DIR" ]]; then
+	echo "[DEBUG] Titanium SDK ${TI_SDK_VERSION} found..."
+else
+	echo "[ERROR] Titanium SDK for ${TI_SDK_VERSION} not found. You could try setting TITANIUM_PATH." >&2
 	exit 1
 fi
 
 # iPhone settings
 if [ "${iphone}" == "" ]; then
-	iphone="5.1"
+  if [ "${IOS_SDK_VERSION}" == "" ]; then
+	  iphone="6.0"
+  else
+    iphone="${IOS_SDK_VERSION}"
+  fi
 fi
 TI_IPHONE_DIR="${TI_ASSETS_DIR}/iphone"
 TI_IPHONE_BUILD="${TI_IPHONE_DIR}/builder.py"
 
 # Android settings
 if [ "${android}" == "" ]; then
-	android="10"
+	android="titanium_2_WVGA854"
 fi
 TI_ANDROID_DIR="${TI_ASSETS_DIR}/android"
 TI_ANDROID_BUILD="${TI_ANDROID_DIR}/builder.py"
-ANDROID_SDK_PATH='~/Android'
 
 # Get APP parameters from current tiapp.xml
 APP_ID=`cat tiapp.xml | grep "<id>" | sed -e "s/<\/*id>//g"`
@@ -83,7 +122,7 @@ APP_NAME=`cat tiapp.xml | grep "<name>" | sed -e "s/<\/*name>//g"`
 APP_NAME=$(echo ${APP_NAME//    /})
 
 if [ "APP_ID" == "" ] || [ "APP_NAME" == "" ]; then
-	echo "[ERROR] Could not obtain APP parameters from tiapp.xml file (does the file exist?)."
+	echo "[ERROR] Could not obtain APP parameters from tiapp.xml file (does the file exist?)." >&2
 	exit 1
 fi
 
@@ -97,7 +136,7 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 		fi
 		echo "'${TI_IPHONE_BUILD}' run '${PROJECT_ROOT}/' ${iphone} ${APP_ID} '${APP_NAME}' ${APP_DEVICE}"
 		bash -c "'${TI_IPHONE_BUILD}' run '${PROJECT_ROOT}/' ${iphone} ${APP_ID} '${APP_NAME}' ${APP_DEVICE}" \
-		| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+		| pretty_print
 
 	# Build an IPA and load it through iTunes
 	else
@@ -105,7 +144,7 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 		bash -c "'${TI_IPHONE_DIR}/prereq.py' package" | \
 		while read prov
 		do
-			temp_iphone_dev_names=`echo $prov | python -c 'import json,sys;obj=json.loads(sys.stdin.read());print obj["'"iphone_dev_name"'"]'| sed 's/ u//g' | sed 's/\[u//g' | sed 's/\[//g'| sed 's/\]//g'| sed "s/\ '//g"| sed "s/\'//g"`
+			temp_iphone_dev_names=`echo $prov | python -c 'import json,sys;obj=json.loads(sys.stdin.read());print obj["'"$PROFILE_TYPE"'"]'| sed 's/ u//g' | sed 's/\[u//g' | sed 's/\[//g'| sed 's/\]//g'| sed "s/\ '//g"| sed "s/\'//g"`
 			IFS=,
 			IPHONE_DEV_NAMES=(${temp_iphone_dev_names//,iphone_dev_name:/})
 
@@ -127,10 +166,10 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 			fi
 
 			SIGNING_IDENTITY=${IPHONE_DEV_NAMES[$IPHONE_DEV_CERT]}
-			PROVISIONING_PROFILE="${PROJECT_ROOT}/certs/development.mobileprovision"
+			PROVISIONING_PROFILE="${PROJECT_ROOT}/certs/${PROVISIONING_PROFILE_NAME}.mobileprovision"
 
-            if [ ! -r 'certs/development.mobileprovision' ];then
-				echo "You must have a file called ${PROVISIONING_PROFILE} to beild for device..."
+            if [ ! -r 'certs/'$PROVISIONING_PROFILE_NAME'.mobileprovision' ];then
+				echo "You must have a file called ${PROVISIONING_PROFILE_NAME} to build for device..."
 				exit
             fi
 
@@ -144,15 +183,45 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 				temp_array=(${line//{\"uuid\": \"/})
 
 				UUID=${temp_array[0]//\"/}
-                echo "'${TI_IPHONE_BUILD}' install ${iphone} '${PROJECT_ROOT}/' $(echo $APP_ID) '$(echo $APP_NAME)' '$(echo $UUID | sed -e "s/uuid: //g")' '${SIGNING_IDENTITY}' '$(echo ${APP_DEVICE})'"
-				bash -c "'${TI_IPHONE_BUILD}' install ${iphone} '${PROJECT_ROOT}/' $(echo $APP_ID) '$(echo $APP_NAME)' '$(echo $UUID | sed -e "s/uuid: //g")' '${SIGNING_IDENTITY}' '$(echo ${APP_DEVICE})'" | \
+                echo "'${TI_IPHONE_BUILD}' $BUILD_ACTION ${iphone} '${PROJECT_ROOT}/' $(echo $APP_ID) '$(echo $APP_NAME)' '$(echo $UUID | sed -e "s/uuid: //g")' '${SIGNING_IDENTITY}' '$(echo ${APP_DEVICE})'"
+				bash -c "'${TI_IPHONE_BUILD}' $BUILD_ACTION ${iphone} '${PROJECT_ROOT}/' $(echo $APP_ID) '$(echo $APP_NAME)' '$(echo $UUID | sed -e "s/uuid: //g")' '${SIGNING_IDENTITY}' '$(echo ${APP_DEVICE})'" | \
 				while read build_log
 				do
+					MAY_SYNC=0
+					if [ $BUILD_ACTION == "install" ] && [ "${build_log}" == '[INFO] iTunes sync initiated' ]; then
+						MAY_SYNC=1
+						BUILD_LOCATION="Debug-iphoneos"
+					elif [ $BUILD_ACTION == "adhoc" ] && [[ "${build_log}" =~ 'PackageApplication' ]]; then
+						MAY_SYNC=1
+						BUILD_LOCATION="Release-iphoneos"
+						SIGNING_IDENTITY="iPhone Distribution: $SIGNING_IDENTITY"
+						PACKAGE_APP=true
+					fi
 
-					if [ "${build_log}" == '[INFO] iTunes sync initiated' ]; then
-
+					if [ $MAY_SYNC -eq 1 ]; then
 						echo "[INFO] Done building app..."\
-						| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+						| pretty_print
+
+						APP="${PROJECT_ROOT}/build/iphone/build/$BUILD_LOCATION/$(echo $APP_NAME).app"
+
+						# Check if TestFlight or Hockey deploy was mandated
+						if [ $TESTFLIGHT_ENABLED ] || [ $HOCKEY_ENABLED ]; then
+							PACKAGE_APP=true
+						fi
+
+						if [ $PACKAGE_APP ]; then
+							echo "[INFO] Creating .ipa from compiled app"\
+							| pretty_print
+
+							if [ -f /tmp/$(echo $APP_NAME).ipa ]; then
+								/bin/rm "/tmp/$(echo $APP_NAME).ipa"
+							fi
+							/usr/bin/xcrun -sdk iphoneos PackageApplication -v "${APP}" -o "/tmp/$(echo $APP_NAME).ipa" --sign "${SIGNING_IDENTITY}" --embed "${PROVISIONING_PROFILE}" | \
+							while read package_log
+							do
+								DATE=$( /bin/date +"%Y-%m-%d" )
+							done
+						fi
 
 						if [ $TESTFLIGHT_ENABLED ]; then
 
@@ -163,27 +232,16 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 
 							if [ "${API_TOKEN}" == '' -o "${TEAM_TOKEN}" == '' ]; then
 								echo "[ERROR] Testflight API key (tf_api) and Testflight team token (tf_token) must be defined in your tiapp.xml to upload with testflight"\
-								| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+								| pretty_print
 
 								exit 0
 							fi
 
 							echo "[INFO] Preping to upload to TestFlight..."\
-							| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+							| pretty_print
 
-							APP="${PROJECT_ROOT}/build/iphone/build/Debug-iphoneos/$(echo $APP_NAME).app"
-
-							echo "[INFO] Creating .ipa from compiled app"\
-							| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
-
-							/bin/rm "/tmp/$(echo $APP_NAME).ipa"
-							/usr/bin/xcrun -sdk iphoneos PackageApplication -v "${APP}" -o "/tmp/$(echo $APP_NAME).ipa" --sign "${SIGNING_IDENTITY}" --embed "${PROVISIONING_PROFILE}" | \
-							while read package_log
-							do
-								DATE=$( /bin/date +"%Y-%m-%d" )
-							done
 							echo "[INFO] Uploading .ipa to TestFlight..." \
-							| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+							| pretty_print
 
 							if [ "${RELEASE_NOTES}" == '' ]; then
 								RELEASE_NOTES='Build uploaded automatically from MakeTi.'
@@ -213,27 +271,16 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 
                             if [ "${API_TOKEN}" == '' -o "${APP_ID}" == '' ]; then
                                 echo "[ERROR] HockeyApp API key (hockey_api) and HockeyApp app ID (hockey_id) must be defined in your tiapp.xml to upload with HockeyApp"\
-                                | perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+                                | pretty_print
 
                                 exit 0
                             fi
 
                             echo "[INFO] Preping to upload to HockeyApp..."\
-                            | perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+                            | pretty_print
 
-                            APP="${PROJECT_ROOT}/build/iphone/build/Debug-iphoneos/$(echo $APP_NAME).app"
-
-                            echo "[INFO] Creating .ipa from compiled app"\
-                            | perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
-
-                            /bin/rm "/tmp/$(echo $APP_NAME).ipa"
-                            /usr/bin/xcrun -sdk iphoneos PackageApplication -v "${APP}" -o "/tmp/$(echo $APP_NAME).ipa" --sign "${SIGNING_IDENTITY}" --embed "${PROVISIONING_PROFILE}" | \
-                            while read package_log
-                            do
-                                DATE=$( /bin/date +"%Y-%m-%d" )
-                            done
                             echo "[INFO] Uploading .ipa to HockeyApp..." \
-                            | perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+                            | pretty_print
 
                             if [ "${RELEASE_NOTES}" == '' ]; then
                                 RELEASE_NOTES='Build uploaded automatically from MakeTi.'
@@ -256,7 +303,7 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 
 					else
 						echo ${build_log}  \
-						| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+						| pretty_print
 					fi
 				done
 			done
@@ -268,12 +315,20 @@ if [ ${APP_DEVICE} == "iphone" -o ${APP_DEVICE} == "ipad" ]; then
 
 elif [ ${APP_DEVICE} == "android" ]; then
 
+	if [[ -d "$ANDROID_SDK_PATH" ]]; then
+		echo "[ERROR] Android SDK not found. Did you set your ANDROID_SDK_PATH environemnt variable?" >&2
+		exit 127
+	fi
+
 	# Run the app in the simulator
-	if [ "${BUILD_TYPE}" == "" ]; then
+	if [ ${APK_ONLY} ]; then
+    	bash -c "'${TI_ANDROID_BUILD}' build '${APP_NAME}'  '${ANDROID_SDK_PATH}' '${PROJECT_ROOT}/' ${APP_ID} ${android}" \
+    		| pretty_print
+	elif [ "${BUILD_TYPE}" == "" ]; then
 		# Check for Android Virtual Device (AVD)
 		if [ "$(ps -Ac | egrep -i 'emulator-arm' | awk '{print $1}')" ]; then
 			bash -c "'${TI_ANDROID_BUILD}' simulator '${APP_NAME}'  '${ANDROID_SDK_PATH}' '${PROJECT_ROOT}/' ${APP_ID} ${android} && adb logcat | grep Ti" \
-			| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+			| pretty_print
 		else
 			echo "[ERROR] Could not find a running emulator."
 		  	echo "[ERROR] Run this command in a separate terminal session: ${ANDROID_SDK_PATH}/tools/emulator-arm -avd ${android}"
@@ -291,7 +346,7 @@ elif [ ${APP_DEVICE} == "android" ]; then
                 while read build_log
                 do
                     echo "${build_log}" \
-                    | perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+                    | pretty_print
 
                     if [[ "$build_log" == *zipalign* ]]; then
                         sleep 2
@@ -304,18 +359,18 @@ elif [ ${APP_DEVICE} == "android" ]; then
 
                         if [ "${API_TOKEN}" == '' -o "${APP_ID}" == '' ]; then
                             echo "[ERROR] HockeyApp API key (hockey_api) and HockeyApp app ID (hockey_android_id) must be defined in your tiapp.xml to upload with HockeyApp"\
-                            | perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+                            | pretty_print
 
                             exit 0
                         fi
 
                         echo "[INFO] Preping to upload to HockeyApp..."\
-                        | perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+                        | pretty_print
 
                         APP="${PROJECT_ROOT}/build/android/bin/app.apk"
 
                         echo "[INFO] Uploading .ipa to HockeyApp..." \
-                        | perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+                        | pretty_print
 
                         if [ "${RELEASE_NOTES}" == '' ]; then
                             RELEASE_NOTES='Build uploaded automatically from MakeTi.'
@@ -333,16 +388,10 @@ elif [ ${APP_DEVICE} == "android" ]; then
                         https://rink.hockeyapp.net/api/2/apps/${APP_ID}/app_versions
                     fi
                 done
-
-            elif [ $APK_ONLY} ]; then
-
-                bash -c "'${TI_ANDROID_BUILD}' build '${APP_NAME}'  '${ANDROID_SDK_PATH}' '${PROJECT_ROOT}/' ${APP_ID} ${android}" \
-                | perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
-
 			elif [ "${list_called}" == "True" ]; then
                 if [ "${adb_output}" == "" ]; then
                     if [ "${device_found}" == "false" ]; then
-                        echo "[ERROR] Could not find an attached android device with development mode enabled."
+                        echo "[ERROR] Could not find an attached android device with development mode enabled." >&2
                         exit 0
                     fi
                 fi
@@ -350,7 +399,7 @@ elif [ ${APP_DEVICE} == "android" ]; then
 				device_found="True"
 
 				bash -c "'${TI_ANDROID_BUILD}' install '${APP_NAME}'  '${ANDROID_SDK_PATH}' '${PROJECT_ROOT}/' ${APP_ID} ${android}" \
-				| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+				| pretty_print
 				break
 			fi
 
@@ -375,12 +424,12 @@ elif [ ${APP_DEVICE} == "web" ]; then
 	fi
 
 	bash -c "'/usr/bin/python' '${TI_ASSETS_DIR}/mobileweb/builder.py' '${PROJECT_ROOT}' 'development'" \
-	| perl -pe 's/^\[DEBUG\].*$/\e[35m$&\e[0m/g;s/^\[INFO\].*$/\e[36m$&\e[0m/g;s/^\[WARN\].*$/\e[33m$&\e[0m/g;s/^\[ERROR\].*$/\e[31m$&\e[0m/g;'
+	| pretty_print
 
-	echo "Files are now located in '${PROJECT_ROOT}/build/mobileweb/' Copy to a webserver and launch index.html in a web browser"
+	echo "Files are now located in '${PROJECT_ROOT}/build/mobileweb/' Copy to a webserver and launch index.html in a web browser" >&2
 	# bash -c "open '${PROJECT_ROOT}/build/mobileweb/index.html'"
 
 else
-	echo "[ERROR] platform ${APP_DEVICE} is not supported!"
+	echo "[ERROR] platform ${APP_DEVICE} is not supported!" >&2
 	echo ${APP_DEVICE}
 fi
