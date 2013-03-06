@@ -108,7 +108,7 @@ class mainContoroller
     @slideMainTable(direction)
 
     commandController.useMenu "storedStocks"
-    # commandController.useMenu "followingTags"
+    commandController.useMenu "followingTags"
 
 
     

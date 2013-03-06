@@ -11,6 +11,7 @@ Ti.App.Properties.setString "storedMyStocks",null
 Ti.App.Properties.getBool "followingTagsError", false
 Ti.App.Properties.setList "followingTags",null
 
+
 ## 起動時には、投稿情報一覧を現在ページとしてステータス管理したいので
 ## currentPageにstoredStocksをセット
 

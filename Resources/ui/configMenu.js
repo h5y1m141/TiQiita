@@ -75,7 +75,7 @@ configMenu = (function() {
     });
     textField2.addEventListener('blur', function(e) {
       var message;
-      if (controller.networkStatus() === false) {
+      if (qiita.isConnected() === false) {
         message = mainContoroller.networkDisconnectedMessage;
         return mainContoroller._alertViewShow(message);
       } else {

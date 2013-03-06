@@ -27,7 +27,14 @@ class commandController
     # followingTagsがnullになってる場合があるため
     # followingTagsの値をチェックした上で以下を実施する
     feedByTagCommand = require("model/getFeedByTagCommand")    
-    @menu.addCommands("followingTag#{tagName}", new feedByTagCommand(tagName))
+    # @menu.addCommands("followingTag#{tagName}", new feedByTagCommand(tagName))
+    param = 
+      commandLabel:"followingTag#{tagName}"
+      command:new feedByTagCommand(tagName)
+    menu = Ti.App.Properties.getList "commandMenu"  
+    menu.push parm
+    Ti.API.info(Ti.App.Properties.getList "commandMenu")  
+    
     
     return true
     

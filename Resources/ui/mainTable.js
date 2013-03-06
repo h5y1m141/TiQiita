@@ -14,22 +14,22 @@ mainTable = (function() {
     });
     this.table.addEventListener('click', function(e) {
       var storedTo;
-      if (controller.networkStatus() === false) {
-        mainContoroller._alertViewShow("ネットワーク接続出来ません。ネットワーク設定を再度ご確認ください");
+      if (qiita.isConnected() === false) {
+        mainController._alertViewShow("ネットワーク接続出来ません。ネットワーク設定を再度ご確認ください");
       } else {
 
       }
       if (e.rowData.className === 'entry') {
-        controller.sessionItem(e.rowData.data);
-        controller.webViewContentsUpdate(e.rowData.data.body);
-        controller.webViewHeaderUpdate(e.rowData.data);
-        return controller.moveToWebViewWindow();
+        mainContoroller.sessionItem(e.rowData.data);
+        mainContoroller.webViewContentsUpdate(e.rowData.data.body);
+        mainContoroller.webViewHeaderUpdate(e.rowData.data);
+        return mainContoroller.moveToWebViewWindow();
       } else if (e.rowData.className === "config") {
-        return controller.login(e.rowData);
+        return mainContoroller.login(e.rowData);
       } else {
         Ti.API.info("tableView eventListener start. storedTo is " + e.rowData.storedTo);
         storedTo = e.rowData.storedTo;
-        return controller.loadOldEntry(storedTo);
+        return mainContoroller.loadOldEntry(storedTo);
       }
     });
   }
