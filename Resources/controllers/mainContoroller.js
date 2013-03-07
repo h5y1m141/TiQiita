@@ -112,6 +112,7 @@ mainContoroller = (function() {
     direction = "vertical";
     Ti.App.Properties.setBool('stateMainTableSlide', false);
     this.slideMainTable(direction);
+    commandController.createMenu("QiitaUser");
     return commandController.useMenu("storedStocks");
   };
 

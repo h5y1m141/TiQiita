@@ -28,7 +28,7 @@ getMyStocksCommand = (function() {
     MAXITEMCOUNT = 20;
     value = this.value;
     direction = "vertical";
-    Ti.App.Properties.setBool('stateMainTableSlide', true);
+    Ti.App.Properties.setBool("stateMainTableSlide", false);
     mainContoroller.slideMainTable(direction);
     qiita.getMyStocks(function(result, links) {
       var json, _i, _len;
@@ -42,7 +42,9 @@ getMyStocksCommand = (function() {
         Ti.API.info("loadOldEntry show");
         rows.push(mainTableView.createRowForLoadOldEntry(value));
       }
-      return mainTable.setData(rows);
+      mainTable.setData(rows);
+      Ti.App.Properties.setBool("stateMainTableSlide", true);
+      return mainContoroller.slideMainTable(direction);
     });
     return true;
   };

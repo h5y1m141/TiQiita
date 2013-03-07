@@ -189,15 +189,16 @@ menuTable = (function() {
   menuTable.prototype.refreshMenu = function() {
     var _this = this;
     return qiita.getFollowingTags(function(result, links) {
-      var errorFlg, json, menuRow, rows, textLabel, _i, _len;
-      errorFlg = Ti.App.Properties.getBool("followingTagsError");
-      if (result.length === 0 || errorFlg === true) {
+      var json, menuRow, rows, textLabel, _i, _len;
+      if (result.length === 0) {
         rows = [_this.makeAllLabelRow(), _this.makeStockRow()];
-        return _this.table.setData(rows);
       } else {
         rows = [_this.makeAllLabelRow(), _this.makeStockRow(), _this.makeTagRow()];
         for (_i = 0, _len = result.length; _i < _len; _i++) {
           json = result[_i];
+          Ti.API.info("followingTag" + json.url_name + "nextURL is initiazlie!!");
+          Ti.App.Properties.setString("followingTag" + json.url_name + "nextURL", null);
+          commandController.applyFeedByTagCommand(json.url_name);
           commandController.applyFeedByTagCommand(json.url_name);
           menuRow = Ti.UI.createTableViewRow(_this.rowColorTheme);
           menuRow.addEventListener('click', function(e) {
@@ -221,8 +222,8 @@ menuTable = (function() {
           menuRow.className = "followingTag" + json.url_name;
           rows.push(menuRow);
         }
-        return _this.table.setData(rows);
       }
+      return _this.table.setData(rows);
     });
   };
 

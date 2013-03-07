@@ -41,13 +41,13 @@ getFeedByTagCommand = (function() {
         rows.push(mainTableView.createRow(json));
       }
       if (result.length !== MAXITEMCOUNT) {
-        Ti.API.info("loadOldEntry hide");
+
       } else {
-        Ti.API.info("loadOldEntry show");
         rows.push(mainTableView.createRowForLoadOldEntry(storedTo));
       }
-      Ti.App.Properties.setBool("stateMainTableSlide", false);
-      return mainTable.setData(rows);
+      mainTable.setData(rows);
+      Ti.App.Properties.setBool("stateMainTableSlide", true);
+      return mainContoroller.slideMainTable(direction);
     });
     return true;
   };
