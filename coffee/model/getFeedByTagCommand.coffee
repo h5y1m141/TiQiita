@@ -34,13 +34,15 @@ class getFeedByTagCommand
     qiita.getFeedByTag(@tagName, (result,links) ->
       rows.push(mainTableView.createRow(json)) for json in result
       if result.length isnt MAXITEMCOUNT
-        Ti.API.info "loadOldEntry hide"
+        
       else
-        Ti.API.info "loadOldEntry show"
+        
         rows.push(mainTableView.createRowForLoadOldEntry(storedTo))
         
-      Ti.App.Properties.setBool "stateMainTableSlide",false
+      
       mainTable.setData rows
+      Ti.App.Properties.setBool "stateMainTableSlide",true
+      mainContoroller.slideMainTable(direction)
 
     )
     return true

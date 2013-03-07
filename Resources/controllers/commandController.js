@@ -3,20 +3,27 @@ var commandController;
 commandController = (function() {
 
   function commandController() {
-    var Menu, configCommand, followingTagsCommand, loginCommand, myStocksCommand, stocksCommand;
+    var Menu;
     Menu = require("controllers/menu");
     this.menu = new Menu();
-    myStocksCommand = require("model/getMyStocksCommand");
+  }
+
+  commandController.prototype.createMenu = function(user) {
+    var configCommand, loginCommand, myStocksCommand, stocksCommand;
     stocksCommand = require("model/getStocksCommand");
     configCommand = require("model/configCommand");
-    followingTagsCommand = require("model/getFollowingTagsCommand");
     loginCommand = require("model/loginCommand");
-    this.menu.addCommands("storedMyStocks", new myStocksCommand());
     this.menu.addCommands("storedStocks", new stocksCommand());
     this.menu.addCommands("config", new configCommand());
-    this.menu.addCommands("followingTags", new followingTagsCommand());
     this.menu.addCommands("qiitaLogin", new loginCommand());
-  }
+    if (user === "QiitaUser") {
+      Ti.API.info("[MENU] for QiitaUser");
+      myStocksCommand = require("model/getMyStocksCommand");
+      this.menu.addCommands("storedMyStocks", new myStocksCommand());
+      mainContoroller.refreshMenuTable();
+    }
+    return true;
+  };
 
   commandController.prototype.useMenu = function(commandLabel) {
     Ti.API.info("commandController.useMenu start. commandLabel is " + commandLabel);
@@ -24,15 +31,9 @@ commandController = (function() {
   };
 
   commandController.prototype.applyFeedByTagCommand = function(tagName) {
-    var feedByTagCommand, menu, param;
+    var feedByTagCommand;
     feedByTagCommand = require("model/getFeedByTagCommand");
-    param = {
-      commandLabel: "followingTag" + tagName,
-      command: new feedByTagCommand(tagName)
-    };
-    menu = Ti.App.Properties.getList("commandMenu");
-    menu.push(parm);
-    Ti.API.info(Ti.App.Properties.getList("commandMenu"));
+    this.menu.addCommands("followingTag" + tagName, new feedByTagCommand(tagName));
     return true;
   };
 

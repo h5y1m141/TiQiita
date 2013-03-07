@@ -2,17 +2,32 @@ class commandController
   constructor:() ->
     Menu = require("controllers/menu")
     @menu = new Menu()
-    myStocksCommand = require("model/getMyStocksCommand")
+
+  createMenu:(user) ->
     stocksCommand = require("model/getStocksCommand")
     configCommand = require("model/configCommand")
-    followingTagsCommand = require("model/getFollowingTagsCommand")
     loginCommand = require("model/loginCommand")
-    @menu.addCommands("storedMyStocks",new myStocksCommand())
+
     @menu.addCommands("storedStocks",new stocksCommand())
     @menu.addCommands("config",new configCommand())
-    @menu.addCommands("followingTags", new followingTagsCommand())
     @menu.addCommands("qiitaLogin", new loginCommand())
 
+    if user is "QiitaUser"
+      Ti.API.info "[MENU] for QiitaUser"
+      myStocksCommand = require("model/getMyStocksCommand")
+      @menu.addCommands("storedMyStocks",new myStocksCommand())
+      
+      mainContoroller.refreshMenuTable()
+      
+      
+
+      
+      # followingTagsCommand = require("model/getFollowingTagsCommand")
+      # @menu.addCommands("followingTags", new followingTagsCommand())
+      
+
+
+    return true
 
     
   useMenu:(commandLabel) ->
@@ -27,16 +42,9 @@ class commandController
     # followingTagsがnullになってる場合があるため
     # followingTagsの値をチェックした上で以下を実施する
     feedByTagCommand = require("model/getFeedByTagCommand")    
-    # @menu.addCommands("followingTag#{tagName}", new feedByTagCommand(tagName))
-    param = 
-      commandLabel:"followingTag#{tagName}"
-      command:new feedByTagCommand(tagName)
-    menu = Ti.App.Properties.getList "commandMenu"  
-    menu.push parm
-    Ti.API.info(Ti.App.Properties.getList "commandMenu")  
-    
-    
+    @menu.addCommands("followingTag#{tagName}", new feedByTagCommand(tagName))
     return true
+
     
   countUp:() ->
     direction = "vertical"
