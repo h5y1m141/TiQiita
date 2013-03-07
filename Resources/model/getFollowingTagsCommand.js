@@ -1,6 +1,9 @@
 var followingTagsCommand;
+
 followingTagsCommand = (function() {
+
   function followingTagsCommand() {}
+
   followingTagsCommand.prototype.execute = function() {
     Ti.API.info("followingTagsCommand start");
     return qiita.getFollowingTags(function(result, links) {
@@ -14,6 +17,9 @@ followingTagsCommand = (function() {
       return true;
     });
   };
+
   return followingTagsCommand;
+
 })();
+
 module.exports = followingTagsCommand;
