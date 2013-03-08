@@ -6,7 +6,7 @@ APP_DEVICE=${DEVICE_TYPE}
 TI_SDK_VERSION=`cat tiapp.xml | grep "<sdk-version>" | sed -e "s/<\/*sdk-version>//g"`
 TI_SDK_HIGHEST_VERSION=`ls  ~/library/Application\ Support/titanium/mobilesdk/osx | tail -1`
 IOS_SDK_VERSION=`cat tiapp.xml | grep "<ios-version>" | sed -e "s/[ \t]*<\/*ios-version>//g"`
-TI_DIR="Library/Application Support/Titanium"
+TI_DIR="/Users/hoyamada/Library/Application Support/Titanium"
 BUILD_TYPE=${BUILD_TYPE}
 TESTFLIGHT_ENABLED=${testflight}
 HOCKEY_ENABLED=${hockey}
@@ -89,8 +89,8 @@ else
 fi
 
 # Both iOS and Android SDKs are linked in this directory
-TI_ASSETS_DIR="${TI_DIR}/mobilesdk/osx/${TI_SDK_VERSION}"
-
+# TI_ASSETS_DIR="${TI_DIR}/mobilesdk/osx/${TI_SDK_VERSION}"
+TI_ASSETS_DIR="${TI_DIR}/mobilesdk/osx/3.0.0.GA"
 if [[ -d "$TI_ASSETS_DIR" ]]; then
 	echo "[DEBUG] Titanium SDK ${TI_SDK_VERSION} found..."
 else
