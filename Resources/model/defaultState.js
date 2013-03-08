@@ -5,11 +5,11 @@ defaultState = (function() {
   function defaultState() {}
 
   defaultState.prototype.sayState = function() {
-    return "[STATE] 標準状態";
+    return "[STATE 標準状態]";
   };
 
   defaultState.prototype.moveUP = function() {
-    Ti.API.info("[STATE] 標準状態この状態では何もしない");
+    Ti.API.info("[STATE 標準状態]この状態では何もしない");
     return new defaultState();
   };
 

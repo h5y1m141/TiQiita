@@ -18,6 +18,7 @@ class mainContoroller
 
     else if loginID? is false or loginID is ""
       Ti.API.info "@createConfigWindow start"
+
       @createConfigWindow()
       
       tabGroup.setActiveTab(1)
@@ -77,6 +78,7 @@ class mainContoroller
       
     listBtn.addEventListener('click',()=>
       direction = "horizontal"
+      Ti.API.info "listBtn click.#{direction}"
       @slideMainTable(direction)
     )
     
@@ -108,8 +110,8 @@ class mainContoroller
     @slideMainTable(direction)
     commandController.createMenu "QiitaUser"
     commandController.useMenu "storedStocks"
-    # commandController.useMenu "followingTags"
-
+    
+    
 
     
   refreshMenuTable:() ->
@@ -158,10 +160,10 @@ class mainContoroller
 
   stockItemToQiita: (uuid) ->
     uuid = Ti.App.Properties.getString('stockUUID')
-    actInd.backgroundColor = '#222'
-    actInd.message = 'Posting...'
-    actInd.zIndex = 20
-    actInd.show()  
+    # actInd.backgroundColor = '#222'
+    # actInd.message = 'Posting...'
+    # actInd.zIndex = 20
+    # actInd.show()  
 
     qiita.putStock(uuid)
     
@@ -191,6 +193,37 @@ class mainContoroller
   selectMenu:(menuName) ->
     Ti.API.info "mainController.selectMenu start. menuName is #{menuName}"
     return commandController.useMenu menuName
+
+  webViewContentsUpdate: (body) ->
+    return webview.contentsUpdate(body)
+    
+  webViewHeaderUpdate: (json) ->
+    return webview.headerUpdate(json)
+
+  moveToWebViewWindow: () ->    
+    actionBtn = Ti.UI.createButton
+      systemButton: Titanium.UI.iPhone.SystemButton.ACTION
+
+    actionBtn.addEventListener('click',()->
+
+      dialog = Ti.UI.createOptionDialog()
+      dialog.setTitle "どの処理を実行しますか？"
+      dialog.setOptions(["ストックする","キャンセル"])
+      dialog.setCancel(1)
+      dialog.addEventListener('click',(event) =>
+        Ti.API.info "start dialog action.Event is #{event.index}"
+        
+        switch event.index
+          when 0
+            mainContoroller.stockItemToQiita()
+            
+      )
+      dialog.show()
+    )
+    webview.show()
+    webWindow.rightNavButton = actionBtn
+    return mainTab.open(webWindow)
+
 
 
 module.exports = mainContoroller  

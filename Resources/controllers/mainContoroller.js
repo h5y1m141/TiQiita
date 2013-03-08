@@ -85,6 +85,7 @@ mainContoroller = (function() {
     listBtn.addEventListener('click', function() {
       var direction;
       direction = "horizontal";
+      Ti.API.info("listBtn click." + direction);
       return _this.slideMainTable(direction);
     });
     refreshBtn = Ti.UI.createButton({
@@ -163,10 +164,6 @@ mainContoroller = (function() {
 
   mainContoroller.prototype.stockItemToQiita = function(uuid) {
     uuid = Ti.App.Properties.getString('stockUUID');
-    actInd.backgroundColor = '#222';
-    actInd.message = 'Posting...';
-    actInd.zIndex = 20;
-    actInd.show();
     qiita.putStock(uuid);
     return true;
   };
@@ -200,6 +197,41 @@ mainContoroller = (function() {
   mainContoroller.prototype.selectMenu = function(menuName) {
     Ti.API.info("mainController.selectMenu start. menuName is " + menuName);
     return commandController.useMenu(menuName);
+  };
+
+  mainContoroller.prototype.webViewContentsUpdate = function(body) {
+    return webview.contentsUpdate(body);
+  };
+
+  mainContoroller.prototype.webViewHeaderUpdate = function(json) {
+    return webview.headerUpdate(json);
+  };
+
+  mainContoroller.prototype.moveToWebViewWindow = function() {
+    var actionBtn, self;
+    self = this;
+    actionBtn = Ti.UI.createButton({
+      systemButton: Titanium.UI.iPhone.SystemButton.ACTION
+    });
+    actionBtn.addEventListener('click', function() {
+      var dialog,
+        _this = this;
+      dialog = Ti.UI.createOptionDialog();
+      dialog.setTitle("どの処理を実行しますか？");
+      dialog.setOptions(["ストックする", "キャンセル"]);
+      dialog.setCancel(1);
+      dialog.addEventListener('click', function(event) {
+        Ti.API.info("start dialog action.Event is " + event.index);
+        switch (event.index) {
+          case 0:
+            return self.stockItemToQiita();
+        }
+      });
+      return dialog.show();
+    });
+    webview.show();
+    webWindow.rightNavButton = actionBtn;
+    return mainTab.open(webWindow);
   };
 
   return mainContoroller;

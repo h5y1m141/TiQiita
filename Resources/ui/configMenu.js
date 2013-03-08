@@ -3,8 +3,10 @@ var configMenu;
 configMenu = (function() {
 
   function configMenu() {
-    var QiitaLoginID, QiitaLoginPassword, groupData, label1, label2, row1, row2, tableView, textField1, textField2;
+    var QiitaLoginID, QiitaLoginPassword, groupData, label1, label2, row1, row2, tableView, textField1, textField2,
+      _this = this;
     groupData = Ti.UI.createTableViewSection();
+    commandController.createMenu();
     QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID');
     QiitaLoginPassword = Ti.App.Properties.getString('QiitaLoginPassword');
     row1 = Ti.UI.createTableViewRow({

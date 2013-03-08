@@ -27,6 +27,8 @@ getStocksCommand = (function() {
     rows = [];
     value = this.value;
     direction = "vertical";
+    Ti.App.Properties.setBool('stateMainTableSlide', false);
+    mainContoroller.slideMainTable(direction);
     qiita.getFeed(function(result, links) {
       var json, _i, _len;
       for (_i = 0, _len = result.length; _i < _len; _i++) {

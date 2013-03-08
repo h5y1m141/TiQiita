@@ -5,7 +5,7 @@ slideState = (function() {
   function slideState() {}
 
   slideState.prototype.sayState = function() {
-    return "[STATE] スライド状態";
+    return "[STATE スライド状態]";
   };
 
   slideState.prototype.moveUP = function() {
@@ -25,7 +25,7 @@ slideState = (function() {
   };
 
   slideState.prototype.moveDown = function() {
-    Ti.API.info("[STATE] スライド状態この状態では何もしない");
+    Ti.API.info("[STATE スライド状態] この状態では何もしない");
     return new slideState();
   };
 

@@ -5,13 +5,14 @@ loginCommand = (function() {
   function loginCommand() {}
 
   loginCommand.prototype.execute = function() {
-    var param;
+    var param,
+      _this = this;
     param = {
       url_name: Ti.App.Properties.getString('QiitaLoginID'),
       password: Ti.App.Properties.getString('QiitaLoginPassword')
     };
+    Ti.API.info("[INFO] login start.");
     qiita._auth(param, function(token) {
-      var logindID;
       if (token === null) {
         alert("ユーザIDかパスワードが間違ってます");
         return actInd.hide();
@@ -21,16 +22,11 @@ loginCommand = (function() {
         Ti.App.Properties.setString('QiitaLoginID', param.url_name);
         Ti.App.Properties.setString('QiitaLoginPassword', param.password);
         Ti.App.Properties.setString('QiitaToken', token);
-        logindID = Ti.App.Properties.getString('QiitaLoginID');
-        qiita.setRequestParameter(logindID);
-        return qiita._auth("", function(token) {
-          Ti.API.info("token is " + token);
-          mainContoroller.createMainWindow();
-          mainContoroller.refreshMenuTable();
-          mainContoroller.startApp();
-          tabGroup.setActiveTab(0);
-          return tabGroup.open();
-        });
+        mainContoroller.createMainWindow();
+        mainContoroller.refreshMenuTable();
+        mainContoroller.startApp();
+        tabGroup.setActiveTab(0);
+        return tabGroup.open();
       }
     });
     return true;
