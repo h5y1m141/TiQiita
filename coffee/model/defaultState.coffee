@@ -4,9 +4,9 @@ class defaultState
     
     
   sayState: () ->
-    return "[STATE] 標準状態"
+    return "[STATE 標準状態]"
   moveUP: () ->
-    Ti.API.info "[STATE] 標準状態この状態では何もしない"
+    Ti.API.info "[STATE 標準状態]この状態では何もしない"
     return new defaultState()
   moveDown: () ->
     Ti.API.info "[ACTION] スライド開始"

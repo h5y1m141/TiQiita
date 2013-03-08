@@ -1,7 +1,7 @@
 class configMenu
   constructor: () ->
     groupData = Ti.UI.createTableViewSection()
-      
+    commandController.createMenu()  
     QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID')
     QiitaLoginPassword = Ti.App.Properties.getString('QiitaLoginPassword')
     
@@ -76,7 +76,7 @@ class configMenu
       Ti.App.Properties.setString('QiitaLoginPassword',e.value)
     )
 
-    textField2.addEventListener('blur',(e) ->
+    textField2.addEventListener('blur',(e) =>
       if qiita.isConnected() is false
         message = mainContoroller.networkDisconnectedMessage
         mainContoroller._alertViewShow message

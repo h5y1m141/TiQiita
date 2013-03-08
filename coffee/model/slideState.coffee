@@ -4,7 +4,7 @@ class slideState
     
     
   sayState: () ->
-    return "[STATE] スライド状態"
+    return "[STATE スライド状態]"
   moveUP: () ->
     Ti.API.info "[ACTION] スライドから標準状態に戻る。垂直方向"
     Ti.App.Properties.setBool "stateMainTableSlide",false
@@ -21,7 +21,7 @@ class slideState
 
     return new defaultState()
   moveDown: () ->    
-    Ti.API.info "[STATE] スライド状態この状態では何もしない"
+    Ti.API.info "[STATE スライド状態] この状態では何もしない"
     return new slideState()
   moveBackward: () ->
     Ti.API.info "[ACTION] スライドから標準状態に戻る。水平方向"

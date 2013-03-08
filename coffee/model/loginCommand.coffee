@@ -6,7 +6,9 @@ class loginCommand
     param =
       url_name: Ti.App.Properties.getString('QiitaLoginID'),
       password: Ti.App.Properties.getString('QiitaLoginPassword')
-    qiita._auth(param, (token)->
+
+    Ti.API.info "[INFO] login start."  
+    qiita._auth(param, (token)=>
       
       if token is null
 
@@ -19,16 +21,13 @@ class loginCommand
         Ti.App.Properties.setString 'QiitaLoginID', param.url_name
         Ti.App.Properties.setString 'QiitaLoginPassword', param.password
         Ti.App.Properties.setString 'QiitaToken', token
-        logindID = Ti.App.Properties.getString 'QiitaLoginID'
-        qiita.setRequestParameter(logindID)
-        qiita._auth("", (token)->
-          Ti.API.info "token is #{token}"
-          mainContoroller.createMainWindow()
-          mainContoroller.refreshMenuTable()
-          mainContoroller.startApp()
-          tabGroup.setActiveTab(0)
-          tabGroup.open()
-        ) 
+        
+        mainContoroller.createMainWindow()
+        mainContoroller.refreshMenuTable()
+        mainContoroller.startApp()
+        tabGroup.setActiveTab(0)
+        tabGroup.open()
+
 
     )
     

@@ -16,6 +16,8 @@ class Menu
     return true
     
   run:(commandLabel) ->
+    
+    
     for command in @commands
       if command.commandLabel is commandLabel
         mainContoroller.networkConnectionCheck(()->

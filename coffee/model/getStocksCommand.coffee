@@ -19,6 +19,9 @@ class getStocksCommand
     rows = []
     value = @value
     direction = "vertical"
+    Ti.App.Properties.setBool 'stateMainTableSlide',false
+    mainContoroller.slideMainTable(direction)
+
 
     qiita.getFeed( (result,links) ->
 
