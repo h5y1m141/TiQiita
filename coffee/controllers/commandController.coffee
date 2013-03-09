@@ -47,9 +47,10 @@ class commandController
 
     
   countUp:() ->
+    Ti.API.info "[COMMAND] countUp start"
     direction = "vertical"
     Ti.App.Properties.setBool 'stateMainTableSlide',true
-    return mainController.slideMainTable(direction)
+    return mainContoroller.slideMainTable(direction)
 
           
 module.exports = commandController

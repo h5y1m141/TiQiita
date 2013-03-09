@@ -21,9 +21,6 @@ class getMyStocksCommand
     rows = []
     MAXITEMCOUNT = 20 # 1リクエスト辺りに読み込まれる最大件数
     value = @value
-    direction = "vertical"
-    Ti.App.Properties.setBool "stateMainTableSlide",false
-    mainContoroller.slideMainTable(direction)
 
     qiita.getMyStocks( (result,links) ->
       
@@ -37,8 +34,6 @@ class getMyStocksCommand
         
       
       mainTable.setData rows
-      Ti.App.Properties.setBool "stateMainTableSlide",true
-      mainContoroller.slideMainTable(direction)
 
 
 

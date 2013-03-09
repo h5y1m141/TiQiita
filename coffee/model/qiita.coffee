@@ -146,8 +146,7 @@ class Qiita
 
           Ti.API.info "xhr.ondatastream start progress is #{Math.round(e.progress * 100)}"
           progressBar.value = e.progress
-
-          commandController.countUp()
+          # commandController.countUp()
 
     Ti.API.info parameter.method + ":" + parameter.url
     xhr.open(parameter.method,parameter.url)

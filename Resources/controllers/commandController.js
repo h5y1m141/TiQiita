@@ -39,9 +39,10 @@ commandController = (function() {
 
   commandController.prototype.countUp = function() {
     var direction;
+    Ti.API.info("[COMMAND] countUp start");
     direction = "vertical";
     Ti.App.Properties.setBool('stateMainTableSlide', true);
-    return mainController.slideMainTable(direction);
+    return mainContoroller.slideMainTable(direction);
   };
 
   return commandController;

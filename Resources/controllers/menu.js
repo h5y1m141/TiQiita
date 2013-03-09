@@ -28,7 +28,6 @@ Menu = (function() {
       command = _ref[_i];
       if (command.commandLabel === commandLabel) {
         _results.push(mainContoroller.networkConnectionCheck(function() {
-          Ti.API.info("Menu.run. command is " + command.commandLabel);
           return command.command.execute();
         }));
       } else {

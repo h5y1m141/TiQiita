@@ -27,13 +27,10 @@ getFeedByTagCommand = (function() {
   };
 
   getFeedByTagCommand.prototype.getFeedByTag = function() {
-    var MAXITEMCOUNT, direction, rows, storedTo;
+    var MAXITEMCOUNT, rows, storedTo;
     rows = [];
     MAXITEMCOUNT = 20;
     storedTo = "followingTag" + this.tagName;
-    direction = "vertical";
-    Ti.App.Properties.setBool('stateMainTableSlide', false);
-    mainContoroller.slideMainTable(direction);
     qiita.getFeedByTag(this.tagName, function(result, links) {
       var json, _i, _len;
       for (_i = 0, _len = result.length; _i < _len; _i++) {
@@ -45,9 +42,7 @@ getFeedByTagCommand = (function() {
       } else {
         rows.push(mainTableView.createRowForLoadOldEntry(storedTo));
       }
-      mainTable.setData(rows);
-      Ti.App.Properties.setBool("stateMainTableSlide", true);
-      return mainContoroller.slideMainTable(direction);
+      return mainTable.setData(rows);
     });
     return true;
   };

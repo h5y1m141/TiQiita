@@ -16,12 +16,11 @@ class Menu
     return true
     
   run:(commandLabel) ->
-    
+
     
     for command in @commands
       if command.commandLabel is commandLabel
         mainContoroller.networkConnectionCheck(()->
-          Ti.API.info "Menu.run. command is #{command.commandLabel}"
           command.command.execute()
         )
 module.exports = Menu

@@ -33,7 +33,7 @@ class mainContoroller
 
       @createConfigWindow()
       @createMainWindow()
-      @refreshMenuTable()
+      # @refreshMenuTable()
       @startApp()
       tabGroup.setActiveTab(0)
       tabGroup.open()
@@ -105,10 +105,10 @@ class mainContoroller
 
     
   startApp:() ->
-    direction = "vertical"
-    Ti.App.Properties.setBool 'stateMainTableSlide',false
-    @slideMainTable(direction)
-    commandController.createMenu "QiitaUser"
+    # direction = "vertical"
+    # Ti.App.Properties.setBool 'stateMainTableSlide',false
+    # @slideMainTable(direction)
+    # commandController.createMenu "QiitaUser"
     commandController.useMenu "storedStocks"
     
     

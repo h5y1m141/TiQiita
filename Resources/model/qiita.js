@@ -1,5 +1,7 @@
 var Qiita;
+
 Qiita = (function() {
+
   function Qiita() {
     var QiitaLoginID, configJSON, file;
     configJSON = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'config/login.json');
@@ -30,6 +32,7 @@ Qiita = (function() {
       }
     };
   }
+
   Qiita.prototype._auth = function(param, callback) {
     var requestParam, xhr;
     if (typeof param !== "undefined" && param !== null) {
@@ -69,6 +72,7 @@ Qiita = (function() {
     xhr.send(requestParam);
     return true;
   };
+
   Qiita.prototype._mockObject = function(value, storedStocksFlag, callback) {
     var followingTags, followingTagsJSON, items, itemsJSON, relLink, relLinkJSON, stocksJSON;
     followingTagsJSON = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, "test/following_tags.json");
@@ -90,6 +94,7 @@ Qiita = (function() {
     }
     return true;
   };
+
   Qiita.prototype._storedStocks = function(_storedTo, strItems) {
     var cachedItems, length, merge, result, stocks;
     cachedItems = Ti.App.Properties.getString(_storedTo);
@@ -109,6 +114,7 @@ Qiita = (function() {
     result = JSON.parse(Ti.App.Properties.getString(_storedTo));
     return Ti.API.info("_storedStocks finish : " + result.length);
   };
+
   Qiita.prototype._request = function(parameter, storedTo, callback) {
     var self, xhr;
     self = this;
@@ -117,8 +123,7 @@ Qiita = (function() {
       if (storedTo !== "followingTags") {
         if (Math.round(e.progress * 100) <= 100) {
           Ti.API.info("xhr.ondatastream start progress is " + (Math.round(e.progress * 100)));
-          progressBar.value = e.progress;
-          return commandController.countUp();
+          return progressBar.value = e.progress;
         }
       }
     };
@@ -151,13 +156,14 @@ Qiita = (function() {
     xhr.timeout = 5000;
     return xhr.send();
   };
+
   Qiita.prototype._convertLinkHeaderToJSON = function(value) {
-    var i, json, length, links, relValues, _obj;
+    var i, json, length, links, relValues, _i, _obj;
     json = [];
     links = value.match(/https?:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+/g);
     relValues = value.match(/first|prev|next|last/g);
     length = links.length - 1;
-    for (i = 0; 0 <= length ? i <= length : i >= length; 0 <= length ? i++ : i--) {
+    for (i = _i = 0; 0 <= length ? _i <= length : _i >= length; i = 0 <= length ? ++_i : --_i) {
       _obj = {
         "rel": relValues[i],
         "url": links[i]
@@ -166,12 +172,14 @@ Qiita = (function() {
     }
     return json;
   };
+
   Qiita.prototype._mergeItems = function(object1, object2) {
     var _;
     _ = require("lib/underscore-1.4.3.min");
     object1 = object1.concat(object2);
     return _(object1).sortBy("created_at");
   };
+
   Qiita.prototype._parsedResponseHeader = function(header, storedTo) {
     var lastURL, link, nextURL, _i, _len;
     for (_i = 0, _len = header.length; _i < _len; _i++) {
@@ -190,24 +198,29 @@ Qiita = (function() {
     }
     return true;
   };
+
   Qiita.prototype.isConnected = function() {
     return Ti.Network.online;
   };
+
   Qiita.prototype.getStocks = function(callback) {
     var param;
     param = this.parameter.stocks;
     return this._request(param, 'storedStocks', callback);
   };
+
   Qiita.prototype.getFollowingUsers = function(callback) {
     var param;
     param = this.parameter.followingUsers;
     return this._request(param, false, callback);
   };
+
   Qiita.prototype.getTags = function(callback) {
     var param;
     param = this.parameter.tags;
     return this._request(param, false, callback);
   };
+
   Qiita.prototype.getFollowingTags = function(callback) {
     var param;
     param = {
@@ -216,11 +229,13 @@ Qiita = (function() {
     };
     return this._request(param, "followingTags", callback);
   };
+
   Qiita.prototype.getFeed = function(callback) {
     var param;
     param = this.parameter.feed;
     return this._request(param, 'storedStocks', callback);
   };
+
   Qiita.prototype.getNextFeed = function(url, storedTo, callback) {
     var param;
     param = {
@@ -229,6 +244,7 @@ Qiita = (function() {
     };
     return this._request(param, storedTo, callback);
   };
+
   Qiita.prototype.getFeedByTag = function(tagName, callback) {
     var param, storedTo, url;
     url = "https://qiita.com/api/v1/tags/" + tagName + "/items";
@@ -239,6 +255,7 @@ Qiita = (function() {
     };
     return this._request(param, storedTo, callback);
   };
+
   Qiita.prototype.getMyStocks = function(callback) {
     var param, token;
     token = Ti.App.Properties.getString('QiitaToken');
@@ -252,6 +269,7 @@ Qiita = (function() {
     };
     return this._request(param, "storedMyStocks", callback);
   };
+
   Qiita.prototype.getMyFeed = function(callback) {
     var param, token;
     token = Ti.App.Properties.getString('QiitaToken');
@@ -264,6 +282,7 @@ Qiita = (function() {
     };
     return this._request(param, false, callback);
   };
+
   Qiita.prototype.putStock = function(uuid) {
     var method, token, url, xhr;
     token = Ti.App.Properties.getString('QiitaToken');
@@ -287,12 +306,16 @@ Qiita = (function() {
       return alertDialog.show();
     };
   };
+
   Qiita.prototype.setRequestParameter = function(name) {
     Ti.API.info("setRequestParameter start.user name id " + this.user_name + " and name is " + name);
     this.user_name = name;
     Ti.API.info("setRequestParameter done." + this.parameter.followingTag);
     return true;
   };
+
   return Qiita;
+
 })();
+
 module.exports = Qiita;

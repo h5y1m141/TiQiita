@@ -33,7 +33,6 @@ mainContoroller = (function() {
       qiita._auth(param);
       this.createConfigWindow();
       this.createMainWindow();
-      this.refreshMenuTable();
       this.startApp();
       tabGroup.setActiveTab(0);
       tabGroup.open();
@@ -109,11 +108,6 @@ mainContoroller = (function() {
   };
 
   mainContoroller.prototype.startApp = function() {
-    var direction;
-    direction = "vertical";
-    Ti.App.Properties.setBool('stateMainTableSlide', false);
-    this.slideMainTable(direction);
-    commandController.createMenu("QiitaUser");
     return commandController.useMenu("storedStocks");
   };
 
@@ -208,8 +202,7 @@ mainContoroller = (function() {
   };
 
   mainContoroller.prototype.moveToWebViewWindow = function() {
-    var actionBtn, self;
-    self = this;
+    var actionBtn;
     actionBtn = Ti.UI.createButton({
       systemButton: Titanium.UI.iPhone.SystemButton.ACTION
     });
@@ -224,7 +217,7 @@ mainContoroller = (function() {
         Ti.API.info("start dialog action.Event is " + event.index);
         switch (event.index) {
           case 0:
-            return self.stockItemToQiita();
+            return mainContoroller.stockItemToQiita();
         }
       });
       return dialog.show();
