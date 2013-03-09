@@ -38,6 +38,7 @@ defaultState = require("model/defaultState")
 slideState = require("model/slideState")
 Qiita = require('model/qiita')
 Hatena = require('model/hatena')
+baseCommand = require("model/baseCommand")
 hatena = new Hatena()
 qiita = new Qiita()
 

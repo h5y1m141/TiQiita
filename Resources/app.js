@@ -1,4 +1,4 @@
-var AlertView, CommandController, ConfigMenu, Hatena, MainContoroller, MainTable, MenuTable, ProgressBar, Qiita, QiitaLoginID, QiitaLoginPassword, StatusView, actInd, activityIndicator, alertView, commandController, configMenu, configTab, configWindow, defaultState, hatena, mainContoroller, mainTab, mainTable, mainTableView, mainWindow, menu, menuTable, moment, momentja, progressBar, qiita, slideState, statusView, tabGroup, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win;
+var AlertView, CommandController, ConfigMenu, Hatena, MainContoroller, MainTable, MenuTable, ProgressBar, Qiita, QiitaLoginID, QiitaLoginPassword, StatusView, actInd, activityIndicator, alertView, baseCommand, commandController, configMenu, configTab, configWindow, defaultState, hatena, mainContoroller, mainTab, mainTable, mainTableView, mainWindow, menu, menuTable, moment, momentja, progressBar, qiita, slideState, statusView, tabGroup, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win;
 
 Ti.App.Properties.setBool('stateMainTableSlide', false);
 
@@ -29,6 +29,8 @@ slideState = require("model/slideState");
 Qiita = require('model/qiita');
 
 Hatena = require('model/hatena');
+
+baseCommand = require("model/baseCommand");
 
 hatena = new Hatena();
 

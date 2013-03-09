@@ -108,6 +108,7 @@ mainContoroller = (function() {
   };
 
   mainContoroller.prototype.startApp = function() {
+    commandController.createMenu("QiitaUser");
     return commandController.useMenu("storedStocks");
   };
 

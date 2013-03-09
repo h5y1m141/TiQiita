@@ -1,21 +1,29 @@
-class getFeedByTagCommand
+class getFeedByTagCommand extends baseCommand
   constructor:(tagName) ->
     @tagName = tagName
+    @direction = "vertical"
 
     
   execute:() ->
+    if @_currentSlideState() is "default"
+      @_showStatusView()
+
+
     storedTo = "followingTag#{@tagName}"
-    Ti.API.info "getFeedByTagCommand execute! storedTo is #{storedTo}"
     result = []
     items = JSON.parse(Ti.App.Properties.getString(storedTo))
 
     if items isnt null
-      Ti.API.info "cache loaded. items is #{items.length}"
+      if @_currentSlideState() is "default"
+        @_showStatusView()
+      else
+        @_hideStatusView()
+      
       result.push(mainTableView.createRow(json)) for json in items
       result.push(mainTableView.createRowForLoadOldEntry(storedTo))
       
     else
-      Ti.API.info "#{storedTo} isn't cached so that get items via Qiita API"
+      
       @.getFeedByTag()
       
     mainTable.setData result  
@@ -25,10 +33,12 @@ class getFeedByTagCommand
     
   getFeedByTag:() ->
     rows = []
+    @_hideStatusView()
     MAXITEMCOUNT = 20 # 1リクエスト辺りに読み込まれる最大件数
     storedTo = "followingTag#{@tagName}" 
 
     qiita.getFeedByTag(@tagName, (result,links) ->
+      @_hideStatusView()
       rows.push(mainTableView.createRow(json)) for json in result
       if result.length isnt MAXITEMCOUNT
         
@@ -42,5 +52,15 @@ class getFeedByTagCommand
 
     )
     return true
+
+  _currentSlideState:() ->
+    super()
+
+  _showStatusView:() ->
+    super()
+
+  _hideStatusView:() ->
+    super()
+
       
 module.exports = getFeedByTagCommand

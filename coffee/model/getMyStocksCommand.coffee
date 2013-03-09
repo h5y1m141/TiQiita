@@ -1,11 +1,14 @@
-class getMyStocksCommand
+class getMyStocksCommand extends baseCommand
   constructor:() ->
     @value = 'storedMyStocks'
+    @direction = "vertical"
   execute:() ->
     result = []
+    @_showStatusView()
     items = JSON.parse(Ti.App.Properties.getString(@value))
 
     if items isnt null
+      @_hideStatusView()
       result.push(mainTableView.createRow(json)) for json in items
       result.push(mainTableView.createRowForLoadOldEntry(@value))
       
@@ -23,7 +26,7 @@ class getMyStocksCommand
     value = @value
 
     qiita.getMyStocks( (result,links) ->
-      
+      @_hideStatusView()
       rows.push(mainTableView.createRow(json)) for json in result
       
       if result.length isnt MAXITEMCOUNT
@@ -31,14 +34,20 @@ class getMyStocksCommand
       else
         Ti.API.info "loadOldEntry show"
         rows.push(mainTableView.createRowForLoadOldEntry(value))
-        
-      
+              
       mainTable.setData rows
-
-
 
     )
 
     return true
+    
+  _currentSlideState:() ->
+    super()
+
+  _showStatusView:() ->
+    super()
+
+  _hideStatusView:() ->
+    super()
       
 module.exports = getMyStocksCommand

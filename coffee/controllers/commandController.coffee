@@ -4,10 +4,11 @@ class commandController
     @menu = new Menu()
 
   createMenu:(user) ->
+    
     stocksCommand = require("model/getStocksCommand")
     configCommand = require("model/configCommand")
     loginCommand = require("model/loginCommand")
-
+    
     @menu.addCommands("storedStocks",new stocksCommand())
     @menu.addCommands("config",new configCommand())
     @menu.addCommands("qiitaLogin", new loginCommand())

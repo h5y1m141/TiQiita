@@ -1,6 +1,10 @@
-var getStocksCommand;
+var getStocksCommand,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-getStocksCommand = (function() {
+getStocksCommand = (function(_super) {
+
+  __extends(getStocksCommand, _super);
 
   function getStocksCommand() {
     this.value = 'storedStocks';
@@ -43,20 +47,20 @@ getStocksCommand = (function() {
     return true;
   };
 
+  getStocksCommand.prototype._currentSlideState = function() {
+    return getStocksCommand.__super__._currentSlideState.call(this);
+  };
+
   getStocksCommand.prototype._showStatusView = function() {
-    Ti.API.info("データの読み込み。statusView表示");
-    Ti.App.Properties.setBool("stateMainTableSlide", false);
-    return mainContoroller.slideMainTable(this.direction);
+    return getStocksCommand.__super__._showStatusView.call(this);
   };
 
   getStocksCommand.prototype._hideStatusView = function() {
-    Ti.API.info("データの読み込みが完了したらstatusViewを元に戻す");
-    Ti.App.Properties.setBool("stateMainTableSlide", true);
-    return mainContoroller.slideMainTable(this.direction);
+    return getStocksCommand.__super__._hideStatusView.call(this);
   };
 
   return getStocksCommand;
 
-})();
+})(baseCommand);
 
 module.exports = getStocksCommand;

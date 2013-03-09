@@ -1,4 +1,4 @@
-class getStocksCommand
+class getStocksCommand extends baseCommand
   constructor:() ->
     @value = 'storedStocks'
     @direction = "vertical"
@@ -34,16 +34,15 @@ class getStocksCommand
       
     )
     return true
-    
-  _showStatusView:() ->
-    Ti.API.info "データの読み込み。statusView表示"
-    Ti.App.Properties.setBool "stateMainTableSlide",false
-    return mainContoroller.slideMainTable(@direction)
 
+  _currentSlideState:() ->
+    super()
+
+  _showStatusView:() ->
+    super()
 
   _hideStatusView:() ->
-    Ti.API.info "データの読み込みが完了したらstatusViewを元に戻す"
-    Ti.App.Properties.setBool "stateMainTableSlide",true
-    mainContoroller.slideMainTable(@direction)
+    super()
+
 
 module.exports =  getStocksCommand 

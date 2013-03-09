@@ -108,7 +108,7 @@ class mainContoroller
     # direction = "vertical"
     # Ti.App.Properties.setBool 'stateMainTableSlide',false
     # @slideMainTable(direction)
-    # commandController.createMenu "QiitaUser"
+    commandController.createMenu "QiitaUser"
     commandController.useMenu "storedStocks"
     
     
