@@ -132,7 +132,9 @@ if (testsEnabled === true) {
     });
     return navController;
   };
-  winLeft = Ti.UI.createWindow();
+  winLeft = Ti.UI.createWindow({
+    backgroundColor: "white"
+  });
   winLeft.add(menu);
   navController = createCenterNavWindow();
   winRight = Ti.UI.createWindow({
@@ -143,13 +145,9 @@ if (testsEnabled === true) {
     centerWindow: navController,
     leftWindow: winLeft,
     rightWindow: winRight,
-    leftLedge: 100
+    leftLedge: 160
   });
-  window.addEventListener("viewWillOpen", function(e) {
-    return Ti.API.info(e.view + "Window will open");
-  });
-  window.addEventListener("viewWillClose", function(e) {
-    return Ti.API.info(e.view + "Window will close");
-  });
+  mainContoroller.refreshMenuTable();
+  mainContoroller.startApp();
   window.open();
 }

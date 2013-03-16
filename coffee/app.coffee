@@ -113,7 +113,8 @@ else
     navController = Ti.UI.iPhone.createNavigationGroup(window: mainWindow)
     return navController
     
-  winLeft = Ti.UI.createWindow()
+  
+  winLeft = Ti.UI.createWindow(backgroundColor: "white")
   winLeft.add menu
 
   navController = createCenterNavWindow()
@@ -126,18 +127,12 @@ else
     centerWindow: navController
     leftWindow: winLeft
     rightWindow: winRight
-    leftLedge: 100
+    leftLedge:160
   )
-  window.addEventListener "viewWillOpen", (e) ->
-    Ti.API.info e.view + "Window will open"
 
+  mainContoroller.refreshMenuTable()
+  mainContoroller.startApp()
 
-  #window.setCenterhiddenInteractivity("TouchDisabledWithTapToClose");
-  window.addEventListener "viewWillClose", (e) ->
-    Ti.API.info e.view + "Window will close"
-
-
-  #window.setCenterhiddenInteractivity("TouchEnabled");
   window.open() #init the app
 
 

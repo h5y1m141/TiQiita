@@ -13,7 +13,7 @@ class menuTable
         fontWeight: "bold"
         
     @rowColorTheme = 
-      width:158
+      width:255
       left:1
       opacity:0.8
       borderColor:'#ededed'
@@ -26,7 +26,7 @@ class menuTable
       separatorStyle:1
       separatorColor:backgroundColorBase
       zIndex:1
-      width:160
+      width:320
       left:0
       top:0
       
@@ -62,7 +62,7 @@ class menuTable
       backgroundColor:"transparent"
     
     allLabel = Ti.UI.createLabel
-      width:158
+      width:255
       height:40
       top:0
       left:35
@@ -203,7 +203,7 @@ class menuTable
           # プロパティを設定しclassNameはQiitaAPI呼び出す時の処理で
           # url_name利用したほうが都合良いためそちらを参照
           textLabel = Ti.UI.createLabel
-            width:150
+            width:255
             height:40
             top:1
             left:20
