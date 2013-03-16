@@ -1,4 +1,4 @@
-var AlertView, CommandController, ConfigMenu, Hatena, MainContoroller, MainTable, MenuTable, ProgressBar, Qiita, QiitaLoginID, QiitaLoginPassword, StatusView, actInd, activityIndicator, alertView, baseCommand, commandController, configMenu, configTab, configWindow, defaultState, hatena, mainContoroller, mainTab, mainTable, mainTableView, mainWindow, menu, menuTable, moment, momentja, progressBar, qiita, slideState, statusView, tabGroup, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win;
+var AlertView, CommandController, ConfigMenu, Hatena, MainContoroller, MainTable, MenuTable, NappSlideMenu, ProgressBar, Qiita, QiitaLoginID, QiitaLoginPassword, StatusView, actInd, activityIndicator, alertView, baseCommand, commandController, configMenu, configWindow, createCenterNavWindow, defaultState, hatena, mainContoroller, mainTable, mainTableView, mainWindow, menu, menuTable, moment, momentja, navController, progressBar, qiita, slideState, statusView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win, winLeft, winRight, window;
 
 Ti.App.Properties.setBool('stateMainTableSlide', false);
 
@@ -112,26 +112,44 @@ QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID');
 
 QiitaLoginPassword = Ti.App.Properties.getString('QiitaLoginPassword');
 
-tabGroup = Ti.UI.createTabGroup();
-
-tabGroup.tabBarVisible = false;
-
-mainTab = Ti.UI.createTab({
-  window: mainWindow,
-  icon: "ui/image/light_home@2x.png"
-});
-
-configTab = Ti.UI.createTab({
-  window: configWindow,
-  icon: "ui/image/light_gear@2x.png"
-});
-
-tabGroup.addTab(mainTab);
-
-tabGroup.addTab(configTab);
-
 if (testsEnabled === true) {
   require('test/tests');
 } else {
-  mainContoroller.init();
+  createCenterNavWindow = function() {
+    var leftBtn, navController;
+    leftBtn = Ti.UI.createButton({
+      title: "Menu"
+    });
+    leftBtn.addEventListener("click", function() {
+      window.toggleLeftView();
+      window.setCenterhiddenInteractivity("TouchDisabledWithTapToCloseBouncing");
+      return window.setPanningMode("NavigationBarPanning");
+    });
+    mainWindow.leftNavButton = leftBtn;
+    mainWindow.add(mainTable);
+    navController = Ti.UI.iPhone.createNavigationGroup({
+      window: mainWindow
+    });
+    return navController;
+  };
+  winLeft = Ti.UI.createWindow();
+  winLeft.add(menu);
+  navController = createCenterNavWindow();
+  winRight = Ti.UI.createWindow({
+    backgroundColor: "white"
+  });
+  NappSlideMenu = require("dk.napp.slidemenu");
+  window = NappSlideMenu.createSlideMenuWindow({
+    centerWindow: navController,
+    leftWindow: winLeft,
+    rightWindow: winRight,
+    leftLedge: 100
+  });
+  window.addEventListener("viewWillOpen", function(e) {
+    return Ti.API.info(e.view + "Window will open");
+  });
+  window.addEventListener("viewWillClose", function(e) {
+    return Ti.API.info(e.view + "Window will close");
+  });
+  window.open();
 }

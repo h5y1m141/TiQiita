@@ -52,6 +52,6 @@
         <theme>default</theme>
     </mobileweb>
     <modules>
-        <module platform="commonjs" version="2.2.0">ti.cloud</module>
+	<module platform="iphone" version="1.2">dk.napp.slidemenu</module>
     </modules>
 </ti:app>

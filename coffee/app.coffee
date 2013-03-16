@@ -90,21 +90,54 @@ configWindow.add actInd
 QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID')
 QiitaLoginPassword = Ti.App.Properties.getString('QiitaLoginPassword')
 
-tabGroup = Ti.UI.createTabGroup()
-tabGroup.tabBarVisible = false
-mainTab = Ti.UI.createTab
-  window: mainWindow
-  icon:"ui/image/light_home@2x.png"  
-
-
-configTab = Ti.UI.createTab
-  window: configWindow
-  icon:"ui/image/light_gear@2x.png"
   
-tabGroup.addTab mainTab
-tabGroup.addTab configTab
 
 if testsEnabled is true
   require('test/tests')
 else
-  mainContoroller.init()
+  
+  createCenterNavWindow = ->
+
+    leftBtn = Ti.UI.createButton(title: "Menu")
+    leftBtn.addEventListener "click", ->
+      window.toggleLeftView()
+      window.setCenterhiddenInteractivity "TouchDisabledWithTapToCloseBouncing"
+      window.setPanningMode "NavigationBarPanning"
+
+    mainWindow.leftNavButton = leftBtn
+    mainWindow.add mainTable
+
+
+    
+    #NAV
+    navController = Ti.UI.iPhone.createNavigationGroup(window: mainWindow)
+    return navController
+    
+  winLeft = Ti.UI.createWindow()
+  winLeft.add menu
+
+  navController = createCenterNavWindow()
+  winRight = Ti.UI.createWindow(backgroundColor: "white")
+
+  #//////////////////////////////////////////////
+  # NappSlideMenu WINDOW
+  NappSlideMenu = require("dk.napp.slidemenu")
+  window = NappSlideMenu.createSlideMenuWindow(
+    centerWindow: navController
+    leftWindow: winLeft
+    rightWindow: winRight
+    leftLedge: 100
+  )
+  window.addEventListener "viewWillOpen", (e) ->
+    Ti.API.info e.view + "Window will open"
+
+
+  #window.setCenterhiddenInteractivity("TouchDisabledWithTapToClose");
+  window.addEventListener "viewWillClose", (e) ->
+    Ti.API.info e.view + "Window will close"
+
+
+  #window.setCenterhiddenInteractivity("TouchEnabled");
+  window.open() #init the app
+
+
