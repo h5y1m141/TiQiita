@@ -18,7 +18,7 @@ menuTable = (function() {
       }
     };
     this.rowColorTheme = {
-      width: 158,
+      width: 255,
       left: 1,
       opacity: 0.8,
       borderColor: '#ededed',
@@ -31,12 +31,13 @@ menuTable = (function() {
       separatorStyle: 1,
       separatorColor: backgroundColorBase,
       zIndex: 1,
-      width: 160,
+      width: 320,
       left: 0,
       top: 0
     });
     this.table.addEventListener('click', function(e) {
       var curretRowIndex;
+      window.toggleLeftView();
       curretRowIndex = e.index;
       _this.resetBackGroundColor(_this.table.data[0].rows);
       _this.table.data[0].rows[curretRowIndex].backgroundColor = _this.qiitaColor;
@@ -66,7 +67,7 @@ menuTable = (function() {
       backgroundColor: "transparent"
     });
     allLabel = Ti.UI.createLabel({
-      width: 158,
+      width: 255,
       height: 40,
       top: 0,
       left: 35,
@@ -206,7 +207,7 @@ menuTable = (function() {
             return _this.slideEvent(e.rowData.className);
           });
           textLabel = Ti.UI.createLabel({
-            width: 150,
+            width: 255,
             height: 40,
             top: 1,
             left: 20,

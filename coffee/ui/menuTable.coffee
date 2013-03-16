@@ -31,6 +31,7 @@ class menuTable
       top:0
       
     @table.addEventListener('click',(e) =>
+      window.toggleLeftView()
       curretRowIndex = e.index
       @.resetBackGroundColor(@table.data[0].rows)
       # クリックされたrowの色を'#59BB0C'に設定

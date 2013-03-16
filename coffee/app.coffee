@@ -106,6 +106,11 @@ else
 
     mainWindow.leftNavButton = leftBtn
     mainWindow.add mainTable
+    mainWindow.add actInd
+    progressBar.show()
+    statusView.add progressBar
+    mainWindow.add statusView
+    mainWindow.add alertView.getAlertView()
 
 
     
