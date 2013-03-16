@@ -2,13 +2,21 @@ class getMyStocksCommand extends baseCommand
   constructor:() ->
     @value = 'storedMyStocks'
     @direction = "vertical"
+
   execute:() ->
     result = []
-    @_showStatusView()
+    if @_currentSlideState() is "default"
+      @_showStatusView()
+
     items = JSON.parse(Ti.App.Properties.getString(@value))
 
     if items isnt null
-      @_hideStatusView()
+      if @_currentSlideState() is "default"
+        @_showStatusView()
+      else
+        @_hideStatusView()
+    
+      
       result.push(mainTableView.createRow(json)) for json in items
       result.push(mainTableView.createRowForLoadOldEntry(@value))
       
@@ -40,7 +48,7 @@ class getMyStocksCommand extends baseCommand
     )
 
     return true
-    
+
   _currentSlideState:() ->
     super()
 

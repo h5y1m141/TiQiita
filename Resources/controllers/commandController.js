@@ -10,6 +10,7 @@ commandController = (function() {
 
   commandController.prototype.createMenu = function(user) {
     var configCommand, loginCommand, myStocksCommand, stocksCommand;
+    Ti.API.info("[commandController] createMenu start");
     stocksCommand = require("model/getStocksCommand");
     configCommand = require("model/configCommand");
     loginCommand = require("model/loginCommand");

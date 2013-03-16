@@ -4,7 +4,7 @@ class commandController
     @menu = new Menu()
 
   createMenu:(user) ->
-    
+    Ti.API.info "[commandController] createMenu start"
     stocksCommand = require("model/getStocksCommand")
     configCommand = require("model/configCommand")
     loginCommand = require("model/loginCommand")
@@ -12,6 +12,7 @@ class commandController
     @menu.addCommands("storedStocks",new stocksCommand())
     @menu.addCommands("config",new configCommand())
     @menu.addCommands("qiitaLogin", new loginCommand())
+    
 
     if user is "QiitaUser"
       Ti.API.info "[MENU] for QiitaUser"

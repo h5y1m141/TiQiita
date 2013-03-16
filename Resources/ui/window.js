@@ -1,5 +1,7 @@
 var window;
+
 window = (function() {
+
   function window() {
     var win;
     win = Ti.UI.createWindow({
@@ -10,6 +12,9 @@ window = (function() {
     });
     return win;
   }
+
   return window;
+
 })();
+
 module.exports = window;

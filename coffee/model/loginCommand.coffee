@@ -24,7 +24,7 @@ class loginCommand
         
         mainContoroller.createMainWindow()
         mainContoroller.refreshMenuTable()
-        mainContoroller.startApp()
+        commandController.useMenu "storedStocks"
         tabGroup.setActiveTab(0)
         tabGroup.open()
 

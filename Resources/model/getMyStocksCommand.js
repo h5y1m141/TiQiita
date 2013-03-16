@@ -14,10 +14,16 @@ getMyStocksCommand = (function(_super) {
   getMyStocksCommand.prototype.execute = function() {
     var items, json, result, _i, _len;
     result = [];
-    this._showStatusView();
+    if (this._currentSlideState() === "default") {
+      this._showStatusView();
+    }
     items = JSON.parse(Ti.App.Properties.getString(this.value));
     if (items !== null) {
-      this._hideStatusView();
+      if (this._currentSlideState() === "default") {
+        this._showStatusView();
+      } else {
+        this._hideStatusView();
+      }
       for (_i = 0, _len = items.length; _i < _len; _i++) {
         json = items[_i];
         result.push(mainTableView.createRow(json));

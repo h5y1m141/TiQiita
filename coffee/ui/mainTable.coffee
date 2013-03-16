@@ -17,22 +17,22 @@ class mainTable
       if qiita.isConnected() is false
         mainController._alertViewShow "ネットワーク接続出来ません。ネットワーク設定を再度ご確認ください"
       else
-      if e.rowData.className is 'entry'
-        
-        # 一覧画面から詳細画面に遷移した後、該当の投稿情報を
-        # ストックする際にURLやuuidの情報が必要になるために
-        # sessionItem()を利用する
+        if e.rowData.className is 'entry'
+          
+          # 一覧画面から詳細画面に遷移した後、該当の投稿情報を
+          # ストックする際にURLやuuidの情報が必要になるために
+          # sessionItem()を利用する
 
-        mainContoroller.sessionItem e.rowData.data
-        mainContoroller.webViewContentsUpdate e.rowData.data.body
-        mainContoroller.webViewHeaderUpdate e.rowData.data
-        mainContoroller.moveToWebViewWindow()
-      else if e.rowData.className is "config"
-        mainContoroller.login e.rowData
-      else
-        Ti.API.info "tableView eventListener start. storedTo is #{e.rowData.storedTo}"
-        storedTo = e.rowData.storedTo
-        mainContoroller.loadOldEntry storedTo
+          mainContoroller.sessionItem e.rowData.data
+          mainContoroller.webViewContentsUpdate e.rowData.data.body
+          mainContoroller.webViewHeaderUpdate e.rowData.data
+          mainContoroller.moveToWebViewWindow()
+        else if e.rowData.className is "config"
+          mainContoroller.login e.rowData
+        else
+          Ti.API.info "tableView eventListener start. storedTo is #{e.rowData.storedTo}"
+          storedTo = e.rowData.storedTo
+          mainContoroller.loadOldEntry storedTo
 
     )
     

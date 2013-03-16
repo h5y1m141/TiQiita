@@ -24,7 +24,7 @@ loginCommand = (function() {
         Ti.App.Properties.setString('QiitaToken', token);
         mainContoroller.createMainWindow();
         mainContoroller.refreshMenuTable();
-        mainContoroller.startApp();
+        commandController.useMenu("storedStocks");
         tabGroup.setActiveTab(0);
         return tabGroup.open();
       }

@@ -39,7 +39,6 @@ getFeedByTagCommand = (function(_super) {
   getFeedByTagCommand.prototype.getFeedByTag = function() {
     var MAXITEMCOUNT, rows, storedTo;
     rows = [];
-    this._hideStatusView();
     MAXITEMCOUNT = 20;
     storedTo = "followingTag" + this.tagName;
     qiita.getFeedByTag(this.tagName, function(result, links) {

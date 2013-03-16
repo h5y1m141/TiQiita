@@ -1,17 +1,22 @@
-var mainContoroller;
+var mainContoroller,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 mainContoroller = (function() {
 
   function mainContoroller() {
+    this._hideStatusView = __bind(this._hideStatusView, this);
+
+    this._showStatusView = __bind(this._showStatusView, this);
     this.state = new defaultState();
     this.networkDisconnectedMessage = "ネットワーク接続出来ません。ネットワーク設定を再度ご確認ください";
     this.authenticationFailMessage = "ユーザIDかパスワードに誤りがあるためログインできません";
   }
 
   mainContoroller.prototype.init = function() {
-    var loginID, param, password;
+    var loginID, password, _;
     loginID = Ti.App.Properties.getString('QiitaLoginID');
     password = Ti.App.Properties.getString('QiitaLoginPassword');
+    _ = require("lib/underscore-min");
     if (qiita.isConnected() === false) {
       Ti.API.info("mainContoroller init fail because of network connection not established");
       this.createMainWindow();
@@ -26,16 +31,13 @@ mainContoroller = (function() {
       tabGroup.open();
     } else {
       Ti.API.info("start mainWindow");
-      param = {
-        url_name: loginID,
-        password: password
-      };
-      qiita._auth(param);
+      this.refreshMenuTable();
+      this.startApp();
       this.createConfigWindow();
       this.createMainWindow();
-      this.startApp();
       tabGroup.setActiveTab(0);
       tabGroup.open();
+      Ti.App.Properties.setBool('stateMainTableSlide', false);
     }
     return true;
   };
@@ -117,41 +119,64 @@ mainContoroller = (function() {
   };
 
   mainContoroller.prototype.loadEntry = function() {
-    var currentPage, direction, items;
+    var currentPage, items;
     currentPage = Ti.App.Properties.getString("currentPage");
     Ti.API.info("qiitaController.loadEntry start. currentPage is " + currentPage);
     Ti.App.Properties.setString(currentPage, null);
     items = JSON.parse(Ti.App.Properties.getString(currentPage));
-    direction = "vertical";
-    this.slideMainTable(direction);
     return commandController.useMenu(currentPage);
   };
 
+  mainContoroller.prototype._currentSlideState = function() {
+    var flg, state;
+    flg = Ti.App.Properties.getBool("stateMainTableSlide");
+    if (flg === true) {
+      state = "slideState";
+    } else {
+      state = "default";
+    }
+    return state;
+  };
+
+  mainContoroller.prototype._showStatusView = function() {
+    Ti.API.info("データの読み込み。statusView表示");
+    Ti.App.Properties.setBool("stateMainTableSlide", false);
+    return this.slideMainTable("vertical");
+  };
+
+  mainContoroller.prototype._hideStatusView = function() {
+    Ti.API.info("データの読み込みが完了したらstatusViewを元に戻す");
+    Ti.App.Properties.setBool("stateMainTableSlide", true);
+    return this.slideMainTable("vertical");
+  };
+
   mainContoroller.prototype.loadOldEntry = function(storedTo) {
-    var MAXITEMCOUNT, currentPage, direction, nextURL,
+    var MAXITEMCOUNT, currentPage, nextURL,
       _this = this;
+    if (this._currentSlideState() === "default") {
+      this._showStatusView();
+    }
     MAXITEMCOUNT = 20;
     currentPage = Ti.App.Properties.getString("currentPage");
     nextURL = Ti.App.Properties.getString("" + currentPage + "nextURL");
-    direction = "vertical";
-    this.slideMainTable(direction);
     Ti.API.info(nextURL);
     if (nextURL !== null) {
       qiita.getNextFeed(nextURL, storedTo, function(result) {
-        var json, lastIndex, r, _i, _len;
+        var json, lastIndex, r, _i, _len, _results;
+        _this._hideStatusView();
         Ti.API.info("getNextFeed start. result is " + result.length);
         if (result.length !== MAXITEMCOUNT) {
-          mainTableView.hideLastRow();
+          return mainTableView.hideLastRow();
         } else {
+          _results = [];
           for (_i = 0, _len = result.length; _i < _len; _i++) {
             json = result[_i];
             r = mainTableView.createRow(json);
             lastIndex = mainTableView.lastRowIndex();
-            mainTableView.insertRow(lastIndex, r);
+            _results.push(mainTableView.insertRow(lastIndex, r));
           }
+          return _results;
         }
-        direction = "vertical";
-        return _this.slideMainTable(direction);
       });
     }
     return true;

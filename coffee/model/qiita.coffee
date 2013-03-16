@@ -170,7 +170,7 @@ class Qiita
         responseHeaders = @.responseHeaders
         if responseHeaders.Link
           relLink = self._convertLinkHeaderToJSON(responseHeaders.Link)
-          Ti.API.info "start self._parsedResponseHeader. storedTo is #{storedTo}"
+          # Ti.API.info "start self._parsedResponseHeader. storedTo is #{storedTo}"
           self._parsedResponseHeader(relLink,storedTo)
         else
           relLink = null
@@ -178,10 +178,10 @@ class Qiita
       callback(json,relLink)
 
     xhr.onerror = (e) ->
-      Ti.API.info "status code: #{@.status}"
+      # Ti.API.info "status code: #{@.status}"
       error = JSON.parse(@.responseText)
       Ti.App.Properties.setBool "#{storedTo}Error", true
-      Ti.API.info "_request method error.#{error.error}"
+      # Ti.API.info "_request method error.#{error.error}"
             
       
       
@@ -226,7 +226,7 @@ class Qiita
         
     if storedTo isnt "followingTags"
       Ti.App.Properties.setString "#{storedTo}nextURL", nextURL
-      Ti.API.info "#{storedTo}nextURL is #{nextURL} and storedTo is #{storedTo}"
+      # Ti.API.info "#{storedTo}nextURL is #{nextURL} and storedTo is #{storedTo}"
 
       
     return true

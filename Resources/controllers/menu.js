@@ -27,6 +27,7 @@ Menu = (function() {
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       command = _ref[_i];
       if (command.commandLabel === commandLabel) {
+        Ti.API.info("[Menu] run " + command.commandLabel);
         _results.push(mainContoroller.networkConnectionCheck(function() {
           return command.command.execute();
         }));

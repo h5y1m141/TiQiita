@@ -2,8 +2,6 @@ class getFeedByTagCommand extends baseCommand
   constructor:(tagName) ->
     @tagName = tagName
     @direction = "vertical"
-
-    
   execute:() ->
     if @_currentSlideState() is "default"
       @_showStatusView()
@@ -24,7 +22,7 @@ class getFeedByTagCommand extends baseCommand
       
     else
       
-      @.getFeedByTag()
+      @getFeedByTag()
       
     mainTable.setData result  
 
@@ -33,7 +31,7 @@ class getFeedByTagCommand extends baseCommand
     
   getFeedByTag:() ->
     rows = []
-    @_hideStatusView()
+    
     MAXITEMCOUNT = 20 # 1リクエスト辺りに読み込まれる最大件数
     storedTo = "followingTag#{@tagName}" 
 

@@ -7,6 +7,7 @@ class mainContoroller
   init:() ->
     loginID  = Ti.App.Properties.getString 'QiitaLoginID'
     password = Ti.App.Properties.getString 'QiitaLoginPassword'
+    _ = require("lib/underscore-min")
 
     if qiita.isConnected() is false
       Ti.API.info "mainContoroller init fail because of network connection not established"
@@ -25,19 +26,15 @@ class mainContoroller
       tabGroup.open()
     else
       Ti.API.info "start mainWindow"
-      param =
-        url_name: loginID
-        password: password
         
-      qiita._auth(param)
-
+      @refreshMenuTable()
+      @startApp()
       @createConfigWindow()
       @createMainWindow()
-      # @refreshMenuTable()
-      @startApp()
+      
       tabGroup.setActiveTab(0)
       tabGroup.open()
-
+      Ti.App.Properties.setBool 'stateMainTableSlide',false
 
       
     return true
@@ -126,22 +123,44 @@ class mainContoroller
     Ti.App.Properties.setString currentPage, null
     items = JSON.parse(Ti.App.Properties.getString(currentPage))
 
-    direction = "vertical"
-    @slideMainTable(direction)
+    
     commandController.useMenu currentPage
 
+  _currentSlideState:() ->
+    flg = Ti.App.Properties.getBool "stateMainTableSlide"
+    if flg is true
+      state = "slideState"
+    else
+      state = "default"
+
+    return state
+
+  _showStatusView:() =>
+    Ti.API.info "データの読み込み。statusView表示"
+    Ti.App.Properties.setBool "stateMainTableSlide",false
+    return @slideMainTable("vertical")
+
+
+  _hideStatusView:() =>
+    Ti.API.info "データの読み込みが完了したらstatusViewを元に戻す"
+    Ti.App.Properties.setBool "stateMainTableSlide",true
+    return @slideMainTable("vertical")    
+
   loadOldEntry: (storedTo) ->
+
+    if @_currentSlideState() is "default"
+      @_showStatusView()
 
     MAXITEMCOUNT = 20
     currentPage = Ti.App.Properties.getString "currentPage"
     nextURL = Ti.App.Properties.getString "#{currentPage}nextURL"
-    direction = "vertical"
-    @slideMainTable(direction)
+    
 
     Ti.API.info nextURL
     
     if nextURL isnt null
       qiita.getNextFeed(nextURL,storedTo,(result) =>
+        @_hideStatusView()
         Ti.API.info "getNextFeed start. result is #{result.length}"
 
         # ここで投稿件数をチェックして、20件以下だったら過去のを
@@ -153,8 +172,7 @@ class mainContoroller
             r = mainTableView.createRow(json)
             lastIndex = mainTableView.lastRowIndex()
             mainTableView.insertRow(lastIndex,r)
-        direction = "vertical"
-        @slideMainTable(direction)
+        
       )
     return true
 
@@ -212,7 +230,7 @@ class mainContoroller
       dialog.setCancel(1)
       dialog.addEventListener('click',(event) =>
         Ti.API.info "start dialog action.Event is #{event.index}"
-        
+
         switch event.index
           when 0
             mainContoroller.stockItemToQiita()

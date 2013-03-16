@@ -1,5 +1,6 @@
 class baseCommand
   constructor:() ->
+    @direction = "vertical"
     
   _currentSlideState:() ->
     flg = Ti.App.Properties.getBool "stateMainTableSlide"

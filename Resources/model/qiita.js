@@ -138,7 +138,6 @@ Qiita = (function() {
         responseHeaders = this.responseHeaders;
         if (responseHeaders.Link) {
           relLink = self._convertLinkHeaderToJSON(responseHeaders.Link);
-          Ti.API.info("start self._parsedResponseHeader. storedTo is " + storedTo);
           self._parsedResponseHeader(relLink, storedTo);
         } else {
           relLink = null;
@@ -148,10 +147,8 @@ Qiita = (function() {
     };
     xhr.onerror = function(e) {
       var error;
-      Ti.API.info("status code: " + this.status);
       error = JSON.parse(this.responseText);
-      Ti.App.Properties.setBool("" + storedTo + "Error", true);
-      return Ti.API.info("_request method error." + error.error);
+      return Ti.App.Properties.setBool("" + storedTo + "Error", true);
     };
     xhr.timeout = 5000;
     return xhr.send();
@@ -194,7 +191,6 @@ Qiita = (function() {
     }
     if (storedTo !== "followingTags") {
       Ti.App.Properties.setString("" + storedTo + "nextURL", nextURL);
-      Ti.API.info("" + storedTo + "nextURL is " + nextURL + " and storedTo is " + storedTo);
     }
     return true;
   };
