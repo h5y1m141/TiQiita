@@ -31,24 +31,6 @@ defaultState = (function() {
     return new slideState();
   };
 
-  defaultState.prototype.moveBackward = function() {
-    "[STATE] 標準状態";
-    return new defaultState();
-  };
-
-  defaultState.prototype.moveForward = function() {
-    Ti.API.info("[ACTION] スライド開始");
-    Ti.App.Properties.setBool("stateMainTableSlide", true);
-    mainTable.touchEnabled = false;
-    mainTable.animate({
-      duration: 200,
-      left: 160
-    }, function() {
-      return mainTable.setOpacity(0.5);
-    });
-    return new slideState();
-  };
-
   return defaultState;
 
 })();
