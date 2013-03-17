@@ -1,4 +1,4 @@
-var AlertView, CommandController, ConfigMenu, Hatena, MainContoroller, MainTable, MenuTable, NappSlideMenu, ProgressBar, Qiita, QiitaLoginID, QiitaLoginPassword, StatusView, actInd, activityIndicator, alertView, baseCommand, commandController, configMenu, configWindow, createCenterNavWindow, defaultState, hatena, mainContoroller, mainTable, mainTableView, mainWindow, menu, menuTable, moment, momentja, navController, progressBar, qiita, slideState, statusView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win, winLeft, window;
+var AlertView, CommandController, ConfigMenu, Hatena, MainContoroller, MainTable, MenuTable, NappSlideMenu, ProgressBar, Qiita, QiitaLoginID, QiitaLoginPassword, StatusView, actInd, activityIndicator, alertView, baseCommand, commandController, configMenu, configWindow, createCenterNavWindow, defaultState, hatena, mainContoroller, mainTable, mainTableView, mainWindow, menu, menuTable, moment, momentja, navController, progressBar, qiita, rootWindow, slideState, statusView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win, winLeft;
 
 Ti.App.Properties.setBool('stateMainTableSlide', false);
 
@@ -84,8 +84,6 @@ menu = menuTable.getMenu();
 
 configMenu = new ConfigMenu();
 
-configWindow = new win();
-
 webWindow = new win();
 
 webview = new webView();
@@ -100,12 +98,6 @@ webWindow.add(webViewContents);
 
 webWindow.add(actInd);
 
-configWindow.title = "Qiitaアカウント設定";
-
-configWindow.backgroundColor = '#fff';
-
-configWindow.add(actInd);
-
 QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID');
 
 QiitaLoginPassword = Ti.App.Properties.getString('QiitaLoginPassword');
@@ -114,16 +106,25 @@ if (testsEnabled === true) {
   require('test/tests');
 } else {
   createCenterNavWindow = function() {
-    var leftBtn, navController;
+    var leftBtn, navController, rightBtn;
     leftBtn = Ti.UI.createButton({
       title: "Menu"
     });
     leftBtn.addEventListener("click", function() {
-      window.toggleLeftView();
-      window.setCenterhiddenInteractivity("TouchDisabledWithTapToCloseBouncing");
-      return window.setPanningMode("NavigationBarPanning");
+      rootWindow.toggleLeftView();
+      rootWindow.setCenterhiddenInteractivity("TouchDisabledWithTapToCloseBouncing");
+      return rootWindow.setPanningMode("NavigationBarPanning");
+    });
+    rightBtn = Ti.UI.createButton({
+      title: "Config"
+    });
+    rightBtn.addEventListener("click", function() {
+      rootWindow.toggleRightView();
+      rootWindow.setCenterhiddenInteractivity("TouchDisabledWithTapToCloseBouncing");
+      return rootWindow.setPanningMode("NavigationBarPanning");
     });
     mainWindow.leftNavButton = leftBtn;
+    mainWindow.rightNavButton = rightBtn;
     mainWindow.add(mainTable);
     mainWindow.add(actInd);
     progressBar.show();
@@ -139,15 +140,23 @@ if (testsEnabled === true) {
     backgroundColor: "white"
   });
   winLeft.add(menu);
+  configWindow = new win();
+  configWindow.title = "Qiitaアカウント設定";
+  configWindow.backgroundColor = '#fff';
+  configWindow.add(actInd);
+  configWindow.add(configMenu);
+  configWindow.add(alertView.getAlertView());
   navController = createCenterNavWindow();
   NappSlideMenu = require("dk.napp.slidemenu");
-  window = NappSlideMenu.createSlideMenuWindow({
+  rootWindow = NappSlideMenu.createSlideMenuWindow({
     centerWindow: navController,
     leftWindow: winLeft,
-    rightWindow: webWindow,
+    rightWindow: configWindow,
     leftLedge: 160
   });
+  rootWindow.setParallaxAmount(0.1);
+  rootWindow.setPanningMode("NoPanning");
   mainContoroller.refreshMenuTable();
   mainContoroller.startApp();
-  window.open();
+  rootWindow.open();
 }

@@ -71,7 +71,7 @@ actInd = new activityIndicator()
 menuTable = new MenuTable()
 menu = menuTable.getMenu()
 configMenu = new ConfigMenu()
-configWindow = new win()
+
 webWindow = new win()
 
 
@@ -84,9 +84,6 @@ webWindow.add webViewHeader
 webWindow.add webViewContents
 webWindow.add actInd
 
-configWindow.title = "Qiitaアカウント設定"
-configWindow.backgroundColor = '#fff'
-configWindow.add actInd
 QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID')
 QiitaLoginPassword = Ti.App.Properties.getString('QiitaLoginPassword')
 
@@ -100,17 +97,25 @@ else
 
     leftBtn = Ti.UI.createButton(title: "Menu")
     leftBtn.addEventListener "click", ->
-      window.toggleLeftView()
-      window.setCenterhiddenInteractivity "TouchDisabledWithTapToCloseBouncing"
-      window.setPanningMode "NavigationBarPanning"
+      rootWindow.toggleLeftView()
+      rootWindow.setCenterhiddenInteractivity "TouchDisabledWithTapToCloseBouncing"
+      rootWindow.setPanningMode "NavigationBarPanning"
+
+    rightBtn = Ti.UI.createButton(title: "Config")
+    rightBtn.addEventListener "click", ->
+      rootWindow.toggleRightView()
+      rootWindow.setCenterhiddenInteractivity "TouchDisabledWithTapToCloseBouncing"
+      rootWindow.setPanningMode "NavigationBarPanning"  
 
     mainWindow.leftNavButton = leftBtn
+    mainWindow.rightNavButton = rightBtn
     mainWindow.add mainTable
     mainWindow.add actInd
     progressBar.show()
     statusView.add progressBar
     mainWindow.add statusView
     mainWindow.add alertView.getAlertView()
+
 
 
     
@@ -121,24 +126,31 @@ else
   
   winLeft = Ti.UI.createWindow(backgroundColor: "white")
   winLeft.add menu
+  configWindow = new win()
+  configWindow.title = "Qiitaアカウント設定"
+  configWindow.backgroundColor = '#fff'
+  configWindow.add actInd
 
+  configWindow.add configMenu
+  configWindow.add alertView.getAlertView()
   navController = createCenterNavWindow()
   
 
   #//////////////////////////////////////////////
   # NappSlideMenu WINDOW
   NappSlideMenu = require("dk.napp.slidemenu")
-  window = NappSlideMenu.createSlideMenuWindow(
+  rootWindow = NappSlideMenu.createSlideMenuWindow(
     centerWindow: navController
     leftWindow: winLeft
-    rightWindow: webWindow
+    rightWindow: configWindow
     leftLedge:160
   )
-  
 
+  rootWindow.setParallaxAmount(0.1)
+  rootWindow.setPanningMode("NoPanning")
   mainContoroller.refreshMenuTable()
   mainContoroller.startApp()
 
-  window.open() #init the app
+  rootWindow.open() #init the app
 
 

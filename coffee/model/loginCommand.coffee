@@ -16,17 +16,16 @@ class loginCommand
         actInd.hide()
         
       else
-        alert "認証出来ました。\n自動的にメインの画面に切り替わりますのでしばらくお待ち下さい"
+        alert "認証出来ました"
         actInd.hide()
         Ti.App.Properties.setString 'QiitaLoginID', param.url_name
         Ti.App.Properties.setString 'QiitaLoginPassword', param.password
         Ti.App.Properties.setString 'QiitaToken', token
         
-        mainContoroller.createMainWindow()
+
         mainContoroller.refreshMenuTable()
         commandController.useMenu "storedStocks"
-        tabGroup.setActiveTab(0)
-        tabGroup.open()
+        
 
 
     )

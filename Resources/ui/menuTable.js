@@ -37,7 +37,7 @@ menuTable = (function() {
     });
     this.table.addEventListener('click', function(e) {
       var curretRowIndex;
-      window.toggleLeftView();
+      rootWindow.toggleLeftView();
       curretRowIndex = e.index;
       _this.resetBackGroundColor(_this.table.data[0].rows);
       _this.table.data[0].rows[curretRowIndex].backgroundColor = _this.qiitaColor;
