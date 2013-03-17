@@ -198,11 +198,8 @@ class mainContoroller
   slideMainTable: (direction) ->
     slideState = Ti.App.Properties.getBool("stateMainTableSlide") 
     Ti.API.info "[SLIDEMAINTABLE] direction is #{direction}.slideState is #{slideState}"
-    if slideState is false and direction is "horizontal"
-      @state = @state.moveForward()
-    else if slideState is true and direction is "horizontal"
-      @state = @state.moveBackward()
-    else if slideState is false and direction is "vertical"
+
+    if slideState is false and direction is "vertical"
       @state = @state.moveDown()
     else if slideState is true and direction is "vertical"
       @state = @state.moveUP()

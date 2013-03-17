@@ -201,11 +201,7 @@ mainContoroller = (function() {
     var slideState;
     slideState = Ti.App.Properties.getBool("stateMainTableSlide");
     Ti.API.info("[SLIDEMAINTABLE] direction is " + direction + ".slideState is " + slideState);
-    if (slideState === false && direction === "horizontal") {
-      return this.state = this.state.moveForward();
-    } else if (slideState === true && direction === "horizontal") {
-      return this.state = this.state.moveBackward();
-    } else if (slideState === false && direction === "vertical") {
+    if (slideState === false && direction === "vertical") {
       return this.state = this.state.moveDown();
     } else if (slideState === true && direction === "vertical") {
       return this.state = this.state.moveUP();
