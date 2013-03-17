@@ -73,7 +73,7 @@ menu = menuTable.getMenu()
 configMenu = new ConfigMenu()
 configWindow = new win()
 webWindow = new win()
-webWindow.backButtonTitle = '戻る'
+
 
 # あらかじめwebviewを生成しておかないと、メイン画面から
 # 遷移した時にもたつく原因になるために以下を実施している    
@@ -123,7 +123,7 @@ else
   winLeft.add menu
 
   navController = createCenterNavWindow()
-  winRight = Ti.UI.createWindow(backgroundColor: "white")
+  
 
   #//////////////////////////////////////////////
   # NappSlideMenu WINDOW
@@ -131,9 +131,10 @@ else
   window = NappSlideMenu.createSlideMenuWindow(
     centerWindow: navController
     leftWindow: winLeft
-    rightWindow: winRight
+    rightWindow: webWindow
     leftLedge:160
   )
+  
 
   mainContoroller.refreshMenuTable()
   mainContoroller.startApp()

@@ -191,6 +191,7 @@ mainContoroller = (function() {
 
   mainContoroller.prototype.moveToWebViewWindow = function() {
     var actionBtn;
+    webview.show();
     actionBtn = Ti.UI.createButton({
       systemButton: Titanium.UI.iPhone.SystemButton.ACTION
     });
@@ -210,9 +211,8 @@ mainContoroller = (function() {
       });
       return dialog.show();
     });
-    webview.show();
-    webWindow.rightNavButton = actionBtn;
-    return mainTab.open(webWindow);
+    webWindow.add(actionBtn);
+    navController.open(webWindow);
   };
 
   return mainContoroller;

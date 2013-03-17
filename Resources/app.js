@@ -1,4 +1,4 @@
-var AlertView, CommandController, ConfigMenu, Hatena, MainContoroller, MainTable, MenuTable, NappSlideMenu, ProgressBar, Qiita, QiitaLoginID, QiitaLoginPassword, StatusView, actInd, activityIndicator, alertView, baseCommand, commandController, configMenu, configWindow, createCenterNavWindow, defaultState, hatena, mainContoroller, mainTable, mainTableView, mainWindow, menu, menuTable, moment, momentja, navController, progressBar, qiita, slideState, statusView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win, winLeft, winRight, window;
+var AlertView, CommandController, ConfigMenu, Hatena, MainContoroller, MainTable, MenuTable, NappSlideMenu, ProgressBar, Qiita, QiitaLoginID, QiitaLoginPassword, StatusView, actInd, activityIndicator, alertView, baseCommand, commandController, configMenu, configWindow, createCenterNavWindow, defaultState, hatena, mainContoroller, mainTable, mainTableView, mainWindow, menu, menuTable, moment, momentja, navController, progressBar, qiita, slideState, statusView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win, winLeft, window;
 
 Ti.App.Properties.setBool('stateMainTableSlide', false);
 
@@ -88,8 +88,6 @@ configWindow = new win();
 
 webWindow = new win();
 
-webWindow.backButtonTitle = '戻る';
-
 webview = new webView();
 
 webViewHeader = webview.retreiveWebViewHeader();
@@ -142,14 +140,11 @@ if (testsEnabled === true) {
   });
   winLeft.add(menu);
   navController = createCenterNavWindow();
-  winRight = Ti.UI.createWindow({
-    backgroundColor: "white"
-  });
   NappSlideMenu = require("dk.napp.slidemenu");
   window = NappSlideMenu.createSlideMenuWindow({
     centerWindow: navController,
     leftWindow: winLeft,
-    rightWindow: winRight,
+    rightWindow: webWindow,
     leftLedge: 160
   });
   mainContoroller.refreshMenuTable();

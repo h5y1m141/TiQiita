@@ -185,7 +185,9 @@ class mainContoroller
   webViewHeaderUpdate: (json) ->
     return webview.headerUpdate(json)
 
-  moveToWebViewWindow: () ->    
+  moveToWebViewWindow: () ->
+    webview.show()
+      
     actionBtn = Ti.UI.createButton
       systemButton: Titanium.UI.iPhone.SystemButton.ACTION
 
@@ -205,9 +207,10 @@ class mainContoroller
       )
       dialog.show()
     )
-    webview.show()
-    webWindow.rightNavButton = actionBtn
-    return mainTab.open(webWindow)
+    
+    webWindow.add actionBtn
+    navController.open webWindow
+    return
 
 
 

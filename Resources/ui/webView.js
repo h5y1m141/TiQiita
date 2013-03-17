@@ -1,5 +1,7 @@
 var webView;
+
 webView = (function() {
+
   function webView() {
     var bootstrapCSS, file, qiitaCSS;
     this.webViewHeaderContainer = Ti.UI.createLabel({
@@ -58,12 +60,15 @@ webView = (function() {
     });
     this.web.hide();
   }
+
   webView.prototype.retreiveWebView = function() {
     return this.web;
   };
+
   webView.prototype.retreiveWebViewHeader = function() {
     return this.webViewHeaderContainer;
   };
+
   webView.prototype.headerUpdate = function(json) {
     this.titleLabel.text = json.title;
     this.dateLabel.text = '投稿日：' + moment(json.created_at, "YYYY-MM-DD HH:mm:ss Z").fromNow();
@@ -73,13 +78,18 @@ webView = (function() {
     this.webViewHeaderContainer.add(this.dateLabel);
     return true;
   };
+
   webView.prototype.contentsUpdate = function(body) {
     this.web.html = "" + this.htmlHeaderElement + body + "</body></html>";
     return true;
   };
+
   webView.prototype.show = function() {
     return this.web.show();
   };
+
   return webView;
+
 })();
+
 module.exports = webView;
