@@ -77,38 +77,6 @@ mainContoroller = (function() {
     return true;
   };
 
-  mainContoroller.prototype.createMainWindow = function() {
-    var listBtn, refreshBtn,
-      _this = this;
-    listBtn = Ti.UI.createButton({
-      systemButton: Titanium.UI.iPhone.SystemButton.BOOKMARKS
-    });
-    listBtn.addEventListener('click', function() {
-      var direction;
-      direction = "horizontal";
-      Ti.API.info("listBtn click." + direction);
-      return _this.slideMainTable(direction);
-    });
-    refreshBtn = Ti.UI.createButton({
-      systemButton: Titanium.UI.iPhone.SystemButton.REFRESH
-    });
-    refreshBtn.addEventListener('click', function() {
-      return _this.networkConnectionCheck(function() {
-        return _this.loadEntry();
-      });
-    });
-    mainWindow.add(actInd);
-    mainWindow.add(mainTable);
-    mainWindow.add(menu);
-    progressBar.show();
-    statusView.add(progressBar);
-    mainWindow.add(statusView);
-    mainWindow.add(alertView.getAlertView());
-    mainWindow.leftNavButton = listBtn;
-    mainWindow.rightNavButton = refreshBtn;
-    return true;
-  };
-
   mainContoroller.prototype.startApp = function() {
     commandController.createMenu("QiitaUser");
     return commandController.useMenu("storedStocks");
@@ -153,9 +121,7 @@ mainContoroller = (function() {
   mainContoroller.prototype.loadOldEntry = function(storedTo) {
     var MAXITEMCOUNT, currentPage, nextURL,
       _this = this;
-    if (this._currentSlideState() === "default") {
-      this._showStatusView();
-    }
+    this._showStatusView();
     MAXITEMCOUNT = 20;
     currentPage = Ti.App.Properties.getString("currentPage");
     nextURL = Ti.App.Properties.getString("" + currentPage + "nextURL");

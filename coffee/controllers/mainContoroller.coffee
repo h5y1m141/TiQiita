@@ -69,36 +69,6 @@ class mainContoroller
     return true
     
         
-  createMainWindow:() ->
-    listBtn = Ti.UI.createButton
-      systemButton: Titanium.UI.iPhone.SystemButton.BOOKMARKS
-      
-    listBtn.addEventListener('click',()=>
-      direction = "horizontal"
-      Ti.API.info "listBtn click.#{direction}"
-      @slideMainTable(direction)
-    )
-    
-    refreshBtn = Ti.UI.createButton
-      systemButton: Titanium.UI.iPhone.SystemButton.REFRESH
-      
-    refreshBtn.addEventListener('click',()=>
-      @networkConnectionCheck(()=>
-        @loadEntry()
-      )
-    )
-    
-    mainWindow.add actInd
-    mainWindow.add mainTable
-    mainWindow.add menu
-    progressBar.show()
-    statusView.add progressBar
-    mainWindow.add statusView
-    mainWindow.add alertView.getAlertView()
-    mainWindow.leftNavButton  = listBtn
-    mainWindow.rightNavButton  = refreshBtn
-    
-    return true
 
     
   startApp:() ->
@@ -148,8 +118,8 @@ class mainContoroller
 
   loadOldEntry: (storedTo) ->
 
-    if @_currentSlideState() is "default"
-      @_showStatusView()
+    
+    @_showStatusView()
 
     MAXITEMCOUNT = 20
     currentPage = Ti.App.Properties.getString "currentPage"
