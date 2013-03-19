@@ -15,15 +15,14 @@ class mainContoroller
       @_alertViewShow @networkDisconnectedMessage
 
     else if loginID? is false or loginID is ""
-
       rootWindow.toggleRightView()
-      @startApp()
+      commandController.useMenu "storedStocks"
 
 
     else
       Ti.API.info "start mainWindow"
-      @refreshMenuTable()
-      @startApp()
+      commandController.createMenu "QiitaUser"
+      commandController.useMenu "storedStocks"
       Ti.App.Properties.setBool 'stateMainTableSlide',false
 
 
@@ -52,12 +51,6 @@ class mainContoroller
   _alertViewShow:(messsage) ->
     alertView.editMessage messsage
     alertView.animate()
-    
-    
-  startApp:() ->
-    commandController.createMenu "QiitaUser"
-    commandController.useMenu "storedStocks"
-    
     
 
     

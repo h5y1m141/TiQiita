@@ -15,8 +15,6 @@ commandController = (function() {
     configCommand = require("model/configCommand");
     loginCommand = require("model/loginCommand");
     this.menu.addCommands("storedStocks", new stocksCommand());
-    this.menu.addCommands("config", new configCommand());
-    this.menu.addCommands("qiitaLogin", new loginCommand());
     if (user === "QiitaUser") {
       Ti.API.info("[MENU] for QiitaUser");
       myStocksCommand = require("model/getMyStocksCommand");

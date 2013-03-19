@@ -21,11 +21,11 @@ mainContoroller = (function() {
       this._alertViewShow(this.networkDisconnectedMessage);
     } else if ((loginID != null) === false || loginID === "") {
       rootWindow.toggleRightView();
-      this.startApp();
+      commandController.useMenu("storedStocks");
     } else {
       Ti.API.info("start mainWindow");
-      this.refreshMenuTable();
-      this.startApp();
+      commandController.createMenu("QiitaUser");
+      commandController.useMenu("storedStocks");
       Ti.App.Properties.setBool('stateMainTableSlide', false);
     }
     return true;
@@ -58,11 +58,6 @@ mainContoroller = (function() {
   mainContoroller.prototype._alertViewShow = function(messsage) {
     alertView.editMessage(messsage);
     return alertView.animate();
-  };
-
-  mainContoroller.prototype.startApp = function() {
-    commandController.createMenu("QiitaUser");
-    return commandController.useMenu("storedStocks");
   };
 
   mainContoroller.prototype.refreshMenuTable = function() {

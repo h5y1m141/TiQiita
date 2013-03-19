@@ -10,8 +10,6 @@ class commandController
     loginCommand = require("model/loginCommand")
     
     @menu.addCommands("storedStocks",new stocksCommand())
-    @menu.addCommands("config",new configCommand())
-    @menu.addCommands("qiitaLogin", new loginCommand())
     
 
     if user is "QiitaUser"

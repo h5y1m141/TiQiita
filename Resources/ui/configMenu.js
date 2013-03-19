@@ -3,31 +3,24 @@ var configMenu;
 configMenu = (function() {
 
   function configMenu() {
-    var QiitaLoginID, QiitaLoginPassword, groupData, label1, label2, row1, row2, tableView, textField1, textField2,
-      _this = this;
-    groupData = Ti.UI.createTableViewSection();
+    var QiitaLoginID, QiitaLoginPassword, groupData, loginGroup, row1, row2, row3, row3label, tableView, textField1, textField2;
+    groupData = Ti.UI.createTableViewSection({
+      headerTitle: "Qiitaアカウント設定"
+    });
     commandController.createMenu();
     QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID');
     QiitaLoginPassword = Ti.App.Properties.getString('QiitaLoginPassword');
     row1 = Ti.UI.createTableViewRow({
-      width: 320,
+      width: 270,
       height: 50
-    });
-    label1 = Ti.UI.createLabel({
-      color: "#222",
-      top: 5,
-      left: 5,
-      width: 100,
-      height: 40,
-      text: "ログインID"
     });
     textField1 = Ti.UI.createTextField({
       color: "#222",
       top: 5,
-      left: 110,
-      width: 150,
+      left: 10,
+      width: 230,
       height: 40,
-      hintText: "ユーザID",
+      hintText: "QiitaユーザID",
       font: {
         fontSize: 14
       },
@@ -40,26 +33,17 @@ configMenu = (function() {
     textField1.addEventListener('change', function(e) {
       return Ti.App.Properties.setString('QiitaLoginID', e.value);
     });
-    row1.add(label1);
     row1.add(textField1);
     row1.className = 'url_name';
     row2 = Ti.UI.createTableViewRow({
-      width: 320,
+      width: 270,
       height: 50
-    });
-    label2 = Ti.UI.createLabel({
-      color: "#222",
-      top: 5,
-      left: 5,
-      width: 100,
-      height: 40,
-      text: "パスワード"
     });
     textField2 = Ti.UI.createTextField({
       color: "#222",
       top: 5,
-      left: 110,
-      width: 150,
+      left: 10,
+      width: 230,
       height: 40,
       hintText: "パスワード入力",
       font: {
@@ -75,17 +59,6 @@ configMenu = (function() {
     textField2.addEventListener('change', function(e) {
       return Ti.App.Properties.setString('QiitaLoginPassword', e.value);
     });
-    textField2.addEventListener('blur', function(e) {
-      var message;
-      if (qiita.isConnected() === false) {
-        message = mainContoroller.networkDisconnectedMessage;
-        return mainContoroller._alertViewShow(message);
-      } else {
-        actInd.show();
-        return commandController.useMenu("qiitaLogin");
-      }
-    });
-    row2.add(label2);
     row2.add(textField2);
     row2.className = 'password';
     if (QiitaLoginID !== null) {
@@ -94,15 +67,42 @@ configMenu = (function() {
     if (QiitaLoginPassword !== null) {
       textField2.value = QiitaLoginPassword;
     }
+    row3 = Ti.UI.createTableViewRow({
+      width: 270,
+      height: 50,
+      backgroundColor: '#59BB0C'
+    });
+    row3label = Ti.UI.createLabel({
+      color: "#fff",
+      top: 15,
+      left: 5,
+      width: 250,
+      height: 20,
+      font: {
+        fontSize: 20,
+        fontWeight: 'bold'
+      },
+      textAlign: 1,
+      text: "ログインする"
+    });
+    row3.add(row3label);
     groupData.add(row1);
     groupData.add(row2);
+    groupData.add(row3);
+    loginGroup = Ti.UI.createTableViewSection();
     tableView = Ti.UI.createTableView({
       zIndex: 5,
       data: [groupData],
       style: Ti.UI.iPhone.TableViewStyle.GROUPED,
       top: 0,
-      width: 320,
-      height: 160
+      left: 50,
+      width: 270,
+      height: 300
+    });
+    tableView.addEventListener('click', function(e) {
+      if (e.index === 2) {
+        return commandController.useMenu("qiitaLogin");
+      }
     });
     return tableView;
   }

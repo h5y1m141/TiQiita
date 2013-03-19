@@ -1,30 +1,23 @@
 class configMenu
   constructor: () ->
-    groupData = Ti.UI.createTableViewSection()
+    groupData = Ti.UI.createTableViewSection(
+      headerTitle: "Qiitaアカウント設定"
+    )
     commandController.createMenu()  
     QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID')
     QiitaLoginPassword = Ti.App.Properties.getString('QiitaLoginPassword')
     
     row1 = Ti.UI.createTableViewRow
-      width: 320
+      width: 270
       height:50
-
-    label1 = Ti.UI.createLabel
-      color:"#222"
-      top:5
-      left:5
-      width:100
-      height:40
-      text:"ログインID"
-    
 
     textField1 = Ti.UI.createTextField
       color:"#222"
       top:5
-      left:110
-      width:150
+      left:10
+      width:230
       height:40
-      hintText:"ユーザID"
+      hintText:"QiitaユーザID"
       font:
         fontSize:14
 
@@ -38,28 +31,18 @@ class configMenu
       Ti.App.Properties.setString('QiitaLoginID',e.value)
     )
     
-    row1.add label1
     row1.add textField1
     row1.className = 'url_name'
 
     row2 = Ti.UI.createTableViewRow
-      width: 320
+      width: 270
       height:50
-
-    label2 = Ti.UI.createLabel
-      color:"#222"
-      top:5
-      left:5
-      width:100
-      height:40
-      text:"パスワード"
-    
 
     textField2 = Ti.UI.createTextField
       color:"#222"
       top:5
-      left:110
-      width:150
+      left:10
+      width:230
       height:40
       hintText:"パスワード入力"
       font:
@@ -76,16 +59,15 @@ class configMenu
       Ti.App.Properties.setString('QiitaLoginPassword',e.value)
     )
 
-    textField2.addEventListener('blur',(e) =>
-      if qiita.isConnected() is false
-        message = mainContoroller.networkDisconnectedMessage
-        mainContoroller._alertViewShow message
-      else
-        actInd.show()
-        commandController.useMenu "qiitaLogin"
-    )
+    # textField2.addEventListener('blur',(e) =>
+    #   if qiita.isConnected() is false
+    #     message = mainContoroller.networkDisconnectedMessage
+    #     mainContoroller._alertViewShow message
+    #   else
+    #     actInd.show()
+    #     commandController.useMenu "qiitaLogin"
+    # )
 
-    row2.add label2
     row2.add textField2
     row2.className = 'password'
     
@@ -94,46 +76,50 @@ class configMenu
 
     if QiitaLoginPassword isnt null
       textField2.value = QiitaLoginPassword
-      
+
+    row3 = Ti.UI.createTableViewRow
+      width: 270
+      height:50
+      backgroundColor:'#59BB0C'  
+
+
+    row3label = Ti.UI.createLabel
+      color:"#fff"
+      top:15
+      left:5
+      width:250
+      height:20
+      font:
+        fontSize:20
+        fontWeight:'bold'
+      textAlign:1
+      text:"ログインする"
+
+    row3.add row3label
+
     groupData.add row1
     groupData.add row2
+    groupData.add row3
 
-    # loginGroup = Ti.UI.createTableViewSection()
+    loginGroup = Ti.UI.createTableViewSection()
 
-    # row3 = Ti.UI.createTableViewRow
-    #   width: 320
-    #   height:50
-    #   backgroundColor:'#59BB0C'
-      
-    # label3 = Ti.UI.createLabel
-    #   color:"#fff"
-    #   top:5
-    #   left:5
-    #   width:300
-    #   height:40
-    #   textAlign:1
-    #   font:
-    #     fontSize:18
-    #     fontWeight:'bold'
-    #   text:"ログインする"
-
-    # row3.add label3
-    # row3.addEventListener('click',(e) ->
-      
-    #   commandController.useMenu "qiitaLogin"
-    # )
-    # loginGroup.add row3
 
     tableView = Ti.UI.createTableView
       zIndex:5
       # data: [groupData,loginGroup]
-      data: [groupData]
+      data: [groupData]      
+
       style: Ti.UI.iPhone.TableViewStyle.GROUPED
       top: 0
-      width: 320
-      height:160
+      left:50
+      width: 270
+      height:300
       
-      
+    tableView.addEventListener('click',(e) ->  
+      if e.index is 2
+        commandController.useMenu "qiitaLogin"
+
+    )
     return tableView
     
 module.exports = configMenu

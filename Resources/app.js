@@ -1,4 +1,4 @@
-var AlertView, CommandController, ConfigMenu, Hatena, MainContoroller, MainTable, MenuTable, NappSlideMenu, ProgressBar, Qiita, QiitaLoginID, QiitaLoginPassword, StatusView, actInd, actionBtn, activityIndicator, alertView, baseCommand, commandController, configMenu, configWindow, createCenterNavWindow, defaultState, hatena, mainContoroller, mainTable, mainTableView, mainWindow, menu, menuTable, moment, momentja, navController, progressBar, qiita, rootWindow, slideState, statusView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win, winLeft;
+var AlertView, CommandController, ConfigMenu, Hatena, MainContoroller, MainTable, MenuTable, NappSlideMenu, ProgressBar, Qiita, QiitaLoginID, QiitaLoginPassword, StatusView, actInd, actionBtn, activityIndicator, alertView, baseCommand, commandController, configMenu, configWindow, createCenterNavWindow, defaultState, mainContoroller, mainTable, mainTableView, mainWindow, menu, menuTable, moment, momentja, navController, progressBar, qiita, rootWindow, slideState, statusView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win, winLeft;
 
 Ti.App.Properties.setBool('stateMainTableSlide', false);
 
@@ -32,11 +32,7 @@ Hatena = require('model/hatena');
 
 baseCommand = require("model/baseCommand");
 
-hatena = new Hatena();
-
 qiita = new Qiita();
-
-hatena.login();
 
 MainContoroller = require('controllers/mainContoroller');
 
@@ -175,9 +171,9 @@ if (testsEnabled === true) {
     centerWindow: navController,
     leftWindow: winLeft,
     rightWindow: configWindow,
-    leftLedge: 200
+    leftLedge: 200,
+    rightLedge: 50
   });
-  rootWindow.setParallaxAmount(0.7);
   rootWindow.open();
   mainContoroller.init();
 }

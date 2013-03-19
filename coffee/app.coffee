@@ -39,10 +39,9 @@ slideState = require("model/slideState")
 Qiita = require('model/qiita')
 Hatena = require('model/hatena')
 baseCommand = require("model/baseCommand")
-hatena = new Hatena()
 qiita = new Qiita()
 
-hatena.login()
+
 # 以下からコントローラー読み込み
 MainContoroller = require('controllers/mainContoroller')
 CommandController = require("controllers/commandController")
@@ -166,8 +165,8 @@ else
     leftWindow: winLeft
     rightWindow: configWindow
     leftLedge:200
+    rightLedge:50
   )
 
-  rootWindow.setParallaxAmount(0.7)
   rootWindow.open()
   mainContoroller.init()
