@@ -27,21 +27,9 @@ class mainTable
         if e.rowData.data?
           webview.setStockURL(e.rowData.data.url)
           webview.setStockUUID(e.rowData.data.uuid)
-        #   Ti.App.Properties.setString('stockURL',e.rowData.data.url)
-        #   Ti.App.Properties.setString('stockUUID',e.rowData.data.uuid)
-        #   Ti.App.Properties.setString('stockID',e.rowData.data.id)
 
         Ti.API.info "web content update finished #{moment()}"  
         navController.open webWindow  
-
-        # mainContoroller.sessionItem e.rowData.data
-        # mainContoroller.webViewContentsUpdate e.rowData.data.body
-        # mainContoroller.webViewHeaderUpdate e.rowData.data
-        # mainContoroller.moveToWebViewWindow()
-        
-        
-        
-        
 
       else if e.rowData.className is "config"
         mainContoroller.login e.rowData

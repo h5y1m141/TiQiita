@@ -83,6 +83,27 @@ webViewContents = webview.retreiveWebView()
 webWindow.add webViewHeader
 webWindow.add webViewContents
 webWindow.add actInd
+actionBtn = Ti.UI.createButton
+  systemButton: Titanium.UI.iPhone.SystemButton.ACTION
+
+actionBtn.addEventListener('click',()->
+
+  dialog = Ti.UI.createOptionDialog()
+  dialog.setTitle "どの処理を実行しますか？"
+  dialog.setOptions(["ストックする","キャンセル"])
+  dialog.setCancel(1)
+  dialog.addEventListener('click',(event) =>
+    Ti.API.info "start dialog action.Event is #{event.index}"
+
+    switch event.index
+      when 0
+        mainContoroller.stockItemToQiita()
+        
+  )
+  dialog.show()
+)
+
+webWindow.rightNavButton = actionBtn
 
 QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID')
 QiitaLoginPassword = Ti.App.Properties.getString('QiitaLoginPassword')
@@ -130,6 +151,7 @@ else
   configWindow.title = "Qiitaアカウント設定"
   configWindow.backgroundColor = '#fff'
   configWindow.add actInd
+
 
   configWindow.add configMenu
   configWindow.add alertView.getAlertView()

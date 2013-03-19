@@ -60,12 +60,6 @@ mainContoroller = (function() {
     return alertView.animate();
   };
 
-  mainContoroller.prototype.createConfigWindow = function() {
-    configWindow.add(configMenu);
-    configWindow.add(alertView.getAlertView());
-    return true;
-  };
-
   mainContoroller.prototype.startApp = function() {
     commandController.createMenu("QiitaUser");
     return commandController.useMenu("storedStocks");
@@ -138,7 +132,8 @@ mainContoroller = (function() {
   };
 
   mainContoroller.prototype.stockItemToQiita = function(uuid) {
-    uuid = Ti.App.Properties.getString('stockUUID');
+    Ti.API.info(webview.getStockUUID());
+    uuid = webview.getStockUUID();
     qiita.putStock(uuid);
     return true;
   };

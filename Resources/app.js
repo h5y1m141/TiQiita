@@ -1,4 +1,4 @@
-var AlertView, CommandController, ConfigMenu, Hatena, MainContoroller, MainTable, MenuTable, NappSlideMenu, ProgressBar, Qiita, QiitaLoginID, QiitaLoginPassword, StatusView, actInd, activityIndicator, alertView, baseCommand, commandController, configMenu, configWindow, createCenterNavWindow, defaultState, hatena, mainContoroller, mainTable, mainTableView, mainWindow, menu, menuTable, moment, momentja, navController, progressBar, qiita, rootWindow, slideState, statusView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win, winLeft;
+var AlertView, CommandController, ConfigMenu, Hatena, MainContoroller, MainTable, MenuTable, NappSlideMenu, ProgressBar, Qiita, QiitaLoginID, QiitaLoginPassword, StatusView, actInd, actionBtn, activityIndicator, alertView, baseCommand, commandController, configMenu, configWindow, createCenterNavWindow, defaultState, hatena, mainContoroller, mainTable, mainTableView, mainWindow, menu, menuTable, moment, momentja, navController, progressBar, qiita, rootWindow, slideState, statusView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win, winLeft;
 
 Ti.App.Properties.setBool('stateMainTableSlide', false);
 
@@ -97,6 +97,29 @@ webWindow.add(webViewHeader);
 webWindow.add(webViewContents);
 
 webWindow.add(actInd);
+
+actionBtn = Ti.UI.createButton({
+  systemButton: Titanium.UI.iPhone.SystemButton.ACTION
+});
+
+actionBtn.addEventListener('click', function() {
+  var dialog,
+    _this = this;
+  dialog = Ti.UI.createOptionDialog();
+  dialog.setTitle("どの処理を実行しますか？");
+  dialog.setOptions(["ストックする", "キャンセル"]);
+  dialog.setCancel(1);
+  dialog.addEventListener('click', function(event) {
+    Ti.API.info("start dialog action.Event is " + event.index);
+    switch (event.index) {
+      case 0:
+        return mainContoroller.stockItemToQiita();
+    }
+  });
+  return dialog.show();
+});
+
+webWindow.rightNavButton = actionBtn;
 
 QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID');
 

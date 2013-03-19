@@ -11,7 +11,7 @@ class mainContoroller
     _ = require("lib/underscore-min")
 
     if qiita.isConnected() is false
-      
+
       @_alertViewShow @networkDisconnectedMessage
 
     else if loginID? is false or loginID is ""
@@ -53,14 +53,6 @@ class mainContoroller
     alertView.editMessage messsage
     alertView.animate()
     
-  createConfigWindow:() ->
-    
-    configWindow.add configMenu
-    configWindow.add alertView.getAlertView()
-    return true
-    
-        
-
     
   startApp:() ->
     commandController.createMenu "QiitaUser"
@@ -135,7 +127,8 @@ class mainContoroller
     return true
 
   stockItemToQiita: (uuid) ->
-    uuid = Ti.App.Properties.getString('stockUUID')
+    Ti.API.info webview.getStockUUID()
+    uuid = webview.getStockUUID()
     # actInd.backgroundColor = '#222'
     # actInd.message = 'Posting...'
     # actInd.zIndex = 20
@@ -175,28 +168,7 @@ class mainContoroller
 
   moveToWebViewWindow: () ->
     
-    
-    
-    # actionBtn = Ti.UI.createButton
-    #   systemButton: Titanium.UI.iPhone.SystemButton.ACTION
 
-    # actionBtn.addEventListener('click',()->
-
-    #   dialog = Ti.UI.createOptionDialog()
-    #   dialog.setTitle "どの処理を実行しますか？"
-    #   dialog.setOptions(["ストックする","キャンセル"])
-    #   dialog.setCancel(1)
-    #   dialog.addEventListener('click',(event) =>
-    #     Ti.API.info "start dialog action.Event is #{event.index}"
-
-    #     switch event.index
-    #       when 0
-    #         mainContoroller.stockItemToQiita()
-            
-    #   )
-    #   dialog.show()
-    # )
-    
     Ti.API.info "webview show finish #{moment()}"
     Ti.API.info "#{webview.getStockUUID()}"
     navController.open webWindow
