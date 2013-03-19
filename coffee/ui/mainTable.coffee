@@ -16,23 +16,39 @@ class mainTable
 
       if qiita.isConnected() is false
         mainController._alertViewShow "ネットワーク接続出来ません。ネットワーク設定を再度ご確認ください"
-      else
-        if e.rowData.className is 'entry'
-          
-          # 一覧画面から詳細画面に遷移した後、該当の投稿情報を
-          # ストックする際にURLやuuidの情報が必要になるために
-          # sessionItem()を利用する
+      else if e.rowData.className is 'entry'
+        # 一覧画面から詳細画面に遷移した後、該当の投稿情報を
+        # ストックする際にURLやuuidの情報が必要になるために
+        # sessionItem()を利用する
+        Ti.API.info "start eventListener #{moment()}"
+        
+        webview.contentsUpdate(e.rowData.data.body)
+        webview.headerUpdate(e.rowData.data)
+        if e.rowData.data?
+          webview.setStockURL(e.rowData.data.url)
+          webview.setStockUUID(e.rowData.data.uuid)
+        #   Ti.App.Properties.setString('stockURL',e.rowData.data.url)
+        #   Ti.App.Properties.setString('stockUUID',e.rowData.data.uuid)
+        #   Ti.App.Properties.setString('stockID',e.rowData.data.id)
 
-          mainContoroller.sessionItem e.rowData.data
-          mainContoroller.webViewContentsUpdate e.rowData.data.body
-          mainContoroller.webViewHeaderUpdate e.rowData.data
-          mainContoroller.moveToWebViewWindow()
-        else if e.rowData.className is "config"
-          mainContoroller.login e.rowData
-        else
-          Ti.API.info "tableView eventListener start. storedTo is #{e.rowData.storedTo}"
-          storedTo = e.rowData.storedTo
-          mainContoroller.loadOldEntry storedTo
+        Ti.API.info "web content update finished #{moment()}"  
+        navController.open webWindow  
+
+        # mainContoroller.sessionItem e.rowData.data
+        # mainContoroller.webViewContentsUpdate e.rowData.data.body
+        # mainContoroller.webViewHeaderUpdate e.rowData.data
+        # mainContoroller.moveToWebViewWindow()
+        
+        
+        
+        
+
+      else if e.rowData.className is "config"
+        mainContoroller.login e.rowData
+      else
+        Ti.API.info "tableView eventListener start. storedTo is #{e.rowData.storedTo}"
+        storedTo = e.rowData.storedTo
+        mainContoroller.loadOldEntry storedTo
 
     )
     

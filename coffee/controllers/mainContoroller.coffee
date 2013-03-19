@@ -1,6 +1,7 @@
 class mainContoroller
   constructor:() ->
     @state = new defaultState()
+
     @networkDisconnectedMessage = "ネットワーク接続出来ません。ネットワーク設定を再度ご確認ください"
     @authenticationFailMessage = "ユーザIDかパスワードに誤りがあるためログインできません"
       
@@ -186,29 +187,31 @@ class mainContoroller
     return webview.headerUpdate(json)
 
   moveToWebViewWindow: () ->
-    webview.show()
-      
-    actionBtn = Ti.UI.createButton
-      systemButton: Titanium.UI.iPhone.SystemButton.ACTION
-
-    actionBtn.addEventListener('click',()->
-
-      dialog = Ti.UI.createOptionDialog()
-      dialog.setTitle "どの処理を実行しますか？"
-      dialog.setOptions(["ストックする","キャンセル"])
-      dialog.setCancel(1)
-      dialog.addEventListener('click',(event) =>
-        Ti.API.info "start dialog action.Event is #{event.index}"
-
-        switch event.index
-          when 0
-            mainContoroller.stockItemToQiita()
-            
-      )
-      dialog.show()
-    )
     
-    webWindow.add actionBtn
+    
+    
+    # actionBtn = Ti.UI.createButton
+    #   systemButton: Titanium.UI.iPhone.SystemButton.ACTION
+
+    # actionBtn.addEventListener('click',()->
+
+    #   dialog = Ti.UI.createOptionDialog()
+    #   dialog.setTitle "どの処理を実行しますか？"
+    #   dialog.setOptions(["ストックする","キャンセル"])
+    #   dialog.setCancel(1)
+    #   dialog.addEventListener('click',(event) =>
+    #     Ti.API.info "start dialog action.Event is #{event.index}"
+
+    #     switch event.index
+    #       when 0
+    #         mainContoroller.stockItemToQiita()
+            
+    #   )
+    #   dialog.show()
+    # )
+    
+    Ti.API.info "webview show finish #{moment()}"
+    Ti.API.info "#{webview.getStockUUID()}"
     navController.open webWindow
     return
 

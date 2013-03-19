@@ -1,4 +1,4 @@
-#!/bin/bash
+_#!/bin/bash
 
 # Utility script to start Titanium Mobile project from the command line.
 PROJECT_ROOT=${PROJECT_ROOT:-../}
@@ -90,7 +90,7 @@ fi
 
 # Both iOS and Android SDKs are linked in this directory
 # TI_ASSETS_DIR="${TI_DIR}/mobilesdk/osx/${TI_SDK_VERSION}"
-TI_ASSETS_DIR="${TI_DIR}/mobilesdk/osx/3.0.0.GA"
+TI_ASSETS_DIR="${TI_DIR}/mobilesdk/osx/2.1.4.GA"
 if [[ -d "$TI_ASSETS_DIR" ]]; then
 	echo "[DEBUG] Titanium SDK ${TI_SDK_VERSION} found..."
 else
@@ -101,7 +101,7 @@ fi
 # iPhone settings
 if [ "${iphone}" == "" ]; then
   if [ "${IOS_SDK_VERSION}" == "" ]; then
-	  iphone="6.0"
+	  iphone="5.1"
   else
     iphone="${IOS_SDK_VERSION}"
   fi

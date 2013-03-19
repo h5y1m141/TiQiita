@@ -3,7 +3,7 @@ var webView;
 webView = (function() {
 
   function webView() {
-    var bootstrapCSS, file, qiitaCSS;
+    var bootstrapCSS, file, qiitaCSS, stockURL, stockUUID;
     this.webViewHeaderContainer = Ti.UI.createLabel({
       top: 0,
       left: 0,
@@ -58,7 +58,8 @@ webView = (function() {
       backgroundColor: '#cbcbcb',
       image: ""
     });
-    this.web.hide();
+    stockURL = null;
+    stockUUID = null;
   }
 
   webView.prototype.retreiveWebView = function() {
@@ -86,6 +87,22 @@ webView = (function() {
 
   webView.prototype.show = function() {
     return this.web.show();
+  };
+
+  webView.prototype.setStockUUID = function(stockUUID) {
+    this.stockUUID = stockUUID;
+  };
+
+  webView.prototype.setStockURL = function(stockURL) {
+    this.stockURL = stockURL;
+  };
+
+  webView.prototype.getStockUUID = function() {
+    return this.stockUUID;
+  };
+
+  webView.prototype.getStockURL = function() {
+    return this.stockURL;
   };
 
   return webView;

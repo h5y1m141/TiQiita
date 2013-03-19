@@ -52,8 +52,11 @@ class webView
       height:50
       backgroundColor:'#cbcbcb'
       image: ""
-      
-    @web.hide()
+
+    stockURL = null
+    stockUUID = null
+
+    # @web.hide()
     
   retreiveWebView: () ->
     return @web
@@ -74,9 +77,24 @@ class webView
   contentsUpdate:(body) ->
     @web.html = "#{@htmlHeaderElement}#{body}</body></html>"
     return true
-
     
   show:() ->
     return @web.show()
+
+  setStockUUID:(stockUUID) ->
+    @stockUUID = stockUUID
+    return
+
+  setStockURL:(stockURL) ->
+    @stockURL = stockURL
+    return
+
+  getStockUUID:() ->
+    return @stockUUID
+
+  getStockURL:() ->
+    return @stockURL
+
+
       
 module.exports = webView    
