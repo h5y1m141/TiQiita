@@ -12,30 +12,20 @@ class mainContoroller
 
     if qiita.isConnected() is false
       Ti.API.info "mainContoroller init fail because of network connection not established"
-      @createMainWindow()
-      @createConfigWindow()
       @_alertViewShow @networkDisconnectedMessage
-      tabGroup.setActiveTab(0)
-      tabGroup.open()
 
     else if loginID? is false or loginID is ""
-      Ti.API.info "@createConfigWindow start"
-
-      @createConfigWindow()
+      rootWindow.open()
+      rootWindow.toggleRightView()
       
-      tabGroup.setActiveTab(1)
-      tabGroup.open()
+
+
     else
       Ti.API.info "start mainWindow"
-        
       @refreshMenuTable()
       @startApp()
-      @createConfigWindow()
-      @createMainWindow()
-      
-      tabGroup.setActiveTab(0)
-      tabGroup.open()
       Ti.App.Properties.setBool 'stateMainTableSlide',false
+      rootWindow.open()
 
       
     return true
@@ -73,9 +63,6 @@ class mainContoroller
 
     
   startApp:() ->
-    # direction = "vertical"
-    # Ti.App.Properties.setBool 'stateMainTableSlide',false
-    # @slideMainTable(direction)
     commandController.createMenu "QiitaUser"
     commandController.useMenu "storedStocks"
     

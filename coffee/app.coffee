@@ -143,14 +143,8 @@ else
     centerWindow: navController
     leftWindow: winLeft
     rightWindow: configWindow
-    leftLedge:160
+    leftLedge:200
   )
 
-  rootWindow.setParallaxAmount(0.1)
-  rootWindow.setPanningMode("NoPanning")
-  mainContoroller.refreshMenuTable()
-  mainContoroller.startApp()
-
-  rootWindow.open() #init the app
-
-
+  rootWindow.setParallaxAmount(0.7)
+  mainContoroller.init()

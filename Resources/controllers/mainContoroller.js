@@ -19,25 +19,16 @@ mainContoroller = (function() {
     _ = require("lib/underscore-min");
     if (qiita.isConnected() === false) {
       Ti.API.info("mainContoroller init fail because of network connection not established");
-      this.createMainWindow();
-      this.createConfigWindow();
       this._alertViewShow(this.networkDisconnectedMessage);
-      tabGroup.setActiveTab(0);
-      tabGroup.open();
     } else if ((loginID != null) === false || loginID === "") {
-      Ti.API.info("@createConfigWindow start");
-      this.createConfigWindow();
-      tabGroup.setActiveTab(1);
-      tabGroup.open();
+      rootWindow.open();
+      rootWindow.toggleRightView();
     } else {
       Ti.API.info("start mainWindow");
       this.refreshMenuTable();
       this.startApp();
-      this.createConfigWindow();
-      this.createMainWindow();
-      tabGroup.setActiveTab(0);
-      tabGroup.open();
       Ti.App.Properties.setBool('stateMainTableSlide', false);
+      rootWindow.open();
     }
     return true;
   };
