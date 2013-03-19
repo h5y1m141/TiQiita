@@ -147,4 +147,5 @@ else
   )
 
   rootWindow.setParallaxAmount(0.7)
+  rootWindow.open()
   mainContoroller.init()

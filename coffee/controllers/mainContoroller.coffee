@@ -11,13 +11,13 @@ class mainContoroller
     _ = require("lib/underscore-min")
 
     if qiita.isConnected() is false
-      Ti.API.info "mainContoroller init fail because of network connection not established"
+      
       @_alertViewShow @networkDisconnectedMessage
 
     else if loginID? is false or loginID is ""
-      rootWindow.open()
+
       rootWindow.toggleRightView()
-      
+      @startApp()
 
 
     else
@@ -25,7 +25,7 @@ class mainContoroller
       @refreshMenuTable()
       @startApp()
       Ti.App.Properties.setBool 'stateMainTableSlide',false
-      rootWindow.open()
+
 
       
     return true

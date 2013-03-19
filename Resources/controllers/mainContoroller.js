@@ -18,17 +18,15 @@ mainContoroller = (function() {
     password = Ti.App.Properties.getString('QiitaLoginPassword');
     _ = require("lib/underscore-min");
     if (qiita.isConnected() === false) {
-      Ti.API.info("mainContoroller init fail because of network connection not established");
       this._alertViewShow(this.networkDisconnectedMessage);
     } else if ((loginID != null) === false || loginID === "") {
-      rootWindow.open();
       rootWindow.toggleRightView();
+      this.startApp();
     } else {
       Ti.API.info("start mainWindow");
       this.refreshMenuTable();
       this.startApp();
       Ti.App.Properties.setBool('stateMainTableSlide', false);
-      rootWindow.open();
     }
     return true;
   };

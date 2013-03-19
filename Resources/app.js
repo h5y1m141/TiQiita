@@ -155,5 +155,6 @@ if (testsEnabled === true) {
     leftLedge: 200
   });
   rootWindow.setParallaxAmount(0.7);
+  rootWindow.open();
   mainContoroller.init();
 }
