@@ -17,31 +17,24 @@ Hatena = (function() {
   }
 
   Hatena.prototype.login = function() {
-    var hatenaAuthorize;
-    hatenaAuthorize = function(event) {
-      this.hatena.addEventListener("login", function(e) {
-        if (e.success) {
-          Ti.App.Properties.setString("hatenaAccessTokenKey", e.accessTokenKey);
-          Ti.App.Properties.setString("hatenaAccessTokenSecret", e.accessTokenSecret);
-          return this.hatena.request("applications/my.json", {}, {}, "POST", function(e) {
-            var json;
-            if (e.success) {
-              return json = JSON.parse(e.result.text);
-            } else {
+    var _this = this;
+    this.hatena.addEventListener("login", function(e) {
+      if (e.success) {
+        Ti.App.Properties.setString("hatenaAccessTokenKey", e.accessTokenKey);
+        Ti.App.Properties.setString("hatenaAccessTokenSecret", e.accessTokenSecret);
+        return _this.hatena.request("applications/my.json", {}, {}, "POST", function(e) {
+          var json;
+          if (e.success) {
+            return json = JSON.parse(e.result.text);
+          } else {
 
-            }
-          });
-        } else {
+          }
+        });
+      } else {
 
-        }
-      });
-      return this.hatena.authorize();
-    };
-    if (this.hatena.authorized) {
-      hatenaAuthorize();
-    } else {
-
-    }
+      }
+    });
+    this.hatena.authorize();
     return true;
   };
 

@@ -24,7 +24,7 @@ class loginCommand
         
 
         mainContoroller.refreshMenuTable()
-        commandController.useMenu "storedStocks"
+        # commandController.useMenu "storedStocks"
         
 
 

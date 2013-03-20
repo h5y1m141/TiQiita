@@ -14,27 +14,23 @@ class Hatena
 
 
   login:() ->
-    hatenaAuthorize = (event) ->
-      @hatena.addEventListener "login", (e) ->
-        if e.success
-          Ti.App.Properties.setString "hatenaAccessTokenKey", e.accessTokenKey
-          Ti.App.Properties.setString "hatenaAccessTokenSecret", e.accessTokenSecret
-          @hatena.request "applications/my.json", {}, {}, "POST", (e) ->
-            if e.success
-              json = JSON.parse(e.result.text)
-            else
 
-        
-        # error proc...
-        else
+    @hatena.addEventListener "login", (e) =>
+      if e.success
+        Ti.App.Properties.setString "hatenaAccessTokenKey", e.accessTokenKey
+        Ti.App.Properties.setString "hatenaAccessTokenSecret", e.accessTokenSecret
+        @hatena.request "applications/my.json", {}, {}, "POST", (e) ->
+          if e.success
+            json = JSON.parse(e.result.text)
+          else
 
-      
-      # error proc…
-      @hatena.authorize()
 
-    if @hatena.authorized
-      hatenaAuthorize()
-    else
+      else
+
+    
+
+    @hatena.authorize()
+
 
     return true
 

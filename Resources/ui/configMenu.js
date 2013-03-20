@@ -3,7 +3,7 @@ var configMenu;
 configMenu = (function() {
 
   function configMenu() {
-    var QiitaLoginID, QiitaLoginPassword, groupData, loginGroup, row1, row2, row3, row3label, tableView, textField1, textField2;
+    var QiitaLoginID, QiitaLoginPassword, evernoteLabel, evernoteRow, evernoteSwitch, groupData, hatenaLabel, hatenaLoginFlg, hatenaRow, hatenaSwitch, platformSection, row1, row2, row3, row3label, tableView, textField1, textField2;
     groupData = Ti.UI.createTableViewSection({
       headerTitle: "Qiitaアカウント設定"
     });
@@ -12,14 +12,14 @@ configMenu = (function() {
     QiitaLoginPassword = Ti.App.Properties.getString('QiitaLoginPassword');
     row1 = Ti.UI.createTableViewRow({
       width: 270,
-      height: 50
+      height: Ti.UI.FILL
     });
     textField1 = Ti.UI.createTextField({
       color: "#222",
       top: 5,
       left: 10,
       width: 230,
-      height: 40,
+      height: 30,
       hintText: "QiitaユーザID",
       font: {
         fontSize: 14
@@ -37,14 +37,14 @@ configMenu = (function() {
     row1.className = 'url_name';
     row2 = Ti.UI.createTableViewRow({
       width: 270,
-      height: 50
+      height: Ti.UI.FILL
     });
     textField2 = Ti.UI.createTextField({
       color: "#222",
       top: 5,
       left: 10,
       width: 230,
-      height: 40,
+      height: 30,
       hintText: "パスワード入力",
       font: {
         fontSize: 14
@@ -89,18 +89,81 @@ configMenu = (function() {
     groupData.add(row1);
     groupData.add(row2);
     groupData.add(row3);
-    loginGroup = Ti.UI.createTableViewSection();
+    platformSection = Ti.UI.createTableViewSection({
+      headerTitle: "SNSアカウント設定"
+    });
+    hatenaRow = Ti.UI.createTableViewRow({
+      touchEnabled: false,
+      height: Ti.UI.FILL,
+      selectionStyle: Ti.UI.iPhone.TableViewCellSelectionStyle.NONE
+    });
+    hatenaRow.addEventListener('click', function() {
+      var Hatena, hatena;
+      Ti.API.info("start hatena");
+      Hatena = require("model/hatena");
+      hatena = new Hatena();
+      return hatena.login();
+    });
+    hatenaLabel = Ti.UI.createLabel({
+      left: 10,
+      text: "Sign in with はてな"
+    });
+    if (Ti.App.Properties.getBool("hatenaAccessTokenKey") != null) {
+      hatenaLoginFlg = true;
+    } else {
+      hatenaLoginFlg = false;
+    }
+    hatenaSwitch = Ti.UI.createSwitch({
+      right: 10,
+      value: hatenaLoginFlg
+    });
+    hatenaSwitch.addEventListener("change", function(e) {
+      return Ti.App.Properties.setBool("hatenaShareSwitch", e.value);
+    });
+    hatenaRow.add(hatenaLabel);
+    hatenaRow.add(hatenaSwitch);
+    evernoteRow = Ti.UI.createTableViewRow({
+      height: Ti.UI.FILL,
+      touchEnabled: false,
+      selectionStyle: Ti.UI.iPhone.TableViewCellSelectionStyle.NONE
+    });
+    evernoteSwitch = Ti.UI.createSwitch({
+      right: 10,
+      value: Ti.App.Properties.getBool("evernoteShareSwitch", true)
+    });
+    evernoteSwitch.addEventListener("change", function(e) {
+      Ti.App.Properties.setBool("evernoteShareSwitch", e.value);
+      if (e.value === false) {
+        return evernote.logout(function() {
+          Ti.App.Properties.removeProperty("evernoteAccessTokenKey");
+          evernoteLabel.setText("Sign in with Evernote");
+          evernoteRow.remove(evernoteSwitch);
+          evernoteRow.touchEnabled = true;
+          evernoteRow.selectionStyle = Ti.UI.iPhone.TableViewCellSelectionStyle.BLUE;
+          return evernoteRow.addEventListener("click", evernoteAuthorize);
+        });
+      }
+    });
+    evernoteLabel = Ti.UI.createLabel({
+      left: 10,
+      text: "Sign in with Evernote"
+    });
+    evernoteRow.add(evernoteLabel);
+    evernoteRow.add(evernoteSwitch);
+    platformSection.add(hatenaRow);
+    platformSection.add(evernoteRow);
     tableView = Ti.UI.createTableView({
       zIndex: 5,
-      data: [groupData],
+      data: [groupData, platformSection],
       style: Ti.UI.iPhone.TableViewStyle.GROUPED,
       top: 0,
       left: 50,
       width: 270,
-      height: 300
+      height: 400
     });
     tableView.addEventListener('click', function(e) {
       if (e.index === 2) {
+        actInd.show();
         return commandController.useMenu("qiitaLogin");
       }
     });

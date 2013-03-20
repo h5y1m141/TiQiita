@@ -130,7 +130,6 @@ else
     mainWindow.leftNavButton = leftBtn
     mainWindow.rightNavButton = rightBtn
     mainWindow.add mainTable
-    mainWindow.add actInd
     progressBar.show()
     statusView.add progressBar
     mainWindow.add statusView

@@ -9,14 +9,14 @@ class configMenu
     
     row1 = Ti.UI.createTableViewRow
       width: 270
-      height:50
+      height: Ti.UI.FILL
 
     textField1 = Ti.UI.createTextField
       color:"#222"
       top:5
       left:10
       width:230
-      height:40
+      height:30
       hintText:"QiitaユーザID"
       font:
         fontSize:14
@@ -36,14 +36,14 @@ class configMenu
 
     row2 = Ti.UI.createTableViewRow
       width: 270
-      height:50
+      height:Ti.UI.FILL
 
     textField2 = Ti.UI.createTextField
       color:"#222"
       top:5
       left:10
       width:230
-      height:40
+      height:30
       hintText:"パスワード入力"
       font:
         fontSize:14
@@ -101,22 +101,94 @@ class configMenu
     groupData.add row2
     groupData.add row3
 
-    loginGroup = Ti.UI.createTableViewSection()
+    # SNS 
+    platformSection = Ti.UI.createTableViewSection(headerTitle: "SNSアカウント設定")
 
+    hatenaRow = Ti.UI.createTableViewRow
+      touchEnabled: false
+      height: Ti.UI.FILL
+      selectionStyle: Ti.UI.iPhone.TableViewCellSelectionStyle.NONE
+    
 
+    hatenaRow.addEventListener('click',()->
+      Ti.API.info "start hatena"
+      Hatena = require("model/hatena")
+      hatena = new Hatena()
+      hatena.login()
+    )  
+
+    hatenaLabel = Ti.UI.createLabel(
+      left: 10
+      text: "Sign in with はてな"
+    )
+    if Ti.App.Properties.getBool("hatenaAccessTokenKey")?
+      hatenaLoginFlg = true
+    else  
+      hatenaLoginFlg = false
+    hatenaSwitch = Ti.UI.createSwitch(
+      right: 10
+      value: hatenaLoginFlg
+    )
+    hatenaSwitch.addEventListener "change", (e) ->
+      Ti.App.Properties.setBool "hatenaShareSwitch", e.value
+
+    hatenaRow.add hatenaLabel
+    hatenaRow.add hatenaSwitch
+
+    evernoteRow = Ti.UI.createTableViewRow(
+      height: Ti.UI.FILL
+      touchEnabled: false
+      selectionStyle: Ti.UI.iPhone.TableViewCellSelectionStyle.NONE
+    )
+
+    evernoteSwitch = Ti.UI.createSwitch(
+      right: 10
+      value: Ti.App.Properties.getBool("evernoteShareSwitch", true)
+    )
+
+    evernoteSwitch.addEventListener "change", (e) ->
+      Ti.App.Properties.setBool "evernoteShareSwitch", e.value
+      if e.value is false
+        evernote.logout ->
+          Ti.App.Properties.removeProperty "evernoteAccessTokenKey"
+          evernoteLabel.setText "Sign in with Evernote"
+          evernoteRow.remove evernoteSwitch
+          evernoteRow.touchEnabled = true
+          evernoteRow.selectionStyle = Ti.UI.iPhone.TableViewCellSelectionStyle.BLUE
+          evernoteRow.addEventListener "click", evernoteAuthorize
+
+    evernoteLabel = Ti.UI.createLabel(
+      left: 10
+      text: "Sign in with Evernote"
+    )
+    
+
+    evernoteRow.add evernoteLabel
+    evernoteRow.add evernoteSwitch
+
+    platformSection.add hatenaRow
+    platformSection.add evernoteRow
     tableView = Ti.UI.createTableView
       zIndex:5
-      # data: [groupData,loginGroup]
-      data: [groupData]      
+      data: [groupData,platformSection]
+      # data: [groupData]      
 
       style: Ti.UI.iPhone.TableViewStyle.GROUPED
       top: 0
       left:50
       width: 270
-      height:300
+      height:400
       
     tableView.addEventListener('click',(e) ->  
+
       if e.index is 2
+    #   if qiita.isConnected() is false
+    #     message = mainContoroller.networkDisconnectedMessage
+    #     mainContoroller._alertViewShow message
+    #   else
+    #     actInd.show()
+    #     commandController.useMenu "qiitaLogin"        
+        actInd.show()
         commandController.useMenu "qiitaLogin"
 
     )

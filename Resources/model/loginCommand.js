@@ -22,8 +22,7 @@ loginCommand = (function() {
         Ti.App.Properties.setString('QiitaLoginID', param.url_name);
         Ti.App.Properties.setString('QiitaLoginPassword', param.password);
         Ti.App.Properties.setString('QiitaToken', token);
-        mainContoroller.refreshMenuTable();
-        return commandController.useMenu("storedStocks");
+        return mainContoroller.refreshMenuTable();
       }
     });
     return true;
