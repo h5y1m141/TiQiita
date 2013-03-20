@@ -168,7 +168,7 @@ class configMenu
 
     platformSection.add hatenaRow
     platformSection.add evernoteRow
-    tableView = Ti.UI.createTableView
+    @tableView = Ti.UI.createTableView
       zIndex:5
       data: [groupData,platformSection]
       # data: [groupData]      
@@ -179,7 +179,7 @@ class configMenu
       width: 270
       height:400
       
-    tableView.addEventListener('click',(e) ->  
+    @tableView.addEventListener('click',(e) ->  
 
       if e.index is 2
     #   if qiita.isConnected() is false
@@ -192,6 +192,20 @@ class configMenu
         commandController.useMenu "qiitaLogin"
 
     )
-    return tableView
-    
+
+
+  getTable:() ->
+    return @tableView
+
+  changeHatenaRowElement: (iconImage,switchFlg) =>
+    Ti.API.info switchFlg
+    Ti.API.info iconImage
+    @hatenaSwitch.value = switchFlg
+    @hatenaRow.add iconImage
+    @hatenaRow.remove hatenaLabel
+    return 
+
+
+
+
 module.exports = configMenu

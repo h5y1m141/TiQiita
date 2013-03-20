@@ -1,9 +1,12 @@
-var configMenu;
+var configMenu,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 configMenu = (function() {
 
   function configMenu() {
-    var QiitaLoginID, QiitaLoginPassword, evernoteLabel, evernoteRow, evernoteSwitch, groupData, hatenaLabel, hatenaLoginFlg, hatenaRow, hatenaSwitch, platformSection, row1, row2, row3, row3label, tableView, textField1, textField2;
+    this.changeHatenaRowElement = __bind(this.changeHatenaRowElement, this);
+
+    var QiitaLoginID, QiitaLoginPassword, evernoteLabel, evernoteRow, evernoteSwitch, groupData, hatenaLabel, hatenaLoginFlg, hatenaRow, hatenaSwitch, platformSection, row1, row2, row3, row3label, textField1, textField2;
     groupData = Ti.UI.createTableViewSection({
       headerTitle: "Qiitaアカウント設定"
     });
@@ -152,7 +155,7 @@ configMenu = (function() {
     evernoteRow.add(evernoteSwitch);
     platformSection.add(hatenaRow);
     platformSection.add(evernoteRow);
-    tableView = Ti.UI.createTableView({
+    this.tableView = Ti.UI.createTableView({
       zIndex: 5,
       data: [groupData, platformSection],
       style: Ti.UI.iPhone.TableViewStyle.GROUPED,
@@ -161,14 +164,25 @@ configMenu = (function() {
       width: 270,
       height: 400
     });
-    tableView.addEventListener('click', function(e) {
+    this.tableView.addEventListener('click', function(e) {
       if (e.index === 2) {
         actInd.show();
         return commandController.useMenu("qiitaLogin");
       }
     });
-    return tableView;
   }
+
+  configMenu.prototype.getTable = function() {
+    return this.tableView;
+  };
+
+  configMenu.prototype.changeHatenaRowElement = function(iconImage, switchFlg) {
+    Ti.API.info(switchFlg);
+    Ti.API.info(iconImage);
+    this.hatenaSwitch.value = switchFlg;
+    this.hatenaRow.add(iconImage);
+    this.hatenaRow.remove(hatenaLabel);
+  };
 
   return configMenu;
 

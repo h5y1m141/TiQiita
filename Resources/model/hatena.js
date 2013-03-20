@@ -23,9 +23,19 @@ Hatena = (function() {
         Ti.App.Properties.setString("hatenaAccessTokenKey", e.accessTokenKey);
         Ti.App.Properties.setString("hatenaAccessTokenSecret", e.accessTokenSecret);
         return _this.hatena.request("applications/my.json", {}, {}, "POST", function(e) {
-          var json;
+          var iconImage, json, switchFlg;
           if (e.success) {
-            return json = JSON.parse(e.result.text);
+            json = JSON.parse(e.result.text);
+            iconImage = Ti.UI.createImageView({
+              width: 40,
+              height: 40,
+              top: 5,
+              left: 5,
+              image: json.profile_image_url
+            });
+            Ti.API.info(json.profile_image_url);
+            switchFlg = true;
+            return configMenu.changeHatenaRowElement(iconImage, switchFlg);
           } else {
 
           }

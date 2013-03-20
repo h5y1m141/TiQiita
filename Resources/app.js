@@ -162,7 +162,7 @@ if (testsEnabled === true) {
   configWindow.title = "Qiitaアカウント設定";
   configWindow.backgroundColor = '#fff';
   configWindow.add(actInd);
-  configWindow.add(configMenu);
+  configWindow.add(configMenu.getTable());
   configWindow.add(alertView.getAlertView());
   navController = createCenterNavWindow();
   NappSlideMenu = require("dk.napp.slidemenu");

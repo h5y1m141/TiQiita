@@ -151,7 +151,7 @@ else
   configWindow.add actInd
 
 
-  configWindow.add configMenu
+  configWindow.add configMenu.getTable()
   configWindow.add alertView.getAlertView()
   navController = createCenterNavWindow()
   
