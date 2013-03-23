@@ -48,28 +48,15 @@ Hatena = (function() {
   };
 
   Hatena.prototype.postBookmark = function(url) {
-    var param, xml, _xhr;
+    var xml;
     xml = "<entry xmlns='http://purl.org/atom/ns#'>\n  <title>dummy</title>\n  <link rel='related' type='text/html' href='" + url + "' />\n</entry>";
-    param = {
-      oauth_token: Ti.App.Properties.getString('hatenaAccessTokenKey'),
-      oauth_token_secret: Ti.App.Properties.getString('hatenaAccessTokenSecret'),
-      xmlData: xml
-    };
-    _xhr = Ti.Network.createHTTPClient();
-    _xhr.open('POST', 'http://b.hatena.ne.jp/atom/post');
-    _xhr.setRequestHeader("Content-type", "application/x.atom+xml");
-    _xhr.onload = function(e) {
-      return Ti.API.info("hatena status code: " + this.status);
-    };
-    _xhr.onerror = function(e) {
-      var dialog;
-      dialog = Ti.UI.createAlertDialog({
-        title: "Ouch!",
-        message: "StatusCode: " + this.status
-      });
-      return dialog.show();
-    };
-    return _xhr.send(xml);
+    return this.hatena.request('http://b.hatena.ne.jp/atom/post', xml, {
+      'Content-Type': 'application/x.atom+xml'
+    }, "POST", function(e) {
+      if (e.success) {
+        return alert("はてなブックマークへの投稿完了しました");
+      }
+    });
   };
 
   return Hatena;

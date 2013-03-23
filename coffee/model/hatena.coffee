@@ -47,36 +47,19 @@ class Hatena
     return true
 
   postBookmark:(url) ->
-      
+    
     xml = """
     <entry xmlns='http://purl.org/atom/ns#'>
       <title>dummy</title>
       <link rel='related' type='text/html' href='#{url}' />
     </entry>
     """
+    
+    @hatena.request('http://b.hatena.ne.jp/atom/post', xml, {'Content-Type':'application/x.atom+xml'}, "POST", (e) ->
+      if e.success
+        alert "はてなブックマークへの投稿完了しました"
 
-    param =
-      oauth_token:Ti.App.Properties.getString('hatenaAccessTokenKey')
-      oauth_token_secret: Ti.App.Properties.getString('hatenaAccessTokenSecret')
-      xmlData: xml
-
-
-    _xhr = Ti.Network.createHTTPClient()
-    _xhr.open 'POST', 'http://b.hatena.ne.jp/atom/post'
-    _xhr.setRequestHeader("Content-type","application/x.atom+xml")
-
-
-
-    _xhr.onload = (e) ->
-      Ti.API.info "hatena status code: #{@.status}"
-      
-    _xhr.onerror = (e) ->
-      dialog = Ti.UI.createAlertDialog
-        title: "Ouch!"
-        message: "StatusCode: #{@.status}"
-      dialog.show()
-    _xhr.send xml
-
+    )
 
 
 module.exports = Hatena
