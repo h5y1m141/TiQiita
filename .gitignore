@@ -26,3 +26,4 @@ tmp
 /Resources/eventManagement.js
 /certs/development.mobileprovision
 /coffee/controllers/qiitaController.coffee
+/Resources/config/*
