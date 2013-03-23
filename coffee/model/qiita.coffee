@@ -300,31 +300,35 @@ class Qiita
 
     @._request(param,false,callback)
   putStock:(uuid) ->
-    token = Ti.App.Properties.getString('QiitaToken')
-    if token is null
-      @._auth()
-      
-    xhr = Ti.Network.createHTTPClient()
-    method = 'PUT'
-    xhr.setRequestHeader('X-HTTP-Method-Override',method)
+    param =
+      url_name: Ti.App.Properties.getString('QiitaLoginID'),
+      password: Ti.App.Properties.getString('QiitaLoginPassword')
 
-    url = "https://qiita.com/api/v1/items/#{uuid}/stock"
-    xhr.open(method,url)
-    xhr.send({
-      token:Ti.App.Properties.getString('QiitaToken')
-    })
-    xhr.onload = ->
-
-      # PUTメソッドを使って投稿成功しても、xhr.responseTextは
-      # nullしか返らないがonload内でその後のalertDialog()を
-      # 呼び出すためにこの処理が必要
-      
-      body = JSON.parse(xhr.responseText)
-      
-      actInd.hide()
-      alertDialog = Ti.UI.createAlertDialog()
-      alertDialog.setTitle "Qiitaへのストックが完了しました"
-      alertDialog.show()
+    qiita._auth(param, (token)=>
+      xhr = Ti.Network.createHTTPClient()
+      method = 'PUT'
+      url = "https://qiita.com/api/v1/items/#{uuid}/stock"
+      xhr.open(method,url)
+      xhr.setRequestHeader('X-HTTP-Method-Override',method)
+      xhr.onload = ->
+        # PUTメソッドを使って投稿成功しても、xhr.responseTextは
+        # nullしか返らないがonload内でその後のalertDialog()を
+        # 呼び出すためにこの処理が必要
+        body = JSON.parse(xhr.responseText)
+        actInd.hide()
+        alertDialog = Ti.UI.createAlertDialog()
+        alertDialog.setTitle "Qiitaへのストックが完了しました"
+        alertDialog.show()
+        
+      xhr.onerror = (e) ->
+        message: "StatusCode: #{@.status}"
+        
+      Ti.API.debug Ti.App.Properties.getString('QiitaToken')
+        
+      xhr.send({
+        token:Ti.App.Properties.getString('QiitaToken')
+      })
+    )
 
   setRequestParameter:(name) ->
     Ti.API.info "setRequestParameter start.user name id #{@user_name} and name is #{name}"

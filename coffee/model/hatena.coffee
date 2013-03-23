@@ -28,8 +28,8 @@ class Hatena
               top:5
               left:5
               image:json.profile_image_url
-              
-            Ti.API.info json.profile_image_url
+
+
             switchFlg = true
 
             configMenu.changeHatenaRowElement(iconImage,switchFlg)  
@@ -45,5 +45,35 @@ class Hatena
 
 
     return true
+
+  postBookmark:(url) ->
+    Ti.include 'lib/wsse.js'
+    xml = """
+    <entry xmlns='http://purl.org/atom/ns#'>
+      <title>dummy</title>
+      <link rel='related' type='text/html' href='#{url}' />
+    </entry>
+    """
+
+
+    _xhr = Ti.Network.createHTTPClient()
+    _xhr.open 'POST', 'http://b.hatena.ne.jp/atom/post'
+    _xhr.setRequestHeader("Content-type","application/x.atom+xml")
+    _xhr.setRequestHeader("X-WSSE", wsseHeader("h5y1m141", "orih6254"))
+    
+
+    Ti.API.debug wsseHeader("h5y1m141", "orih6254")
+
+    _xhr.onload = (e) ->
+      Ti.API.info "hatena status code: #{@.status}"
+      
+    _xhr.onerror = (e) ->
+      dialog = Ti.UI.createAlertDialog
+        title: "Ouch!"
+        message: "StatusCode: #{@.status}"
+      dialog.show()
+    _xhr.send xml
+
+
 
 module.exports = Hatena

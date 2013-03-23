@@ -33,7 +33,6 @@ Hatena = (function() {
               left: 5,
               image: json.profile_image_url
             });
-            Ti.API.info(json.profile_image_url);
             switchFlg = true;
             return configMenu.changeHatenaRowElement(iconImage, switchFlg);
           } else {
@@ -46,6 +45,29 @@ Hatena = (function() {
     });
     this.hatena.authorize();
     return true;
+  };
+
+  Hatena.prototype.postBookmark = function(url) {
+    var xml, _xhr;
+    Ti.include('lib/wsse.js');
+    xml = "<entry xmlns='http://purl.org/atom/ns#'>\n  <title>dummy</title>\n  <link rel='related' type='text/html' href='" + url + "' />\n</entry>";
+    _xhr = Ti.Network.createHTTPClient();
+    _xhr.open('POST', 'http://b.hatena.ne.jp/atom/post');
+    _xhr.setRequestHeader("Content-type", "application/x.atom+xml");
+    _xhr.setRequestHeader("X-WSSE", wsseHeader("h5y1m141", "orih6254"));
+    Ti.API.debug(wsseHeader("h5y1m141", "orih6254"));
+    _xhr.onload = function(e) {
+      return Ti.API.info("hatena status code: " + this.status);
+    };
+    _xhr.onerror = function(e) {
+      var dialog;
+      dialog = Ti.UI.createAlertDialog({
+        title: "Ouch!",
+        message: "StatusCode: " + this.status
+      });
+      return dialog.show();
+    };
+    return _xhr.send(xml);
   };
 
   return Hatena;

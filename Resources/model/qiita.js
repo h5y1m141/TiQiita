@@ -280,27 +280,37 @@ Qiita = (function() {
   };
 
   Qiita.prototype.putStock = function(uuid) {
-    var method, token, url, xhr;
-    token = Ti.App.Properties.getString('QiitaToken');
-    if (token === null) {
-      this._auth();
-    }
-    xhr = Ti.Network.createHTTPClient();
-    method = 'PUT';
-    xhr.setRequestHeader('X-HTTP-Method-Override', method);
-    url = "https://qiita.com/api/v1/items/" + uuid + "/stock";
-    xhr.open(method, url);
-    xhr.send({
-      token: Ti.App.Properties.getString('QiitaToken')
-    });
-    return xhr.onload = function() {
-      var alertDialog, body;
-      body = JSON.parse(xhr.responseText);
-      actInd.hide();
-      alertDialog = Ti.UI.createAlertDialog();
-      alertDialog.setTitle("Qiitaへのストックが完了しました");
-      return alertDialog.show();
+    var param,
+      _this = this;
+    param = {
+      url_name: Ti.App.Properties.getString('QiitaLoginID'),
+      password: Ti.App.Properties.getString('QiitaLoginPassword')
     };
+    return qiita._auth(param, function(token) {
+      var method, url, xhr;
+      xhr = Ti.Network.createHTTPClient();
+      method = 'PUT';
+      url = "https://qiita.com/api/v1/items/" + uuid + "/stock";
+      xhr.open(method, url);
+      xhr.setRequestHeader('X-HTTP-Method-Override', method);
+      xhr.onload = function() {
+        var alertDialog, body;
+        body = JSON.parse(xhr.responseText);
+        actInd.hide();
+        alertDialog = Ti.UI.createAlertDialog();
+        alertDialog.setTitle("Qiitaへのストックが完了しました");
+        return alertDialog.show();
+      };
+      xhr.onerror = function(e) {
+        return {
+          message: "StatusCode: " + this.status
+        };
+      };
+      Ti.API.debug(Ti.App.Properties.getString('QiitaToken'));
+      return xhr.send({
+        token: Ti.App.Properties.getString('QiitaToken')
+      });
+    });
   };
 
   Qiita.prototype.setRequestParameter = function(name) {

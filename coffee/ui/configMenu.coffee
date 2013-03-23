@@ -104,20 +104,20 @@ class configMenu
     # SNS 
     platformSection = Ti.UI.createTableViewSection(headerTitle: "SNSアカウント設定")
 
-    hatenaRow = Ti.UI.createTableViewRow
+    @hatenaRow = Ti.UI.createTableViewRow
       touchEnabled: false
       height: Ti.UI.FILL
       selectionStyle: Ti.UI.iPhone.TableViewCellSelectionStyle.NONE
     
 
-    hatenaRow.addEventListener('click',()->
+    @hatenaRow.addEventListener('click',()->
       Ti.API.info "start hatena"
       Hatena = require("model/hatena")
       hatena = new Hatena()
       hatena.login()
     )  
 
-    hatenaLabel = Ti.UI.createLabel(
+    @hatenaLabel = Ti.UI.createLabel(
       left: 10
       text: "Sign in with はてな"
     )
@@ -125,15 +125,16 @@ class configMenu
       hatenaLoginFlg = true
     else  
       hatenaLoginFlg = false
-    hatenaSwitch = Ti.UI.createSwitch(
+    @hatenaSwitch = Ti.UI.createSwitch(
       right: 10
       value: hatenaLoginFlg
     )
-    hatenaSwitch.addEventListener "change", (e) ->
+    @hatenaSwitch.hide()
+    @hatenaSwitch.addEventListener "change", (e) ->
       Ti.App.Properties.setBool "hatenaShareSwitch", e.value
 
-    hatenaRow.add hatenaLabel
-    hatenaRow.add hatenaSwitch
+    @hatenaRow.add @hatenaLabel
+    @hatenaRow.add @hatenaSwitch
 
     evernoteRow = Ti.UI.createTableViewRow(
       height: Ti.UI.FILL
@@ -166,7 +167,7 @@ class configMenu
     evernoteRow.add evernoteLabel
     evernoteRow.add evernoteSwitch
 
-    platformSection.add hatenaRow
+    platformSection.add @hatenaRow
     platformSection.add evernoteRow
     @tableView = Ti.UI.createTableView
       zIndex:5
@@ -198,11 +199,12 @@ class configMenu
     return @tableView
 
   changeHatenaRowElement: (iconImage,switchFlg) =>
-    Ti.API.info switchFlg
-    Ti.API.info iconImage
+
     @hatenaSwitch.value = switchFlg
     @hatenaRow.add iconImage
-    @hatenaRow.remove hatenaLabel
+    @hatenaSwitch.show()
+    @hatenaSwitch.left = 60
+    @hatenaRow.remove @hatenaLabel
     return 
 
 

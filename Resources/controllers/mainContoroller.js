@@ -126,9 +126,15 @@ mainContoroller = (function() {
     return true;
   };
 
-  mainContoroller.prototype.stockItemToQiita = function(uuid) {
+  mainContoroller.prototype.stockItemToQiita = function() {
+    var Hatena, hatena, url, uuid;
     Ti.API.info(webview.getStockUUID());
     uuid = webview.getStockUUID();
+    url = webview.getStockURL();
+    Hatena = require("model/hatena");
+    hatena = new Hatena();
+    Ti.API.info("stockItemToQiita start. url is " + url);
+    hatena.postBookmark(url);
     qiita.putStock(uuid);
     return true;
   };

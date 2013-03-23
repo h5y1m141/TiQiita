@@ -6,7 +6,7 @@ configMenu = (function() {
   function configMenu() {
     this.changeHatenaRowElement = __bind(this.changeHatenaRowElement, this);
 
-    var QiitaLoginID, QiitaLoginPassword, evernoteLabel, evernoteRow, evernoteSwitch, groupData, hatenaLabel, hatenaLoginFlg, hatenaRow, hatenaSwitch, platformSection, row1, row2, row3, row3label, textField1, textField2;
+    var QiitaLoginID, QiitaLoginPassword, evernoteLabel, evernoteRow, evernoteSwitch, groupData, hatenaLoginFlg, platformSection, row1, row2, row3, row3label, textField1, textField2;
     groupData = Ti.UI.createTableViewSection({
       headerTitle: "Qiitaアカウント設定"
     });
@@ -95,19 +95,19 @@ configMenu = (function() {
     platformSection = Ti.UI.createTableViewSection({
       headerTitle: "SNSアカウント設定"
     });
-    hatenaRow = Ti.UI.createTableViewRow({
+    this.hatenaRow = Ti.UI.createTableViewRow({
       touchEnabled: false,
       height: Ti.UI.FILL,
       selectionStyle: Ti.UI.iPhone.TableViewCellSelectionStyle.NONE
     });
-    hatenaRow.addEventListener('click', function() {
+    this.hatenaRow.addEventListener('click', function() {
       var Hatena, hatena;
       Ti.API.info("start hatena");
       Hatena = require("model/hatena");
       hatena = new Hatena();
       return hatena.login();
     });
-    hatenaLabel = Ti.UI.createLabel({
+    this.hatenaLabel = Ti.UI.createLabel({
       left: 10,
       text: "Sign in with はてな"
     });
@@ -116,15 +116,16 @@ configMenu = (function() {
     } else {
       hatenaLoginFlg = false;
     }
-    hatenaSwitch = Ti.UI.createSwitch({
+    this.hatenaSwitch = Ti.UI.createSwitch({
       right: 10,
       value: hatenaLoginFlg
     });
-    hatenaSwitch.addEventListener("change", function(e) {
+    this.hatenaSwitch.hide();
+    this.hatenaSwitch.addEventListener("change", function(e) {
       return Ti.App.Properties.setBool("hatenaShareSwitch", e.value);
     });
-    hatenaRow.add(hatenaLabel);
-    hatenaRow.add(hatenaSwitch);
+    this.hatenaRow.add(this.hatenaLabel);
+    this.hatenaRow.add(this.hatenaSwitch);
     evernoteRow = Ti.UI.createTableViewRow({
       height: Ti.UI.FILL,
       touchEnabled: false,
@@ -153,7 +154,7 @@ configMenu = (function() {
     });
     evernoteRow.add(evernoteLabel);
     evernoteRow.add(evernoteSwitch);
-    platformSection.add(hatenaRow);
+    platformSection.add(this.hatenaRow);
     platformSection.add(evernoteRow);
     this.tableView = Ti.UI.createTableView({
       zIndex: 5,
@@ -177,11 +178,11 @@ configMenu = (function() {
   };
 
   configMenu.prototype.changeHatenaRowElement = function(iconImage, switchFlg) {
-    Ti.API.info(switchFlg);
-    Ti.API.info(iconImage);
     this.hatenaSwitch.value = switchFlg;
     this.hatenaRow.add(iconImage);
-    this.hatenaRow.remove(hatenaLabel);
+    this.hatenaSwitch.show();
+    this.hatenaSwitch.left = 60;
+    this.hatenaRow.remove(this.hatenaLabel);
   };
 
   return configMenu;
