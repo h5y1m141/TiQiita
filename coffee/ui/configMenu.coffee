@@ -119,17 +119,23 @@ class configMenu
 
     @hatenaLabel = Ti.UI.createLabel(
       left: 10
-      text: "Sign in with はてな"
+      text: "はてな"
     )
     if Ti.App.Properties.getBool("hatenaAccessTokenKey")?
-      hatenaLoginFlg = true
-    else  
-      hatenaLoginFlg = false
-    @hatenaSwitch = Ti.UI.createSwitch(
-      right: 10
-      value: hatenaLoginFlg
-    )
-    @hatenaSwitch.hide()
+      @hatenaSwitch = Ti.UI.createSwitch(
+        right: 10
+        value: true
+      )
+      @hatenaSwitch.show()
+    else
+      @hatenaSwitch = Ti.UI.createSwitch(
+        right: 10
+        value: false
+      )  
+      @hatenaSwitch.hide()
+      
+    
+    
     @hatenaSwitch.addEventListener "change", (e) ->
       Ti.App.Properties.setBool "hatenaShareSwitch", e.value
 
@@ -160,7 +166,7 @@ class configMenu
 
     evernoteLabel = Ti.UI.createLabel(
       left: 10
-      text: "Sign in with Evernote"
+      text: "Evernote"
     )
     
 

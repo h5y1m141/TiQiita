@@ -6,7 +6,7 @@ configMenu = (function() {
   function configMenu() {
     this.changeHatenaRowElement = __bind(this.changeHatenaRowElement, this);
 
-    var QiitaLoginID, QiitaLoginPassword, evernoteLabel, evernoteRow, evernoteSwitch, groupData, hatenaLoginFlg, platformSection, row1, row2, row3, row3label, textField1, textField2;
+    var QiitaLoginID, QiitaLoginPassword, evernoteLabel, evernoteRow, evernoteSwitch, groupData, platformSection, row1, row2, row3, row3label, textField1, textField2;
     groupData = Ti.UI.createTableViewSection({
       headerTitle: "Qiitaアカウント設定"
     });
@@ -109,18 +109,21 @@ configMenu = (function() {
     });
     this.hatenaLabel = Ti.UI.createLabel({
       left: 10,
-      text: "Sign in with はてな"
+      text: "はてな"
     });
     if (Ti.App.Properties.getBool("hatenaAccessTokenKey") != null) {
-      hatenaLoginFlg = true;
+      this.hatenaSwitch = Ti.UI.createSwitch({
+        right: 10,
+        value: true
+      });
+      this.hatenaSwitch.show();
     } else {
-      hatenaLoginFlg = false;
+      this.hatenaSwitch = Ti.UI.createSwitch({
+        right: 10,
+        value: false
+      });
+      this.hatenaSwitch.hide();
     }
-    this.hatenaSwitch = Ti.UI.createSwitch({
-      right: 10,
-      value: hatenaLoginFlg
-    });
-    this.hatenaSwitch.hide();
     this.hatenaSwitch.addEventListener("change", function(e) {
       return Ti.App.Properties.setBool("hatenaShareSwitch", e.value);
     });
@@ -150,7 +153,7 @@ configMenu = (function() {
     });
     evernoteLabel = Ti.UI.createLabel({
       left: 10,
-      text: "Sign in with Evernote"
+      text: "Evernote"
     });
     evernoteRow.add(evernoteLabel);
     evernoteRow.add(evernoteSwitch);
