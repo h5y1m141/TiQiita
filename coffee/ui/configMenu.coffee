@@ -142,43 +142,13 @@ class configMenu
     @hatenaRow.add @hatenaLabel
     @hatenaRow.add @hatenaSwitch
 
-    evernoteRow = Ti.UI.createTableViewRow(
-      height: Ti.UI.FILL
-      touchEnabled: false
-      selectionStyle: Ti.UI.iPhone.TableViewCellSelectionStyle.NONE
-    )
-
-    evernoteSwitch = Ti.UI.createSwitch(
-      right: 10
-      value: Ti.App.Properties.getBool("evernoteShareSwitch", true)
-    )
-
-    evernoteSwitch.addEventListener "change", (e) ->
-      Ti.App.Properties.setBool "evernoteShareSwitch", e.value
-      if e.value is false
-        evernote.logout ->
-          Ti.App.Properties.removeProperty "evernoteAccessTokenKey"
-          evernoteLabel.setText "Sign in with Evernote"
-          evernoteRow.remove evernoteSwitch
-          evernoteRow.touchEnabled = true
-          evernoteRow.selectionStyle = Ti.UI.iPhone.TableViewCellSelectionStyle.BLUE
-          evernoteRow.addEventListener "click", evernoteAuthorize
-
-    evernoteLabel = Ti.UI.createLabel(
-      left: 10
-      text: "Evernote"
-    )
-    
-
-    evernoteRow.add evernoteLabel
-    evernoteRow.add evernoteSwitch
 
     platformSection.add @hatenaRow
-    platformSection.add evernoteRow
+
     @tableView = Ti.UI.createTableView
       zIndex:5
       data: [groupData,platformSection]
-      # data: [groupData]      
+
 
       style: Ti.UI.iPhone.TableViewStyle.GROUPED
       top: 0
@@ -189,12 +159,7 @@ class configMenu
     @tableView.addEventListener('click',(e) ->  
 
       if e.index is 2
-    #   if qiita.isConnected() is false
-    #     message = mainContoroller.networkDisconnectedMessage
-    #     mainContoroller._alertViewShow message
-    #   else
-    #     actInd.show()
-    #     commandController.useMenu "qiitaLogin"        
+
         actInd.show()
         commandController.useMenu "qiitaLogin"
 

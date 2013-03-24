@@ -6,7 +6,7 @@ configMenu = (function() {
   function configMenu() {
     this.changeHatenaRowElement = __bind(this.changeHatenaRowElement, this);
 
-    var QiitaLoginID, QiitaLoginPassword, evernoteLabel, evernoteRow, evernoteSwitch, groupData, platformSection, row1, row2, row3, row3label, textField1, textField2;
+    var QiitaLoginID, QiitaLoginPassword, groupData, platformSection, row1, row2, row3, row3label, textField1, textField2;
     groupData = Ti.UI.createTableViewSection({
       headerTitle: "Qiitaアカウント設定"
     });
@@ -129,36 +129,7 @@ configMenu = (function() {
     });
     this.hatenaRow.add(this.hatenaLabel);
     this.hatenaRow.add(this.hatenaSwitch);
-    evernoteRow = Ti.UI.createTableViewRow({
-      height: Ti.UI.FILL,
-      touchEnabled: false,
-      selectionStyle: Ti.UI.iPhone.TableViewCellSelectionStyle.NONE
-    });
-    evernoteSwitch = Ti.UI.createSwitch({
-      right: 10,
-      value: Ti.App.Properties.getBool("evernoteShareSwitch", true)
-    });
-    evernoteSwitch.addEventListener("change", function(e) {
-      Ti.App.Properties.setBool("evernoteShareSwitch", e.value);
-      if (e.value === false) {
-        return evernote.logout(function() {
-          Ti.App.Properties.removeProperty("evernoteAccessTokenKey");
-          evernoteLabel.setText("Sign in with Evernote");
-          evernoteRow.remove(evernoteSwitch);
-          evernoteRow.touchEnabled = true;
-          evernoteRow.selectionStyle = Ti.UI.iPhone.TableViewCellSelectionStyle.BLUE;
-          return evernoteRow.addEventListener("click", evernoteAuthorize);
-        });
-      }
-    });
-    evernoteLabel = Ti.UI.createLabel({
-      left: 10,
-      text: "Evernote"
-    });
-    evernoteRow.add(evernoteLabel);
-    evernoteRow.add(evernoteSwitch);
     platformSection.add(this.hatenaRow);
-    platformSection.add(evernoteRow);
     this.tableView = Ti.UI.createTableView({
       zIndex: 5,
       data: [groupData, platformSection],
