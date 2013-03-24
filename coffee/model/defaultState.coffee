@@ -17,7 +17,7 @@ class defaultState
         duration:400
         top:0
     },() ->
-      mainTable.touchEnabled = false
+      # mainTable.touchEnabled = false
       mainTable.animate({
         duration:200
         top:50
