@@ -1,8 +1,11 @@
-var Qiita;
+var Qiita,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 Qiita = (function() {
 
   function Qiita() {
+    this.getMyStocks = __bind(this.getMyStocks, this);
+
     var QiitaLoginID, configJSON, file;
     configJSON = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'config/login.json');
     file = configJSON.read().toString();
@@ -253,17 +256,25 @@ Qiita = (function() {
   };
 
   Qiita.prototype.getMyStocks = function(callback) {
-    var param, token;
-    token = Ti.App.Properties.getString('QiitaToken');
-    Ti.API.info("getMyStocks start. token is " + token);
-    if (token === null) {
-      this._auth();
-    }
+    var param,
+      _this = this;
     param = {
-      url: this.parameter.myStocks.url + ("?token=" + token),
-      method: this.parameter.myStocks.method
+      url_name: Ti.App.Properties.getString('QiitaLoginID'),
+      password: Ti.App.Properties.getString('QiitaLoginPassword')
     };
-    return this._request(param, "storedMyStocks", callback);
+    return this._auth(param, function(token) {
+      var requestParam;
+      if (token === null) {
+        alert("QiitaのユーザIDかパスワードが間違ってます");
+      } else {
+
+      }
+      requestParam = {
+        url: "https://qiita.com/api/v1/stocks?token=" + token,
+        method: 'GET'
+      };
+      return _this._request(requestParam, "storedMyStocks", callback);
+    });
   };
 
   Qiita.prototype.getMyFeed = function(callback) {

@@ -277,18 +277,22 @@ class Qiita
     @._request(param,storedTo,callback)
 
 
-  getMyStocks:(callback) ->
-    token = Ti.App.Properties.getString('QiitaToken')
-    Ti.API.info "getMyStocks start. token is #{token}"
-    if token is null
-      @._auth()
+  getMyStocks:(callback) =>
 
     param = 
-      url:@parameter.myStocks.url + "?token=#{token}"
-      method:@parameter.myStocks.method
-      
-    @._request(param,"storedMyStocks",callback)
-    
+      url_name: Ti.App.Properties.getString('QiitaLoginID'),
+      password: Ti.App.Properties.getString('QiitaLoginPassword')
+
+    @._auth(param, (token)=>
+      if token is null
+        alert "QiitaのユーザIDかパスワードが間違ってます"
+      else
+      requestParam = 
+        url:"https://qiita.com/api/v1/stocks?token=#{token}"
+        method:'GET'
+        
+      @._request(requestParam,"storedMyStocks",callback)
+    )
     
   getMyFeed:(callback) ->
     token = Ti.App.Properties.getString('QiitaToken')

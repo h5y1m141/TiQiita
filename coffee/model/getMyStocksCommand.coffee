@@ -6,7 +6,8 @@ class getMyStocksCommand extends baseCommand
   execute:() ->
     result = []
 
-    @_showStatusView()
+    if @_currentSlideState() is "default"
+      @_showStatusView()
 
     items = JSON.parse(Ti.App.Properties.getString(@value))
 
@@ -33,7 +34,7 @@ class getMyStocksCommand extends baseCommand
     MAXITEMCOUNT = 20 # 1リクエスト辺りに読み込まれる最大件数
     value = @value
 
-    qiita.getMyStocks( (result,links) ->
+    qiita.getMyStocks( (result,links) =>
       @_hideStatusView()
       rows.push(mainTableView.createRow(json)) for json in result
       
