@@ -3,12 +3,11 @@ class getFeedByTagCommand extends baseCommand
     @tagName = tagName
     @direction = "vertical"
   execute:() ->
-    if @_currentSlideState() is "default"
-      @_showStatusView()
-
+    result = []
+    Ti.API.debug @_currentSlideState()
+    @_showStatusView()
 
     storedTo = "followingTag#{@tagName}"
-    result = []
     items = JSON.parse(Ti.App.Properties.getString(storedTo))
 
     if items isnt null
@@ -35,7 +34,7 @@ class getFeedByTagCommand extends baseCommand
     MAXITEMCOUNT = 20 # 1リクエスト辺りに読み込まれる最大件数
     storedTo = "followingTag#{@tagName}" 
 
-    qiita.getFeedByTag(@tagName, (result,links) ->
+    qiita.getFeedByTag(@tagName, (result,links) =>
       @_hideStatusView()
       rows.push(mainTableView.createRow(json)) for json in result
       if result.length isnt MAXITEMCOUNT

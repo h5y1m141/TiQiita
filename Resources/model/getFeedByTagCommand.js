@@ -13,11 +13,10 @@ getFeedByTagCommand = (function(_super) {
 
   getFeedByTagCommand.prototype.execute = function() {
     var items, json, result, storedTo, _i, _len;
-    if (this._currentSlideState() === "default") {
-      this._showStatusView();
-    }
-    storedTo = "followingTag" + this.tagName;
     result = [];
+    Ti.API.debug(this._currentSlideState());
+    this._showStatusView();
+    storedTo = "followingTag" + this.tagName;
     items = JSON.parse(Ti.App.Properties.getString(storedTo));
     if (items !== null) {
       if (this._currentSlideState() === "default") {
@@ -37,13 +36,14 @@ getFeedByTagCommand = (function(_super) {
   };
 
   getFeedByTagCommand.prototype.getFeedByTag = function() {
-    var MAXITEMCOUNT, rows, storedTo;
+    var MAXITEMCOUNT, rows, storedTo,
+      _this = this;
     rows = [];
     MAXITEMCOUNT = 20;
     storedTo = "followingTag" + this.tagName;
     qiita.getFeedByTag(this.tagName, function(result, links) {
       var json, _i, _len;
-      this._hideStatusView();
+      _this._hideStatusView();
       for (_i = 0, _len = result.length; _i < _len; _i++) {
         json = result[_i];
         rows.push(mainTableView.createRow(json));
