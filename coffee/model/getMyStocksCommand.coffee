@@ -5,10 +5,9 @@ class getMyStocksCommand extends baseCommand
 
   execute:() ->
     result = []
-
-    if @_currentSlideState() is "default"
-      @_showStatusView()
-
+    Ti.API.debug @_currentSlideState()
+    @_showStatusView()
+    
     items = JSON.parse(Ti.App.Properties.getString(@value))
 
     if items isnt null
