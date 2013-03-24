@@ -3,7 +3,8 @@ var mainTable;
 mainTable = (function() {
 
   function mainTable() {
-    var _this = this;
+    var pullToRefresh,
+      _this = this;
     this.table = Ti.UI.createTableView({
       backgroundColor: '#ededed',
       separatorColor: '#999',
@@ -11,6 +12,61 @@ mainTable = (function() {
       width: 320,
       left: 0,
       top: 0
+    });
+    this.arrow = Ti.UI.createView({
+      backgroundImage: "/lib/arrow.png",
+      width: 30,
+      height: 30,
+      bottom: 20,
+      left: 20
+    });
+    this.statusMessage = Ti.UI.createLabel({
+      text: "Puxe para recarregar...",
+      left: 55,
+      width: 220,
+      bottom: 35,
+      height: "auto",
+      color: "#000",
+      textAlign: "center",
+      font: {
+        fontSize: 13,
+        fontWeight: "bold"
+      }
+    });
+    pullToRefresh = this._createPullToRefresh({
+      backgroundColor: "#CCC",
+      action: function() {
+        return setTimeout((function() {
+          return refresh();
+        }), 500);
+      }
+    });
+    this.pulling = false;
+    this.table.headerPullView = pullToRefresh;
+    this.table.addEventListener("scroll", function(e) {
+      var offset, t;
+      offset = e.contentOffset.y;
+      if (offset <= -65.0 && !_this.pulling) {
+        t = Ti.UI.create2DMatrix().scale();
+        t = t.rotate(-180);
+        _this.pulling = true;
+        _this.arrow.animate({
+          transform: t,
+          duration: 180
+        });
+        return _this.statusMessage.text = "引き下げて更新";
+      } else if (_this.pulling && offset > -65.0 && offset < 0) {
+        _this.pulling = false;
+        t = Ti.UI.create2DMatrix().scale();
+        _this.arrow.animate({
+          transform: t,
+          duration: 180
+        });
+        mainContoroller.loadEntry();
+        return _this.statusMessage.text = "OK";
+      } else {
+
+      }
     });
     this.table.addEventListener('click', function(e) {
       var storedTo;
@@ -159,6 +215,19 @@ mainTable = (function() {
     row.className = 'loadOldEntry';
     row.storedTo = storedTo;
     return row;
+  };
+
+  mainTable.prototype._createPullToRefresh = function(parameters) {
+    var loadingCallback, view;
+    loadingCallback = parameters.action;
+    view = Ti.UI.createView({
+      backgroundColor: parameters.backgroundColor,
+      width: 320,
+      height: 60
+    });
+    view.add(this.arrow);
+    view.add(this.statusMessage);
+    return view;
   };
 
   return mainTable;

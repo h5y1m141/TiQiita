@@ -14,9 +14,7 @@ getStocksCommand = (function(_super) {
   getStocksCommand.prototype.execute = function() {
     var items, json, result, _i, _len;
     result = [];
-    if (this._currentSlideState() === "default") {
-      this._showStatusView();
-    }
+    this._showStatusView();
     items = JSON.parse(Ti.App.Properties.getString(this.value));
     if (items !== null) {
       if (this._currentSlideState() === "default") {

@@ -7,8 +7,66 @@ class mainTable
       width:320
       left:0
       top:0
+    @arrow = Ti.UI.createView
+      backgroundImage:"/lib/arrow.png"
+      width:30
+      height:30
+      bottom:20
+      left:20
 
-            
+      
+    @statusMessage = Ti.UI.createLabel
+      text:"Puxe para recarregar...",
+      left:55,
+      width:220,
+      bottom:35,
+      height:"auto",
+      color:"#000"
+      textAlign:"center",
+      font:{fontSize:13,fontWeight:"bold"}
+
+
+    pullToRefresh = @._createPullToRefresh(
+      backgroundColor: "#CCC"
+      action: ->
+        setTimeout (->
+          refresh()
+        ), 500
+    )
+    
+    @pulling = false
+    
+    @table.headerPullView = pullToRefresh
+    
+    @table.addEventListener("scroll",(e) =>
+
+      offset = e.contentOffset.y
+
+      if offset <= -65.0 and not @pulling
+        t = Ti.UI.create2DMatrix().scale()
+        t = t.rotate(-180)
+        @pulling = true
+        @arrow.animate
+          transform: t
+          duration: 180
+          
+        @statusMessage.text = "引き下げて更新"  
+
+      else if @pulling and offset > -65.0 and offset < 0
+        @pulling = false
+        t = Ti.UI.create2DMatrix().scale()
+        @arrow.animate
+          transform: t
+          duration: 180
+        mainContoroller.loadEntry()    
+        @statusMessage.text = "OK"
+        
+      else
+
+    )
+
+    
+    
     @table.addEventListener('click',(e) =>
       # TableViewの一番下に、過去投稿を読み込むためのボタンを
       # 配置しており、そのrowだけは投稿詳細画面に遷移させない
@@ -151,6 +209,20 @@ class mainTable
     row.storedTo = storedTo
     return row
     
+  _createPullToRefresh: (parameters) ->
+    loadingCallback = parameters.action
+    
+    view = Ti.UI.createView
+      backgroundColor:parameters.backgroundColor
+      width:320
+      height:60
+
+    
+    view.add @arrow
+    view.add @statusMessage
+    
+    return view
+      
 module.exports = mainTable
 
 
