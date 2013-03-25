@@ -21,7 +21,7 @@ class menuTable
       backgroundColor:@backgroundColorSub
       selectedBackgroundColor:@qiitaColor
     
-    @table = Ti.UI.createTableView
+    @menuTable = Ti.UI.createTableView
       backgroundColor:backgroundColorBase
       separatorStyle:1
       separatorColor:backgroundColorBase
@@ -30,22 +30,22 @@ class menuTable
       left:0
       top:0
       
-    @table.addEventListener('click',(e) =>
+    @menuTable.addEventListener('click',(e) =>
       rootWindow.toggleLeftView()
       curretRowIndex = e.index
-      @.resetBackGroundColor(@table.data[0].rows)
+      @.resetBackGroundColor(@menuTable.data[0].rows)
       # クリックされたrowの色を'#59BB0C'に設定
-      @table.data[0].rows[curretRowIndex].backgroundColor = @qiitaColor      
-      mainContoroller.selectMenu @table.data[0].rows[curretRowIndex].className
+      @menuTable.data[0].rows[curretRowIndex].backgroundColor = @qiitaColor      
+      mainContoroller.selectMenu @menuTable.data[0].rows[curretRowIndex].className
     )
     
     rows = [@.makeAllLabelRow()]
 
-    @table.setData rows
+    @menuTable.setData rows
 
     
   getMenu:() ->
-    return @table
+    return @menuTable
     
   makeAllLabelRow:() ->
     allLabelRow = Ti.UI.createTableViewRow(@rowColorTheme)
@@ -173,12 +173,16 @@ class menuTable
       
     # すべてのrowの背景色をデフォルト値に設定
   resetBackGroundColor: (menuRows) ->
-    menuRows = @table.data[0].rows
+    menuRows = @menuTable.data[0].rows
     for menuRow in menuRows
       if menuRow.backgroundColor isnt @backgroundColorSub
         menuRow.backgroundColor = @backgroundColorSub
 
   refreshMenu:() ->
+    # リフレッシュするために、既存のメニューを初期化
+    resetRows = []
+    
+    @menuTable.setData resetRows
     
     qiita.getFollowingTags( (result,links)=>
       if result.length is 0
@@ -218,7 +222,7 @@ class menuTable
           menuRow.className = "followingTag#{json.url_name}"
           rows.push menuRow
 
-      @table.setData rows
+      @menuTable.setData rows
     )    
         
     

@@ -123,7 +123,9 @@ Qiita = (function() {
     self = this;
     xhr = Ti.Network.createHTTPClient();
     xhr.ondatastream = function(e) {
-      if (storedTo !== "followingTags") {
+      if (storedTo === "followingTags") {
+        return Ti.API.debug("フォローしてるタグの情報取得する際には何も行わない");
+      } else {
         if (Math.round(e.progress * 100) <= 100) {
           Ti.API.info("xhr.ondatastream start progress is " + (Math.round(e.progress * 100)));
           return progressBar.value = e.progress;
@@ -135,7 +137,9 @@ Qiita = (function() {
     xhr.onload = function() {
       var json, relLink, responseHeaders;
       json = JSON.parse(this.responseText);
-      if (storedTo !== false) {
+      if (storedTo === "followingTags") {
+        Ti.API.debug("フォローしてるタグの情報取得する際には何も行わない");
+      } else {
         Ti.API.info("start _storedStocks " + storedTo);
         self._storedStocks(storedTo, this.responseText);
         responseHeaders = this.responseHeaders;
@@ -151,7 +155,7 @@ Qiita = (function() {
     xhr.onerror = function(e) {
       var error;
       error = JSON.parse(this.responseText);
-      return Ti.App.Properties.setBool("" + storedTo + "Error", true);
+      return Ti.API.debug("_request method error." + error.error);
     };
     xhr.timeout = 5000;
     return xhr.send();

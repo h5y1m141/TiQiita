@@ -3,26 +3,18 @@ var commandController;
 commandController = (function() {
 
   function commandController() {
-    var Menu;
+    var Menu, myStocksCommand, stocksCommand;
     Menu = require("controllers/menu");
     this.menu = new Menu();
+    stocksCommand = require("model/getStocksCommand");
+    this.menu.addCommands("storedStocks", new stocksCommand());
+    myStocksCommand = require("model/getMyStocksCommand");
+    this.menu.addCommands("storedMyStocks", new myStocksCommand());
   }
 
-  commandController.prototype.createMenu = function(user) {
-    var configCommand, loginCommand, myStocksCommand, stocksCommand;
+  commandController.prototype.createMenu = function() {
     Ti.API.info("[commandController] createMenu start");
-    stocksCommand = require("model/getStocksCommand");
-    configCommand = require("model/configCommand");
-    loginCommand = require("model/loginCommand");
-    this.menu.addCommands("storedStocks", new stocksCommand());
-    this.menu.addCommands("config", new configCommand());
-    this.menu.addCommands("qiitaLogin", new loginCommand());
-    if (user === "QiitaUser") {
-      Ti.API.info("[MENU] for QiitaUser");
-      myStocksCommand = require("model/getMyStocksCommand");
-      this.menu.addCommands("storedMyStocks", new myStocksCommand());
-      mainContoroller.refreshMenuTable();
-    }
+    mainContoroller.refreshMenuTable();
     return true;
   };
 

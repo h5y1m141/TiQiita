@@ -26,7 +26,7 @@ menuTable = (function() {
       backgroundColor: this.backgroundColorSub,
       selectedBackgroundColor: this.qiitaColor
     };
-    this.table = Ti.UI.createTableView({
+    this.menuTable = Ti.UI.createTableView({
       backgroundColor: backgroundColorBase,
       separatorStyle: 1,
       separatorColor: backgroundColorBase,
@@ -35,20 +35,20 @@ menuTable = (function() {
       left: 0,
       top: 0
     });
-    this.table.addEventListener('click', function(e) {
+    this.menuTable.addEventListener('click', function(e) {
       var curretRowIndex;
       rootWindow.toggleLeftView();
       curretRowIndex = e.index;
-      _this.resetBackGroundColor(_this.table.data[0].rows);
-      _this.table.data[0].rows[curretRowIndex].backgroundColor = _this.qiitaColor;
-      return mainContoroller.selectMenu(_this.table.data[0].rows[curretRowIndex].className);
+      _this.resetBackGroundColor(_this.menuTable.data[0].rows);
+      _this.menuTable.data[0].rows[curretRowIndex].backgroundColor = _this.qiitaColor;
+      return mainContoroller.selectMenu(_this.menuTable.data[0].rows[curretRowIndex].className);
     });
     rows = [this.makeAllLabelRow()];
-    this.table.setData(rows);
+    this.menuTable.setData(rows);
   }
 
   menuTable.prototype.getMenu = function() {
-    return this.table;
+    return this.menuTable;
   };
 
   menuTable.prototype.makeAllLabelRow = function() {
@@ -174,7 +174,7 @@ menuTable = (function() {
 
   menuTable.prototype.resetBackGroundColor = function(menuRows) {
     var menuRow, _i, _len, _results;
-    menuRows = this.table.data[0].rows;
+    menuRows = this.menuTable.data[0].rows;
     _results = [];
     for (_i = 0, _len = menuRows.length; _i < _len; _i++) {
       menuRow = menuRows[_i];
@@ -188,7 +188,10 @@ menuTable = (function() {
   };
 
   menuTable.prototype.refreshMenu = function() {
-    var _this = this;
+    var resetRows,
+      _this = this;
+    resetRows = [];
+    this.menuTable.setData(resetRows);
     return qiita.getFollowingTags(function(result, links) {
       var json, menuRow, rows, textLabel, _i, _len;
       if (result.length === 0) {
@@ -224,7 +227,7 @@ menuTable = (function() {
           rows.push(menuRow);
         }
       }
-      return _this.table.setData(rows);
+      return _this.menuTable.setData(rows);
     });
   };
 

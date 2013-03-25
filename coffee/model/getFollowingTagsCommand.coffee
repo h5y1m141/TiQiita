@@ -12,8 +12,8 @@ class followingTagsCommand
     )    
     
   execute:() ->
+    Ti.API.info "run"
 
-    )
     
 
 module.exports = followingTagsCommand  

@@ -2,30 +2,26 @@ class commandController
   constructor:() ->
     Menu = require("controllers/menu")
     @menu = new Menu()
-
-  createMenu:(user) ->
-    Ti.API.info "[commandController] createMenu start"
     stocksCommand = require("model/getStocksCommand")
-    configCommand = require("model/configCommand")
-    loginCommand = require("model/loginCommand")
-    
     @menu.addCommands("storedStocks",new stocksCommand())
-    @menu.addCommands("config",new configCommand())
-    @menu.addCommands("qiitaLogin", new loginCommand())
+        
+    myStocksCommand = require("model/getMyStocksCommand")
+    @menu.addCommands("storedMyStocks",new myStocksCommand())
+
+  createMenu:() ->
+    Ti.API.info "[commandController] createMenu start"
+
+
+    # configCommand = require("model/configCommand")
+    # loginCommand = require("model/loginCommand")
+    # @menu.addCommands("config",new configCommand())
+    # @menu.addCommands("qiitaLogin", new loginCommand())
     
-
-    if user is "QiitaUser"
-      Ti.API.info "[MENU] for QiitaUser"
-      myStocksCommand = require("model/getMyStocksCommand")
-      @menu.addCommands("storedMyStocks",new myStocksCommand())
-      
-      mainContoroller.refreshMenuTable()
-      
+    
+    mainContoroller.refreshMenuTable()
+    # @useMenu "storedStocks"      
       
 
-      
-      # followingTagsCommand = require("model/getFollowingTagsCommand")
-      # @menu.addCommands("followingTags", new followingTagsCommand())
       
 
 

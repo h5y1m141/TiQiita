@@ -15,7 +15,9 @@ getStocksCommand = (function(_super) {
     var items, json, result, _i, _len;
     result = [];
     items = JSON.parse(Ti.App.Properties.getString(this.value));
-    if (items !== null) {
+    if ((items != null) === false || items === "") {
+      return this.getFeed();
+    } else {
       Ti.API.debug("load cached item and mainTable reset");
       for (_i = 0, _len = items.length; _i < _len; _i++) {
         json = items[_i];
@@ -24,8 +26,6 @@ getStocksCommand = (function(_super) {
       result.push(mainTableView.createRowForLoadOldEntry(this.value));
       mainTable.setData(result);
       return this._hideStatusView();
-    } else {
-      return this.getFeed();
     }
   };
 

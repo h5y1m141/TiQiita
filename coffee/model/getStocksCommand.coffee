@@ -7,16 +7,17 @@ class getStocksCommand extends baseCommand
     result = []
     
     items = JSON.parse(Ti.App.Properties.getString(@value))
-    if items isnt null
+    if items? is false or items is ""
+      @getFeed()
+    else
       Ti.API.debug "load cached item and mainTable reset"
       
       result.push(mainTableView.createRow(json)) for json in items
       result.push(mainTableView.createRowForLoadOldEntry(@value))
       mainTable.setData result
       @_hideStatusView()
+    
 
-    else
-      @getFeed()
       
     
 

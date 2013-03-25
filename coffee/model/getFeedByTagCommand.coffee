@@ -4,27 +4,17 @@ class getFeedByTagCommand extends baseCommand
     @direction = "vertical"
   execute:() ->
     result = []
-    Ti.API.debug @_currentSlideState()
-    
-    # @_showStatusView()
-
     storedTo = "followingTag#{@tagName}"
     items = JSON.parse(Ti.App.Properties.getString(storedTo))
-
-    if items isnt null
-      # if @_currentSlideState() is "default"
-      #   @_showStatusView()
-      # else
-      #   @_hideStatusView()
-      
+    
+    if items? is false or items is ""
+      @getFeedByTag()
+    else  
       result.push(mainTableView.createRow(json)) for json in items
       result.push(mainTableView.createRowForLoadOldEntry(storedTo))
+      mainTable.setData result
+      @_hideStatusView()
       
-    else
-      
-      @getFeedByTag()
-      
-    mainTable.setData result  
 
     
 
@@ -34,20 +24,18 @@ class getFeedByTagCommand extends baseCommand
     
     MAXITEMCOUNT = 20 # 1リクエスト辺りに読み込まれる最大件数
     storedTo = "followingTag#{@tagName}" 
-
+    @_showStatusView()
+    
     qiita.getFeedByTag(@tagName, (result,links) =>
       rows.push(mainTableView.createRow(json)) for json in result
       if result.length isnt MAXITEMCOUNT
-        
+        Ti.API.info "loadOldEntry hide"  
       else
         rows.push(mainTableView.createRowForLoadOldEntry(storedTo))
         
       
       mainTable.setData rows
-      # @_hideStatusView()
-      # Ti.App.Properties.setBool "stateMainTableSlide",false
-      
-      
+      @_hideStatusView()
 
     )
     return true

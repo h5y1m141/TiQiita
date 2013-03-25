@@ -20,8 +20,10 @@ class mainContoroller
 
     else
       Ti.API.info "start mainWindow"
-      commandController.createMenu "QiitaUser"
+      @refreshMenuTable
       commandController.useMenu "storedStocks"
+
+      
 
       
     return true

@@ -23,7 +23,7 @@ mainContoroller = (function() {
       commandController.useMenu("storedStocks");
     } else {
       Ti.API.info("start mainWindow");
-      commandController.createMenu("QiitaUser");
+      this.refreshMenuTable;
       commandController.useMenu("storedStocks");
     }
     return true;

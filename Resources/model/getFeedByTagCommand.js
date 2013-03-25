@@ -14,19 +14,19 @@ getFeedByTagCommand = (function(_super) {
   getFeedByTagCommand.prototype.execute = function() {
     var items, json, result, storedTo, _i, _len;
     result = [];
-    Ti.API.debug(this._currentSlideState());
     storedTo = "followingTag" + this.tagName;
     items = JSON.parse(Ti.App.Properties.getString(storedTo));
-    if (items !== null) {
+    if ((items != null) === false || items === "") {
+      return this.getFeedByTag();
+    } else {
       for (_i = 0, _len = items.length; _i < _len; _i++) {
         json = items[_i];
         result.push(mainTableView.createRow(json));
       }
       result.push(mainTableView.createRowForLoadOldEntry(storedTo));
-    } else {
-      this.getFeedByTag();
+      mainTable.setData(result);
+      return this._hideStatusView();
     }
-    return mainTable.setData(result);
   };
 
   getFeedByTagCommand.prototype.getFeedByTag = function() {
@@ -35,6 +35,7 @@ getFeedByTagCommand = (function(_super) {
     rows = [];
     MAXITEMCOUNT = 20;
     storedTo = "followingTag" + this.tagName;
+    this._showStatusView();
     qiita.getFeedByTag(this.tagName, function(result, links) {
       var json, _i, _len;
       for (_i = 0, _len = result.length; _i < _len; _i++) {
@@ -42,11 +43,12 @@ getFeedByTagCommand = (function(_super) {
         rows.push(mainTableView.createRow(json));
       }
       if (result.length !== MAXITEMCOUNT) {
-
+        Ti.API.info("loadOldEntry hide");
       } else {
         rows.push(mainTableView.createRowForLoadOldEntry(storedTo));
       }
-      return mainTable.setData(rows);
+      mainTable.setData(rows);
+      return _this._hideStatusView();
     });
     return true;
   };
