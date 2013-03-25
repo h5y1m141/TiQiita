@@ -15,14 +15,8 @@ getMyStocksCommand = (function(_super) {
     var items, json, result, _i, _len;
     result = [];
     Ti.API.debug(this._currentSlideState());
-    this._showStatusView();
     items = JSON.parse(Ti.App.Properties.getString(this.value));
     if (items !== null) {
-      if (this._currentSlideState() === "default") {
-        this._showStatusView();
-      } else {
-        this._hideStatusView();
-      }
       for (_i = 0, _len = items.length; _i < _len; _i++) {
         json = items[_i];
         result.push(mainTableView.createRow(json));
@@ -42,7 +36,6 @@ getMyStocksCommand = (function(_super) {
     value = this.value;
     qiita.getMyStocks(function(result, links) {
       var json, _i, _len;
-      _this._hideStatusView();
       for (_i = 0, _len = result.length; _i < _len; _i++) {
         json = result[_i];
         rows.push(mainTableView.createRow(json));

@@ -23,8 +23,6 @@ class mainContoroller
       Ti.API.info "start mainWindow"
       commandController.createMenu "QiitaUser"
       commandController.useMenu "storedStocks"
-      Ti.App.Properties.setBool 'stateMainTableSlide',false
-
 
       
     return true

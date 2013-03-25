@@ -6,15 +6,15 @@ class getMyStocksCommand extends baseCommand
   execute:() ->
     result = []
     Ti.API.debug @_currentSlideState()
-    @_showStatusView()
+
     
     items = JSON.parse(Ti.App.Properties.getString(@value))
 
     if items isnt null
-      if @_currentSlideState() is "default"
-        @_showStatusView()
-      else
-        @_hideStatusView()
+      # if @_currentSlideState() is "default"
+      #   @_showStatusView()
+      # else
+      #   @_hideStatusView()
     
       
       result.push(mainTableView.createRow(json)) for json in items
@@ -34,7 +34,7 @@ class getMyStocksCommand extends baseCommand
     value = @value
 
     qiita.getMyStocks( (result,links) =>
-      @_hideStatusView()
+      
       rows.push(mainTableView.createRow(json)) for json in result
       
       if result.length isnt MAXITEMCOUNT
@@ -42,8 +42,12 @@ class getMyStocksCommand extends baseCommand
       else
         Ti.API.info "loadOldEntry show"
         rows.push(mainTableView.createRowForLoadOldEntry(value))
-              
+        
+      
       mainTable.setData rows
+      # @_hideStatusView() 
+      # Ti.App.Properties.setBool "stateMainTableSlide",false
+      
 
     )
 

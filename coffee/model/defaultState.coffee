@@ -2,7 +2,6 @@ class defaultState
   constructor: () ->
     # Ti.API.info "STATE: 標準状態"
     
-    
   sayState: () ->
     return "[STATE 標準状態]"
   moveUP: () ->

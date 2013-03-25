@@ -22,7 +22,6 @@ defaultState = (function() {
       duration: 400,
       top: 0
     }, function() {
-      mainTable.touchEnabled = false;
       return mainTable.animate({
         duration: 200,
         top: 50

@@ -38,14 +38,6 @@ commandController = (function() {
     return true;
   };
 
-  commandController.prototype.countUp = function() {
-    var direction;
-    Ti.API.info("[COMMAND] countUp start");
-    direction = "vertical";
-    Ti.App.Properties.setBool('stateMainTableSlide', true);
-    return mainContoroller.slideMainTable(direction);
-  };
-
   return commandController;
 
 })();

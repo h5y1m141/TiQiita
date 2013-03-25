@@ -82,8 +82,8 @@ class Qiita
     relLink = JSON.parse(relLinkJSON.read().toString())
     
 
-    # if storedStocksFlag is true
-    #   @._storedStocks(itemsJSON.read().toString())
+    if storedStocksFlag is true
+      @._storedStocks(itemsJSON.read().toString())
 
     if value is "items"
       callback(items,relLink)

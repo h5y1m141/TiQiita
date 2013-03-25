@@ -15,15 +15,9 @@ getFeedByTagCommand = (function(_super) {
     var items, json, result, storedTo, _i, _len;
     result = [];
     Ti.API.debug(this._currentSlideState());
-    this._showStatusView();
     storedTo = "followingTag" + this.tagName;
     items = JSON.parse(Ti.App.Properties.getString(storedTo));
     if (items !== null) {
-      if (this._currentSlideState() === "default") {
-        this._showStatusView();
-      } else {
-        this._hideStatusView();
-      }
       for (_i = 0, _len = items.length; _i < _len; _i++) {
         json = items[_i];
         result.push(mainTableView.createRow(json));
@@ -43,7 +37,6 @@ getFeedByTagCommand = (function(_super) {
     storedTo = "followingTag" + this.tagName;
     qiita.getFeedByTag(this.tagName, function(result, links) {
       var json, _i, _len;
-      _this._hideStatusView();
       for (_i = 0, _len = result.length; _i < _len; _i++) {
         json = result[_i];
         rows.push(mainTableView.createRow(json));

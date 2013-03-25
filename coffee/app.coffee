@@ -3,15 +3,15 @@
 Ti.App.Properties.setBool 'stateMainTableSlide',false
 
 ## storedStocks毎起動時に初期化
-Ti.App.Properties.setString "storedStocks",null
-Ti.App.Properties.setString "storedMyStocks",null
+# Ti.App.Properties.setString "storedStocks",null
+# Ti.App.Properties.setString "storedMyStocks",null
 
 
 ## フォローしてるタグの有無と、タグのリスト
 Ti.App.Properties.getBool "followingTagsError", false
 Ti.App.Properties.setList "followingTags",null
 
-Ti.App.Properties.setList "TiQiitaMenu",[]
+
 
 
 ## 起動時には、投稿情報一覧を現在ページとしてステータス管理したいので

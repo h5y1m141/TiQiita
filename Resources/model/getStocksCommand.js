@@ -14,39 +14,37 @@ getStocksCommand = (function(_super) {
   getStocksCommand.prototype.execute = function() {
     var items, json, result, _i, _len;
     result = [];
-    this._showStatusView();
     items = JSON.parse(Ti.App.Properties.getString(this.value));
     if (items !== null) {
-      if (this._currentSlideState() === "default") {
-        this._showStatusView();
-      } else {
-        this._hideStatusView();
-      }
+      Ti.API.debug("load cached item and mainTable reset");
       for (_i = 0, _len = items.length; _i < _len; _i++) {
         json = items[_i];
         result.push(mainTableView.createRow(json));
       }
       result.push(mainTableView.createRowForLoadOldEntry(this.value));
+      mainTable.setData(result);
+      return this._hideStatusView();
     } else {
-      this.getFeed();
+      return this.getFeed();
     }
-    return mainTable.setData(result);
   };
 
   getStocksCommand.prototype.getFeed = function() {
     var rows, value,
       _this = this;
+    Ti.API.debug("getFeed start");
     rows = [];
     value = this.value;
+    this._showStatusView();
     qiita.getFeed(function(result, links) {
       var json, _i, _len;
-      _this._hideStatusView();
       for (_i = 0, _len = result.length; _i < _len; _i++) {
         json = result[_i];
         rows.push(mainTableView.createRow(json));
       }
       rows.push(mainTableView.createRowForLoadOldEntry(value));
-      return mainTable.setData(rows);
+      mainTable.setData(rows);
+      return _this._hideStatusView();
     });
     return true;
   };
@@ -56,11 +54,34 @@ getStocksCommand = (function(_super) {
   };
 
   getStocksCommand.prototype._showStatusView = function() {
-    return getStocksCommand.__super__._showStatusView.call(this);
+    Ti.API.info("[ACTION] スライド開始");
+    progressBar.value = 0;
+    progressBar.show();
+    return statusView.animate({
+      duration: 400,
+      top: 0
+    }, function() {
+      Ti.API.debug("mainTable を上にずらす");
+      return mainTable.animate({
+        duration: 200,
+        top: 50
+      });
+    });
   };
 
   getStocksCommand.prototype._hideStatusView = function() {
-    return getStocksCommand.__super__._hideStatusView.call(this);
+    Ti.API.info("[ACTION] スライドから標準状態に戻る。垂直方向");
+    return mainTable.animate({
+      duration: 200,
+      top: 0
+    }, function() {
+      Ti.API.debug("mainTable back");
+      progressBar.hide();
+      return statusView.animate({
+        duration: 400,
+        top: -50
+      });
+    });
   };
 
   return getStocksCommand;

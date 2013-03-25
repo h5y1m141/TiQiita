@@ -2,15 +2,9 @@ var AlertView, CommandController, ConfigMenu, Hatena, MainContoroller, MainTable
 
 Ti.App.Properties.setBool('stateMainTableSlide', false);
 
-Ti.App.Properties.setString("storedStocks", null);
-
-Ti.App.Properties.setString("storedMyStocks", null);
-
 Ti.App.Properties.getBool("followingTagsError", false);
 
 Ti.App.Properties.setList("followingTags", null);
-
-Ti.App.Properties.setList("TiQiitaMenu", []);
 
 Ti.App.Properties.setString("currentPage", "storedStocks");
 
