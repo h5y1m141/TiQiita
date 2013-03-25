@@ -128,25 +128,18 @@ class Qiita
   _request:(parameter,storedTo,callback) ->
     
     self = @
-    # if self.isConnected() is false
-    #   # controller.errorHandle()
-    #   logData =
-    #     source  : "qiita._request()"
-    #     time    : moment().format("YYYY-MM-DD hh:mm:ss")
-    #     message : "fail"
-    #   Ti.API.info logData
-
-    #   controller.logging(logData)
       
     xhr = Ti.Network.createHTTPClient()
     
     xhr.ondatastream = (e) ->
-      if storedTo isnt "followingTags"
+      if storedTo is "followingTags"
+        Ti.API.debug "フォローしてるタグの情報取得する際には何も行わない"
+      else
         if Math.round(e.progress * 100) <= 100
 
           Ti.API.info "xhr.ondatastream start progress is #{Math.round(e.progress * 100)}"
           progressBar.value = e.progress
-          # commandController.countUp()
+
 
     Ti.API.info parameter.method + ":" + parameter.url
     xhr.open(parameter.method,parameter.url)
@@ -157,8 +150,10 @@ class Qiita
 
       # アプリ起動中にキャッシュしたい情報かどうかをこのstoredToパラメータ
       # にて行う。
+      if storedTo is "followingTags"
+        Ti.API.debug "フォローしてるタグの情報取得する際には何も行わない"
+      else
 
-      if storedTo isnt false
         Ti.API.info "start _storedStocks #{storedTo}"
         # QiitaAPIから取得した投稿情報をTi.App.Propertiesに都度突っ込み
         # これをローカルDB的に活用する
@@ -178,10 +173,8 @@ class Qiita
       callback(json,relLink)
 
     xhr.onerror = (e) ->
-      # Ti.API.info "status code: #{@.status}"
       error = JSON.parse(@.responseText)
-      Ti.App.Properties.setBool "#{storedTo}Error", true
-      # Ti.API.info "_request method error.#{error.error}"
+      Ti.API.debug "_request method error.#{error.error}"
             
       
       
