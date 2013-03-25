@@ -1,6 +1,8 @@
-var AlertView, CommandController, ConfigMenu, Hatena, MainContoroller, MainTable, MenuTable, NappSlideMenu, ProgressBar, Qiita, QiitaLoginID, QiitaLoginPassword, StatusView, actInd, actionBtn, activityIndicator, alertView, baseCommand, commandController, configMenu, configWindow, createCenterNavWindow, defaultState, mainContoroller, mainTable, mainTableView, mainWindow, menu, menuTable, moment, momentja, navController, progressBar, qiita, rootWindow, slideState, statusView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win, winLeft;
+var AlertView, CommandController, ConfigMenu, Hatena, MainContoroller, MainTable, MenuTable, NappSlideMenu, ProgressBar, Qiita, QiitaLoginID, QiitaLoginPassword, StatusView, actInd, actionBtn, activityIndicator, alertView, baseCommand, commandController, configMenu, configWindow, createCenterNavWindow, mainContoroller, mainTable, mainTableView, mainWindow, menu, menuTable, moment, momentja, navController, progressBar, qiita, rootWindow, statusView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win, winLeft;
 
-Ti.App.Properties.setBool('stateMainTableSlide', false);
+Ti.App.Properties.setString("storedStocks", null);
+
+Ti.App.Properties.setString("storedMyStocks", null);
 
 Ti.App.Properties.getBool("followingTagsError", false);
 
@@ -15,10 +17,6 @@ testsEnabled = false;
 moment = require('lib/moment.min');
 
 momentja = require('lib/momentja');
-
-defaultState = require("model/defaultState");
-
-slideState = require("model/slideState");
 
 Qiita = require('model/qiita');
 

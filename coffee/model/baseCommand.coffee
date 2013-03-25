@@ -11,17 +11,35 @@ class baseCommand
 
     return state
 
-
   _showStatusView:() ->
-    Ti.API.info "データの読み込み。statusView表示"
-
-    return mainContoroller.slideMainTable(@direction)
+    Ti.API.info "[ACTION] スライド開始"
+    progressBar.value = 0
+    progressBar.show()    
+    statusView.animate({
+        duration:400
+        top:0
+    },() ->
+      Ti.API.debug "mainTable を上にずらす"
+      mainTable.animate({
+        duration:200
+        top:50
+      })
+    )
 
 
   _hideStatusView:() ->
-    Ti.API.info "データの読み込みが完了したらstatusViewを元に戻す"
-
-    mainContoroller.slideMainTable(@direction)
+    Ti.API.info "[ACTION] スライドから標準状態に戻る。垂直方向"
+    mainTable.animate({
+      duration:200
+      top:0
+    },()->
+      Ti.API.debug "mainTable back"
+      progressBar.hide()
+      statusView.animate({
+        duration:400
+        top:-50
+      })
+    )
 
     
     

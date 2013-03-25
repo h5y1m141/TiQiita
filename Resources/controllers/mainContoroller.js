@@ -7,7 +7,6 @@ mainContoroller = (function() {
     this._hideStatusView = __bind(this._hideStatusView, this);
 
     this._showStatusView = __bind(this._showStatusView, this);
-    this.state = new defaultState();
     this.networkDisconnectedMessage = "ネットワーク接続出来ません。ネットワーク設定を再度ご確認ください";
     this.authenticationFailMessage = "ユーザIDかパスワードに誤りがあるためログインできません";
   }
@@ -31,14 +30,11 @@ mainContoroller = (function() {
   };
 
   mainContoroller.prototype.networkConnectionCheck = function(callback) {
-    var currentPage, direction;
+    var currentPage;
     if (qiita.isConnected() === false) {
       this._alertViewShow(this.networkDisconnectedMessage);
-      direction = "vertical";
-      Ti.App.Properties.setBool('stateMainTableSlide', true);
       currentPage = Ti.App.Properties.getString("currentPage");
       Ti.API.info("networkConnectionCheck " + currentPage);
-      return this.slideMainTable(direction);
     } else {
       return callback();
     }
@@ -72,27 +68,35 @@ mainContoroller = (function() {
     return commandController.useMenu(currentPage);
   };
 
-  mainContoroller.prototype._currentSlideState = function() {
-    var flg, state;
-    flg = Ti.App.Properties.getBool("stateMainTableSlide");
-    if (flg === true) {
-      state = "slideState";
-    } else {
-      state = "default";
-    }
-    return state;
-  };
-
   mainContoroller.prototype._showStatusView = function() {
-    Ti.API.info("データの読み込み。statusView表示");
-    Ti.App.Properties.setBool("stateMainTableSlide", false);
-    return this.slideMainTable("vertical");
+    Ti.API.info("[ACTION] スライド開始");
+    progressBar.value = 0;
+    progressBar.show();
+    return statusView.animate({
+      duration: 400,
+      top: 0
+    }, function() {
+      Ti.API.debug("mainTable を上にずらす");
+      return mainTable.animate({
+        duration: 200,
+        top: 50
+      });
+    });
   };
 
   mainContoroller.prototype._hideStatusView = function() {
-    Ti.API.info("データの読み込みが完了したらstatusViewを元に戻す");
-    Ti.App.Properties.setBool("stateMainTableSlide", true);
-    return this.slideMainTable("vertical");
+    Ti.API.info("[ACTION] スライドから標準状態に戻る。垂直方向");
+    return mainTable.animate({
+      duration: 200,
+      top: 0
+    }, function() {
+      Ti.API.debug("mainTable back");
+      progressBar.hide();
+      return statusView.animate({
+        duration: 400,
+        top: -50
+      });
+    });
   };
 
   mainContoroller.prototype.loadOldEntry = function(storedTo) {

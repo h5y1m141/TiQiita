@@ -1,6 +1,5 @@
 class mainContoroller
   constructor:() ->
-    @state = new defaultState()
 
     @networkDisconnectedMessage = "ネットワーク接続出来ません。ネットワーク設定を再度ご確認ください"
     @authenticationFailMessage = "ユーザIDかパスワードに誤りがあるためログインできません"
@@ -31,11 +30,9 @@ class mainContoroller
 
     if qiita.isConnected() is false
       @_alertViewShow @networkDisconnectedMessage
-      direction = "vertical"
-      Ti.App.Properties.setBool 'stateMainTableSlide',true
       currentPage = Ti.App.Properties.getString "currentPage"
       Ti.API.info "networkConnectionCheck #{currentPage}"
-      return @slideMainTable(direction)
+      return
     else
       return callback()
       
@@ -67,25 +64,36 @@ class mainContoroller
     
     commandController.useMenu currentPage
 
-  _currentSlideState:() ->
-    flg = Ti.App.Properties.getBool "stateMainTableSlide"
-    if flg is true
-      state = "slideState"
-    else
-      state = "default"
-
-    return state
 
   _showStatusView:() =>
-    Ti.API.info "データの読み込み。statusView表示"
-    Ti.App.Properties.setBool "stateMainTableSlide",false
-    return @slideMainTable("vertical")
+    Ti.API.info "[ACTION] スライド開始"
+    progressBar.value = 0
+    progressBar.show()    
+    statusView.animate({
+        duration:400
+        top:0
+    },() ->
+      Ti.API.debug "mainTable を上にずらす"
+      mainTable.animate({
+        duration:200
+        top:50
+      })
+    )
 
 
   _hideStatusView:() =>
-    Ti.API.info "データの読み込みが完了したらstatusViewを元に戻す"
-    Ti.App.Properties.setBool "stateMainTableSlide",true
-    return @slideMainTable("vertical")    
+    Ti.API.info "[ACTION] スライドから標準状態に戻る。垂直方向"
+    mainTable.animate({
+      duration:200
+      top:0
+    },()->
+      Ti.API.debug "mainTable back"
+      progressBar.hide()
+      statusView.animate({
+        duration:400
+        top:-50
+      })
+    )
 
   loadOldEntry: (storedTo) ->
 

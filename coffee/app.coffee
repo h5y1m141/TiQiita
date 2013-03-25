@@ -1,10 +1,8 @@
 # Ti.App.Propertiesの初期化  
-## クリックイベント時の状態管理のために以下利用
-Ti.App.Properties.setBool 'stateMainTableSlide',false
 
 ## storedStocks毎起動時に初期化
-# Ti.App.Properties.setString "storedStocks",null
-# Ti.App.Properties.setString "storedMyStocks",null
+Ti.App.Properties.setString "storedStocks",null
+Ti.App.Properties.setString "storedMyStocks",null
 
 
 ## フォローしてるタグの有無と、タグのリスト
@@ -34,8 +32,6 @@ moment = require('lib/moment.min')
 momentja = require('lib/momentja')
 
 # 以下はmodelの読み込み
-defaultState = require("model/defaultState")
-slideState = require("model/slideState")
 Qiita = require('model/qiita')
 Hatena = require('model/hatena')
 baseCommand = require("model/baseCommand")
