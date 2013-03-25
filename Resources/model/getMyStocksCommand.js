@@ -22,10 +22,11 @@ getMyStocksCommand = (function(_super) {
         result.push(mainTableView.createRow(json));
       }
       result.push(mainTableView.createRowForLoadOldEntry(this.value));
+      this._hideStatusView();
+      return mainTable.setData(result);
     } else {
-      this.getMyStocks();
+      return this.getMyStocks();
     }
-    return mainTable.setData(result);
   };
 
   getMyStocksCommand.prototype.getMyStocks = function() {
@@ -34,6 +35,7 @@ getMyStocksCommand = (function(_super) {
     rows = [];
     MAXITEMCOUNT = 20;
     value = this.value;
+    this._showStatusView();
     qiita.getMyStocks(function(result, links) {
       var json, _i, _len;
       for (_i = 0, _len = result.length; _i < _len; _i++) {
@@ -46,7 +48,8 @@ getMyStocksCommand = (function(_super) {
         Ti.API.info("loadOldEntry show");
         rows.push(mainTableView.createRowForLoadOldEntry(value));
       }
-      return mainTable.setData(rows);
+      mainTable.setData(rows);
+      return _this._hideStatusView();
     });
     return true;
   };
@@ -56,11 +59,34 @@ getMyStocksCommand = (function(_super) {
   };
 
   getMyStocksCommand.prototype._showStatusView = function() {
-    return getMyStocksCommand.__super__._showStatusView.call(this);
+    Ti.API.info("[ACTION] スライド開始");
+    progressBar.value = 0;
+    progressBar.show();
+    return statusView.animate({
+      duration: 400,
+      top: 0
+    }, function() {
+      Ti.API.debug("mainTable を上にずらす");
+      return mainTable.animate({
+        duration: 200,
+        top: 50
+      });
+    });
   };
 
   getMyStocksCommand.prototype._hideStatusView = function() {
-    return getMyStocksCommand.__super__._hideStatusView.call(this);
+    Ti.API.info("[ACTION] スライドから標準状態に戻る。垂直方向");
+    return mainTable.animate({
+      duration: 200,
+      top: 0
+    }, function() {
+      Ti.API.debug("mainTable back");
+      progressBar.hide();
+      return statusView.animate({
+        duration: 400,
+        top: -50
+      });
+    });
   };
 
   return getMyStocksCommand;

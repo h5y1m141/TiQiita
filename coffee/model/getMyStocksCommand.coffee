@@ -6,32 +6,25 @@ class getMyStocksCommand extends baseCommand
   execute:() ->
     result = []
     Ti.API.debug @_currentSlideState()
-
     
     items = JSON.parse(Ti.App.Properties.getString(@value))
-
     if items isnt null
-      # if @_currentSlideState() is "default"
-      #   @_showStatusView()
-      # else
-      #   @_hideStatusView()
-    
       
       result.push(mainTableView.createRow(json)) for json in items
       result.push(mainTableView.createRowForLoadOldEntry(@value))
+      @_hideStatusView()
+      mainTable.setData result  
       
     else
-      @.getMyStocks()
+      @getMyStocks()
       
-    mainTable.setData result  
-
-    
       
   getMyStocks:() ->
 
     rows = []
     MAXITEMCOUNT = 20 # 1リクエスト辺りに読み込まれる最大件数
     value = @value
+    @_showStatusView()
 
     qiita.getMyStocks( (result,links) =>
       
@@ -45,9 +38,7 @@ class getMyStocksCommand extends baseCommand
         
       
       mainTable.setData rows
-      # @_hideStatusView() 
-      # Ti.App.Properties.setBool "stateMainTableSlide",false
-      
+      @_hideStatusView() 
 
     )
 
@@ -57,9 +48,33 @@ class getMyStocksCommand extends baseCommand
     super()
 
   _showStatusView:() ->
-    super()
+    Ti.API.info "[ACTION] スライド開始"
+    progressBar.value = 0
+    progressBar.show()    
+    statusView.animate({
+        duration:400
+        top:0
+    },() ->
+      Ti.API.debug "mainTable を上にずらす"
+      mainTable.animate({
+        duration:200
+        top:50
+      })
+    )
+
 
   _hideStatusView:() ->
-    super()
+    Ti.API.info "[ACTION] スライドから標準状態に戻る。垂直方向"
+    mainTable.animate({
+      duration:200
+      top:0
+    },()->
+      Ti.API.debug "mainTable back"
+      progressBar.hide()
+      statusView.animate({
+        duration:400
+        top:-50
+      })
+    )
       
 module.exports = getMyStocksCommand
