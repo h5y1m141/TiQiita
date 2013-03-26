@@ -54,7 +54,9 @@ class Hatena
     
     @hatena.request('http://b.hatena.ne.jp/atom/post', xml, {'Content-Type':'application/x.atom+xml'}, "POST", (e) ->
       if e.success
-        alert "はてなブックマークへの投稿完了しました"
+        alertDialog = Ti.UI.createAlertDialog()
+        alertDialog.setTitle "はてなブックマークへの投稿完了しました"
+        alertDialog.show()
 
     )
 
