@@ -59,14 +59,7 @@ class configMenu
       Ti.App.Properties.setString('QiitaLoginPassword',e.value)
     )
 
-    # textField2.addEventListener('blur',(e) =>
-    #   if qiita.isConnected() is false
-    #     message = mainContoroller.networkDisconnectedMessage
-    #     mainContoroller._alertViewShow message
-    #   else
-    #     actInd.show()
-    #     commandController.useMenu "qiitaLogin"
-    # )
+    
 
     row2.add textField2
     row2.className = 'password'
@@ -95,6 +88,7 @@ class configMenu
       textAlign:1
       text:"ログインする"
 
+
     row3.add row3label
 
     groupData.add row1
@@ -111,14 +105,22 @@ class configMenu
     
 
     @hatenaRow.addEventListener('click',()->
-      Ti.API.info "start hatena"
-      Hatena = require("model/hatena")
-      hatena = new Hatena()
-      hatena.login()
-    )  
-
+      # Ti.API.info "start hatena"
+      # Hatena = require("model/hatena")
+      # hatena = new Hatena()
+      # hatena.login()
+    )
+    
+    hatenaIconImage = Ti.UI.createImageView
+      width:35
+      height:35
+      top:5
+      left:5
+      image:"ui/image/hatena.png"
+      
     @hatenaLabel = Ti.UI.createLabel(
-      left: 10
+      left: 50
+      width:100
       text: "はてな"
     )
     if Ti.App.Properties.getBool("hatenaAccessTokenKey")?
@@ -126,18 +128,27 @@ class configMenu
         right: 10
         value: true
       )
-      @hatenaSwitch.show()
+
     else
       @hatenaSwitch = Ti.UI.createSwitch(
         right: 10
         value: false
       )  
-      @hatenaSwitch.hide()
+
       
     
-    
     @hatenaSwitch.addEventListener "change", (e) ->
-      Ti.App.Properties.setBool "hatenaShareSwitch", e.value
+      if e.value is true
+
+        Hatena = require("model/hatena")
+        hatena = new Hatena()
+        hatena.login()
+      else
+        Ti.App.Properties.removeProperty("hatenaAccessTokenKey")
+        Ti.App.Properties.removeProperty("hatenaAccessTokenSecret")
+     
+
+    @hatenaRow.add hatenaIconImage
 
     @hatenaRow.add @hatenaLabel
     @hatenaRow.add @hatenaSwitch
@@ -157,9 +168,8 @@ class configMenu
       height:400
       
     @tableView.addEventListener('click',(e) ->  
-
       if e.index is 2
-
+        textField2.enabled = false
         actInd.show()
         LoginCommand = require("model/loginCommand")
         loginCommand = new LoginCommand()
@@ -171,13 +181,8 @@ class configMenu
   getTable:() ->
     return @tableView
 
-  changeHatenaRowElement: (iconImage,switchFlg) =>
-
+  changeHatenaRowElement: (switchFlg) ->
     @hatenaSwitch.value = switchFlg
-    @hatenaRow.add iconImage
-    @hatenaSwitch.show()
-    @hatenaSwitch.left = 60
-    @hatenaRow.remove @hatenaLabel
     return 
 
 

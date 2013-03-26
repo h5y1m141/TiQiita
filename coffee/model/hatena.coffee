@@ -28,13 +28,10 @@ class Hatena
               top:5
               left:5
               image:json.profile_image_url
-
-
-            switchFlg = true
-
-            configMenu.changeHatenaRowElement(iconImage,switchFlg)  
             
           else
+            switchFlg = false
+            configMenu.changeHatenaRowElement(switchFlg)  
 
 
       else

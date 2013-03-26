@@ -26,17 +26,16 @@ Hatena = (function() {
           var iconImage, json, switchFlg;
           if (e.success) {
             json = JSON.parse(e.result.text);
-            iconImage = Ti.UI.createImageView({
+            return iconImage = Ti.UI.createImageView({
               width: 40,
               height: 40,
               top: 5,
               left: 5,
               image: json.profile_image_url
             });
-            switchFlg = true;
-            return configMenu.changeHatenaRowElement(iconImage, switchFlg);
           } else {
-
+            switchFlg = false;
+            return configMenu.changeHatenaRowElement(switchFlg);
           }
         });
       } else {

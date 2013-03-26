@@ -1,12 +1,9 @@
-var configMenu,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+var configMenu;
 
 configMenu = (function() {
 
   function configMenu() {
-    this.changeHatenaRowElement = __bind(this.changeHatenaRowElement, this);
-
-    var QiitaLoginID, QiitaLoginPassword, groupData, platformSection, row1, row2, row3, row3label, textField1, textField2;
+    var QiitaLoginID, QiitaLoginPassword, groupData, hatenaIconImage, platformSection, row1, row2, row3, row3label, textField1, textField2;
     groupData = Ti.UI.createTableViewSection({
       headerTitle: "Qiitaアカウント設定"
     });
@@ -100,15 +97,17 @@ configMenu = (function() {
       height: Ti.UI.FILL,
       selectionStyle: Ti.UI.iPhone.TableViewCellSelectionStyle.NONE
     });
-    this.hatenaRow.addEventListener('click', function() {
-      var Hatena, hatena;
-      Ti.API.info("start hatena");
-      Hatena = require("model/hatena");
-      hatena = new Hatena();
-      return hatena.login();
+    this.hatenaRow.addEventListener('click', function() {});
+    hatenaIconImage = Ti.UI.createImageView({
+      width: 35,
+      height: 35,
+      top: 5,
+      left: 5,
+      image: "ui/image/hatena.png"
     });
     this.hatenaLabel = Ti.UI.createLabel({
-      left: 10,
+      left: 50,
+      width: 100,
       text: "はてな"
     });
     if (Ti.App.Properties.getBool("hatenaAccessTokenKey") != null) {
@@ -116,17 +115,24 @@ configMenu = (function() {
         right: 10,
         value: true
       });
-      this.hatenaSwitch.show();
     } else {
       this.hatenaSwitch = Ti.UI.createSwitch({
         right: 10,
         value: false
       });
-      this.hatenaSwitch.hide();
     }
     this.hatenaSwitch.addEventListener("change", function(e) {
-      return Ti.App.Properties.setBool("hatenaShareSwitch", e.value);
+      var Hatena, hatena;
+      if (e.value === true) {
+        Hatena = require("model/hatena");
+        hatena = new Hatena();
+        return hatena.login();
+      } else {
+        Ti.App.Properties.removeProperty("hatenaAccessTokenKey");
+        return Ti.App.Properties.removeProperty("hatenaAccessTokenSecret");
+      }
     });
+    this.hatenaRow.add(hatenaIconImage);
     this.hatenaRow.add(this.hatenaLabel);
     this.hatenaRow.add(this.hatenaSwitch);
     platformSection.add(this.hatenaRow);
@@ -142,6 +148,7 @@ configMenu = (function() {
     this.tableView.addEventListener('click', function(e) {
       var LoginCommand, loginCommand;
       if (e.index === 2) {
+        textField2.enabled = false;
         actInd.show();
         LoginCommand = require("model/loginCommand");
         loginCommand = new LoginCommand();
@@ -154,12 +161,8 @@ configMenu = (function() {
     return this.tableView;
   };
 
-  configMenu.prototype.changeHatenaRowElement = function(iconImage, switchFlg) {
+  configMenu.prototype.changeHatenaRowElement = function(switchFlg) {
     this.hatenaSwitch.value = switchFlg;
-    this.hatenaRow.add(iconImage);
-    this.hatenaSwitch.show();
-    this.hatenaSwitch.left = 60;
-    this.hatenaRow.remove(this.hatenaLabel);
   };
 
   return configMenu;
