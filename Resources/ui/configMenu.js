@@ -140,9 +140,12 @@ configMenu = (function() {
       height: 400
     });
     this.tableView.addEventListener('click', function(e) {
+      var LoginCommand, loginCommand;
       if (e.index === 2) {
         actInd.show();
-        return commandController.useMenu("qiitaLogin");
+        LoginCommand = require("model/loginCommand");
+        loginCommand = new LoginCommand();
+        return loginCommand.execute();
       }
     });
   }

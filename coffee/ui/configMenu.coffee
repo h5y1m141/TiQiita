@@ -161,7 +161,9 @@ class configMenu
       if e.index is 2
 
         actInd.show()
-        commandController.useMenu "qiitaLogin"
+        LoginCommand = require("model/loginCommand")
+        loginCommand = new LoginCommand()
+        loginCommand.execute()
 
     )
 
