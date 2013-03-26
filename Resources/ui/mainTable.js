@@ -14,14 +14,14 @@ mainTable = (function() {
       top: 0
     });
     this.arrow = Ti.UI.createView({
-      backgroundImage: "/lib/arrow.png",
+      backgroundImage: "ui/image/arrow.png",
       width: 30,
       height: 30,
       bottom: 20,
       left: 20
     });
     this.statusMessage = Ti.UI.createLabel({
-      text: "Puxe para recarregar...",
+      text: "引っ張って更新",
       left: 55,
       width: 220,
       bottom: 35,
@@ -47,23 +47,23 @@ mainTable = (function() {
       var offset, t;
       offset = e.contentOffset.y;
       if (offset <= -65.0 && !_this.pulling) {
-        t = Ti.UI.create2DMatrix().scale();
+        t = Ti.UI.create2DMatrix().scale(1);
         t = t.rotate(-180);
         _this.pulling = true;
         _this.arrow.animate({
           transform: t,
           duration: 180
         });
-        return _this.statusMessage.text = "引き下げて更新";
+        return _this.statusMessage.text = "指を離して更新";
       } else if (_this.pulling && offset > -65.0 && offset < 0) {
         _this.pulling = false;
-        t = Ti.UI.create2DMatrix().scale();
+        t = Ti.UI.create2DMatrix().scale(1);
         _this.arrow.animate({
           transform: t,
           duration: 180
         });
         mainContoroller.loadEntry();
-        return _this.statusMessage.text = "OK";
+        return _this.statusMessage.text = "引っ張って更新";
       } else {
 
       }

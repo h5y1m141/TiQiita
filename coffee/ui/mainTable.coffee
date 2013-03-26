@@ -8,7 +8,7 @@ class mainTable
       left:0
       top:0
     @arrow = Ti.UI.createView
-      backgroundImage:"/lib/arrow.png"
+      backgroundImage:"ui/image/arrow.png"
       width:30
       height:30
       bottom:20
@@ -16,7 +16,7 @@ class mainTable
 
       
     @statusMessage = Ti.UI.createLabel
-      text:"Puxe para recarregar...",
+      text:"引っ張って更新"
       left:55,
       width:220,
       bottom:35,
@@ -43,23 +43,23 @@ class mainTable
       offset = e.contentOffset.y
 
       if offset <= -65.0 and not @pulling
-        t = Ti.UI.create2DMatrix().scale()
+        t = Ti.UI.create2DMatrix().scale(1)
         t = t.rotate(-180)
         @pulling = true
         @arrow.animate
           transform: t
           duration: 180
           
-        @statusMessage.text = "引き下げて更新"  
+        @statusMessage.text = "指を離して更新"
 
       else if @pulling and offset > -65.0 and offset < 0
         @pulling = false
-        t = Ti.UI.create2DMatrix().scale()
+        t = Ti.UI.create2DMatrix().scale(1)
         @arrow.animate
           transform: t
           duration: 180
         mainContoroller.loadEntry()    
-        @statusMessage.text = "OK"
+        @statusMessage.text = "引っ張って更新"
         
       else
 
