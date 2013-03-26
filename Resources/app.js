@@ -95,13 +95,40 @@ actionBtn.addEventListener('click', function() {
     _this = this;
   dialog = Ti.UI.createOptionDialog();
   dialog.setTitle("どの処理を実行しますか？");
-  dialog.setOptions(["ストックする", "キャンセル"]);
-  dialog.setCancel(1);
+  dialog.setOptions(["Qiitaへストック", "はてブ", "Qiitaへストック&はてブ", "キャンセル"]);
+  dialog.setCancel(3);
   dialog.addEventListener('click', function(event) {
-    Ti.API.info("start dialog action.Event is " + event.index);
+    var QiitaToken, alertDialog, hatenaAccessTokenKey;
+    hatenaAccessTokenKey = Ti.App.Properties.getString("hatenaAccessTokenKey");
+    QiitaToken = Ti.App.Properties.getString('QiitaToken');
+    alertDialog = Titanium.UI.createAlertDialog();
+    alertDialog.setTitle("Error");
+    Ti.API.debug("start dialog action.Event is " + event.index);
     switch (event.index) {
       case 0:
-        return mainContoroller.stockItemToQiita();
+        if ((QiitaToken != null) === true) {
+          return mainContoroller.stockItemToQiita();
+        } else {
+          alertDialog.setMessage("Qiitaのアカウント設定が完了していないため投稿できません");
+          return alertDialog.show();
+        }
+        break;
+      case 1:
+        if ((hatenaAccessTokenKey != null) === true) {
+          return mainContoroller.stockItemToHatena();
+        } else {
+          alertDialog.setMessage("はてなのアカウント設定が完了していないため投稿できません");
+          return alertDialog.show();
+        }
+        break;
+      case 2:
+        if ((hatenaAccessTokenKey != null) === true && (QiitaToken != null) === true) {
+          mainContoroller.stockItemToQiita();
+          return mainContoroller.stockItemToHatena();
+        } else {
+          alertDialog.setMessage("Qiitaかはてなのアカウント設定が完了していないため投稿できません");
+          return alertDialog.show();
+        }
     }
   });
   return dialog.show();

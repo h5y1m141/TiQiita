@@ -83,16 +83,44 @@ actionBtn = Ti.UI.createButton
 
 actionBtn.addEventListener('click',()->
 
+  
+
   dialog = Ti.UI.createOptionDialog()
   dialog.setTitle "どの処理を実行しますか？"
-  dialog.setOptions(["ストックする","キャンセル"])
-  dialog.setCancel(1)
+  dialog.setOptions(["Qiitaへストック","はてブ","Qiitaへストック&はてブ","キャンセル"])
+  dialog.setCancel(3)
   dialog.addEventListener('click',(event) =>
-    Ti.API.info "start dialog action.Event is #{event.index}"
+    hatenaAccessTokenKey  = Ti.App.Properties.getString("hatenaAccessTokenKey")
+    QiitaToken = Ti.App.Properties.getString('QiitaToken')
+    alertDialog = Titanium.UI.createAlertDialog()
+    alertDialog.setTitle("Error")
+    Ti.API.debug "start dialog action.Event is #{event.index}"
 
     switch event.index
       when 0
-        mainContoroller.stockItemToQiita()
+        if QiitaToken? is true
+          mainContoroller.stockItemToQiita()
+        else
+          alertDialog.setMessage("Qiitaのアカウント設定が完了していないため投稿できません")
+          alertDialog.show()
+      when 1
+        if hatenaAccessTokenKey? is true
+          mainContoroller.stockItemToHatena()
+        else
+          alertDialog.setMessage("はてなのアカウント設定が完了していないため投稿できません")
+          alertDialog.show()
+
+      when 2
+        if hatenaAccessTokenKey? is true and QiitaToken? is true
+          mainContoroller.stockItemToQiita()
+          mainContoroller.stockItemToHatena()
+        else
+          alertDialog.setMessage("Qiitaかはてなのアカウント設定が完了していないため投稿できません")
+          alertDialog.show()
+      
+        
+        
+        
         
   )
   dialog.show()

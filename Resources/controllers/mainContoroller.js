@@ -130,15 +130,20 @@ mainContoroller = (function() {
   };
 
   mainContoroller.prototype.stockItemToQiita = function() {
-    var Hatena, hatena, url, uuid;
+    var uuid;
     Ti.API.info(webview.getStockUUID());
     uuid = webview.getStockUUID();
+    qiita.putStock(uuid);
+    return true;
+  };
+
+  mainContoroller.prototype.stockItemToHatena = function() {
+    var Hatena, hatena, url;
     url = webview.getStockURL();
     Hatena = require("model/hatena");
     hatena = new Hatena();
     Ti.API.info("stockItemToQiita start. url is " + url);
     hatena.postBookmark(url);
-    qiita.putStock(uuid);
     return true;
   };
 

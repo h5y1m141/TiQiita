@@ -52,8 +52,11 @@ Hatena = (function() {
     return this.hatena.request('http://b.hatena.ne.jp/atom/post', xml, {
       'Content-Type': 'application/x.atom+xml'
     }, "POST", function(e) {
+      var alertDialog;
       if (e.success) {
-        return alert("はてなブックマークへの投稿完了しました");
+        alertDialog = Ti.UI.createAlertDialog();
+        alertDialog.setTitle("はてなブックマークへの投稿完了しました");
+        return alertDialog.show();
       }
     });
   };
