@@ -2,7 +2,13 @@
 
 ## What's this?
 
-プログラマの技術情報共有サービス の[Qiita](http://qiita.com/) の非公式なiPhoneアプリ。Titanium Mobileで開発してます
+プログラマの技術情報共有サービス の[Qiita](http://qiita.com/) の非公式なiPhoneアプリ。Titanium Mobile(Titanium SDK 2.1.4.GA)にて開発しています
+
+
+なお、スライドメニュー実装にあたって、[NappSlideMenu Module](https://github.com/viezel/NappSlideMenu)が必要になります。
+
+※NappSlideMenu Moduleのバージョン1.2を利用してます（2013年3月27日時点)
+
 
 アプリの機能としては下記の通りです
 
