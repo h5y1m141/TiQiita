@@ -1,29 +1,57 @@
-# Qiita Viewer
+# TiQiita
 
 ## What's this?
 
-プログラマの技術情報共有サービス のQiita[キータ] の非公式なiPhoneアプリ。Titanium Mobileで開発してます
+プログラマの技術情報共有サービス の[Qiita](http://qiita.com/) の非公式なiPhoneアプリ。Titanium Mobileで開発してます
+
+アプリの機能としては下記の通りです
+
+- Qiitaの投稿情報を表示
+- Qiitaにストックした情報を表示
+- フォローしてるタグの情報を表示
+- 投稿情報を、Qiitaにストック and/or はてなブックマークする
 
 
 ## アプリケーション画面イメージ
 
-### 起動時の画面
+### 起動時の状態
 
-![起動時の画面](https://s3-ap-northeast-1.amazonaws.com/tiqiita/001.png)
+起動時にまず設定画面を表示します。ここでQiitaと、はてなのアカウント設定を行うことができます。
+
+![起動時の画面](https://s3-ap-northeast-1.amazonaws.com/tiqiita/config.png)
+
+アカウントの設定をしてない状態でも、Qiitaの投稿情報は表示することができます
+
+![メイン画面](https://s3-ap-northeast-1.amazonaws.com/tiqiita/mainWindow.png)
+
+twitter系アプリのように「引っ張って更新」機能があります
+
+![メイン画面](https://s3-ap-northeast-1.amazonaws.com/tiqiita/downloading.png)
 
 ### 左上ボタンタッチした時に表示されるメニュー
 
-![左上ボタンタッチした時のメニュー](https://s3-ap-northeast-1.amazonaws.com/tiqiita/002.png)
+Qiitaのアカウント設定が完了してる状態で左上のMenuをタッチした時に
 
-### Qiitaのアカウント設定画面
+- Qiitaにストックした投稿情報を表示するための項目
+- Qiitaでフォローしてるタグの情報を表示するための項目
 
-![アカウント設定画面](https://s3-ap-northeast-1.amazonaws.com/tiqiita/003.png)
+が含まれたメニューが表示されます
+
+![左上ボタンタッチした時のメニュー](https://s3-ap-northeast-1.amazonaws.com/tiqiita/slidemenu.png)
+
 
 ### 投稿情報一覧から、投稿情報詳細を表示した場合
 
-![投稿情報詳細画面](https://s3-ap-northeast-1.amazonaws.com/tiqiita/004.png)
+投稿情報画面から、投稿情報の詳細を見るための画面に遷移した時には以下のようになります。
 
-![気になった投稿があった場合ストック可能](https://s3-ap-northeast-1.amazonaws.com/tiqiita/005.png)
+コード自体はシンタックスハイライトされた状態で標示されます
+
+![投稿情報詳細画面](https://s3-ap-northeast-1.amazonaws.com/tiqiita/detail.png)
+
+
+気になった投稿があった場合に、Qiitaにストックしたり、はてなブックマークすることも可能です
+
+![気になった投稿があった場合ストック可能](https://s3-ap-northeast-1.amazonaws.com/tiqiita/action.png)
 
 
 ## License

@@ -7,7 +7,6 @@ configMenu = (function() {
     groupData = Ti.UI.createTableViewSection({
       headerTitle: "Qiitaアカウント設定"
     });
-    commandController.createMenu();
     QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID');
     QiitaLoginPassword = Ti.App.Properties.getString('QiitaLoginPassword');
     row1 = Ti.UI.createTableViewRow({
