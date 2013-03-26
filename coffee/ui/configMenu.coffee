@@ -3,7 +3,7 @@ class configMenu
     groupData = Ti.UI.createTableViewSection(
       headerTitle: "Qiitaアカウント設定"
     )
-    commandController.createMenu()  
+
     QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID')
     QiitaLoginPassword = Ti.App.Properties.getString('QiitaLoginPassword')
     
