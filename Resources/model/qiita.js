@@ -58,8 +58,12 @@ Qiita = (function() {
       var body, token;
       body = JSON.parse(this.responseText);
       Ti.API.info("status code: " + this.status);
-      Ti.App.Properties.setString('QiitaToken', body.token);
-      token = body.token;
+      if (this.status === 200) {
+        Ti.App.Properties.setString('QiitaToken', body.token);
+        token = body.token;
+      } else {
+        token = null;
+      }
       return callback(token);
     };
     xhr.onerror = function(e) {

@@ -11,8 +11,9 @@ loginCommand = (function() {
       url_name: Ti.App.Properties.getString('QiitaLoginID'),
       password: Ti.App.Properties.getString('QiitaLoginPassword')
     };
-    Ti.API.info("[INFO] login start.");
+    Ti.API.debug("[INFO] login start.");
     qiita._auth(param, function(token) {
+      Ti.API.debug("token is " + token);
       if (token === null) {
         alert("ユーザIDかパスワードが間違ってます");
         return actInd.hide();

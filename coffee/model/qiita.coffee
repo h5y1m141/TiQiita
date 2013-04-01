@@ -49,8 +49,13 @@ class Qiita
     xhr.onload = ->
       body = JSON.parse(@.responseText)
       Ti.API.info "status code: #{@.status}"
-      Ti.App.Properties.setString('QiitaToken', body.token)
-      token = body.token
+      if @.status is 200
+        Ti.App.Properties.setString('QiitaToken', body.token)
+        token = body.token
+
+      else
+        token = null
+        
       callback(token)
 
         
