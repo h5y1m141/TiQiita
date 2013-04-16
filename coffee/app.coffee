@@ -16,11 +16,6 @@ Ti.App.Properties.setList "followingTags",null
 ## currentPageにstoredStocksをセット
 
 Ti.App.Properties.setString "currentPage","storedStocks"
-
-# 起動時に一旦tokenをリセット。
-# アカウントを切り替えて利用してる人や、フォローしてるタグの
-# 情報が変わってる可能性あるため
-Ti.App.Properties.setString 'QiitaToken',null
 # Jasmine利用してテスト実行するかどうかのフラグ。
 # trueにすることで、メインのアプリは起動せずに
 # Jasmineのテストが実行される
