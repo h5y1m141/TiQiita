@@ -10,8 +10,6 @@ Ti.App.Properties.setList("followingTags", null);
 
 Ti.App.Properties.setString("currentPage", "storedStocks");
 
-Ti.App.Properties.setString('QiitaToken', null);
-
 testsEnabled = false;
 
 moment = require('lib/moment.min');
