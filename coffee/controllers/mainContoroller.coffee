@@ -14,7 +14,7 @@ class mainContoroller
       @_alertViewShow @networkDisconnectedMessage
 
     else if loginID? is false or loginID is ""
-      rootWindow.toggleRightView()
+      # rootWindow.toggleRightView()
       commandController.useMenu "storedStocks"
 
 

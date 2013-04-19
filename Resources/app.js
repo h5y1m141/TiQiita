@@ -1,4 +1,4 @@
-var AlertView, CommandController, ConfigMenu, Hatena, MainContoroller, MainTable, MenuTable, NappSlideMenu, ProgressBar, Qiita, QiitaLoginID, QiitaLoginPassword, StatusView, actInd, actionBtn, activityIndicator, alertView, baseCommand, commandController, configMenu, configWindow, createCenterNavWindow, mainContoroller, mainTable, mainTableView, mainWindow, menu, menuTable, moment, momentja, navController, progressBar, qiita, rootWindow, statusView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win, winLeft;
+var AlertView, CommandController, ConfigMenu, Hatena, MainContoroller, MainTable, MenuTable, ProgressBar, Qiita, QiitaLoginID, QiitaLoginPassword, StatusView, actInd, actionBtn, activityIndicator, alertView, baseCommand, commandController, configMenu, mainContoroller, mainTable, mainTableView, mainWindow, menu, menuTable, moment, momentja, progressBar, qiita, statusView, tab1, tabGroup, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win, win1;
 
 Ti.App.Properties.setString("storedStocks", null);
 
@@ -141,55 +141,16 @@ QiitaLoginPassword = Ti.App.Properties.getString('QiitaLoginPassword');
 if (testsEnabled === true) {
   require('test/tests');
 } else {
-  createCenterNavWindow = function() {
-    var leftBtn, navController, rightBtn;
-    leftBtn = Ti.UI.createButton({
-      title: "Menu"
-    });
-    leftBtn.addEventListener("click", function() {
-      rootWindow.toggleLeftView();
-      rootWindow.setCenterhiddenInteractivity("TouchDisabledWithTapToCloseBouncing");
-      return rootWindow.setPanningMode("NavigationBarPanning");
-    });
-    rightBtn = Ti.UI.createButton({
-      title: "Config"
-    });
-    rightBtn.addEventListener("click", function() {
-      rootWindow.toggleRightView();
-      rootWindow.setCenterhiddenInteractivity("TouchDisabledWithTapToCloseBouncing");
-      return rootWindow.setPanningMode("NavigationBarPanning");
-    });
-    mainWindow.leftNavButton = leftBtn;
-    mainWindow.rightNavButton = rightBtn;
-    mainWindow.add(mainTable);
-    progressBar.show();
-    statusView.add(progressBar);
-    mainWindow.add(statusView);
-    mainWindow.add(alertView.getAlertView());
-    navController = Ti.UI.iPhone.createNavigationGroup({
-      window: mainWindow
-    });
-    return navController;
-  };
-  winLeft = Ti.UI.createWindow({
-    backgroundColor: "white"
-  });
-  winLeft.add(menu);
-  configWindow = new win();
-  configWindow.title = "Qiitaアカウント設定";
-  configWindow.backgroundColor = '#fff';
-  configWindow.add(actInd);
-  configWindow.add(configMenu.getTable());
-  configWindow.add(alertView.getAlertView());
-  navController = createCenterNavWindow();
-  NappSlideMenu = require("dk.napp.slidemenu");
-  rootWindow = NappSlideMenu.createSlideMenuWindow({
-    centerWindow: navController,
-    leftWindow: winLeft,
-    rightWindow: configWindow,
-    leftLedge: 200,
-    rightLedge: 50
-  });
-  rootWindow.open();
+  win1 = Titanium.UI.createWindow();
+  mainTable.height = 640;
+  win1.add(mainTable);
   mainContoroller.init();
+  win1.hideTabBar();
+  tabGroup = Ti.UI.createTabGroup();
+  tab1 = Ti.UI.createTab({
+    window: win1,
+    title: '最新ニュース'
+  });
+  tabGroup.addTab(tab1);
+  tabGroup.open();
 }

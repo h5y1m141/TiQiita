@@ -68,7 +68,7 @@ class webView
     @titleLabel.text = json.title
     @dateLabel.text = '投稿日：' + moment(json.created_at,"YYYY-MM-DD HH:mm:ss Z").fromNow()
     @iconIamge.image = json.user.profile_image_url
-    @webViewHeaderContainer.add(@iconIamge)
+    # @webViewHeaderContainer.add(@iconIamge)
     @webViewHeaderContainer.add(@titleLabel)
     @webViewHeaderContainer.add(@dateLabel)
     

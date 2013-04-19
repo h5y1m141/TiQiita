@@ -165,7 +165,7 @@ class configMenu
       top: 0
       left:50
       width: 270
-      height:400
+      height:'auto'
       
     @tableView.addEventListener('click',(e) ->  
       if e.index is 2

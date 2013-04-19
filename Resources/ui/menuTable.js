@@ -32,6 +32,7 @@ menuTable = (function() {
       separatorColor: backgroundColorBase,
       zIndex: 1,
       width: 320,
+      height: 'auto',
       left: 0,
       top: 0
     });
