@@ -74,7 +74,6 @@ webView = (function() {
     this.titleLabel.text = json.title;
     this.dateLabel.text = '投稿日：' + moment(json.created_at, "YYYY-MM-DD HH:mm:ss Z").fromNow();
     this.iconIamge.image = json.user.profile_image_url;
-    this.webViewHeaderContainer.add(this.iconIamge);
     this.webViewHeaderContainer.add(this.titleLabel);
     this.webViewHeaderContainer.add(this.dateLabel);
     return true;

@@ -19,7 +19,6 @@ mainContoroller = (function() {
     if (qiita.isConnected() === false) {
       this._alertViewShow(this.networkDisconnectedMessage);
     } else if ((loginID != null) === false || loginID === "") {
-      rootWindow.toggleRightView();
       commandController.useMenu("storedStocks");
     } else {
       Ti.API.info("start mainWindow");

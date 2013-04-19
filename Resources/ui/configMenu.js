@@ -142,7 +142,7 @@ configMenu = (function() {
       top: 0,
       left: 50,
       width: 270,
-      height: 400
+      height: 'auto'
     });
     this.tableView.addEventListener('click', function(e) {
       var LoginCommand, loginCommand;
