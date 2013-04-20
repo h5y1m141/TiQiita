@@ -6,7 +6,7 @@ class mainTable
       zIndex:2
       width:320
       left:0
-      top:0
+      top:50
     @arrow = Ti.UI.createView
       backgroundImage:"ui/image/arrow.png"
       width:30
@@ -210,6 +210,7 @@ class mainTable
     row.className = 'loadOldEntry'
     row.storedTo = storedTo
     return row
+    
     
   _createPullToRefresh: (parameters) ->
     loadingCallback = parameters.action

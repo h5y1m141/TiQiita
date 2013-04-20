@@ -2,14 +2,14 @@ class getMyStocksCommand extends baseCommand
   constructor:() ->
     @value = 'storedMyStocks'
     @direction = "vertical"
-
+    
   execute:() ->
     result = []
     Ti.API.debug @_currentSlideState()
     
     items = JSON.parse(Ti.App.Properties.getString(@value))
     if items isnt null
-      
+
       result.push(mainTableView.createRow(json)) for json in items
       result.push(mainTableView.createRowForLoadOldEntry(@value))
       @_hideStatusView()
@@ -20,7 +20,6 @@ class getMyStocksCommand extends baseCommand
       
       
   getMyStocks:() ->
-
     rows = []
     MAXITEMCOUNT = 20 # 1リクエスト辺りに読み込まれる最大件数
     value = @value
@@ -35,7 +34,6 @@ class getMyStocksCommand extends baseCommand
       else
         Ti.API.info "loadOldEntry show"
         rows.push(mainTableView.createRowForLoadOldEntry(value))
-        
       
       mainTable.setData rows
       @_hideStatusView() 

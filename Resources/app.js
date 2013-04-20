@@ -1,4 +1,4 @@
-var AlertView, CommandController, ConfigMenu, Hatena, MainContoroller, MainTable, MenuTable, NappSlideMenu, ProgressBar, Qiita, QiitaLoginID, QiitaLoginPassword, StatusView, actInd, actionBtn, activityIndicator, alertView, baseCommand, commandController, configMenu, configWindow, createCenterNavWindow, mainContoroller, mainTable, mainTableView, mainWindow, menu, menuTable, moment, momentja, navController, progressBar, qiita, rootWindow, statusView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win, winLeft;
+var Admob, AlertView, CommandController, ConfigMenu, Hatena, MainContoroller, MainTable, MenuTable, NappSlideMenu, ProgressBar, Qiita, QiitaLoginID, QiitaLoginPassword, StatusView, actInd, actionBtn, activityIndicator, adView, alertView, baseCommand, commandController, configMenu, configWindow, createCenterNavWindow, mainContoroller, mainTable, mainTableView, mainWindow, menu, menuTable, moment, momentja, navController, progressBar, qiita, rootWindow, statusView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win, winLeft;
 
 Ti.App.Properties.setString("storedStocks", null);
 
@@ -11,6 +11,8 @@ Ti.App.Properties.setList("followingTags", null);
 Ti.App.Properties.setString("currentPage", "storedStocks");
 
 testsEnabled = false;
+
+Admob = require("ti.admob");
 
 moment = require('lib/moment.min');
 
@@ -132,7 +134,19 @@ actionBtn.addEventListener('click', function() {
   return dialog.show();
 });
 
+adView = Admob.createView({
+  width: 320,
+  height: 50,
+  left: 0,
+  top: 0,
+  zIndex: 20,
+  adBackgroundColor: 'black',
+  publisherId: "a1516c99bf7991a"
+});
+
 webWindow.rightNavButton = actionBtn;
+
+webWindow.add(adView);
 
 QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID');
 

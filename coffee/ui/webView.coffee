@@ -1,7 +1,7 @@
 class webView
   constructor: () ->
     @webViewHeaderContainer = Ti.UI.createLabel
-      top:0
+      top:50
       left:0
       width:320
       height:80
@@ -15,7 +15,7 @@ class webView
     @htmlHeaderElement = "<html><head><meta name='viewport' content='width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1'><link rel='stylesheet' href='#{qiitaCSS}' type='text/css'></link></head>"
 
     @web = Ti.UI.createWebView
-      top:80
+      top:130
       left:0
       zIndex:5
       width:320
