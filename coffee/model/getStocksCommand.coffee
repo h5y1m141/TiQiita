@@ -14,12 +14,9 @@ class getStocksCommand extends baseCommand
       
       result.push(mainTableView.createRow(json)) for json in items
       result.push(mainTableView.createRowForLoadOldEntry(@value))
+      
       mainTable.setData result
       @_hideStatusView()
-    
-
-      
-    
 
     
   getFeed:() ->
@@ -30,7 +27,6 @@ class getStocksCommand extends baseCommand
     
 
     qiita.getFeed( (result,links) =>
-      
 
       rows.push(mainTableView.createRow(json)) for json in result
       rows.push(mainTableView.createRowForLoadOldEntry(value))
@@ -49,7 +45,6 @@ class getStocksCommand extends baseCommand
 
   _hideStatusView:() ->
     super()
-
-
+    
 
 module.exports =  getStocksCommand 

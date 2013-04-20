@@ -10,9 +10,8 @@ mainTable = (function() {
       separatorColor: '#999',
       zIndex: 2,
       width: 320,
-      height: 480,
       left: 0,
-      top: 0
+      top: 50
     });
     this.arrow = Ti.UI.createView({
       backgroundImage: "ui/image/arrow.png",
@@ -115,7 +114,7 @@ mainTable = (function() {
   };
 
   mainTable.prototype.createRow = function(json) {
-    var bodySummary, createdDate, handleName, row, textLabel, updateTime;
+    var bodySummary, createdDate, handleName, iconImage, row, textLabel, updateTime;
     row = Ti.UI.createTableViewRow({
       width: 320,
       borderWidth: 2,
@@ -136,6 +135,15 @@ mainTable = (function() {
       text: createdDate
     });
     row.add(updateTime);
+    iconImage = Ti.UI.createImageView({
+      width: 40,
+      height: 40,
+      top: 5,
+      left: 5,
+      defaultImage: "ui/image/logo-square.png",
+      image: json.user.profile_image_url
+    });
+    row.add(iconImage);
     handleName = Ti.UI.createLabel({
       width: 200,
       height: 15,

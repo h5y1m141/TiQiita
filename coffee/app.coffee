@@ -22,7 +22,8 @@ Ti.App.Properties.setString "currentPage","storedStocks"
 testsEnabled = false
 
 
-# 外部のライブラリ読み込み 
+# 外部のライブラリ読み込み
+Admob = require("ti.admob")
 moment = require('lib/moment.min')
 momentja = require('lib/momentja')
 
@@ -120,9 +121,17 @@ actionBtn.addEventListener('click',()->
   )
   dialog.show()
 )
+adView = Admob.createView
+  width:320
+  height:50
+  left:0
+  top:0
+  zIndex:20
+  adBackgroundColor:'black',
+  publisherId:"a1516c99bf7991a"
 
 webWindow.rightNavButton = actionBtn
-
+webWindow.add adView
 QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID')
 QiitaLoginPassword = Ti.App.Properties.getString('QiitaLoginPassword')
 
@@ -131,74 +140,63 @@ QiitaLoginPassword = Ti.App.Properties.getString('QiitaLoginPassword')
 if testsEnabled is true
   require('test/tests')
 else
-  win1 = Titanium.UI.createWindow()
-  mainTable.height = 640
-  win1.add mainTable
-  mainContoroller.init()  
-  win1.hideTabBar()
-  tabGroup = Ti.UI.createTabGroup()
-  tab1 = Ti.UI.createTab
-    window:win1
-    title:'最新ニュース'
-  tabGroup.addTab tab1
-  tabGroup.open()
+  
+  createCenterNavWindow = ->
 
-  # createCenterNavWindow = ->
+    leftBtn = Ti.UI.createButton(title: "Menu")
+    leftBtn.addEventListener "click", ->
+      rootWindow.toggleLeftView()
+      rootWindow.setCenterhiddenInteractivity "TouchDisabledWithTapToCloseBouncing"
+      rootWindow.setPanningMode "NavigationBarPanning"
 
-  #   leftBtn = Ti.UI.createButton(title: "Menu")
-  #   leftBtn.addEventListener "click", ->
-  #     rootWindow.toggleLeftView()
-  #     rootWindow.setCenterhiddenInteractivity "TouchDisabledWithTapToCloseBouncing"
-  #     rootWindow.setPanningMode "NavigationBarPanning"
+    rightBtn = Ti.UI.createButton(title: "Config")
+    rightBtn.addEventListener "click", ->
+      rootWindow.toggleRightView()
+      rootWindow.setCenterhiddenInteractivity "TouchDisabledWithTapToCloseBouncing"
+      rootWindow.setPanningMode "NavigationBarPanning"  
 
-  #   rightBtn = Ti.UI.createButton(title: "Config")
-  #   rightBtn.addEventListener "click", ->
-  #     rootWindow.toggleRightView()
-  #     rootWindow.setCenterhiddenInteractivity "TouchDisabledWithTapToCloseBouncing"
-  #     rootWindow.setPanningMode "NavigationBarPanning"  
-
-  #   mainWindow.leftNavButton = leftBtn
-  #   mainWindow.rightNavButton = rightBtn
-  #   mainWindow.add mainTable
-  #   progressBar.show()
-  #   statusView.add progressBar
-  #   mainWindow.add statusView
-  #   mainWindow.add alertView.getAlertView()
-
+    mainWindow.leftNavButton = leftBtn
+    mainWindow.rightNavButton = rightBtn
+    mainWindow.add mainTable
+    progressBar.show()
+    statusView.add progressBar
+    mainWindow.add statusView
+    
+    mainWindow.add alertView.getAlertView()
 
 
     
-  #   #NAV
-  #   navController = Ti.UI.iPhone.createNavigationGroup
-  #     window: mainWindow
-  #     width:'auto'
-  #     height:'auto'
-  #   return navController
+    #NAV
+    navController = Ti.UI.iPhone.createNavigationGroup
+      window: mainWindow
+      width:'auto'
+      height:'auto'
+    return navController
     
   
-  # winLeft = Ti.UI.createWindow(backgroundColor: "white")
-  # winLeft.add menu
-  # configWindow = new win()
-  # configWindow.title = "Qiitaアカウント設定"
-  # configWindow.backgroundColor = '#fff'
-  # configWindow.add actInd
+  winLeft = Ti.UI.createWindow(backgroundColor: "white")
+  winLeft.add menu
+  configWindow = new win()
+  configWindow.title = "Qiitaアカウント設定"
+  configWindow.backgroundColor = '#fff'
+  configWindow.add actInd
 
 
-  # configWindow.add configMenu.getTable()
-  # configWindow.add alertView.getAlertView()
-  # navController = createCenterNavWindow()
+  configWindow.add configMenu.getTable()
+  configWindow.add alertView.getAlertView()
+  navController = createCenterNavWindow()
   
 
-  # #//////////////////////////////////////////////
-  # # NappSlideMenu WINDOW
-  # NappSlideMenu = require("dk.napp.slidemenu")
-  # rootWindow = NappSlideMenu.createSlideMenuWindow(
-  #   centerWindow: navController
-  #   leftWindow: winLeft
-  #   rightWindow: configWindow
-  #   leftLedge:200
-  #   rightLedge:50
-  # )
+  #//////////////////////////////////////////////
+  # NappSlideMenu WINDOW
+  NappSlideMenu = require("dk.napp.slidemenu")
+  rootWindow = NappSlideMenu.createSlideMenuWindow(
+    centerWindow: navController
+    leftWindow: winLeft
+    rightWindow: configWindow
+    leftLedge:200
+    rightLedge:50
+  )
 
-  # rootWindow.open()
-  # mainContoroller.init()
+  rootWindow.open()
+  mainContoroller.init()
