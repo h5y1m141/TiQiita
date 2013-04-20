@@ -142,8 +142,10 @@ class mainTable
       height:40
       top:5
       left:5
+      defaultImage:"ui/image/logo-square.png"
       image:json.user.profile_image_url
-    # row.add(iconImage)
+      
+    row.add(iconImage)
 
     handleName = Ti.UI.createLabel
       width:200
