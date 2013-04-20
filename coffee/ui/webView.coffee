@@ -4,7 +4,7 @@ class webView
       top:50
       left:0
       width:320
-      height:80
+      height:55
       backgroundColor:'#141414'
 
     # file = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'ui/css/bootstrap.min.css')
@@ -15,7 +15,7 @@ class webView
     @htmlHeaderElement = "<html><head><meta name='viewport' content='width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1'><link rel='stylesheet' href='#{qiitaCSS}' type='text/css'></link></head>"
 
     @web = Ti.UI.createWebView
-      top:130
+      top:105
       left:0
       zIndex:5
       width:320
@@ -26,10 +26,10 @@ class webView
         fontWeight:'bold'
         fontSize:16
       color:'#fff'
-      top:10
+      top:5
       left:80
       width:220
-      height:50
+      height:40
       text :"no title"
       
     @dateLabel = Ti.UI.createLabel
@@ -44,7 +44,7 @@ class webView
       text : "no date"
     @iconIamge = Ti.UI.createImageView
       left:5
-      top:10
+      top:5
       borderWidth:1
       borderColor:'#222'
       borderRadius:5
@@ -71,7 +71,7 @@ class webView
     @iconIamge.image = json.user.profile_image_url
     @webViewHeaderContainer.add(@iconIamge)
     @webViewHeaderContainer.add(@titleLabel)
-    @webViewHeaderContainer.add(@dateLabel)
+    # @webViewHeaderContainer.add(@dateLabel)
     
     return true
     
