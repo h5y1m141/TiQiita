@@ -143,7 +143,7 @@ class mainTable
       top:5
       left:5
       image:json.user.profile_image_url
-    row.add(iconImage)
+    # row.add(iconImage)
 
     handleName = Ti.UI.createLabel
       width:200
