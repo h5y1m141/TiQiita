@@ -53,5 +53,6 @@
     </mobileweb>
     <modules>
         <module platform="iphone" version="1.2.1">dk.napp.slidemenu</module>
+	<module platform="iphone" version="1.4.0">ti.admob</module>
     </modules>
 </ti:app>
