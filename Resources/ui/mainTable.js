@@ -11,7 +11,7 @@ mainTable = (function() {
       zIndex: 2,
       width: 320,
       left: 0,
-      top: 0
+      top: 50
     });
     this.arrow = Ti.UI.createView({
       backgroundImage: "ui/image/arrow.png",

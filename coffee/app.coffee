@@ -22,7 +22,8 @@ Ti.App.Properties.setString "currentPage","storedStocks"
 testsEnabled = false
 
 
-# 外部のライブラリ読み込み 
+# 外部のライブラリ読み込み
+Admob = require("ti.admob")
 moment = require('lib/moment.min')
 momentja = require('lib/momentja')
 
@@ -120,9 +121,17 @@ actionBtn.addEventListener('click',()->
   )
   dialog.show()
 )
+adView = Admob.createView
+  width:320
+  height:50
+  left:0
+  top:0
+  zIndex:20
+  adBackgroundColor:'black',
+  publisherId:"a1516c99bf7991a"
 
 webWindow.rightNavButton = actionBtn
-
+webWindow.add adView
 QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID')
 QiitaLoginPassword = Ti.App.Properties.getString('QiitaLoginPassword')
 
@@ -152,6 +161,7 @@ else
     progressBar.show()
     statusView.add progressBar
     mainWindow.add statusView
+    
     mainWindow.add alertView.getAlertView()
 
 
