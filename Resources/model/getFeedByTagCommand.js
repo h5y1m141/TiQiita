@@ -19,6 +19,13 @@ getFeedByTagCommand = (function(_super) {
     if ((items != null) === false || items === "") {
       return this.getFeedByTag();
     } else {
+      items.sort(function(a, b) {
+        if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
+          return -1;
+        } else {
+          return 1;
+        }
+      });
       for (_i = 0, _len = items.length; _i < _len; _i++) {
         json = items[_i];
         result.push(mainTableView.createRow(json));
@@ -38,6 +45,13 @@ getFeedByTagCommand = (function(_super) {
     this._showStatusView();
     qiita.getFeedByTag(this.tagName, function(result, links) {
       var json, _i, _len;
+      result.sort(function(a, b) {
+        if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
+          return -1;
+        } else {
+          return 1;
+        }
+      });
       for (_i = 0, _len = result.length; _i < _len; _i++) {
         json = result[_i];
         rows.push(mainTableView.createRow(json));

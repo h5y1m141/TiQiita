@@ -210,7 +210,10 @@ class Qiita
   _mergeItems:(object1,object2) ->
     _ = require("lib/underscore-1.4.3.min")
     object1 = object1.concat object2
-    return _(object1).sortBy("created_at")
+    # return _(object1).sortBy("created_at")
+    return object1.sort( (a,b) ->
+      (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
+    )
 
   _parsedResponseHeader:(header,storedTo) ->
 
