@@ -10,7 +10,7 @@ Ti.App.Properties.setList("followingTags", null);
 
 Ti.App.Properties.setString("currentPage", "storedStocks");
 
-testsEnabled = false;
+testsEnabled = true;
 
 Admob = require("ti.admob");
 
