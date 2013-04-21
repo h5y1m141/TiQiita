@@ -14,3 +14,8 @@ describe 'qiitaUserクラスのためのテスト', ->
           
   it 'Qiitaの該当ユーザ名を取得できる', () ->
     expect(userInfo.name).toBe "hiroshi oyamada"
+
+  it '取得済のQiitaユーザをローカルから読み取れる', () ->
+    qiitaUserList = Ti.App.Properties.getList "qiitaUserList"
+
+    expect(qiitaUserList.length).toBe 0

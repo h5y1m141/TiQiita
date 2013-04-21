@@ -8,6 +8,8 @@ class qiitaUser
     xhr.onload = ->
       if @.status is 200
         json = JSON.parse(@.responseText)
+        testArray = []
+        Ti.App.Properties.setList("qiitaUserList", testArray)
         return callback(json)
     xhr.onerror = (e) ->
       error = JSON.parse(@.responseText)
