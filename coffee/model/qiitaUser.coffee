@@ -1,8 +1,28 @@
 class qiitaUser
   constructor:(url_name)->
     @url_name = url_name
-    
+  getfollowingUserList:(callback) ->
+    param =
+      method:'GET'
+      url:"https://qiita.com/api/v1/users/#{@url_name}/following_users"
+
+    return @_request(param,callback)
+        
   getUserInfo:(callback) ->
+    param =
+      method:'GET'
+      url:"https://qiita.com/api/v1/users/#{@url_name}"
+      
+    return @_request(param,callback)
+        
+  _cached:(userInfo)->
+    # result = Titanium.App.Properties.getString "qiitaUserList"
+    # localUserInfo = JSON.parse(result)
+
+    Titanium.App.Properties.setString("qiitaUserList",userInfo)
+    return true
+    
+  _request:(param,callback) ->
     self = @
     xhr = Ti.Network.createHTTPClient()
     xhr.open('GET',"https://qiita.com/api/v1/users/#{@url_name}")
@@ -22,13 +42,9 @@ class qiitaUser
     xhr.send()
     return
     
-  _cached:(userInfo)->
-    # result = Titanium.App.Properties.getString "qiitaUserList"
-    # localUserInfo = JSON.parse(result)
-
-    Titanium.App.Properties.setString("qiitaUserList",userInfo)
 
 
-    return true
+
+    
 module.exports = qiitaUser  
 
