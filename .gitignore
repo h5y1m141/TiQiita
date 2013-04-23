@@ -27,3 +27,4 @@ tmp
 /certs/development.mobileprovision
 /coffee/controllers/qiitaController.coffee
 /Resources/config/*
+/upload.sh
