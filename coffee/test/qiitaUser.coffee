@@ -42,3 +42,11 @@ describe 'ユーザリスト取得', ->
   it '該当ユーザのフォローしてるユーザリストを取得できる', () ->
     runs ->
       expect(userList.length).toBe 9
+      
+  waits 1000
+  
+  it 'フォローしてるユーザリストをキャッシュから読み取れる', () ->
+    runs ->
+      result = Titanium.App.Properties.getString "qiitaUserList"
+      cached = JSON.parse(result)
+      expect(cached.length).toBe 9      
