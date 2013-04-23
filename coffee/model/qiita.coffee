@@ -207,10 +207,6 @@ class Qiita
 
     return json
     
-  _mergeItems:(object1,object2) ->
-    _ = require("lib/underscore-1.4.3.min")
-    object1 = object1.concat object2
-    return _(object1).sortBy("created_at")
 
   _parsedResponseHeader:(header,storedTo) ->
 

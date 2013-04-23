@@ -1,10 +1,11 @@
 class webView
   constructor: () ->
-    @webViewHeaderContainer = Ti.UI.createLabel
+    @webViewHeaderContainer = Ti.UI.createView
       top:50
       left:0
       width:320
       height:55
+      zIndex:1
       backgroundColor:'#141414'
 
     # file = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'ui/css/bootstrap.min.css')
@@ -30,6 +31,7 @@ class webView
       left:80
       width:220
       height:40
+      zIndex:2
       text :"no title"
       
     @dateLabel = Ti.UI.createLabel
@@ -41,6 +43,7 @@ class webView
       left:80
       width:220
       height:15
+      zIndex:2
       text : "no date"
     @iconIamge = Ti.UI.createImageView
       left:5
@@ -50,10 +53,13 @@ class webView
       borderRadius:5
       width:40
       height:40
+      zIndex:20
+      userName:""
       defaultImage:"ui/image/logo-square.png"
       backgroundColor:'#cbcbcb'
       image: ""
-
+      
+  
     stockURL = null
     stockUUID = null
 
@@ -69,6 +75,11 @@ class webView
     @titleLabel.text = json.title
     @dateLabel.text = '投稿日：' + moment(json.created_at,"YYYY-MM-DD HH:mm:ss Z").fromNow()
     @iconIamge.image = json.user.profile_image_url
+    @iconIamge.userName = json.user.url_name
+    @iconIamge.addEventListener('click',(e)->
+      Ti.API.info e.source.userName
+    )
+    
     @webViewHeaderContainer.add(@iconIamge)
     @webViewHeaderContainer.add(@titleLabel)
     # @webViewHeaderContainer.add(@dateLabel)

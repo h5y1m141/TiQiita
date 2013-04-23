@@ -19,7 +19,7 @@ Ti.App.Properties.setString "currentPage","storedStocks"
 # Jasmine利用してテスト実行するかどうかのフラグ。
 # trueにすることで、メインのアプリは起動せずに
 # Jasmineのテストが実行される
-testsEnabled = false
+testsEnabled = true
 
 
 # 外部のライブラリ読み込み

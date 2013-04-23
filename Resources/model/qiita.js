@@ -181,13 +181,6 @@ Qiita = (function() {
     return json;
   };
 
-  Qiita.prototype._mergeItems = function(object1, object2) {
-    var _;
-    _ = require("lib/underscore-1.4.3.min");
-    object1 = object1.concat(object2);
-    return _(object1).sortBy("created_at");
-  };
-
   Qiita.prototype._parsedResponseHeader = function(header, storedTo) {
     var lastURL, link, nextURL, _i, _len;
     for (_i = 0, _len = header.length; _i < _len; _i++) {

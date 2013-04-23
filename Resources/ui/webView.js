@@ -4,11 +4,12 @@ webView = (function() {
 
   function webView() {
     var bootstrapCSS, file, qiitaCSS, stockURL, stockUUID;
-    this.webViewHeaderContainer = Ti.UI.createLabel({
+    this.webViewHeaderContainer = Ti.UI.createView({
       top: 50,
       left: 0,
       width: 320,
       height: 55,
+      zIndex: 1,
       backgroundColor: '#141414'
     });
     file = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'ui/css/qiita.css');
@@ -33,6 +34,7 @@ webView = (function() {
       left: 80,
       width: 220,
       height: 40,
+      zIndex: 2,
       text: "no title"
     });
     this.dateLabel = Ti.UI.createLabel({
@@ -45,6 +47,7 @@ webView = (function() {
       left: 80,
       width: 220,
       height: 15,
+      zIndex: 2,
       text: "no date"
     });
     this.iconIamge = Ti.UI.createImageView({
@@ -55,6 +58,8 @@ webView = (function() {
       borderRadius: 5,
       width: 40,
       height: 40,
+      zIndex: 20,
+      userName: "",
       defaultImage: "ui/image/logo-square.png",
       backgroundColor: '#cbcbcb',
       image: ""
@@ -75,6 +80,10 @@ webView = (function() {
     this.titleLabel.text = json.title;
     this.dateLabel.text = '投稿日：' + moment(json.created_at, "YYYY-MM-DD HH:mm:ss Z").fromNow();
     this.iconIamge.image = json.user.profile_image_url;
+    this.iconIamge.userName = json.user.url_name;
+    this.iconIamge.addEventListener('click', function(e) {
+      return Ti.API.info(e.source.userName);
+    });
     this.webViewHeaderContainer.add(this.iconIamge);
     this.webViewHeaderContainer.add(this.titleLabel);
     return true;
