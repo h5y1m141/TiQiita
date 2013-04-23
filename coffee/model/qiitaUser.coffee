@@ -26,8 +26,8 @@ class qiitaUser
       if @.status is 200
         
         json = JSON.parse(@.responseText)
-        alert json.length
-        # self._cached(@.responseText)
+
+        self._cached(@.responseText)
 
         return callback(json)
     xhr.onerror = (e) ->
