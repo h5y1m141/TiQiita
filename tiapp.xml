@@ -7,6 +7,7 @@
     <property name="acs-oauth-key-development" type="string">rlnvsUQD2m084udpEc3PGvJMLIV7ZM9K</property>
     <property name="acs-api-key-development" type="string">aGqeoziB3X2YVl3rYjmZLdDEpfJgaxAU</property>
     <deployment-targets>
+        <target device="tizen">false</target>
         <target device="mobileweb">false</target>
         <target device="iphone">true</target>
         <target device="ipad">false</target>
@@ -53,6 +54,6 @@
     </mobileweb>
     <modules>
         <module platform="iphone" version="1.2.1">dk.napp.slidemenu</module>
-	<module platform="iphone" version="1.4.0">ti.admob</module>
+        <module platform="iphone" version="1.4.0">ti.admob</module>
     </modules>
 </ti:app>

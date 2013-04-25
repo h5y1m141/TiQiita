@@ -19,7 +19,9 @@ Ti.App.Properties.setString "currentPage","storedStocks"
 # Jasmine利用してテスト実行するかどうかのフラグ。
 # trueにすることで、メインのアプリは起動せずに
 # Jasmineのテストが実行される
-testsEnabled = true
+testsEnabled = false
+
+Ti.API.info "Ti.Platform.displayCaps.platformHeight:#{Ti.Platform.displayCaps.platformHeight}"
 
 
 # 外部のライブラリ読み込み
@@ -121,14 +123,24 @@ actionBtn.addEventListener('click',()->
   )
   dialog.show()
 )
+screenHeight = Ti.Platform.displayCaps.platformHeight
+adViewHeight = 50
+webViewHeaderHight = 55
+barHeight = 60
+
+webViewHeight = screenHeight - (barHeight + webViewHeaderHight + adViewHeight)
+webViewTopPosition = barHeight
+adViewTopPosition = webViewHeight + webViewTopPosition
+
+
 adView = Admob.createView
-  width:320
-  height:50
-  left:0
-  top:0
-  zIndex:20
-  adBackgroundColor:'black',
-  publisherId:"a1516c99bf7991a"
+  width             :320
+  height            :adViewHeight
+  top               :adViewTopPosition
+  left              :0
+  zIndex            :20
+  adBackgroundColor :'black',
+  publisherId       :"a1516c99bf7991a"
 
 webWindow.rightNavButton = actionBtn
 webWindow.add adView

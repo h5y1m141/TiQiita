@@ -1,12 +1,24 @@
 class webView
   constructor: () ->
+    screenHeight = Ti.Platform.displayCaps.platformHeight
+    adViewHeight = 50
+    webViewHeaderHight = 55
+    barHeight = 60
+    webViewTopPosition = webViewHeaderHight
+    webViewHeight = screenHeight - (barHeight + webViewHeaderHight + adViewHeight)
+    Ti.API.info "#{webViewHeaderHight} and #{webViewHeight} and #{webViewTopPosition}"
+
     @webViewHeaderContainer = Ti.UI.createView
-      top:50
+      top:0
       left:0
       width:320
-      height:55
+      height:webViewHeaderHight
       zIndex:1
       backgroundColor:'#141414'
+
+
+
+    Ti.API.info "webViewHeight is #{webViewHeight}"
 
     # file = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'ui/css/bootstrap.min.css')
     file = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'ui/css/qiita.css')
@@ -16,10 +28,11 @@ class webView
     @htmlHeaderElement = "<html><head><meta name='viewport' content='width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1'><link rel='stylesheet' href='#{qiitaCSS}' type='text/css'></link></head>"
 
     @web = Ti.UI.createWebView
-      top:105
+      top:webViewTopPosition
       left:0
       zIndex:5
       width:320
+      height:webViewHeight
       html:"init"
       
     @titleLabel = Ti.UI.createLabel
