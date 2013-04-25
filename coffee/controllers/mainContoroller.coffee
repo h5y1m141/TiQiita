@@ -20,7 +20,8 @@ class mainContoroller
 
     else
       Ti.API.info "start mainWindow"
-      @refreshMenuTable
+      Ti.API.info( Ti.App.Properties.getString('QiitaToken'))
+      @refreshMenuTable()
       commandController.useMenu "storedStocks"
 
       
@@ -52,6 +53,7 @@ class mainContoroller
 
     
   refreshMenuTable:() ->
+    Ti.API.debug "refreshMenuTable"
     return menuTable.refreshMenu()
 
   loadEntry: () ->

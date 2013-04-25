@@ -1,4 +1,4 @@
-var Admob, AlertView, CommandController, ConfigMenu, Hatena, MainContoroller, MainTable, MenuTable, NappSlideMenu, ProgressBar, Qiita, QiitaLoginID, QiitaLoginPassword, StatusView, actInd, actionBtn, activityIndicator, adView, alertView, baseCommand, commandController, configMenu, configWindow, createCenterNavWindow, mainContoroller, mainTable, mainTableView, mainWindow, menu, menuTable, moment, momentja, navController, progressBar, qiita, rootWindow, statusView, testsEnabled, webView, webViewContents, webViewHeader, webWindow, webview, win, winLeft;
+var Admob, AlertView, CommandController, ConfigMenu, Hatena, MainContoroller, MainTable, MenuTable, NappSlideMenu, ProgressBar, Qiita, QiitaLoginID, QiitaLoginPassword, StatusView, actInd, actionBtn, activityIndicator, adView, adViewHeight, adViewTopPosition, alertView, barHeight, baseCommand, commandController, configMenu, configWindow, createCenterNavWindow, mainContoroller, mainTable, mainTableView, mainWindow, menu, menuTable, moment, momentja, navController, progressBar, qiita, rootWindow, screenHeight, statusView, testsEnabled, webView, webViewContents, webViewHeader, webViewHeaderHight, webViewHeight, webViewTopPosition, webWindow, webview, win, winLeft;
 
 Ti.App.Properties.setString("storedStocks", null);
 
@@ -11,6 +11,8 @@ Ti.App.Properties.setList("followingTags", null);
 Ti.App.Properties.setString("currentPage", "storedStocks");
 
 testsEnabled = false;
+
+Ti.API.info("Ti.Platform.displayCaps.platformHeight:" + Ti.Platform.displayCaps.platformHeight);
 
 Admob = require("ti.admob");
 
@@ -134,11 +136,25 @@ actionBtn.addEventListener('click', function() {
   return dialog.show();
 });
 
+screenHeight = Ti.Platform.displayCaps.platformHeight;
+
+adViewHeight = 50;
+
+webViewHeaderHight = 55;
+
+barHeight = 60;
+
+webViewHeight = screenHeight - (barHeight + webViewHeaderHight + adViewHeight);
+
+webViewTopPosition = barHeight;
+
+adViewTopPosition = webViewHeight + webViewTopPosition;
+
 adView = Admob.createView({
   width: 320,
-  height: 50,
+  height: adViewHeight,
+  top: adViewTopPosition,
   left: 0,
-  top: 0,
   zIndex: 20,
   adBackgroundColor: 'black',
   publisherId: "a1516c99bf7991a"

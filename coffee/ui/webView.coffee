@@ -1,11 +1,24 @@
 class webView
   constructor: () ->
-    @webViewHeaderContainer = Ti.UI.createLabel
-      top:50
+    screenHeight = Ti.Platform.displayCaps.platformHeight
+    adViewHeight = 50
+    webViewHeaderHight = 55
+    barHeight = 60
+    webViewTopPosition = webViewHeaderHight
+    webViewHeight = screenHeight - (barHeight + webViewHeaderHight + adViewHeight)
+    Ti.API.info "#{webViewHeaderHight} and #{webViewHeight} and #{webViewTopPosition}"
+
+    @webViewHeaderContainer = Ti.UI.createView
+      top:0
       left:0
       width:320
-      height:55
+      height:webViewHeaderHight
+      zIndex:1
       backgroundColor:'#141414'
+
+
+
+    Ti.API.info "webViewHeight is #{webViewHeight}"
 
     # file = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'ui/css/bootstrap.min.css')
     file = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'ui/css/qiita.css')
@@ -15,10 +28,11 @@ class webView
     @htmlHeaderElement = "<html><head><meta name='viewport' content='width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1'><link rel='stylesheet' href='#{qiitaCSS}' type='text/css'></link></head>"
 
     @web = Ti.UI.createWebView
-      top:105
+      top:webViewTopPosition
       left:0
       zIndex:5
       width:320
+      height:webViewHeight
       html:"init"
       
     @titleLabel = Ti.UI.createLabel
@@ -30,6 +44,7 @@ class webView
       left:80
       width:220
       height:40
+      zIndex:2
       text :"no title"
       
     @dateLabel = Ti.UI.createLabel
@@ -41,6 +56,7 @@ class webView
       left:80
       width:220
       height:15
+      zIndex:2
       text : "no date"
     @iconIamge = Ti.UI.createImageView
       left:5
@@ -50,10 +66,13 @@ class webView
       borderRadius:5
       width:40
       height:40
+      zIndex:20
+      userName:""
       defaultImage:"ui/image/logo-square.png"
       backgroundColor:'#cbcbcb'
       image: ""
-
+      
+  
     stockURL = null
     stockUUID = null
 
@@ -69,6 +88,11 @@ class webView
     @titleLabel.text = json.title
     @dateLabel.text = '投稿日：' + moment(json.created_at,"YYYY-MM-DD HH:mm:ss Z").fromNow()
     @iconIamge.image = json.user.profile_image_url
+    @iconIamge.userName = json.user.url_name
+    @iconIamge.addEventListener('click',(e)->
+      Ti.API.info e.source.userName
+    )
+    
     @webViewHeaderContainer.add(@iconIamge)
     @webViewHeaderContainer.add(@titleLabel)
     # @webViewHeaderContainer.add(@dateLabel)

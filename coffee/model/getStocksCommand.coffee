@@ -11,6 +11,10 @@ class getStocksCommand extends baseCommand
       @getFeed()
     else
       Ti.API.debug "load cached item and mainTable reset"
+      items.sort( (a, b) ->
+
+        (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
+      )
       
       result.push(mainTableView.createRow(json)) for json in items
       result.push(mainTableView.createRowForLoadOldEntry(@value))
@@ -27,6 +31,13 @@ class getStocksCommand extends baseCommand
     
 
     qiita.getFeed( (result,links) =>
+      
+      # http://d.hatena.ne.jp/yatemmma/20110723/1311534794を参考に実装
+      # なお比較した結果、1を最初に返すと更新日古い順番にソートされる
+      result.sort( (a, b) ->
+
+        (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
+      )
 
       rows.push(mainTableView.createRow(json)) for json in result
       rows.push(mainTableView.createRowForLoadOldEntry(value))
@@ -45,6 +56,5 @@ class getStocksCommand extends baseCommand
 
   _hideStatusView:() ->
     super()
-    
 
 module.exports =  getStocksCommand 

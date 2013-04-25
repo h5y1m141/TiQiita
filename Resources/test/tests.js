@@ -4,7 +4,7 @@ if (testsEnabled) {
   Ti.include('/test/lib/jasmine-1.3.1.js');
   Ti.include('/test/lib/jasmine.async.min.js');
   require('test/lib/jasmine-titanium-console');
-  require('test/qiitaController');
+  require('test/qiitaUser');
   jasmine.getEnv().addReporter(new jasmine.TitaniumReporter());
   jasmine.getEnv().execute();
 }

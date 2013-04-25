@@ -22,7 +22,8 @@ mainContoroller = (function() {
       commandController.useMenu("storedStocks");
     } else {
       Ti.API.info("start mainWindow");
-      this.refreshMenuTable;
+      Ti.API.info(Ti.App.Properties.getString('QiitaToken'));
+      this.refreshMenuTable();
       commandController.useMenu("storedStocks");
     }
     return true;
@@ -55,6 +56,7 @@ mainContoroller = (function() {
   };
 
   mainContoroller.prototype.refreshMenuTable = function() {
+    Ti.API.debug("refreshMenuTable");
     return menuTable.refreshMenu();
   };
 
