@@ -31,8 +31,10 @@ momentja = require('lib/momentja')
 
 # 以下はmodelの読み込み
 Qiita = require('model/qiita')
+QiitaUser = require('model/qiitaUser')
 Hatena = require('model/hatena')
 baseCommand = require("model/baseCommand")
+qiitaUser = new QiitaUser()
 qiita = new Qiita()
 
 

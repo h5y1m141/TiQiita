@@ -1,6 +1,9 @@
 class qiitaUser
   constructor:(url_name)->
-    @url_name = url_name
+    if url_name? is false
+      @url_name = Ti.App.Properties.getString('QiitaLoginID')
+    else
+      @url_name = url_name
   getfollowingUserList:(callback) ->
     param =
       method:'GET'
