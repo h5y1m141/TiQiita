@@ -19,11 +19,12 @@ class getFollowerItemsCommand extends baseCommand
       @_hideStatusView()
           
   getFollowerItems:() ->
-
+    @_showStatusView()
     qiitaUser.getfollowingUserList( (result) =>
 
       for item in result
-        _url = "https://qiita.com/api/v1/users/#{item.url_name}/items?per_page=5"
+        # _url = "https://qiita.com/api/v1/users/#{item.url_name}/items?per_page=5"
+        _url = "https://qiita.com/api/v1/users/#{item.url_name}/items"
         _items = []
         xhr = Ti.Network.createHTTPClient()
         xhr.open("GET",_url)
@@ -45,7 +46,6 @@ class getFollowerItemsCommand extends baseCommand
       setTimeout (=>
         result = []
         _items.sort( (a, b) ->
-
           (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
         )
         
@@ -53,6 +53,7 @@ class getFollowerItemsCommand extends baseCommand
           result.push(mainTableView.createRow(_item))
           
         mainTable.setData result
+        @_hideStatusView() 
           
       ),10000
 
