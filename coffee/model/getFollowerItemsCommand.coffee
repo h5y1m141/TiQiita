@@ -14,17 +14,17 @@ class getFollowerItemsCommand extends baseCommand
       )
     
       result.push(mainTableView.createRow(json)) for json in items
-      result.push(mainTableView.createRowForLoadOldEntry(storedTo))
       mainTable.setData result
       @_hideStatusView()
           
   getFollowerItems:() ->
     @_showStatusView()
-    qiitaUser.getfollowingUserList( (result) =>
-
-      for item in result
-        # _url = "https://qiita.com/api/v1/users/#{item.url_name}/items?per_page=5"
-        _url = "https://qiita.com/api/v1/users/#{item.url_name}/items"
+    qiitaUser.getfollowingUserList( (userList) =>
+      # 1)フォローしてるユーザ情報のuserListを
+      # 順番にループして個々のユーザの投稿情報を取得
+      for item in userList
+        _url = "https://qiita.com/api/v1/users/#{item.url_name}/items?per_page=20"
+        # _url = "https://qiita.com/api/v1/users/#{item.url_name}/items"
         _items = []
         xhr = Ti.Network.createHTTPClient()
         xhr.open("GET",_url)
@@ -32,7 +32,6 @@ class getFollowerItemsCommand extends baseCommand
           if @.status is 200
             items = JSON.parse(@.responseText)
             if items isnt null
-              Ti.API.info typeof items
               for item in items
                 _items.push item
 
@@ -42,13 +41,17 @@ class getFollowerItemsCommand extends baseCommand
         xhr.timeout = 5000  
         xhr.send()
         
-
+      # 1)の処理は非同期で実施されるため、最終的に
+      # 全部のユーザの投稿情報を取得するのに時間がかかるため
+      # ひとまず10秒間まってから、mainTable.setDataの処理と
+      # 取得した投稿情報のローカルへのキャッシュを実施
       setTimeout (=>
         result = []
         _items.sort( (a, b) ->
           (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
         )
-        
+        # フォローしてるユーザの投稿情報をローカルにキャッシュ
+        Ti.App.Properties.setString("followerItems",JSON.stringify(_items))
         for _item in _items
           result.push(mainTableView.createRow(_item))
           
