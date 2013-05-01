@@ -12,8 +12,6 @@ Ti.App.Properties.setString("currentPage", "storedStocks");
 
 testsEnabled = false;
 
-Ti.API.info("Ti.Platform.displayCaps.platformHeight:" + Ti.Platform.displayCaps.platformHeight);
-
 Admob = require("ti.admob");
 
 moment = require('lib/moment.min');

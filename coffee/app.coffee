@@ -21,7 +21,7 @@ Ti.App.Properties.setString "currentPage","storedStocks"
 # Jasmineのテストが実行される
 testsEnabled = false
 
-Ti.API.info "Ti.Platform.displayCaps.platformHeight:#{Ti.Platform.displayCaps.platformHeight}"
+
 
 
 # 外部のライブラリ読み込み
