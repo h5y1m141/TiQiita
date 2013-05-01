@@ -1,4 +1,4 @@
-var Admob, AlertView, CommandController, ConfigMenu, Hatena, MainContoroller, MainTable, MenuTable, NappSlideMenu, ProgressBar, Qiita, QiitaLoginID, QiitaLoginPassword, StatusView, actInd, actionBtn, activityIndicator, adView, adViewHeight, adViewTopPosition, alertView, barHeight, baseCommand, commandController, configMenu, configWindow, createCenterNavWindow, mainContoroller, mainTable, mainTableView, mainWindow, menu, menuTable, moment, momentja, navController, progressBar, qiita, rootWindow, screenHeight, statusView, testsEnabled, webView, webViewContents, webViewHeader, webViewHeaderHight, webViewHeight, webViewTopPosition, webWindow, webview, win, winLeft;
+var Admob, AlertView, CommandController, ConfigMenu, Hatena, MainContoroller, MainTable, MenuTable, NappSlideMenu, ProgressBar, Qiita, QiitaLoginID, QiitaLoginPassword, QiitaUser, StatusView, actInd, actionBtn, activityIndicator, adView, adViewHeight, adViewTopPosition, alertView, barHeight, baseCommand, commandController, configMenu, configWindow, createCenterNavWindow, mainContoroller, mainTable, mainTableView, mainWindow, menu, menuTable, moment, momentja, navController, progressBar, qiita, qiitaUser, rootWindow, screenHeight, statusView, testsEnabled, webView, webViewContents, webViewHeader, webViewHeaderHight, webViewHeight, webViewTopPosition, webWindow, webview, win, winLeft;
 
 Ti.App.Properties.setString("storedStocks", null);
 
@@ -12,8 +12,6 @@ Ti.App.Properties.setString("currentPage", "storedStocks");
 
 testsEnabled = false;
 
-Ti.API.info("Ti.Platform.displayCaps.platformHeight:" + Ti.Platform.displayCaps.platformHeight);
-
 Admob = require("ti.admob");
 
 moment = require('lib/moment.min');
@@ -22,9 +20,13 @@ momentja = require('lib/momentja');
 
 Qiita = require('model/qiita');
 
+QiitaUser = require('model/qiitaUser');
+
 Hatena = require('model/hatena');
 
 baseCommand = require("model/baseCommand");
+
+qiitaUser = new QiitaUser();
 
 qiita = new Qiita();
 

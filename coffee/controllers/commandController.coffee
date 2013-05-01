@@ -8,6 +8,9 @@ class commandController
     myStocksCommand = require("model/getMyStocksCommand")
     @menu.addCommands("storedMyStocks",new myStocksCommand())
 
+    followerItemsCommand = require("model/getFollowerItemsCommand")
+    @menu.addCommands("followerItems",new followerItemsCommand())
+
   createMenu:() ->
     Ti.API.info "[commandController] createMenu start"
 

@@ -3,14 +3,13 @@ var webView;
 webView = (function() {
 
   function webView() {
-    var adViewHeight, barHeight, bootstrapCSS, file, qiitaCSS, screenHeight, stockURL, stockUUID, webViewHeaderHight, webViewHeight, webViewTopPosition;
+    var adViewHeight, barHeight, qiitaCSS, screenHeight, stockURL, stockUUID, webViewHeaderHight, webViewHeight, webViewTopPosition;
     screenHeight = Ti.Platform.displayCaps.platformHeight;
     adViewHeight = 50;
     webViewHeaderHight = 55;
     barHeight = 60;
     webViewTopPosition = webViewHeaderHight;
     webViewHeight = screenHeight - (barHeight + webViewHeaderHight + adViewHeight);
-    Ti.API.info("" + webViewHeaderHight + " and " + webViewHeight + " and " + webViewTopPosition);
     this.webViewHeaderContainer = Ti.UI.createView({
       top: 0,
       left: 0,
@@ -19,11 +18,7 @@ webView = (function() {
       zIndex: 1,
       backgroundColor: '#141414'
     });
-    Ti.API.info("webViewHeight is " + webViewHeight);
-    file = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'ui/css/qiita.css');
-    this.css = file.read();
     qiitaCSS = 'ui/css/qiitaColor.css';
-    bootstrapCSS = 'ui/css/bootstrap.min.css';
     this.htmlHeaderElement = "<html><head><meta name='viewport' content='width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1'><link rel='stylesheet' href='" + qiitaCSS + "' type='text/css'></link></head>";
     this.web = Ti.UI.createWebView({
       top: webViewTopPosition,

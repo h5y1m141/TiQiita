@@ -21,7 +21,7 @@ Ti.App.Properties.setString "currentPage","storedStocks"
 # Jasmineのテストが実行される
 testsEnabled = false
 
-Ti.API.info "Ti.Platform.displayCaps.platformHeight:#{Ti.Platform.displayCaps.platformHeight}"
+
 
 
 # 外部のライブラリ読み込み
@@ -31,8 +31,10 @@ momentja = require('lib/momentja')
 
 # 以下はmodelの読み込み
 Qiita = require('model/qiita')
+QiitaUser = require('model/qiitaUser')
 Hatena = require('model/hatena')
 baseCommand = require("model/baseCommand")
+qiitaUser = new QiitaUser()
 qiita = new Qiita()
 
 
