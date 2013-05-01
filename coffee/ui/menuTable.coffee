@@ -146,7 +146,30 @@ class menuTable
     tagRow.add tagLabel        
     tagRow.add tagBtn
     return tagRow
+    
+  makeFollowerItemsRow:() ->
+    followerItemsBtn = Ti.UI.createImageView
+      image:"ui/image/light_pegman---yes@2x.png"
+      left:5
+      top:5
+      backgroundColor:"transparent"
+      
+    followerItemsLabel = Ti.UI.createLabel(@fontThemeWhite)
+      
+    followerItemsLabel.text = "フォロワー投稿"
+    followerItemsLabel.top = 8
+    followerItemsLabel.left = 35
 
+    followerItemsRow = Ti.UI.createTableViewRow(@rowColorTheme)
+    followerItemsRow.addEventListener('click',(e) =>
+      @.slideEvent(e.rowData.className)
+    )
+    followerItemsRow.className = "followerItems"
+    followerItemsRow.add followerItemsBtn
+    followerItemsRow.add followerItemsLabel
+
+    return followerItemsRow
+    
   matchTag: (items,tagName) ->
     # 取得されてる投稿情報の中で、引数に指定したタグにマッチするもの
     # だけ抽出してrowを生成
@@ -188,7 +211,7 @@ class menuTable
       if result.length is 0
         rows = [@makeAllLabelRow(),  @makeStockRow()]
       else
-        rows = [@makeAllLabelRow(),  @makeStockRow(), @makeTagRow()]
+        rows = [@makeAllLabelRow(),  @makeStockRow(), @makeFollowerItemsRow(),@makeTagRow()]
         for json in result
           Ti.API.info "followingTag#{json.url_name}nextURL is initiazlie!!" 
           Ti.App.Properties.setString "followingTag#{json.url_name}nextURL", null

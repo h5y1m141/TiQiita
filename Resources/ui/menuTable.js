@@ -149,6 +149,29 @@ menuTable = (function() {
     return tagRow;
   };
 
+  menuTable.prototype.makeFollowerItemsRow = function() {
+    var followerItemsBtn, followerItemsLabel, followerItemsRow,
+      _this = this;
+    followerItemsBtn = Ti.UI.createImageView({
+      image: "ui/image/light_pegman---yes@2x.png",
+      left: 5,
+      top: 5,
+      backgroundColor: "transparent"
+    });
+    followerItemsLabel = Ti.UI.createLabel(this.fontThemeWhite);
+    followerItemsLabel.text = "フォロワー投稿";
+    followerItemsLabel.top = 8;
+    followerItemsLabel.left = 35;
+    followerItemsRow = Ti.UI.createTableViewRow(this.rowColorTheme);
+    followerItemsRow.addEventListener('click', function(e) {
+      return _this.slideEvent(e.rowData.className);
+    });
+    followerItemsRow.className = "followerItems";
+    followerItemsRow.add(followerItemsBtn);
+    followerItemsRow.add(followerItemsLabel);
+    return followerItemsRow;
+  };
+
   menuTable.prototype.matchTag = function(items, tagName) {
     var i, tags, value, _, _i, _ref;
     for (i = _i = 0, _ref = items.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
@@ -197,7 +220,7 @@ menuTable = (function() {
       if (result.length === 0) {
         rows = [_this.makeAllLabelRow(), _this.makeStockRow()];
       } else {
-        rows = [_this.makeAllLabelRow(), _this.makeStockRow(), _this.makeTagRow()];
+        rows = [_this.makeAllLabelRow(), _this.makeStockRow(), _this.makeFollowerItemsRow(), _this.makeTagRow()];
         for (_i = 0, _len = result.length; _i < _len; _i++) {
           json = result[_i];
           Ti.API.info("followingTag" + json.url_name + "nextURL is initiazlie!!");
