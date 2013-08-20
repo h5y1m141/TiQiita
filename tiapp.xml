@@ -14,10 +14,10 @@
         <target device="android">false</target>
         <target device="blackberry">false</target>
     </deployment-targets>
-    <sdk-version>3.0.2.GA</sdk-version>
+    <sdk-version>3.1.2.GA</sdk-version>
     <id>info.h5y1m141.tiqiita</id>
     <name>TiQiita</name>
-    <version>1.1</version>
+    <version>1.2</version>
     <publisher>hoyamada</publisher>
     <url>http://</url>
     <description>not specified</description>
@@ -55,5 +55,7 @@
     <modules>
         <module platform="iphone" version="1.2.1">dk.napp.slidemenu</module>
         <module platform="iphone" version="1.4.0">ti.admob</module>
+	<module platform="iphone" version="1.0.1">net.nend</module>
+        <module platform="android" version="1.0.0">net.nend</module>
     </modules>
 </ti:app>

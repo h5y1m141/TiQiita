@@ -1,0 +1,14 @@
+version: 1.0.0
+apiversion: 2
+description: Nend Titanium module for Android
+author: F@N Communications, Inc.
+license: Specify your license
+copyright: Copyright (c) 2013 F@N Communications, Inc.
+
+nendSDK version: 2.1.0
+
+name: Nend
+moduleid: net.nend
+guid: 9525c30a-96ce-45bf-891c-4f1302055d1d
+platform: android
+minsdk: 3.0.2.GA

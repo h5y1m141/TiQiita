@@ -1,0 +1,12 @@
+version: 1.0.1
+apiversion: 2
+description: Nend Titanium module for iOS
+author: F@N Communications, Inc.
+license: Specify your license
+copyright: Copyright (c) 2013 F@N Communications, Inc.
+
+name: Nend
+moduleid: net.nend
+guid: d564e1a6-ed2d-4dff-ae00-8fef8e1bef0f
+platform: iphone
+minsdk: 3.0.2.GA
