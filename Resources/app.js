@@ -1,4 +1,4 @@
-var Admob, AlertView, CommandController, ConfigMenu, Hatena, MainContoroller, MainTable, MenuTable, NappSlideMenu, ProgressBar, Qiita, QiitaLoginID, QiitaLoginPassword, QiitaUser, StatusView, actInd, actionBtn, activityIndicator, adView, adViewHeight, adViewTopPosition, alertView, barHeight, baseCommand, commandController, configMenu, configWindow, createCenterNavWindow, mainContoroller, mainTable, mainTableView, mainWindow, menu, menuTable, moment, momentja, navController, progressBar, qiita, qiitaUser, rootWindow, screenHeight, statusView, testsEnabled, webView, webViewContents, webViewHeader, webViewHeaderHight, webViewHeight, webViewTopPosition, webWindow, webview, win, winLeft;
+var AlertView, CommandController, ConfigMenu, Hatena, MainContoroller, MainTable, MenuTable, NappSlideMenu, ProgressBar, Qiita, QiitaLoginID, QiitaLoginPassword, QiitaUser, StatusView, actInd, activityIndicator, alertView, baseCommand, commandController, configMenu, configWindow, createCenterNavWindow, mainContoroller, mainTable, mainTableView, mainWindow, menu, menuTable, moment, momentja, navController, progressBar, qiita, qiitaUser, rootWindow, statusView, testsEnabled, win, winLeft;
 
 Ti.App.Properties.setString("storedStocks", null);
 
@@ -11,8 +11,6 @@ Ti.App.Properties.setList("followingTags", null);
 Ti.App.Properties.setString("currentPage", "storedStocks");
 
 testsEnabled = false;
-
-Admob = require("ti.admob");
 
 moment = require('lib/moment.min');
 
@@ -48,8 +46,6 @@ AlertView = require('ui/alertView');
 
 ProgressBar = require('ui/progressBar');
 
-webView = require('ui/webView');
-
 win = require('ui/window');
 
 activityIndicator = require('ui/activityIndicator');
@@ -75,96 +71,6 @@ menuTable = new MenuTable();
 menu = menuTable.getMenu();
 
 configMenu = new ConfigMenu();
-
-webWindow = new win();
-
-webview = new webView();
-
-webViewHeader = webview.retreiveWebViewHeader();
-
-webViewContents = webview.retreiveWebView();
-
-webWindow.add(webViewHeader);
-
-webWindow.add(webViewContents);
-
-webWindow.add(actInd);
-
-actionBtn = Ti.UI.createButton({
-  systemButton: Titanium.UI.iPhone.SystemButton.ACTION
-});
-
-actionBtn.addEventListener('click', function() {
-  var dialog,
-    _this = this;
-  dialog = Ti.UI.createOptionDialog();
-  dialog.setTitle("どの処理を実行しますか？");
-  dialog.setOptions(["Qiitaへストック", "はてブ", "Qiitaへストック&はてブ", "キャンセル"]);
-  dialog.setCancel(3);
-  dialog.addEventListener('click', function(event) {
-    var QiitaToken, alertDialog, hatenaAccessTokenKey;
-    hatenaAccessTokenKey = Ti.App.Properties.getString("hatenaAccessTokenKey");
-    QiitaToken = Ti.App.Properties.getString('QiitaToken');
-    alertDialog = Titanium.UI.createAlertDialog();
-    alertDialog.setTitle("Error");
-    Ti.API.debug("start dialog action.Event is " + event.index);
-    switch (event.index) {
-      case 0:
-        if ((QiitaToken != null) === true) {
-          return mainContoroller.stockItemToQiita();
-        } else {
-          alertDialog.setMessage("Qiitaのアカウント設定が完了していないため投稿できません");
-          return alertDialog.show();
-        }
-        break;
-      case 1:
-        if ((hatenaAccessTokenKey != null) === true) {
-          return mainContoroller.stockItemToHatena();
-        } else {
-          alertDialog.setMessage("はてなのアカウント設定が完了していないため投稿できません");
-          return alertDialog.show();
-        }
-        break;
-      case 2:
-        if ((hatenaAccessTokenKey != null) === true && (QiitaToken != null) === true) {
-          mainContoroller.stockItemToQiita();
-          return mainContoroller.stockItemToHatena();
-        } else {
-          alertDialog.setMessage("Qiitaかはてなのアカウント設定が完了していないため投稿できません");
-          return alertDialog.show();
-        }
-    }
-  });
-  return dialog.show();
-});
-
-screenHeight = Ti.Platform.displayCaps.platformHeight;
-
-adViewHeight = 50;
-
-webViewHeaderHight = 55;
-
-barHeight = 60;
-
-webViewHeight = screenHeight - (barHeight + webViewHeaderHight + adViewHeight);
-
-webViewTopPosition = barHeight;
-
-adViewTopPosition = webViewHeight + webViewTopPosition;
-
-adView = Admob.createView({
-  width: 320,
-  height: adViewHeight,
-  top: adViewTopPosition,
-  left: 0,
-  zIndex: 20,
-  adBackgroundColor: 'black',
-  publisherId: "a1516c99bf7991a"
-});
-
-webWindow.rightNavButton = actionBtn;
-
-webWindow.add(adView);
 
 QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID');
 

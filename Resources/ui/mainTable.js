@@ -69,19 +69,50 @@ mainTable = (function() {
       }
     });
     this.table.addEventListener('click', function(e) {
-      var storedTo;
+      var Admob, WebView, actionBtn, adView, adViewHeight, adViewTopPosition, barHeight, detailInfoWindow, screenHeight, storedTo, webViewContents, webViewHeader, webViewHeaderHight, webViewHeight, webViewTopPosition, webview;
+      actionBtn = _this._createActionBtn();
       if (qiita.isConnected() === false) {
         return mainController._alertViewShow("ネットワーク接続出来ません。ネットワーク設定を再度ご確認ください");
       } else if (e.rowData.className === 'entry') {
+        screenHeight = Ti.Platform.displayCaps.platformHeight;
+        adViewHeight = 50;
+        webViewHeaderHight = 55;
+        barHeight = 60;
+        webViewHeight = screenHeight - (barHeight + webViewHeaderHight + adViewHeight);
+        webViewTopPosition = barHeight;
+        adViewTopPosition = webViewHeight + webViewTopPosition;
+        Admob = require("ti.admob");
+        adView = Admob.createView({
+          width: 320,
+          height: adViewHeight,
+          top: adViewTopPosition,
+          left: 0,
+          zIndex: 20,
+          adBackgroundColor: 'black',
+          publisherId: "a1516c99bf7991a"
+        });
         Ti.API.info("start eventListener " + (moment()));
+        WebView = require('ui/webView');
+        webview = new WebView();
+        webViewHeader = webview.retreiveWebViewHeader();
+        webViewContents = webview.retreiveWebView();
+        detailInfoWindow = Ti.UI.createWindow({
+          title: '投稿情報詳細画面',
+          barColor: '#59BB0C',
+          navBarHidden: false,
+          tabBarHidden: false
+        });
+        detailInfoWindow.add(webViewHeader);
+        detailInfoWindow.add(webViewContents);
         webview.contentsUpdate(e.rowData.data.body);
         webview.headerUpdate(e.rowData.data);
         if (e.rowData.data != null) {
           webview.setStockURL(e.rowData.data.url);
           webview.setStockUUID(e.rowData.data.uuid);
         }
-        Ti.API.info("web content update finished " + (moment()));
-        return navController.open(webWindow);
+        detailInfoWindow.rightNavButton = actionBtn;
+        detailInfoWindow.add(adView);
+        return navController.open(detailInfoWindow);
       } else if (e.rowData.className === "config") {
         return mainContoroller.login(e.rowData);
       } else {
@@ -229,6 +260,57 @@ mainTable = (function() {
     view.add(this.arrow);
     view.add(this.statusMessage);
     return view;
+  };
+
+  mainTable.prototype._createActionBtn = function() {
+    var actionBtn;
+    actionBtn = Ti.UI.createButton({
+      systemButton: Titanium.UI.iPhone.SystemButton.ACTION
+    });
+    actionBtn.addEventListener('click', function() {
+      var dialog,
+        _this = this;
+      dialog = Ti.UI.createOptionDialog();
+      dialog.setTitle("どの処理を実行しますか？");
+      dialog.setOptions(["Qiitaへストック", "はてブ", "Qiitaへストック&はてブ", "キャンセル"]);
+      dialog.setCancel(3);
+      dialog.addEventListener('click', function(event) {
+        var QiitaToken, alertDialog, hatenaAccessTokenKey;
+        hatenaAccessTokenKey = Ti.App.Properties.getString("hatenaAccessTokenKey");
+        QiitaToken = Ti.App.Properties.getString('QiitaToken');
+        alertDialog = Titanium.UI.createAlertDialog();
+        alertDialog.setTitle("Error");
+        Ti.API.debug("start dialog action.Event is " + event.index);
+        switch (event.index) {
+          case 0:
+            if ((QiitaToken != null) === true) {
+              return mainContoroller.stockItemToQiita();
+            } else {
+              alertDialog.setMessage("Qiitaのアカウント設定が完了していないため投稿できません");
+              return alertDialog.show();
+            }
+            break;
+          case 1:
+            if ((hatenaAccessTokenKey != null) === true) {
+              return mainContoroller.stockItemToHatena();
+            } else {
+              alertDialog.setMessage("はてなのアカウント設定が完了していないため投稿できません");
+              return alertDialog.show();
+            }
+            break;
+          case 2:
+            if ((hatenaAccessTokenKey != null) === true && (QiitaToken != null) === true) {
+              mainContoroller.stockItemToQiita();
+              return mainContoroller.stockItemToHatena();
+            } else {
+              alertDialog.setMessage("Qiitaかはてなのアカウント設定が完了していないため投稿できません");
+              return alertDialog.show();
+            }
+        }
+      });
+      return dialog.show();
+    });
+    return actionBtn;
   };
 
   return mainTable;
