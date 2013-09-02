@@ -65,29 +65,58 @@ class mainTable
 
     )
 
-    
-    
     @table.addEventListener('click',(e) =>
       # TableViewの一番下に、過去投稿を読み込むためのボタンを
       # 配置しており、そのrowだけは投稿詳細画面に遷移させない
       # 詳細画面にいくかどうかはrowのclassNameの値をチェックする
-
+      actionBtn = @_createActionBtn()
       if qiita.isConnected() is false
         mainController._alertViewShow "ネットワーク接続出来ません。ネットワーク設定を再度ご確認ください"
       else if e.rowData.className is 'entry'
+        screenHeight = Ti.Platform.displayCaps.platformHeight
+        adViewHeight = 50
+        webViewHeaderHight = 55
+        barHeight = 60
+        
+        webViewHeight = screenHeight - (barHeight + webViewHeaderHight + adViewHeight)
+        webViewTopPosition = barHeight
+        adViewTopPosition = webViewHeight + webViewTopPosition
+      
+        Admob = require("ti.admob")
+        adView = Admob.createView
+          width             :320
+          height            :adViewHeight
+          top               :adViewTopPosition
+          left              :0
+          zIndex            :20
+          adBackgroundColor :'black',
+          publisherId       :"a1516c99bf7991a"
+
         # 一覧画面から詳細画面に遷移した後、該当の投稿情報を
         # ストックする際にURLやuuidの情報が必要になるために
         # sessionItem()を利用する
         Ti.API.info "start eventListener #{moment()}"
-        
+        WebView = require('ui/webView')
+        webview = new WebView()
+        webViewHeader = webview.retreiveWebViewHeader()
+        webViewContents = webview.retreiveWebView()
+        detailInfoWindow = Ti.UI.createWindow
+          title:'投稿情報詳細画面'
+          barColor:'#59BB0C'
+          navBarHidden: false
+          tabBarHidden: false
+
+        detailInfoWindow.add webViewHeader
+        detailInfoWindow.add webViewContents        
         webview.contentsUpdate(e.rowData.data.body)
         webview.headerUpdate(e.rowData.data)
         if e.rowData.data?
           webview.setStockURL(e.rowData.data.url)
           webview.setStockUUID(e.rowData.data.uuid)
 
-        Ti.API.info "web content update finished #{moment()}"  
-        navController.open webWindow  
+        detailInfoWindow.rightNavButton = actionBtn
+        detailInfoWindow.add adView
+        navController.open detailInfoWindow
 
       else if e.rowData.className is "config"
         mainContoroller.login e.rowData
@@ -227,6 +256,53 @@ class mainTable
     view.add @statusMessage
     
     return view
+  _createActionBtn:() ->
+    actionBtn = Ti.UI.createButton
+      systemButton: Titanium.UI.iPhone.SystemButton.ACTION
+  
+    actionBtn.addEventListener('click',()->
+      dialog = Ti.UI.createOptionDialog()
+      dialog.setTitle "どの処理を実行しますか？"
+      dialog.setOptions(["Qiitaへストック","はてブ","Qiitaへストック&はてブ","キャンセル"])
+      dialog.setCancel(3)
+      dialog.addEventListener('click',(event) =>
+        hatenaAccessTokenKey  = Ti.App.Properties.getString("hatenaAccessTokenKey")
+        QiitaToken = Ti.App.Properties.getString('QiitaToken')
+        alertDialog = Titanium.UI.createAlertDialog()
+        alertDialog.setTitle("Error")
+        Ti.API.debug "start dialog action.Event is #{event.index}"
+  
+        switch event.index
+          when 0
+            if QiitaToken? is true
+              mainContoroller.stockItemToQiita()
+            else
+              alertDialog.setMessage("Qiitaのアカウント設定が完了していないため投稿できません")
+              alertDialog.show()
+          when 1
+            if hatenaAccessTokenKey? is true
+              mainContoroller.stockItemToHatena()
+            else
+              alertDialog.setMessage("はてなのアカウント設定が完了していないため投稿できません")
+              alertDialog.show()
+  
+          when 2
+            if hatenaAccessTokenKey? is true and QiitaToken? is true
+              mainContoroller.stockItemToQiita()
+              mainContoroller.stockItemToHatena()
+            else
+              alertDialog.setMessage("Qiitaかはてなのアカウント設定が完了していないため投稿できません")
+              alertDialog.show()
+          
+            
+            
+            
+            
+      )
+      dialog.show()
+    )
+    return actionBtn
+      
       
 module.exports = mainTable
 

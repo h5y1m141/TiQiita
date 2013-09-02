@@ -25,7 +25,7 @@ testsEnabled = false
 
 
 # 外部のライブラリ読み込み
-Admob = require("ti.admob")
+
 moment = require('lib/moment.min')
 momentja = require('lib/momentja')
 
@@ -51,7 +51,7 @@ MenuTable = require('ui/menuTable')
 StatusView = require('ui/statusView')
 AlertView = require('ui/alertView')
 ProgressBar = require('ui/progressBar')
-webView = require('ui/webView')
+
 win = require('ui/window')
 activityIndicator = require('ui/activityIndicator')
 ConfigMenu = require("ui/configMenu")
@@ -67,85 +67,7 @@ menuTable = new MenuTable()
 menu = menuTable.getMenu()
 configMenu = new ConfigMenu()
 
-webWindow = new win()
 
-
-# あらかじめwebviewを生成しておかないと、メイン画面から
-# 遷移した時にもたつく原因になるために以下を実施している    
-webview = new webView()
-webViewHeader = webview.retreiveWebViewHeader()
-webViewContents = webview.retreiveWebView()
-webWindow.add webViewHeader
-webWindow.add webViewContents
-webWindow.add actInd
-actionBtn = Ti.UI.createButton
-  systemButton: Titanium.UI.iPhone.SystemButton.ACTION
-
-actionBtn.addEventListener('click',()->
-
-  
-
-  dialog = Ti.UI.createOptionDialog()
-  dialog.setTitle "どの処理を実行しますか？"
-  dialog.setOptions(["Qiitaへストック","はてブ","Qiitaへストック&はてブ","キャンセル"])
-  dialog.setCancel(3)
-  dialog.addEventListener('click',(event) =>
-    hatenaAccessTokenKey  = Ti.App.Properties.getString("hatenaAccessTokenKey")
-    QiitaToken = Ti.App.Properties.getString('QiitaToken')
-    alertDialog = Titanium.UI.createAlertDialog()
-    alertDialog.setTitle("Error")
-    Ti.API.debug "start dialog action.Event is #{event.index}"
-
-    switch event.index
-      when 0
-        if QiitaToken? is true
-          mainContoroller.stockItemToQiita()
-        else
-          alertDialog.setMessage("Qiitaのアカウント設定が完了していないため投稿できません")
-          alertDialog.show()
-      when 1
-        if hatenaAccessTokenKey? is true
-          mainContoroller.stockItemToHatena()
-        else
-          alertDialog.setMessage("はてなのアカウント設定が完了していないため投稿できません")
-          alertDialog.show()
-
-      when 2
-        if hatenaAccessTokenKey? is true and QiitaToken? is true
-          mainContoroller.stockItemToQiita()
-          mainContoroller.stockItemToHatena()
-        else
-          alertDialog.setMessage("Qiitaかはてなのアカウント設定が完了していないため投稿できません")
-          alertDialog.show()
-      
-        
-        
-        
-        
-  )
-  dialog.show()
-)
-screenHeight = Ti.Platform.displayCaps.platformHeight
-adViewHeight = 50
-webViewHeaderHight = 55
-barHeight = 60
-
-webViewHeight = screenHeight - (barHeight + webViewHeaderHight + adViewHeight)
-webViewTopPosition = barHeight
-adViewTopPosition = webViewHeight + webViewTopPosition
-
-
-adView = Admob.createView
-  width             :320
-  height            :adViewHeight
-  top               :adViewTopPosition
-  left              :0
-  zIndex            :20
-  adBackgroundColor :'black',
-  publisherId       :"a1516c99bf7991a"
-
-webWindow.rightNavButton = actionBtn
-webWindow.add adView
 QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID')
 QiitaLoginPassword = Ti.App.Properties.getString('QiitaLoginPassword')
 
