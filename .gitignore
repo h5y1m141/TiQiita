@@ -17,14 +17,12 @@ tmp
 /Resources/android/images/**/**/*
 /build/iphone/build/build.log
 /Resources/.DS_Store
-/Resources/ui/.DS_Store
+/Resources/config/*
+/upload.sh
 /.DS_Store
-/Resources/*
 /Resources/KS_nav_ui.png
 /Resources/KS_nav_views.png
 /Resources/bootstrap.min.css
 /Resources/eventManagement.js
 /certs/development.mobileprovision
 /coffee/controllers/qiitaController.coffee
-/Resources/config/*
-/upload.sh

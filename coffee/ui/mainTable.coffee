@@ -73,50 +73,15 @@ class mainTable
       if qiita.isConnected() is false
         mainController._alertViewShow "ネットワーク接続出来ません。ネットワーク設定を再度ご確認ください"
       else if e.rowData.className is 'entry'
-        screenHeight = Ti.Platform.displayCaps.platformHeight
-        adViewHeight = 50
-        webViewHeaderHight = 55
-        barHeight = 60
-        
-        webViewHeight = screenHeight - (barHeight + webViewHeaderHight + adViewHeight)
-        webViewTopPosition = barHeight
-        adViewTopPosition = webViewHeight + webViewTopPosition
-      
-        Admob = require("ti.admob")
-        adView = Admob.createView
-          width             :320
-          height            :adViewHeight
-          top               :adViewTopPosition
-          left              :0
-          zIndex            :20
-          adBackgroundColor :'black',
-          publisherId       :"a1516c99bf7991a"
-
         # 一覧画面から詳細画面に遷移した後、該当の投稿情報を
         # ストックする際にURLやuuidの情報が必要になるために
 
         if e.rowData.data?
           actionBtn = @_createActionBtn(e.rowData.data.uuid,e.rowData.data.url)
 
-        Ti.API.info "start eventListener #{moment()}"
-        WebView = require('ui/webView')
-        webview = new WebView()
-        webViewHeader = webview.retreiveWebViewHeader()
-        webViewContents = webview.retreiveWebView()
-        detailInfoWindow = Ti.UI.createWindow
-          title:'投稿情報詳細画面'
-          barColor:'#59BB0C'
-          navBarHidden: false
-          tabBarHidden: false
-
-        detailInfoWindow.add webViewHeader
-        detailInfoWindow.add webViewContents        
-        webview.contentsUpdate(e.rowData.data.body)
-        webview.headerUpdate(e.rowData.data)
-
-        detailInfoWindow.rightNavButton = actionBtn
-        detailInfoWindow.add adView
-        navController.open detailInfoWindow
+        DetailWindow = require("ui/detailWindow")
+        detailWindow = new DetailWindow(e.rowData.data)
+        navController.open detailWindow
 
       else if e.rowData.className is "config"
         mainContoroller.login e.rowData
