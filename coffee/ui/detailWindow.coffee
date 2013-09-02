@@ -13,17 +13,32 @@ class detailWindow
       navBarHidden: false
       tabBarHidden: false
       
-    dialog = @_createDialog()
-    adView = @_createAdView()
-    WebView = require('ui/webView')
-    webview = new WebView()
-    webViewHeader = webview.retreiveWebViewHeader()
-    webViewContents = webview.retreiveWebView()
-    detailWindow.add webViewHeader
-    detailWindow.add webViewContents
+    qiitaCSS = 'ui/css/qiitaColor.css'
+    htmlHeaderElement = "<html><head><meta name='viewport' content='width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1'><link rel='stylesheet' href='#{qiitaCSS}' type='text/css'></link></head>"
+    
+    screenHeight = Ti.Platform.displayCaps.platformHeight
+    adViewHeight = 55
+    webViewHeaderHight = 55
+    barHeight = 60
+    webViewTopPosition = webViewHeaderHight
+    webViewHeight = screenHeight - (barHeight + webViewHeaderHight + adViewHeight)
+
+    webView = Ti.UI.createWebView
+      top:55
+      left:0
+      zIndex:5
+      width:320
+      height:webViewHeight
+      html:"#{htmlHeaderElement}#{data.body}</body></html>"
+      
+      
+    dialog          = @_createDialog()
+    adView          = @_createAdView()
+    headerContainer = @_createHeader(data)
+    
+    detailWindow.add webView
     detailWindow.add adView
-    webview.contentsUpdate(data.body)
-    webview.headerUpdate(data)
+    detailWindow.add headerContainer
     
     return detailWindow
 
@@ -155,26 +170,70 @@ class detailWindow
 
   _createAdView:() ->
     # 画面下部に広告用のViewを配置するための高さ計算処理
-    screenHeight = Ti.Platform.displayCaps.platformHeight
-    adViewHeight = 50
-    webViewHeaderHight = 55
-    barHeight = 60
-    
-    webViewHeight = screenHeight - (barHeight + webViewHeaderHight + adViewHeight)
-    webViewTopPosition = barHeight
-    adViewTopPosition = webViewHeight + webViewTopPosition
-
-        
     Admob = require("ti.admob")
     adView = Admob.createView
       width             :320
-      height            :adViewHeight
-      top               :adViewTopPosition
+      height            :55
+      bottom            :0
       left              :0
       zIndex            :20
       adBackgroundColor :'black',
       publisherId       :"a1516c99bf7991a"
 
     return adView
-              
+    
+  _createHeader:(data) ->
+    moment = require('lib/moment.min')
+    momentja = require('lib/momentja')
+    headerContainer = Ti.UI.createView
+      top:0
+      left:0
+      width:320
+      height:55
+      zIndex:1
+      backgroundColor:'#141414'
+      
+    titleLabel = Ti.UI.createLabel
+      font:
+        fontWeight:'bold'
+        fontSize:16
+      color:'#fff'
+      top:5
+      left:80
+      width:220
+      height:40
+      zIndex:2
+      text :data.title
+      
+    dateLabel = Ti.UI.createLabel
+      font:
+        fontSize:12
+      textAlign:2
+      color:'#fff'
+      top:65
+      left:80
+      width:220
+      height:15
+      zIndex:2
+      text :'投稿日：' + moment(data.created_at,"YYYY-MM-DD HH:mm:ss Z").fromNow()
+    iconIamge = Ti.UI.createImageView
+      left:5
+      top:5
+      borderWidth:1
+      borderColor:'#222'
+      borderRadius:5
+      width:40
+      height:40
+      zIndex:20
+      userName:""
+      defaultImage:"ui/image/logo-square.png"
+      backgroundColor:'#cbcbcb'
+      image: data.user.profile_image_url
+      
+    headerContainer.add(iconIamge)
+    headerContainer.add(dateLabel)
+    headerContainer.add(titleLabel)
+    
+    return headerContainer
+                
 module.exports  = detailWindow
