@@ -131,17 +131,13 @@ mainContoroller = (function() {
     return true;
   };
 
-  mainContoroller.prototype.stockItemToQiita = function() {
-    var uuid;
-    Ti.API.info(webview.getStockUUID());
-    uuid = webview.getStockUUID();
+  mainContoroller.prototype.stockItemToQiita = function(uuid) {
     qiita.putStock(uuid);
     return true;
   };
 
-  mainContoroller.prototype.stockItemToHatena = function() {
-    var Hatena, hatena, url;
-    url = webview.getStockURL();
+  mainContoroller.prototype.stockItemToHatena = function(url) {
+    var Hatena, hatena;
     Hatena = require("model/hatena");
     hatena = new Hatena();
     Ti.API.info("stockItemToQiita start. url is " + url);

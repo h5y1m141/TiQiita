@@ -69,7 +69,7 @@ class mainTable
       # TableViewの一番下に、過去投稿を読み込むためのボタンを
       # 配置しており、そのrowだけは投稿詳細画面に遷移させない
       # 詳細画面にいくかどうかはrowのclassNameの値をチェックする
-      actionBtn = @_createActionBtn()
+
       if qiita.isConnected() is false
         mainController._alertViewShow "ネットワーク接続出来ません。ネットワーク設定を再度ご確認ください"
       else if e.rowData.className is 'entry'
@@ -94,7 +94,10 @@ class mainTable
 
         # 一覧画面から詳細画面に遷移した後、該当の投稿情報を
         # ストックする際にURLやuuidの情報が必要になるために
-        # sessionItem()を利用する
+
+        if e.rowData.data?
+          actionBtn = @_createActionBtn(e.rowData.data.uuid,e.rowData.data.url)
+
         Ti.API.info "start eventListener #{moment()}"
         WebView = require('ui/webView')
         webview = new WebView()
@@ -110,9 +113,6 @@ class mainTable
         detailInfoWindow.add webViewContents        
         webview.contentsUpdate(e.rowData.data.body)
         webview.headerUpdate(e.rowData.data)
-        if e.rowData.data?
-          webview.setStockURL(e.rowData.data.url)
-          webview.setStockUUID(e.rowData.data.uuid)
 
         detailInfoWindow.rightNavButton = actionBtn
         detailInfoWindow.add adView
@@ -254,7 +254,7 @@ class mainTable
     view.add @statusMessage
     
     return view
-  _createActionBtn:() ->
+  _createActionBtn:(uuid,url) ->
     actionBtn = Ti.UI.createButton
       systemButton: Titanium.UI.iPhone.SystemButton.ACTION
   
@@ -273,21 +273,21 @@ class mainTable
         switch event.index
           when 0
             if QiitaToken? is true
-              mainContoroller.stockItemToQiita()
+              mainContoroller.stockItemToQiita(uuid)
             else
               alertDialog.setMessage("Qiitaのアカウント設定が完了していないため投稿できません")
               alertDialog.show()
           when 1
             if hatenaAccessTokenKey? is true
-              mainContoroller.stockItemToHatena()
+              mainContoroller.stockItemToHatena(url)
             else
               alertDialog.setMessage("はてなのアカウント設定が完了していないため投稿できません")
               alertDialog.show()
   
           when 2
             if hatenaAccessTokenKey? is true and QiitaToken? is true
-              mainContoroller.stockItemToQiita()
-              mainContoroller.stockItemToHatena()
+              mainContoroller.stockItemToQiita(uuid)
+              mainContoroller.stockItemToHatena(url)
             else
               alertDialog.setMessage("Qiitaかはてなのアカウント設定が完了していないため投稿できません")
               alertDialog.show()
