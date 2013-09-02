@@ -129,15 +129,11 @@ class mainContoroller
       )
     return true
 
-  stockItemToQiita: () ->
-    Ti.API.info webview.getStockUUID()
-    uuid = webview.getStockUUID()
+  stockItemToQiita: (uuid) ->
     qiita.putStock(uuid)
     
     return true
-  stockItemToHatena: () ->
-
-    url = webview.getStockURL()
+  stockItemToHatena: (url) ->
     Hatena = require("model/hatena")
     hatena = new Hatena()
     Ti.API.info "stockItemToQiita start. url is #{url}"
