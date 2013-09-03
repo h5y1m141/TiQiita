@@ -1,5 +1,6 @@
 class detailWindow
   constructor:(data) ->
+    filterView = require("net.uchidak.tigfview")    
     @baseColor =
       barColor:'#4BA503'
       backgroundColor:"#f3f3f3"
@@ -9,6 +10,7 @@ class detailWindow
     
     detailWindow = Ti.UI.createWindow
       title:'投稿情報詳細画面'
+      left:320
       barColor:@baseColor.barColor
       navBarHidden: false
       tabBarHidden: false
@@ -19,11 +21,10 @@ class detailWindow
     screenHeight = Ti.Platform.displayCaps.platformHeight
     adViewHeight = 55
     webViewHeaderHight = 55
-    barHeight = 60
     webViewTopPosition = webViewHeaderHight
-    webViewHeight = screenHeight - (barHeight + webViewHeaderHight + adViewHeight)
+    webViewHeight = screenHeight - (webViewHeaderHight + adViewHeight)
 
-    webView = Ti.UI.createWebView
+    @webView = Ti.UI.createWebView
       top:55
       left:0
       zIndex:5
@@ -32,13 +33,20 @@ class detailWindow
       html:"#{htmlHeaderElement}#{data.body}</body></html>"
       
       
-    dialog          = @_createDialog()
+    @dialog          = @_createDialog()
     adView          = @_createAdView()
     headerContainer = @_createHeader(data)
-    
-    detailWindow.add webView
+    showDialogBtn = Ti.UI.createButton()
+    showDialogBtn.addEventListener('click',(e)=>
+      @_setTiGFviewToWevView()
+      @_showDialog(@dialog)
+
+    )
+    detailWindow.rightNavButton = showDialogBtn
+    detailWindow.add @webView
     detailWindow.add adView
     detailWindow.add headerContainer
+    detailWindow.add @dialog
     
     return detailWindow
 
@@ -52,7 +60,7 @@ class detailWindow
     _view = Ti.UI.createView
       width:300
       height:280
-      top:0
+      top:60
       left:10
       borderRadius:10
       opacity:0.8
@@ -61,10 +69,10 @@ class detailWindow
       transform:t
     
     titleForMemo = Ti.UI.createLabel
-      text: "どの部分に誤りがあったのかご入力ください"
+      text: "(任意)はてブ時登録時のコメント"
       width:300
       height:40
-      color:@baseColor.barColor
+      color:"#f9f9f9"
       left:10
       top:5
       font:
@@ -75,6 +83,7 @@ class detailWindow
     contents = ""
     textArea = Titanium.UI.createTextArea
       value:''
+      hintText:"(任意)はてブ時登録時のコメント"
       height:150
       width:280
       top:50
@@ -110,17 +119,17 @@ class detailWindow
       backgroundImage:"NONE"
       borderWidth:0
       borderRadius:5
-      color:@baseColor.barColor      
+      color:"f9f9f9"
       backgroundColor:"#4cda64"
       font:
         fontSize:18
         fontFamily :'Rounded M+ 1p'
-      text:"報告する"
+      text:"登録する"
       textAlign:'center'
 
     registMemoBtn.addEventListener('click',(e) =>
       that = @
-      that._setDefaultMapViewStyle()
+      that._setDefaultWebViewStyle()
       that.activityIndicator.show()
       # ACSにメモを登録
       # 次のCloud.Places.queryからはaddNewIconの外側にある
@@ -149,7 +158,7 @@ class detailWindow
       bottom:30      
       borderRadius:5
       backgroundColor:"#d8514b"
-      color:@baseColor.barColor
+      color:"f9f9f9"
       font:
         fontSize:18
         fontFamily :'Rounded M+ 1p'
@@ -157,7 +166,7 @@ class detailWindow
       textAlign:"center"
       
     cancelleBtn.addEventListener('click',(e) =>
-      @_setDefaultMapViewStyle()
+      @_setDefaultWebViewStyle()
       @_hideDialog(_view,Ti.API.info "done")
     )
     
@@ -183,8 +192,6 @@ class detailWindow
     return adView
     
   _createHeader:(data) ->
-    moment = require('lib/moment.min')
-    momentja = require('lib/momentja')
     headerContainer = Ti.UI.createView
       top:0
       left:0
@@ -199,23 +206,28 @@ class detailWindow
         fontSize:16
       color:'#fff'
       top:5
-      left:80
+      left:60
       width:220
       height:40
       zIndex:2
       text :data.title
       
-    dateLabel = Ti.UI.createLabel
+    menuBtn = Ti.UI.createLabel
+      backgroundColor:"transparent"
+      color:"#f9f9f9"
+      width:28
+      height:28
+      right:5
       font:
-        fontSize:12
-      textAlign:2
-      color:'#fff'
-      top:65
-      left:80
-      width:220
-      height:15
-      zIndex:2
-      text :'投稿日：' + moment(data.created_at,"YYYY-MM-DD HH:mm:ss Z").fromNow()
+        fontSize: 32
+        fontFamily:'LigatureSymbols'
+      text:String.fromCharCode("0xe08e")
+      
+    menuBtn.addEventListener('click',(e) =>
+      @_setTiGFviewToWevView()
+      @_showDialog(@dialog)
+    )
+
     iconIamge = Ti.UI.createImageView
       left:5
       top:5
@@ -225,15 +237,55 @@ class detailWindow
       width:40
       height:40
       zIndex:20
-      userName:""
+      userName:data.user.url_name
       defaultImage:"ui/image/logo-square.png"
       backgroundColor:'#cbcbcb'
       image: data.user.profile_image_url
       
-    headerContainer.add(iconIamge)
-    headerContainer.add(dateLabel)
-    headerContainer.add(titleLabel)
+    iconIamge.addEventListener('click',(e) ->
+      animation = Titanium.UI.createAnimation()
+      animation.left = 320
+      animation.duration = 500
+      detailWindow.close(animation)
+      
+    )  
+    headerContainer.add iconIamge
+    headerContainer.add titleLabel
+    headerContainer.add menuBtn
     
     return headerContainer
-                
+  _setTiGFviewToWevView:() ->
+    @webView.rasterizationScale = 0.1
+    @webView.shouldRasterize = true
+    @webView.kCAFilterTrilinear= true
+    return
+        
+  _setDefaultWebViewStyle:() ->
+    @webView.rasterizationScale = 1.0
+    @webView.shouldRasterize =false
+    @webView.kCAFilterTrilinear= false
+    return
+
+  # 引数に取ったviewに対してせり出すようにするアニメーションを適用
+  _showDialog:(_view) ->
+    t1 = Titanium.UI.create2DMatrix()
+    t1 = t1.scale(1.0)
+    animation = Titanium.UI.createAnimation()
+    animation.transform = t1
+    animation.duration = 250
+    return _view.animate(animation)
+    
+  # 引数に取ったviewに対してズームインするようなアニメーションを適用
+  # することで非表示のように見せる
+  _hideDialog:(_view,callback) ->        
+    t1 = Titanium.UI.create2DMatrix()
+    t1 = t1.scale(0.0)
+    animation = Titanium.UI.createAnimation()
+    animation.transform = t1
+    animation.duration = 250
+    _view.animate(animation)
+    
+    animation.addEventListener('complete',(e) ->
+      return callback
+    )                        
 module.exports  = detailWindow

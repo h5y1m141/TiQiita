@@ -81,7 +81,11 @@ class mainTable
 
         DetailWindow = require("ui/detailWindow")
         detailWindow = new DetailWindow(e.rowData.data)
-        navController.open detailWindow
+        animation = Titanium.UI.createAnimation()
+        animation.left = 0
+        animation.duration = 500
+        detailWindow.open(animation)
+        # navController.open detailWindow
 
       else if e.rowData.className is "config"
         mainContoroller.login e.rowData

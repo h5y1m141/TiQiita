@@ -3,7 +3,9 @@ var detailWindow;
 detailWindow = (function() {
 
   function detailWindow(data) {
-    var adView, adViewHeight, barHeight, dialog, headerContainer, htmlHeaderElement, qiitaCSS, screenHeight, webView, webViewHeaderHight, webViewHeight, webViewTopPosition;
+    var adView, adViewHeight, filterView, headerContainer, htmlHeaderElement, qiitaCSS, screenHeight, showDialogBtn, webViewHeaderHight, webViewHeight, webViewTopPosition,
+      _this = this;
+    filterView = require("net.uchidak.tigfview");
     this.baseColor = {
       barColor: '#4BA503',
       backgroundColor: "#f3f3f3",
@@ -13,6 +15,7 @@ detailWindow = (function() {
     };
     detailWindow = Ti.UI.createWindow({
       title: '投稿情報詳細画面',
+      left: 320,
       barColor: this.baseColor.barColor,
       navBarHidden: false,
       tabBarHidden: false
@@ -22,10 +25,9 @@ detailWindow = (function() {
     screenHeight = Ti.Platform.displayCaps.platformHeight;
     adViewHeight = 55;
     webViewHeaderHight = 55;
-    barHeight = 60;
     webViewTopPosition = webViewHeaderHight;
-    webViewHeight = screenHeight - (barHeight + webViewHeaderHight + adViewHeight);
-    webView = Ti.UI.createWebView({
+    webViewHeight = screenHeight - (webViewHeaderHight + adViewHeight);
+    this.webView = Ti.UI.createWebView({
       top: 55,
       left: 0,
       zIndex: 5,
@@ -33,12 +35,19 @@ detailWindow = (function() {
       height: webViewHeight,
       html: "" + htmlHeaderElement + data.body + "</body></html>"
     });
-    dialog = this._createDialog();
+    this.dialog = this._createDialog();
     adView = this._createAdView();
     headerContainer = this._createHeader(data);
-    detailWindow.add(webView);
+    showDialogBtn = Ti.UI.createButton();
+    showDialogBtn.addEventListener('click', function(e) {
+      _this._setTiGFviewToWevView();
+      return _this._showDialog(_this.dialog);
+    });
+    detailWindow.rightNavButton = showDialogBtn;
+    detailWindow.add(this.webView);
     detailWindow.add(adView);
     detailWindow.add(headerContainer);
+    detailWindow.add(this.dialog);
     return detailWindow;
   }
 
@@ -52,7 +61,7 @@ detailWindow = (function() {
     _view = Ti.UI.createView({
       width: 300,
       height: 280,
-      top: 0,
+      top: 60,
       left: 10,
       borderRadius: 10,
       opacity: 0.8,
@@ -61,10 +70,10 @@ detailWindow = (function() {
       transform: t
     });
     titleForMemo = Ti.UI.createLabel({
-      text: "どの部分に誤りがあったのかご入力ください",
+      text: "(任意)はてブ時登録時のコメント",
       width: 300,
       height: 40,
-      color: this.baseColor.barColor,
+      color: "#f9f9f9",
       left: 10,
       top: 5,
       font: {
@@ -76,6 +85,7 @@ detailWindow = (function() {
     contents = "";
     textArea = Titanium.UI.createTextArea({
       value: '',
+      hintText: "(任意)はてブ時登録時のコメント",
       height: 150,
       width: 280,
       top: 50,
@@ -109,19 +119,19 @@ detailWindow = (function() {
       backgroundImage: "NONE",
       borderWidth: 0,
       borderRadius: 5,
-      color: this.baseColor.barColor,
+      color: "f9f9f9",
       backgroundColor: "#4cda64",
       font: {
         fontSize: 18,
         fontFamily: 'Rounded M+ 1p'
       },
-      text: "報告する",
+      text: "登録する",
       textAlign: 'center'
     });
     registMemoBtn.addEventListener('click', function(e) {
       var MainController, currentUserId, mainController, that;
       that = _this;
-      that._setDefaultMapViewStyle();
+      that._setDefaultWebViewStyle();
       that.activityIndicator.show();
       contents = contents;
       currentUserId = Ti.App.Properties.getString("currentUserId");
@@ -145,7 +155,7 @@ detailWindow = (function() {
       bottom: 30,
       borderRadius: 5,
       backgroundColor: "#d8514b",
-      color: this.baseColor.barColor,
+      color: "f9f9f9",
       font: {
         fontSize: 18,
         fontFamily: 'Rounded M+ 1p'
@@ -154,7 +164,7 @@ detailWindow = (function() {
       textAlign: "center"
     });
     cancelleBtn.addEventListener('click', function(e) {
-      _this._setDefaultMapViewStyle();
+      _this._setDefaultWebViewStyle();
       return _this._hideDialog(_view, Ti.API.info("done"));
     });
     _view.add(textArea);
@@ -180,9 +190,8 @@ detailWindow = (function() {
   };
 
   detailWindow.prototype._createHeader = function(data) {
-    var dateLabel, headerContainer, iconIamge, moment, momentja, titleLabel;
-    moment = require('lib/moment.min');
-    momentja = require('lib/momentja');
+    var headerContainer, iconIamge, menuBtn, titleLabel,
+      _this = this;
     headerContainer = Ti.UI.createView({
       top: 0,
       left: 0,
@@ -198,24 +207,27 @@ detailWindow = (function() {
       },
       color: '#fff',
       top: 5,
-      left: 80,
+      left: 60,
       width: 220,
       height: 40,
       zIndex: 2,
       text: data.title
     });
-    dateLabel = Ti.UI.createLabel({
+    menuBtn = Ti.UI.createLabel({
+      backgroundColor: "transparent",
+      color: "#f9f9f9",
+      width: 28,
+      height: 28,
+      right: 5,
       font: {
-        fontSize: 12
+        fontSize: 32,
+        fontFamily: 'LigatureSymbols'
       },
-      textAlign: 2,
-      color: '#fff',
-      top: 65,
-      left: 80,
-      width: 220,
-      height: 15,
-      zIndex: 2,
-      text: '投稿日：' + moment(data.created_at, "YYYY-MM-DD HH:mm:ss Z").fromNow()
+      text: String.fromCharCode("0xe08e")
+    });
+    menuBtn.addEventListener('click', function(e) {
+      _this._setTiGFviewToWevView();
+      return _this._showDialog(_this.dialog);
     });
     iconIamge = Ti.UI.createImageView({
       left: 5,
@@ -226,15 +238,57 @@ detailWindow = (function() {
       width: 40,
       height: 40,
       zIndex: 20,
-      userName: "",
+      userName: data.user.url_name,
       defaultImage: "ui/image/logo-square.png",
       backgroundColor: '#cbcbcb',
       image: data.user.profile_image_url
     });
+    iconIamge.addEventListener('click', function(e) {
+      var animation;
+      animation = Titanium.UI.createAnimation();
+      animation.left = 320;
+      animation.duration = 500;
+      return detailWindow.close(animation);
+    });
     headerContainer.add(iconIamge);
-    headerContainer.add(dateLabel);
     headerContainer.add(titleLabel);
+    headerContainer.add(menuBtn);
     return headerContainer;
+  };
+
+  detailWindow.prototype._setTiGFviewToWevView = function() {
+    this.webView.rasterizationScale = 0.1;
+    this.webView.shouldRasterize = true;
+    this.webView.kCAFilterTrilinear = true;
+  };
+
+  detailWindow.prototype._setDefaultWebViewStyle = function() {
+    this.webView.rasterizationScale = 1.0;
+    this.webView.shouldRasterize = false;
+    this.webView.kCAFilterTrilinear = false;
+  };
+
+  detailWindow.prototype._showDialog = function(_view) {
+    var animation, t1;
+    t1 = Titanium.UI.create2DMatrix();
+    t1 = t1.scale(1.0);
+    animation = Titanium.UI.createAnimation();
+    animation.transform = t1;
+    animation.duration = 250;
+    return _view.animate(animation);
+  };
+
+  detailWindow.prototype._hideDialog = function(_view, callback) {
+    var animation, t1;
+    t1 = Titanium.UI.create2DMatrix();
+    t1 = t1.scale(0.0);
+    animation = Titanium.UI.createAnimation();
+    animation.transform = t1;
+    animation.duration = 250;
+    _view.animate(animation);
+    return animation.addEventListener('complete', function(e) {
+      return callback;
+    });
   };
 
   return detailWindow;
