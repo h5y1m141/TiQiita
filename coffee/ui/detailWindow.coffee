@@ -4,28 +4,69 @@ class detailWindow
     @baseColor =
       barColor:'#4BA503'
       backgroundColor:"#f3f3f3"
-      textColor:"#333"
+      textColor:"#f9f9f9"
+      # barColor:'#f9f9f9'
+      # backgroundColor:"#f9f9f9"
       feedbackColor:'#4BA503'
       separatorColor:'#cccccc'
     
-    detailWindow = Ti.UI.createWindow
-      title:'投稿情報詳細画面'
-      left:320
+    @detailWindow = Ti.UI.createWindow
+      left:0
       barColor:@baseColor.barColor
+      backgroundColor:@baseColor.backgroundColor
       navBarHidden: false
       tabBarHidden: false
       
+    # NavBar要素を生成
+    menuBtn = Ti.UI.createLabel
+      backgroundColor:"transparent"
+      color:@baseColor.textColor
+      width:28
+      height:28
+      right:5
+      font:
+        fontSize: 32
+        fontFamily:'LigatureSymbols'
+      text:String.fromCharCode("0xe08e")
+      
+    menuBtn.addEventListener('click',(e) =>
+      @_setTiGFviewToWevView()
+      @_showDialog(@dialog)
+    )
+
+    backBtn = Ti.UI.createLabel
+      backgroundColor:"transparent"
+      color:@baseColor.textColor
+      width:28
+      height:28
+      right:5
+      font:
+        fontSize: 32
+        fontFamily:'LigatureSymbols'
+      text:String.fromCharCode("0xe080")
+    
+    listWindowTitle = Ti.UI.createLabel
+      textAlign: 'left'
+      color:@baseColor.textColor
+      font:
+        fontSize:14
+        # fontFamily : 'Rounded M+ 1p'
+      text:data.title
+
+    @detailWindow.setTitleControl listWindowTitle
+    @detailWindow.rightNavButton = menuBtn
+
+
+    # 投稿情報を表示するためWebViewを活用
     qiitaCSS = 'ui/css/qiitaColor.css'
     htmlHeaderElement = "<html><head><meta name='viewport' content='width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1'><link rel='stylesheet' href='#{qiitaCSS}' type='text/css'></link></head>"
     
     screenHeight = Ti.Platform.displayCaps.platformHeight
     adViewHeight = 55
-    webViewHeaderHight = 55
-    webViewTopPosition = webViewHeaderHight
-    webViewHeight = screenHeight - (webViewHeaderHight + adViewHeight)
+    webViewHeight = screenHeight - adViewHeight
 
     @webView = Ti.UI.createWebView
-      top:55
+      top:0
       left:0
       zIndex:5
       width:320
@@ -35,20 +76,13 @@ class detailWindow
       
     @dialog          = @_createDialog()
     adView          = @_createAdView()
-    headerContainer = @_createHeader(data)
-    showDialogBtn = Ti.UI.createButton()
-    showDialogBtn.addEventListener('click',(e)=>
-      @_setTiGFviewToWevView()
-      @_showDialog(@dialog)
-
-    )
-    detailWindow.rightNavButton = showDialogBtn
-    detailWindow.add @webView
-    detailWindow.add adView
-    detailWindow.add headerContainer
-    detailWindow.add @dialog
     
-    return detailWindow
+
+    @detailWindow.add @webView
+    @detailWindow.add adView
+    @detailWindow.add @dialog
+    
+    return @detailWindow
 
     
   _createDialog:() ->
@@ -60,7 +94,7 @@ class detailWindow
     _view = Ti.UI.createView
       width:300
       height:280
-      top:60
+      top:10
       left:10
       borderRadius:10
       opacity:0.8
@@ -191,69 +225,7 @@ class detailWindow
 
     return adView
     
-  _createHeader:(data) ->
-    headerContainer = Ti.UI.createView
-      top:0
-      left:0
-      width:320
-      height:55
-      zIndex:1
-      backgroundColor:'#141414'
-      
-    titleLabel = Ti.UI.createLabel
-      font:
-        fontWeight:'bold'
-        fontSize:16
-      color:'#fff'
-      top:5
-      left:60
-      width:220
-      height:40
-      zIndex:2
-      text :data.title
-      
-    menuBtn = Ti.UI.createLabel
-      backgroundColor:"transparent"
-      color:"#f9f9f9"
-      width:28
-      height:28
-      right:5
-      font:
-        fontSize: 32
-        fontFamily:'LigatureSymbols'
-      text:String.fromCharCode("0xe08e")
-      
-    menuBtn.addEventListener('click',(e) =>
-      @_setTiGFviewToWevView()
-      @_showDialog(@dialog)
-    )
 
-    iconIamge = Ti.UI.createImageView
-      left:5
-      top:5
-      borderWidth:1
-      borderColor:'#222'
-      borderRadius:5
-      width:40
-      height:40
-      zIndex:20
-      userName:data.user.url_name
-      defaultImage:"ui/image/logo-square.png"
-      backgroundColor:'#cbcbcb'
-      image: data.user.profile_image_url
-      
-    iconIamge.addEventListener('click',(e) ->
-      animation = Titanium.UI.createAnimation()
-      animation.left = 320
-      animation.duration = 500
-      detailWindow.close(animation)
-      
-    )  
-    headerContainer.add iconIamge
-    headerContainer.add titleLabel
-    headerContainer.add menuBtn
-    
-    return headerContainer
   _setTiGFviewToWevView:() ->
     @webView.rasterizationScale = 0.1
     @webView.shouldRasterize = true
@@ -287,5 +259,8 @@ class detailWindow
     
     animation.addEventListener('complete',(e) ->
       return callback
-    )                        
+    )
+
+      
+    
 module.exports  = detailWindow

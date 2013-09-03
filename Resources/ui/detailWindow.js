@@ -3,32 +3,68 @@ var detailWindow;
 detailWindow = (function() {
 
   function detailWindow(data) {
-    var adView, adViewHeight, filterView, headerContainer, htmlHeaderElement, qiitaCSS, screenHeight, showDialogBtn, webViewHeaderHight, webViewHeight, webViewTopPosition,
+    var adView, adViewHeight, backBtn, filterView, htmlHeaderElement, listWindowTitle, menuBtn, qiitaCSS, screenHeight, webViewHeight,
       _this = this;
     filterView = require("net.uchidak.tigfview");
     this.baseColor = {
       barColor: '#4BA503',
       backgroundColor: "#f3f3f3",
-      textColor: "#333",
+      textColor: "#f9f9f9",
       feedbackColor: '#4BA503',
       separatorColor: '#cccccc'
     };
-    detailWindow = Ti.UI.createWindow({
-      title: '投稿情報詳細画面',
-      left: 320,
+    this.detailWindow = Ti.UI.createWindow({
+      left: 0,
       barColor: this.baseColor.barColor,
+      backgroundColor: this.baseColor.backgroundColor,
       navBarHidden: false,
       tabBarHidden: false
     });
+    menuBtn = Ti.UI.createLabel({
+      backgroundColor: "transparent",
+      color: this.baseColor.textColor,
+      width: 28,
+      height: 28,
+      right: 5,
+      font: {
+        fontSize: 32,
+        fontFamily: 'LigatureSymbols'
+      },
+      text: String.fromCharCode("0xe08e")
+    });
+    menuBtn.addEventListener('click', function(e) {
+      _this._setTiGFviewToWevView();
+      return _this._showDialog(_this.dialog);
+    });
+    backBtn = Ti.UI.createLabel({
+      backgroundColor: "transparent",
+      color: this.baseColor.textColor,
+      width: 28,
+      height: 28,
+      right: 5,
+      font: {
+        fontSize: 32,
+        fontFamily: 'LigatureSymbols'
+      },
+      text: String.fromCharCode("0xe080")
+    });
+    listWindowTitle = Ti.UI.createLabel({
+      textAlign: 'left',
+      color: this.baseColor.textColor,
+      font: {
+        fontSize: 14
+      },
+      text: data.title
+    });
+    this.detailWindow.setTitleControl(listWindowTitle);
+    this.detailWindow.rightNavButton = menuBtn;
     qiitaCSS = 'ui/css/qiitaColor.css';
     htmlHeaderElement = "<html><head><meta name='viewport' content='width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1'><link rel='stylesheet' href='" + qiitaCSS + "' type='text/css'></link></head>";
     screenHeight = Ti.Platform.displayCaps.platformHeight;
     adViewHeight = 55;
-    webViewHeaderHight = 55;
-    webViewTopPosition = webViewHeaderHight;
-    webViewHeight = screenHeight - (webViewHeaderHight + adViewHeight);
+    webViewHeight = screenHeight - adViewHeight;
     this.webView = Ti.UI.createWebView({
-      top: 55,
+      top: 0,
       left: 0,
       zIndex: 5,
       width: 320,
@@ -37,18 +73,10 @@ detailWindow = (function() {
     });
     this.dialog = this._createDialog();
     adView = this._createAdView();
-    headerContainer = this._createHeader(data);
-    showDialogBtn = Ti.UI.createButton();
-    showDialogBtn.addEventListener('click', function(e) {
-      _this._setTiGFviewToWevView();
-      return _this._showDialog(_this.dialog);
-    });
-    detailWindow.rightNavButton = showDialogBtn;
-    detailWindow.add(this.webView);
-    detailWindow.add(adView);
-    detailWindow.add(headerContainer);
-    detailWindow.add(this.dialog);
-    return detailWindow;
+    this.detailWindow.add(this.webView);
+    this.detailWindow.add(adView);
+    this.detailWindow.add(this.dialog);
+    return this.detailWindow;
   }
 
   detailWindow.prototype._createDialog = function() {
@@ -61,7 +89,7 @@ detailWindow = (function() {
     _view = Ti.UI.createView({
       width: 300,
       height: 280,
-      top: 60,
+      top: 10,
       left: 10,
       borderRadius: 10,
       opacity: 0.8,
@@ -187,73 +215,6 @@ detailWindow = (function() {
       publisherId: "a1516c99bf7991a"
     });
     return adView;
-  };
-
-  detailWindow.prototype._createHeader = function(data) {
-    var headerContainer, iconIamge, menuBtn, titleLabel,
-      _this = this;
-    headerContainer = Ti.UI.createView({
-      top: 0,
-      left: 0,
-      width: 320,
-      height: 55,
-      zIndex: 1,
-      backgroundColor: '#141414'
-    });
-    titleLabel = Ti.UI.createLabel({
-      font: {
-        fontWeight: 'bold',
-        fontSize: 16
-      },
-      color: '#fff',
-      top: 5,
-      left: 60,
-      width: 220,
-      height: 40,
-      zIndex: 2,
-      text: data.title
-    });
-    menuBtn = Ti.UI.createLabel({
-      backgroundColor: "transparent",
-      color: "#f9f9f9",
-      width: 28,
-      height: 28,
-      right: 5,
-      font: {
-        fontSize: 32,
-        fontFamily: 'LigatureSymbols'
-      },
-      text: String.fromCharCode("0xe08e")
-    });
-    menuBtn.addEventListener('click', function(e) {
-      _this._setTiGFviewToWevView();
-      return _this._showDialog(_this.dialog);
-    });
-    iconIamge = Ti.UI.createImageView({
-      left: 5,
-      top: 5,
-      borderWidth: 1,
-      borderColor: '#222',
-      borderRadius: 5,
-      width: 40,
-      height: 40,
-      zIndex: 20,
-      userName: data.user.url_name,
-      defaultImage: "ui/image/logo-square.png",
-      backgroundColor: '#cbcbcb',
-      image: data.user.profile_image_url
-    });
-    iconIamge.addEventListener('click', function(e) {
-      var animation;
-      animation = Titanium.UI.createAnimation();
-      animation.left = 320;
-      animation.duration = 500;
-      return detailWindow.close(animation);
-    });
-    headerContainer.add(iconIamge);
-    headerContainer.add(titleLabel);
-    headerContainer.add(menuBtn);
-    return headerContainer;
   };
 
   detailWindow.prototype._setTiGFviewToWevView = function() {

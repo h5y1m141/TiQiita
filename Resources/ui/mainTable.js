@@ -69,7 +69,7 @@ mainTable = (function() {
       }
     });
     this.table.addEventListener('click', function(e) {
-      var DetailWindow, actionBtn, animation, detailWindow, storedTo;
+      var DetailWindow, actionBtn, detailWindow, storedTo;
       if (qiita.isConnected() === false) {
         return mainController._alertViewShow("ネットワーク接続出来ません。ネットワーク設定を再度ご確認ください");
       } else if (e.rowData.className === 'entry') {
@@ -78,10 +78,7 @@ mainTable = (function() {
         }
         DetailWindow = require("ui/detailWindow");
         detailWindow = new DetailWindow(e.rowData.data);
-        animation = Titanium.UI.createAnimation();
-        animation.left = 0;
-        animation.duration = 500;
-        return detailWindow.open(animation);
+        return navController.open(detailWindow);
       } else if (e.rowData.className === "config") {
         return mainContoroller.login(e.rowData);
       } else {
