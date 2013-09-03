@@ -1,12 +1,10 @@
 class detailWindow
   constructor:(data) ->
-    filterView = require("net.uchidak.tigfview")    
+    filterView = require("net.uchidak.tigfview")
     @baseColor =
       barColor:'#4BA503'
       backgroundColor:"#f3f3f3"
       textColor:"#f9f9f9"
-      # barColor:'#f9f9f9'
-      # backgroundColor:"#f9f9f9"
       feedbackColor:'#4BA503'
       separatorColor:'#cccccc'
     
@@ -17,45 +15,9 @@ class detailWindow
       navBarHidden: false
       tabBarHidden: false
       
-    # NavBar要素を生成
-    menuBtn = Ti.UI.createLabel
-      backgroundColor:"transparent"
-      color:@baseColor.textColor
-      width:28
-      height:28
-      right:5
-      font:
-        fontSize: 32
-        fontFamily:'LigatureSymbols'
-      text:String.fromCharCode("0xe08e")
-      
-    menuBtn.addEventListener('click',(e) =>
-      @_setTiGFviewToWevView()
-      @_showDialog(@dialog)
-    )
-
-    backBtn = Ti.UI.createLabel
-      backgroundColor:"transparent"
-      color:@baseColor.textColor
-      width:28
-      height:28
-      right:5
-      font:
-        fontSize: 32
-        fontFamily:'LigatureSymbols'
-      text:String.fromCharCode("0xe080")
     
-    listWindowTitle = Ti.UI.createLabel
-      textAlign: 'left'
-      color:@baseColor.textColor
-      font:
-        fontSize:14
-        # fontFamily : 'Rounded M+ 1p'
-      text:data.title
-
-    @detailWindow.setTitleControl listWindowTitle
-    @detailWindow.rightNavButton = menuBtn
-
+    # NavBar要素を生成
+    @_createNavBar()    
 
     # 投稿情報を表示するためWebViewを活用
     qiitaCSS = 'ui/css/qiitaColor.css'
@@ -165,24 +127,7 @@ class detailWindow
       that = @
       that._setDefaultWebViewStyle()
       that.activityIndicator.show()
-      # ACSにメモを登録
-      # 次のCloud.Places.queryからはaddNewIconの外側にある
-      # 変数参照できないはずなのでここでローカル変数として格納しておく
-      
-      contents = contents
-      currentUserId = Ti.App.Properties.getString "currentUserId"
-      Ti.API.info "contents is #{contents} and shopName is #{shopName}"
-      MainController = require("controller/mainController")
-      mainController = new MainController()
-      mainController.sendFeedBack(contents,shopName,currentUserId,(result) =>
-        that.activityIndicator.hide()
-        if result.success
-          alert "報告完了しました"
-        else
-          alert "サーバーがダウンしているために登録することができませんでした"
-        that._hideDialog(_view,Ti.API.info "done")
 
-      )
       
     ) 
     cancelleBtn =  Ti.UI.createLabel
@@ -260,6 +205,46 @@ class detailWindow
     animation.addEventListener('complete',(e) ->
       return callback
     )
+
+  _createNavBar:() ->      
+    
+    menuBtn = Ti.UI.createLabel
+      backgroundColor:"transparent"
+      color:@baseColor.textColor
+      width:28
+      height:28
+      right:5
+      font:
+        fontSize: 32
+        fontFamily:'LigatureSymbols'
+      text:String.fromCharCode("0xe08e")
+      
+    menuBtn.addEventListener('click',(e) =>
+      @_setTiGFviewToWevView()
+      @_showDialog(@dialog)
+    )
+
+    backBtn = Ti.UI.createLabel
+      backgroundColor:"transparent"
+      color:@baseColor.textColor
+      width:28
+      height:28
+      right:5
+      font:
+        fontSize: 32
+        fontFamily:'LigatureSymbols'
+      text:String.fromCharCode("0xe080")
+    
+    listWindowTitle = Ti.UI.createLabel
+      textAlign: 'left'
+      color:@baseColor.textColor
+      font:
+        fontSize:14
+        # fontFamily : 'Rounded M+ 1p'
+      text:data.title
+
+    @detailWindow.setTitleControl listWindowTitle
+    @detailWindow.rightNavButton = menuBtn
 
       
     

@@ -3,8 +3,7 @@ var detailWindow;
 detailWindow = (function() {
 
   function detailWindow(data) {
-    var adView, adViewHeight, backBtn, filterView, htmlHeaderElement, listWindowTitle, menuBtn, qiitaCSS, screenHeight, webViewHeight,
-      _this = this;
+    var adView, adViewHeight, filterView, htmlHeaderElement, qiitaCSS, screenHeight, webViewHeight;
     filterView = require("net.uchidak.tigfview");
     this.baseColor = {
       barColor: '#4BA503',
@@ -20,44 +19,7 @@ detailWindow = (function() {
       navBarHidden: false,
       tabBarHidden: false
     });
-    menuBtn = Ti.UI.createLabel({
-      backgroundColor: "transparent",
-      color: this.baseColor.textColor,
-      width: 28,
-      height: 28,
-      right: 5,
-      font: {
-        fontSize: 32,
-        fontFamily: 'LigatureSymbols'
-      },
-      text: String.fromCharCode("0xe08e")
-    });
-    menuBtn.addEventListener('click', function(e) {
-      _this._setTiGFviewToWevView();
-      return _this._showDialog(_this.dialog);
-    });
-    backBtn = Ti.UI.createLabel({
-      backgroundColor: "transparent",
-      color: this.baseColor.textColor,
-      width: 28,
-      height: 28,
-      right: 5,
-      font: {
-        fontSize: 32,
-        fontFamily: 'LigatureSymbols'
-      },
-      text: String.fromCharCode("0xe080")
-    });
-    listWindowTitle = Ti.UI.createLabel({
-      textAlign: 'left',
-      color: this.baseColor.textColor,
-      font: {
-        fontSize: 14
-      },
-      text: data.title
-    });
-    this.detailWindow.setTitleControl(listWindowTitle);
-    this.detailWindow.rightNavButton = menuBtn;
+    this._createNavBar();
     qiitaCSS = 'ui/css/qiitaColor.css';
     htmlHeaderElement = "<html><head><meta name='viewport' content='width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1'><link rel='stylesheet' href='" + qiitaCSS + "' type='text/css'></link></head>";
     screenHeight = Ti.Platform.displayCaps.platformHeight;
@@ -157,24 +119,10 @@ detailWindow = (function() {
       textAlign: 'center'
     });
     registMemoBtn.addEventListener('click', function(e) {
-      var MainController, currentUserId, mainController, that;
+      var that;
       that = _this;
       that._setDefaultWebViewStyle();
-      that.activityIndicator.show();
-      contents = contents;
-      currentUserId = Ti.App.Properties.getString("currentUserId");
-      Ti.API.info("contents is " + contents + " and shopName is " + shopName);
-      MainController = require("controller/mainController");
-      mainController = new MainController();
-      return mainController.sendFeedBack(contents, shopName, currentUserId, function(result) {
-        that.activityIndicator.hide();
-        if (result.success) {
-          alert("報告完了しました");
-        } else {
-          alert("サーバーがダウンしているために登録することができませんでした");
-        }
-        return that._hideDialog(_view, Ti.API.info("done"));
-      });
+      return that.activityIndicator.show();
     });
     cancelleBtn = Ti.UI.createLabel({
       width: 120,
@@ -250,6 +198,49 @@ detailWindow = (function() {
     return animation.addEventListener('complete', function(e) {
       return callback;
     });
+  };
+
+  detailWindow.prototype._createNavBar = function() {
+    var backBtn, listWindowTitle, menuBtn,
+      _this = this;
+    menuBtn = Ti.UI.createLabel({
+      backgroundColor: "transparent",
+      color: this.baseColor.textColor,
+      width: 28,
+      height: 28,
+      right: 5,
+      font: {
+        fontSize: 32,
+        fontFamily: 'LigatureSymbols'
+      },
+      text: String.fromCharCode("0xe08e")
+    });
+    menuBtn.addEventListener('click', function(e) {
+      _this._setTiGFviewToWevView();
+      return _this._showDialog(_this.dialog);
+    });
+    backBtn = Ti.UI.createLabel({
+      backgroundColor: "transparent",
+      color: this.baseColor.textColor,
+      width: 28,
+      height: 28,
+      right: 5,
+      font: {
+        fontSize: 32,
+        fontFamily: 'LigatureSymbols'
+      },
+      text: String.fromCharCode("0xe080")
+    });
+    listWindowTitle = Ti.UI.createLabel({
+      textAlign: 'left',
+      color: this.baseColor.textColor,
+      font: {
+        fontSize: 14
+      },
+      text: data.title
+    });
+    this.detailWindow.setTitleControl(listWindowTitle);
+    return this.detailWindow.rightNavButton = menuBtn;
   };
 
   return detailWindow;
