@@ -130,13 +130,19 @@ class detailWindow
       contents = e.value
       Ti.API.info "blur event fire.content is #{contents}です"
     )  
-    textArea.addEventListener('change',(e)->
+    textArea.addEventListener('change',(e)=>
       # 文字入力されるたびに、文字数カウンターの値を変更する
-      # Ti.API.info e.value.length
-
+      Ti.API.info "e.value.length is #{e.value.length}"
       textCounter.text = "#{e.value.length}文字"
       if e.value.length > 0
         hintLabel.hide()
+        if e.value.length > 100
+          textCounter.backgroundColor = "#d8514b"
+          textCounter.color = "#f9f9f9"
+        else
+          textCounter.backgroundColor = 'transparent'
+          textCounter.color = '#4BA503'
+          
       else  
         hintLabel.show()
     )

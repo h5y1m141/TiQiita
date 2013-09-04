@@ -119,9 +119,17 @@ detailWindow = (function() {
       return Ti.API.info("blur event fire.content is " + contents + "です");
     });
     textArea.addEventListener('change', function(e) {
+      Ti.API.info("e.value.length is " + e.value.length);
       textCounter.text = "" + e.value.length + "文字";
       if (e.value.length > 0) {
-        return hintLabel.hide();
+        hintLabel.hide();
+        if (e.value.length > 100) {
+          textCounter.backgroundColor = "#d8514b";
+          return textCounter.color = "#f9f9f9";
+        } else {
+          textCounter.backgroundColor = 'transparent';
+          return textCounter.color = '#4BA503';
+        }
       } else {
         return hintLabel.show();
       }
