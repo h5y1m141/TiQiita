@@ -15,9 +15,13 @@ class detailWindow
       navBarHidden: false
       tabBarHidden: false
       
+    # Qiita へのストックやはてブする時に必要となるTokenを取得
+    #  
+    @hatenaAccessTokenKey  = Ti.App.Properties.getString("hatenaAccessTokenKey")
+    @QiitaToken = Ti.App.Properties.getString('QiitaToken')
     
     # NavBar要素を生成
-    @_createNavBar()    
+    @_createNavBar(data.title)    
 
     # 投稿情報を表示するためWebViewを活用
     qiitaCSS = 'ui/css/qiitaColor.css'
@@ -64,37 +68,57 @@ class detailWindow
       zIndex:20
       transform:t
     
-    titleForMemo = Ti.UI.createLabel
-      text: "(任意)はてブ時登録時のコメント"
-      width:300
-      height:40
-      color:"#f9f9f9"
-      left:10
-      top:5
-      font:
-        fontSize:14
-        fontFamily :'Rounded M+ 1p'
-        fontWeight:'bold'
         
     contents = ""
+
     textArea = Titanium.UI.createTextArea
       value:''
-      hintText:"(任意)はてブ時登録時のコメント"
-      height:150
+      height:100
       width:280
-      top:50
+      top:100
       left:10
-      font:
-        fontSize:12
-        fontFamily :'Rounded M+ 1p'
-        fontWeight:'bold'
-      color:@baseColor.textColor
       textAlign:'left'
       borderWidth:2
       borderColor:"#dfdfdf"
       borderRadius:5
       keyboardType:Titanium.UI.KEYBOARD_DEFAULT
       
+    hintLabel = Ti.UI.createLabel
+      text :"(任意)はてブ時登録時のコメント"
+      font:
+        fontSize:12
+        fontFamily :'Rounded M+ 1p'
+      color:"222"
+      top:5
+      left:7
+      widht:100
+      height:20
+      backgroundColor: 'transparent'
+      touchEnabled: true
+
+
+    textCounter =Ti.UI.createLabel
+      text :"0文字"
+      font:
+        fontSize:16
+        fontFamily :'Rounded M+ 1p'
+      color:'#4BA503'
+      bottom:5
+      right:5
+      widht:50
+      height:20
+      backgroundColor: 'transparent'
+    
+    hintLabel.addEventListener('click',(e) ->
+      return textArea.focus()
+    )
+
+    textArea.add hintLabel
+    textArea.add textCounter
+
+    if textArea.value.length > 0
+      hintLabel.hide()
+    
     # 入力完了後、キーボードを消す  
     textArea.addEventListener('return',(e)->
       contents = e.value
@@ -106,9 +130,19 @@ class detailWindow
       contents = e.value
       Ti.API.info "blur event fire.content is #{contents}です"
     )  
+    textArea.addEventListener('change',(e)->
+      # 文字入力されるたびに、文字数カウンターの値を変更する
+      # Ti.API.info e.value.length
+
+      textCounter.text = "#{e.value.length}文字"
+      if e.value.length > 0
+        hintLabel.hide()
+      else  
+        hintLabel.show()
+    )
     
     registMemoBtn = Ti.UI.createLabel
-      bottom:30
+      bottom:10
       right:20
       width:120
       height:40
@@ -134,7 +168,7 @@ class detailWindow
       width:120
       height:40
       left:20
-      bottom:30      
+      bottom:10
       borderRadius:5
       backgroundColor:"#d8514b"
       color:"f9f9f9"
@@ -150,7 +184,6 @@ class detailWindow
     )
     
     _view.add textArea
-    _view.add titleForMemo
     _view.add registMemoBtn
     _view.add cancelleBtn
     
@@ -206,7 +239,7 @@ class detailWindow
       return callback
     )
 
-  _createNavBar:() ->      
+  _createNavBar:(title) ->      
     
     menuBtn = Ti.UI.createLabel
       backgroundColor:"transparent"
@@ -241,7 +274,7 @@ class detailWindow
       font:
         fontSize:14
         # fontFamily : 'Rounded M+ 1p'
-      text:data.title
+      text:title
 
     @detailWindow.setTitleControl listWindowTitle
     @detailWindow.rightNavButton = menuBtn

@@ -19,7 +19,9 @@ detailWindow = (function() {
       navBarHidden: false,
       tabBarHidden: false
     });
-    this._createNavBar();
+    this.hatenaAccessTokenKey = Ti.App.Properties.getString("hatenaAccessTokenKey");
+    this.QiitaToken = Ti.App.Properties.getString('QiitaToken');
+    this._createNavBar(data.title);
     qiitaCSS = 'ui/css/qiitaColor.css';
     htmlHeaderElement = "<html><head><meta name='viewport' content='width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1'><link rel='stylesheet' href='" + qiitaCSS + "' type='text/css'></link></head>";
     screenHeight = Ti.Platform.displayCaps.platformHeight;
@@ -42,7 +44,7 @@ detailWindow = (function() {
   }
 
   detailWindow.prototype._createDialog = function() {
-    var cancelleBtn, contents, registMemoBtn, selectedColor, selectedValue, t, textArea, titleForMemo, unselectedColor, _view,
+    var cancelleBtn, contents, hintLabel, registMemoBtn, selectedColor, selectedValue, t, textArea, textCounter, unselectedColor, _view,
       _this = this;
     t = Titanium.UI.create2DMatrix().scale(0.0);
     unselectedColor = "#666";
@@ -59,39 +61,54 @@ detailWindow = (function() {
       zIndex: 20,
       transform: t
     });
-    titleForMemo = Ti.UI.createLabel({
-      text: "(任意)はてブ時登録時のコメント",
-      width: 300,
-      height: 40,
-      color: "#f9f9f9",
-      left: 10,
-      top: 5,
-      font: {
-        fontSize: 14,
-        fontFamily: 'Rounded M+ 1p',
-        fontWeight: 'bold'
-      }
-    });
     contents = "";
     textArea = Titanium.UI.createTextArea({
       value: '',
-      hintText: "(任意)はてブ時登録時のコメント",
-      height: 150,
+      height: 100,
       width: 280,
-      top: 50,
+      top: 100,
       left: 10,
-      font: {
-        fontSize: 12,
-        fontFamily: 'Rounded M+ 1p',
-        fontWeight: 'bold'
-      },
-      color: this.baseColor.textColor,
       textAlign: 'left',
       borderWidth: 2,
       borderColor: "#dfdfdf",
       borderRadius: 5,
       keyboardType: Titanium.UI.KEYBOARD_DEFAULT
     });
+    hintLabel = Ti.UI.createLabel({
+      text: "(任意)はてブ時登録時のコメント",
+      font: {
+        fontSize: 12,
+        fontFamily: 'Rounded M+ 1p'
+      },
+      color: "222",
+      top: 5,
+      left: 7,
+      widht: 100,
+      height: 20,
+      backgroundColor: 'transparent',
+      touchEnabled: true
+    });
+    textCounter = Ti.UI.createLabel({
+      text: "0文字",
+      font: {
+        fontSize: 16,
+        fontFamily: 'Rounded M+ 1p'
+      },
+      color: '#4BA503',
+      bottom: 5,
+      right: 5,
+      widht: 50,
+      height: 20,
+      backgroundColor: 'transparent'
+    });
+    hintLabel.addEventListener('click', function(e) {
+      return textArea.focus();
+    });
+    textArea.add(hintLabel);
+    textArea.add(textCounter);
+    if (textArea.value.length > 0) {
+      hintLabel.hide();
+    }
     textArea.addEventListener('return', function(e) {
       contents = e.value;
       Ti.API.info("登録しようとしてる情報は is " + contents + "です");
@@ -101,8 +118,16 @@ detailWindow = (function() {
       contents = e.value;
       return Ti.API.info("blur event fire.content is " + contents + "です");
     });
+    textArea.addEventListener('change', function(e) {
+      textCounter.text = "" + e.value.length + "文字";
+      if (e.value.length > 0) {
+        return hintLabel.hide();
+      } else {
+        return hintLabel.show();
+      }
+    });
     registMemoBtn = Ti.UI.createLabel({
-      bottom: 30,
+      bottom: 10,
       right: 20,
       width: 120,
       height: 40,
@@ -128,7 +153,7 @@ detailWindow = (function() {
       width: 120,
       height: 40,
       left: 20,
-      bottom: 30,
+      bottom: 10,
       borderRadius: 5,
       backgroundColor: "#d8514b",
       color: "f9f9f9",
@@ -144,7 +169,6 @@ detailWindow = (function() {
       return _this._hideDialog(_view, Ti.API.info("done"));
     });
     _view.add(textArea);
-    _view.add(titleForMemo);
     _view.add(registMemoBtn);
     _view.add(cancelleBtn);
     return _view;
@@ -200,7 +224,7 @@ detailWindow = (function() {
     });
   };
 
-  detailWindow.prototype._createNavBar = function() {
+  detailWindow.prototype._createNavBar = function(title) {
     var backBtn, listWindowTitle, menuBtn,
       _this = this;
     menuBtn = Ti.UI.createLabel({
@@ -237,7 +261,7 @@ detailWindow = (function() {
       font: {
         fontSize: 14
       },
-      text: data.title
+      text: title
     });
     this.detailWindow.setTitleControl(listWindowTitle);
     return this.detailWindow.rightNavButton = menuBtn;
