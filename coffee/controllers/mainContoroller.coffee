@@ -171,21 +171,6 @@ class mainContoroller
     
 
 
-    
-  stockItemToQiita: (uuid) ->
-    qiita.putStock(uuid)
-    
-    return true
-  stockItemToHatena: (url,contents) ->
-    Hatena = require("model/hatena")
-    hatena = new Hatena()
-    Ti.API.info "stockItemToQiita start. url is #{url}"
-    hatena.postBookmark(url,contents)
-
-    
-    return true
-
-
   sessionItem: (json) ->
     Ti.API.info "start sessionItem. url is #{json.url}. uuid is #{json.uuid}"
     if json

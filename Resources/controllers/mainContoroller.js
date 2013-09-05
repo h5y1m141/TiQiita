@@ -175,20 +175,6 @@ mainContoroller = (function() {
     }
   };
 
-  mainContoroller.prototype.stockItemToQiita = function(uuid) {
-    qiita.putStock(uuid);
-    return true;
-  };
-
-  mainContoroller.prototype.stockItemToHatena = function(url, contents) {
-    var Hatena, hatena;
-    Hatena = require("model/hatena");
-    hatena = new Hatena();
-    Ti.API.info("stockItemToQiita start. url is " + url);
-    hatena.postBookmark(url, contents);
-    return true;
-  };
-
   mainContoroller.prototype.sessionItem = function(json) {
     Ti.API.info("start sessionItem. url is " + json.url + ". uuid is " + json.uuid);
     if (json) {
