@@ -297,7 +297,7 @@ class Qiita
       method:@parameter.myFeed.method
 
     @._request(param,false,callback)
-  putStock:(uuid) ->
+  putStock:(uuid,callback) ->
     param =
       url_name: Ti.App.Properties.getString('QiitaLoginID'),
       password: Ti.App.Properties.getString('QiitaLoginPassword')
@@ -309,14 +309,12 @@ class Qiita
       xhr.open(method,url)
       xhr.setRequestHeader('X-HTTP-Method-Override',method)
       xhr.onload = ->
-        # PUTメソッドを使って投稿成功しても、xhr.responseTextは
-        # nullしか返らないがonload内でその後のalertDialog()を
-        # 呼び出すためにこの処理が必要
+
         body = JSON.parse(xhr.responseText)
-        actInd.hide()
-        alertDialog = Ti.UI.createAlertDialog()
-        alertDialog.setTitle "Qiitaへのストックが完了しました"
-        alertDialog.show()
+        if @status is 204
+          callback('success')
+        else
+          callback('error')
         
       xhr.onerror = (e) ->
         message: "StatusCode: #{@.status}"

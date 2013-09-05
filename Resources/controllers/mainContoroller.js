@@ -131,6 +131,50 @@ mainContoroller = (function() {
     return true;
   };
 
+  mainContoroller.prototype.stockItem = function(uuid, url, contents, qiitaPostFlg, hatenaPostFlg, callback) {
+    var Hatena, hatena, hatenaPostResult, qiitaPostResult;
+    Hatena = require("model/hatena");
+    hatena = new Hatena();
+    qiitaPostResult = false;
+    hatenaPostResult = false;
+    if (qiitaPostFlg === true) {
+      return qiita.putStock(uuid, function(qiitaresult) {
+        var result;
+        if (qiitaresult === 'success') {
+          qiitaPostResult = true;
+        }
+        if (hatenaPostFlg === true) {
+          return hatena.postBookmark(url, contents, function(hatenaresult) {
+            var result;
+            Ti.API.info("postBookmark result is " + hatenaresult);
+            if (hatenaresult.success) {
+              hatenaPostResult = true;
+            }
+            Ti.API.info("Qiitaとはてブ同時投稿終了。結果は" + qiitaPostResult + "と" + hatenaPostResult + "です");
+            result = [qiitaPostResult, hatenaPostResult];
+            return callback(result);
+          });
+        } else {
+          result = [qiitaPostResult, hatenaPostResult];
+          return callback(result);
+        }
+      });
+    } else {
+      if (hatenaPostFlg === true) {
+        return hatena.postBookmark(url, contents, function(hatenaresult) {
+          var result;
+          Ti.API.info("postBookmark result is " + hatenaresult);
+          if (hatenaresult.success) {
+            hatenaPostResult = true;
+          }
+          Ti.API.info("はてブ投稿終了。結果は" + qiitaPostResult + "と" + hatenaPostResult + "です");
+          result = [qiitaPostResult, hatenaPostResult];
+          return callback(result);
+        });
+      }
+    }
+  };
+
   mainContoroller.prototype.stockItemToQiita = function(uuid) {
     qiita.putStock(uuid);
     return true;

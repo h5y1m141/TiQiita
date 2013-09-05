@@ -156,19 +156,14 @@ detailWindow = (function() {
     registMemoBtn.addEventListener('click', function(e) {
       var that;
       that = _this;
-      that._setDefaultWebViewStyle();
       Ti.API.info(qiitaPostFlg);
       Ti.API.info(hatenaPostFlg);
-      if (qiitaPostFlg === true) {
-        mainContoroller.stockItemToQiita(_this.uuid);
-      } else {
-        Ti.API.info('no stockItemToQiita');
-      }
-      if (hatenaPostFlg === true) {
-        return mainContoroller.stockItemToHatena(_this.url, contents);
-      } else {
-        return Ti.API.info('no stockItemToHatena');
-      }
+      return mainContoroller.stockItem(that.uuid, that.url, contents, qiitaPostFlg, hatenaPostFlg, function(result) {
+        if (result) {
+          that._setDefaultWebViewStyle();
+          return that._hideDialog(_view, Ti.API.info("投稿処理が完了"));
+        }
+      });
     });
     cancelleBtn = Ti.UI.createLabel({
       width: 120,

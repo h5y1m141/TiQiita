@@ -167,19 +167,16 @@ class detailWindow
     
     registMemoBtn.addEventListener('click',(e) =>
       that = @
-      that._setDefaultWebViewStyle()
+      
       Ti.API.info qiitaPostFlg
       Ti.API.info hatenaPostFlg
-      if qiitaPostFlg is true
-        mainContoroller.stockItemToQiita(@uuid)
-      else
-        Ti.API.info 'no stockItemToQiita'
+      mainContoroller.stockItem(that.uuid,that.url,contents,qiitaPostFlg,hatenaPostFlg,(result) ->
+        ## result = [qiitaPostResult,hatenaPostResult]となってる
+        if result
+          that._setDefaultWebViewStyle()
+          that._hideDialog(_view,Ti.API.info "投稿処理が完了")
         
-      if hatenaPostFlg is true
-        mainContoroller.stockItemToHatena(@url,contents)
-      else
-        Ti.API.info 'no stockItemToHatena'
-
+      )
       
     ) 
     cancelleBtn =  Ti.UI.createLabel
