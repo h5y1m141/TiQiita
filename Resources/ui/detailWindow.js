@@ -21,6 +21,8 @@ detailWindow = (function() {
     });
     this.hatenaAccessTokenKey = Ti.App.Properties.getString("hatenaAccessTokenKey");
     this.QiitaToken = Ti.App.Properties.getString('QiitaToken');
+    this.uuid = data.uuid;
+    this.url = data.url;
     this._createNavBar(data.title);
     qiitaCSS = 'ui/css/qiitaColor.css';
     htmlHeaderElement = "<html><head><meta name='viewport' content='width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1'><link rel='stylesheet' href='" + qiitaCSS + "' type='text/css'></link></head>";
@@ -44,12 +46,12 @@ detailWindow = (function() {
   }
 
   detailWindow.prototype._createDialog = function() {
-    var cancelleBtn, contents, hintLabel, registMemoBtn, selectedColor, selectedValue, t, textArea, textCounter, unselectedColor, _view,
+    var cancelleBtn, contents, hatenaIcon, hatenaPostFlg, hatenaPostLabel, hatenaPostSwitch, hintLabel, qiitaIcon, qiitaPostFlg, qiitaPostLabel, qiitaPostSwitch, registMemoBtn, selectedValue, t, textArea, textCounter, _view,
       _this = this;
     t = Titanium.UI.create2DMatrix().scale(0.0);
-    unselectedColor = "#666";
-    selectedColor = "#222";
     selectedValue = false;
+    qiitaPostFlg = false;
+    hatenaPostFlg = false;
     _view = Ti.UI.createView({
       width: 300,
       height: 280,
@@ -142,7 +144,7 @@ detailWindow = (function() {
       backgroundImage: "NONE",
       borderWidth: 0,
       borderRadius: 5,
-      color: "f9f9f9",
+      color: "#f9f9f9",
       backgroundColor: "#4cda64",
       font: {
         fontSize: 18,
@@ -155,7 +157,18 @@ detailWindow = (function() {
       var that;
       that = _this;
       that._setDefaultWebViewStyle();
-      return that.activityIndicator.show();
+      Ti.API.info(qiitaPostFlg);
+      Ti.API.info(hatenaPostFlg);
+      if (qiitaPostFlg === true) {
+        mainContoroller.stockItemToQiita(_this.uuid);
+      } else {
+        Ti.API.info('no stockItemToQiita');
+      }
+      if (hatenaPostFlg === true) {
+        return mainContoroller.stockItemToHatena(_this.url, contents);
+      } else {
+        return Ti.API.info('no stockItemToHatena');
+      }
     });
     cancelleBtn = Ti.UI.createLabel({
       width: 120,
@@ -164,7 +177,7 @@ detailWindow = (function() {
       bottom: 10,
       borderRadius: 5,
       backgroundColor: "#d8514b",
-      color: "f9f9f9",
+      color: "#f9f9f9",
       font: {
         fontSize: 18,
         fontFamily: 'Rounded M+ 1p'
@@ -176,6 +189,80 @@ detailWindow = (function() {
       _this._setDefaultWebViewStyle();
       return _this._hideDialog(_view, Ti.API.info("done"));
     });
+    qiitaIcon = Ti.UI.createImageView({
+      image: "ui/image/logo-square.png",
+      top: 10,
+      left: 10,
+      width: 35,
+      height: 35
+    });
+    if ((this.QiitaToken != null) === true) {
+      qiitaPostFlg = true;
+    } else {
+      qiitaPostFlg = false;
+    }
+    qiitaPostSwitch = Ti.UI.createSwitch({
+      value: qiitaPostFlg,
+      top: 15,
+      left: 200
+    });
+    qiitaPostSwitch.addEventListener('change', function(e) {
+      return qiitaPostFlg = e.source.value;
+    });
+    qiitaPostLabel = Ti.UI.createLabel({
+      text: "Qiitaへストック",
+      textAlign: 'left',
+      font: {
+        fontSize: 16,
+        fontFamily: 'Rounded M+ 1p'
+      },
+      color: "#f9f9f9",
+      top: 20,
+      left: 50,
+      widht: 100,
+      height: 20,
+      backgroundColor: 'transparent'
+    });
+    hatenaIcon = Ti.UI.createImageView({
+      image: "ui/image/hatena.png",
+      top: 50,
+      left: 10,
+      width: 35,
+      height: 35
+    });
+    if ((this.hatenaAccessTokenKey != null) === true) {
+      hatenaPostFlg = true;
+    } else {
+      hatenaPostFlg = false;
+    }
+    hatenaPostSwitch = Ti.UI.createSwitch({
+      value: hatenaPostFlg,
+      top: 55,
+      left: 200
+    });
+    hatenaPostSwitch.addEventListener('change', function(e) {
+      return hatenaPostFlg = e.source.value;
+    });
+    hatenaPostLabel = Ti.UI.createLabel({
+      text: "はてブする",
+      textAlign: 'left',
+      font: {
+        fontSize: 16,
+        fontFamily: 'Rounded M+ 1p'
+      },
+      color: "#f9f9f9",
+      top: 60,
+      left: 50,
+      widht: 100,
+      height: 20,
+      backgroundColor: 'transparent'
+    });
+    _view.add(qiitaIcon);
+    _view.add(qiitaPostSwitch);
+    _view.add(qiitaPostLabel);
+    _view.add(hatenaIcon);
+    _view.add(hatenaPostSwitch);
+    _view.add(hatenaPostLabel);
     _view.add(textArea);
     _view.add(registMemoBtn);
     _view.add(cancelleBtn);

@@ -7,7 +7,7 @@ class detailWindow
       textColor:"#f9f9f9"
       feedbackColor:'#4BA503'
       separatorColor:'#cccccc'
-    
+
     @detailWindow = Ti.UI.createWindow
       left:0
       barColor:@baseColor.barColor
@@ -15,11 +15,12 @@ class detailWindow
       navBarHidden: false
       tabBarHidden: false
       
-    # Qiita へのストックやはてブする時に必要となるTokenを取得
-    #  
+    # Qiita へのストックやはてブする時に必要となるTokenと
+    # uuid，URLを設定 
     @hatenaAccessTokenKey  = Ti.App.Properties.getString("hatenaAccessTokenKey")
     @QiitaToken = Ti.App.Properties.getString('QiitaToken')
-    
+    @uuid = data.uuid
+    @url  = data.url        
     # NavBar要素を生成
     @_createNavBar(data.title)    
 
@@ -54,9 +55,10 @@ class detailWindow
   _createDialog:() ->
 
     t = Titanium.UI.create2DMatrix().scale(0.0)
-    unselectedColor = "#666"
-    selectedColor = "#222"
     selectedValue = false
+    qiitaPostFlg = false
+    hatenaPostFlg = false
+        
     _view = Ti.UI.createView
       width:300
       height:280
@@ -155,18 +157,28 @@ class detailWindow
       backgroundImage:"NONE"
       borderWidth:0
       borderRadius:5
-      color:"f9f9f9"
+      color:"#f9f9f9"
       backgroundColor:"#4cda64"
       font:
         fontSize:18
         fontFamily :'Rounded M+ 1p'
       text:"登録する"
       textAlign:'center'
-
+    
     registMemoBtn.addEventListener('click',(e) =>
       that = @
       that._setDefaultWebViewStyle()
-      that.activityIndicator.show()
+      Ti.API.info qiitaPostFlg
+      Ti.API.info hatenaPostFlg
+      if qiitaPostFlg is true
+        mainContoroller.stockItemToQiita(@uuid)
+      else
+        Ti.API.info 'no stockItemToQiita'
+        
+      if hatenaPostFlg is true
+        mainContoroller.stockItemToHatena(@url,contents)
+      else
+        Ti.API.info 'no stockItemToHatena'
 
       
     ) 
@@ -177,7 +189,7 @@ class detailWindow
       bottom:10
       borderRadius:5
       backgroundColor:"#d8514b"
-      color:"f9f9f9"
+      color:"#f9f9f9"
       font:
         fontSize:18
         fontFamily :'Rounded M+ 1p'
@@ -189,6 +201,77 @@ class detailWindow
       @_hideDialog(_view,Ti.API.info "done")
     )
     
+    qiitaIcon = Ti.UI.createImageView
+      image:"ui/image/logo-square.png"
+      top:10
+      left:10
+      width:35
+      height:35
+      
+    if @QiitaToken? is true
+      qiitaPostFlg = true
+    else
+      qiitaPostFlg = false
+      
+    qiitaPostSwitch = Ti.UI.createSwitch
+      value:qiitaPostFlg
+      top:15
+      left:200
+      
+    qiitaPostSwitch.addEventListener('change',(e)  ->
+      qiitaPostFlg = e.source.value
+    )
+    qiitaPostLabel = Ti.UI.createLabel
+      text :"Qiitaへストック"
+      textAlign:'left'
+      font:
+        fontSize:16
+        fontFamily :'Rounded M+ 1p'
+      color:"#f9f9f9"
+      top:20
+      left:50
+      widht:100
+      height:20
+      backgroundColor: 'transparent'
+        
+    hatenaIcon = Ti.UI.createImageView
+      image:"ui/image/hatena.png"
+      top:50
+      left:10
+      width:35
+      height:35
+      
+    if @hatenaAccessTokenKey? is true
+      hatenaPostFlg = true
+    else  
+      hatenaPostFlg = false
+      
+    hatenaPostSwitch = Ti.UI.createSwitch
+      value:hatenaPostFlg
+      top:55
+      left:200
+    hatenaPostSwitch.addEventListener('change',(e) ->
+      hatenaPostFlg = e.source.value
+    )      
+    hatenaPostLabel = Ti.UI.createLabel
+      text :"はてブする"
+      textAlign:'left'
+      font:
+        fontSize:16
+        fontFamily :'Rounded M+ 1p'
+      color:"#f9f9f9"
+      top:60
+      left:50
+      widht:100
+      height:20
+      backgroundColor: 'transparent'
+    
+    _view.add qiitaIcon
+    _view.add qiitaPostSwitch
+    _view.add qiitaPostLabel
+    _view.add hatenaIcon
+    _view.add hatenaPostSwitch
+    _view.add hatenaPostLabel
     _view.add textArea
     _view.add registMemoBtn
     _view.add cancelleBtn
