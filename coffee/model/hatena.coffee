@@ -43,22 +43,33 @@ class Hatena
 
     return true
 
-  postBookmark:(url) ->
-    
+  postBookmark:(url,contents) ->
+      
+    Ti.API.info "hanate postBookmark start. url is #{url} and contents is #{contents}"
     xml = """
     <entry xmlns='http://purl.org/atom/ns#'>
       <title>dummy</title>
       <link rel='related' type='text/html' href='#{url}' />
+      <summary type='text/plain'>#{contents}</summary>        
     </entry>
     """
-    
-    @hatena.request('http://b.hatena.ne.jp/atom/post', xml, {'Content-Type':'application/x.atom+xml'}, "POST", (e) ->
-      if e.success
-        alertDialog = Ti.UI.createAlertDialog()
-        alertDialog.setTitle "はてなブックマークへの投稿完了しました"
-        alertDialog.show()
+    # 念のためaccesstokenの存在を確認した上でポスト処理する
+    hatenaAccessTokenKey  = Ti.App.Properties.getString("hatenaAccessTokenKey")
+    if hatenaAccessTokenKey is true
+      
+      @hatena.request('http://b.hatena.ne.jp/atom/post', xml, {'Content-Type':'application/x.atom+xml'}, "POST", (e) ->
 
-    )
+        if e.success
+          alertDialog = Ti.UI.createAlertDialog()
+          alertDialog.setTitle "はてなブックマークへの投稿完了しました"
+          alertDialog.show()
+
+      )
+    else
+      alertDialog = Ti.UI.createAlertDialog()
+      alertDialog.setTitle "はてなのアカウント認証に失敗してるようです。このアプリの設定画面のはてなのアカウントの設定を念のためご確認ください"
+      alertDialog.show()
+      
 
 
 module.exports = Hatena
