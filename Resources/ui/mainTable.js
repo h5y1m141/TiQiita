@@ -69,13 +69,10 @@ mainTable = (function() {
       }
     });
     this.table.addEventListener('click', function(e) {
-      var DetailWindow, actionBtn, detailWindow, storedTo;
+      var DetailWindow, detailWindow, storedTo;
       if (qiita.isConnected() === false) {
         return mainController._alertViewShow("ネットワーク接続出来ません。ネットワーク設定を再度ご確認ください");
       } else if (e.rowData.className === 'entry') {
-        if (e.rowData.data != null) {
-          actionBtn = _this._createActionBtn(e.rowData.data.uuid, e.rowData.data.url);
-        }
         DetailWindow = require("ui/detailWindow");
         detailWindow = new DetailWindow(e.rowData.data);
         return navController.open(detailWindow);
@@ -226,57 +223,6 @@ mainTable = (function() {
     view.add(this.arrow);
     view.add(this.statusMessage);
     return view;
-  };
-
-  mainTable.prototype._createActionBtn = function(uuid, url) {
-    var actionBtn;
-    actionBtn = Ti.UI.createButton({
-      systemButton: Titanium.UI.iPhone.SystemButton.ACTION
-    });
-    actionBtn.addEventListener('click', function() {
-      var dialog,
-        _this = this;
-      dialog = Ti.UI.createOptionDialog();
-      dialog.setTitle("どの処理を実行しますか？");
-      dialog.setOptions(["Qiitaへストック", "はてブ", "Qiitaへストック&はてブ", "キャンセル"]);
-      dialog.setCancel(3);
-      dialog.addEventListener('click', function(event) {
-        var QiitaToken, alertDialog, hatenaAccessTokenKey;
-        hatenaAccessTokenKey = Ti.App.Properties.getString("hatenaAccessTokenKey");
-        QiitaToken = Ti.App.Properties.getString('QiitaToken');
-        alertDialog = Titanium.UI.createAlertDialog();
-        alertDialog.setTitle("Error");
-        Ti.API.debug("start dialog action.Event is " + event.index);
-        switch (event.index) {
-          case 0:
-            if ((QiitaToken != null) === true) {
-              return mainContoroller.stockItemToQiita(uuid);
-            } else {
-              alertDialog.setMessage("Qiitaのアカウント設定が完了していないため投稿できません");
-              return alertDialog.show();
-            }
-            break;
-          case 1:
-            if ((hatenaAccessTokenKey != null) === true) {
-              return mainContoroller.stockItemToHatena(url);
-            } else {
-              alertDialog.setMessage("はてなのアカウント設定が完了していないため投稿できません");
-              return alertDialog.show();
-            }
-            break;
-          case 2:
-            if ((hatenaAccessTokenKey != null) === true && (QiitaToken != null) === true) {
-              mainContoroller.stockItemToQiita(uuid);
-              return mainContoroller.stockItemToHatena(url);
-            } else {
-              alertDialog.setMessage("Qiitaかはてなのアカウント設定が完了していないため投稿できません");
-              return alertDialog.show();
-            }
-        }
-      });
-      return dialog.show();
-    });
-    return actionBtn;
   };
 
   return mainTable;
