@@ -128,19 +128,47 @@ class mainContoroller
         
       )
     return true
-
-  stockItemToQiita: (uuid) ->
-    qiita.putStock(uuid)
     
-    return true
-  stockItemToHatena: (url) ->
+  stockItem: (uuid,url,contents,qiitaPostFlg,hatenaPostFlg,callback) ->
     Hatena = require("model/hatena")
     hatena = new Hatena()
-    Ti.API.info "stockItemToQiita start. url is #{url}"
-    hatena.postBookmark(url)
-
     
-    return true
+    # 最初にQiitaへの投稿処理を必要に応じて実施して
+    # それが終わったらはてブした上でそれぞれの投稿処理が
+    # 成功失敗の情報をcallback関数に渡す
+
+    qiitaPostResult = false
+    hatenaPostResult = false
+    
+    if qiitaPostFlg is true
+      qiita.putStock(uuid,(qiitaresult) ->
+        if qiitaresult is 'success'
+          qiitaPostResult = true
+
+        if hatenaPostFlg is true  
+          hatena.postBookmark(url,contents,(hatenaresult) ->
+            Ti.API.info "postBookmark result is #{hatenaresult}"
+            if hatenaresult.success
+              hatenaPostResult = true
+            Ti.API.info "Qiitaとはてブ同時投稿終了。結果は#{qiitaPostResult}と#{hatenaPostResult}です"
+            result = [qiitaPostResult,hatenaPostResult]
+            return callback(result)  
+          )
+        else
+          result = [qiitaPostResult,hatenaPostResult]
+          return callback(result)  
+      )
+    else
+      if hatenaPostFlg is true  
+        hatena.postBookmark(url,contents,(hatenaresult) ->
+          Ti.API.info "postBookmark result is #{hatenaresult}"
+          if hatenaresult.success
+            hatenaPostResult = true
+          Ti.API.info "はてブ投稿終了。結果は#{qiitaPostResult}と#{hatenaPostResult}です"  
+          result = [qiitaPostResult,hatenaPostResult]
+          return callback(result)    
+        )
+    
 
 
   sessionItem: (json) ->

@@ -46,19 +46,22 @@ Hatena = (function() {
     return true;
   };
 
-  Hatena.prototype.postBookmark = function(url) {
-    var xml;
-    xml = "<entry xmlns='http://purl.org/atom/ns#'>\n  <title>dummy</title>\n  <link rel='related' type='text/html' href='" + url + "' />\n</entry>";
-    return this.hatena.request('http://b.hatena.ne.jp/atom/post', xml, {
-      'Content-Type': 'application/x.atom+xml'
-    }, "POST", function(e) {
-      var alertDialog;
-      if (e.success) {
-        alertDialog = Ti.UI.createAlertDialog();
-        alertDialog.setTitle("はてなブックマークへの投稿完了しました");
-        return alertDialog.show();
-      }
-    });
+  Hatena.prototype.postBookmark = function(url, contents, callback) {
+    var alertDialog, hatenaAccessTokenKey, xml;
+    Ti.API.info("hanate postBookmark start. url is " + url + " and contents is " + contents);
+    xml = "<entry xmlns='http://purl.org/atom/ns#'>\n  <title>dummy</title>\n  <link rel='related' type='text/html' href='" + url + "' />\n  <summary type='text/plain'>" + contents + "</summary>        \n</entry>";
+    hatenaAccessTokenKey = Ti.App.Properties.getString("hatenaAccessTokenKey");
+    if ((hatenaAccessTokenKey != null) === true) {
+      return this.hatena.request('http://b.hatena.ne.jp/atom/post', xml, {
+        'Content-Type': 'application/x.atom+xml'
+      }, "POST", function(result) {
+        return callback(result);
+      });
+    } else {
+      alertDialog = Ti.UI.createAlertDialog();
+      alertDialog.setTitle("はてなのアカウント認証に失敗してるようです。\nこのアプリの設定画面のはてなのアカウントの設定を念のためご確認ください");
+      return alertDialog.show();
+    }
   };
 
   return Hatena;
