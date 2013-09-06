@@ -291,7 +291,7 @@ Qiita = (function() {
     return this._request(param, false, callback);
   };
 
-  Qiita.prototype.putStock = function(uuid) {
+  Qiita.prototype.putStock = function(uuid, callback) {
     var param,
       _this = this;
     param = {
@@ -306,12 +306,13 @@ Qiita = (function() {
       xhr.open(method, url);
       xhr.setRequestHeader('X-HTTP-Method-Override', method);
       xhr.onload = function() {
-        var alertDialog, body;
+        var body;
         body = JSON.parse(xhr.responseText);
-        actInd.hide();
-        alertDialog = Ti.UI.createAlertDialog();
-        alertDialog.setTitle("Qiitaへのストックが完了しました");
-        return alertDialog.show();
+        if (this.status === 204) {
+          return callback('success');
+        } else {
+          return callback('error');
+        }
       };
       xhr.onerror = function(e) {
         return {
