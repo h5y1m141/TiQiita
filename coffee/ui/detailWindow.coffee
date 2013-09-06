@@ -167,15 +167,22 @@ class detailWindow
     
     registMemoBtn.addEventListener('click',(e) =>
       that = @
+      ActivityIndicator = require('ui/activityIndicator')
+      actInd = new ActivityIndicator()
+      that.detailWindow.add actInd
+      actInd.show()
+      
       
       Ti.API.info qiitaPostFlg
       Ti.API.info hatenaPostFlg
       mainContoroller.stockItem(that.uuid,that.url,contents,qiitaPostFlg,hatenaPostFlg,(result) ->
         ## result = [qiitaPostResult,hatenaPostResult]となってる
         if result
+          actInd.hide()
           that._setDefaultWebViewStyle()
           that._hideDialog(_view,Ti.API.info "投稿処理が完了")
-        
+          that.detailWindow.remove actInd
+          actInd = null
       )
       
     ) 

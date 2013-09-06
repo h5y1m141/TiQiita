@@ -154,14 +154,21 @@ detailWindow = (function() {
       textAlign: 'center'
     });
     registMemoBtn.addEventListener('click', function(e) {
-      var that;
+      var ActivityIndicator, actInd, that;
       that = _this;
+      ActivityIndicator = require('ui/activityIndicator');
+      actInd = new ActivityIndicator();
+      that.detailWindow.add(actInd);
+      actInd.show();
       Ti.API.info(qiitaPostFlg);
       Ti.API.info(hatenaPostFlg);
       return mainContoroller.stockItem(that.uuid, that.url, contents, qiitaPostFlg, hatenaPostFlg, function(result) {
         if (result) {
+          actInd.hide();
           that._setDefaultWebViewStyle();
-          return that._hideDialog(_view, Ti.API.info("投稿処理が完了"));
+          that._hideDialog(_view, Ti.API.info("投稿処理が完了"));
+          that.detailWindow.remove(actInd);
+          return actInd = null;
         }
       });
     });
