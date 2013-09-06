@@ -58,7 +58,7 @@ detailWindow = (function() {
       top: 10,
       left: 10,
       borderRadius: 10,
-      opacity: 0.8,
+      opacity: 0.9,
       backgroundColor: "#333",
       zIndex: 20,
       transform: t
@@ -287,7 +287,7 @@ detailWindow = (function() {
   };
 
   detailWindow.prototype._setTiGFviewToWevView = function() {
-    this.webView.rasterizationScale = 0.1;
+    this.webView.rasterizationScale = 0.5;
     this.webView.shouldRasterize = true;
     this.webView.kCAFilterTrilinear = true;
   };
