@@ -57,7 +57,7 @@ Qiitaのアカウント設定が完了してる状態で左上のMenuをタッ�
 
 気になった投稿があった場合に、Qiitaにストックしたり、はてなブックマークすることも可能です
 
-![気になった投稿があった場合ストック可能](https://s3-ap-northeast-1.amazonaws.com/tiqiita/action.png)
+![気になった投稿があった場合ストック可能](https://s3-ap-northeast-1.amazonaws.com/tiqiita/postDialog.png)
 
 
 ## License
