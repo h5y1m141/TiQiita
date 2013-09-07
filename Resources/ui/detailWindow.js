@@ -3,7 +3,7 @@ var detailWindow;
 detailWindow = (function() {
 
   function detailWindow(data) {
-    var adView, adViewHeight, filterView, htmlHeaderElement, qiitaCSS, screenHeight, webViewHeight;
+    var adView, adViewHeight, barHeight, filterView, htmlHeaderElement, qiitaCSS, screenHeight, webViewHeight;
     filterView = require("net.uchidak.tigfview");
     this.baseColor = {
       barColor: '#4BA503',
@@ -28,7 +28,8 @@ detailWindow = (function() {
     htmlHeaderElement = "<html><head><meta name='viewport' content='width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1'><link rel='stylesheet' href='" + qiitaCSS + "' type='text/css'></link></head>";
     screenHeight = Ti.Platform.displayCaps.platformHeight;
     adViewHeight = 55;
-    webViewHeight = screenHeight - adViewHeight;
+    barHeight = 40;
+    webViewHeight = screenHeight - (barHeight + adViewHeight);
     this.webView = Ti.UI.createWebView({
       top: 0,
       left: 0,
