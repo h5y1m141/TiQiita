@@ -30,7 +30,8 @@ class detailWindow
     
     screenHeight = Ti.Platform.displayCaps.platformHeight
     adViewHeight = 55
-    webViewHeight = screenHeight - adViewHeight
+    barHeight = 40
+    webViewHeight = screenHeight - (barHeight+adViewHeight)
 
     @webView = Ti.UI.createWebView
       top:0
