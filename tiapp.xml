@@ -54,7 +54,8 @@
     </mobileweb>
     <modules>
         <module platform="iphone" version="1.2.1">dk.napp.slidemenu</module>
-        <module platform="iphone" version="1.4.0">ti.admob</module>
+	<module platform="iphone" version="1.0.1">net.nend</module>
+        <module platform="iphone" version="1.0.1">de.marcelpociot.social</module>
 	<module platform="iphone" version="1.0.0">net.uchidak.tigfview</module>
     </modules>
 </ti:app>
