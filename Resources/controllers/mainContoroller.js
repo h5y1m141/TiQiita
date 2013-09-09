@@ -7,9 +7,41 @@ mainContoroller = (function() {
     this._hideStatusView = __bind(this._hideStatusView, this);
 
     this._showStatusView = __bind(this._showStatusView, this);
+    this.tabSetting = {
+      "iphone": {
+        "main": {
+          "windowName": "mainWindow"
+        }
+      },
+      "android": {
+        "main": {
+          "windowName": "mainWindow"
+        }
+      }
+    };
     this.networkDisconnectedMessage = "ネットワーク接続出来ません。ネットワーク設定を再度ご確認ください";
     this.authenticationFailMessage = "ユーザIDかパスワードに誤りがあるためログインできません";
   }
+
+  mainContoroller.prototype.createTabGroup = function() {
+    var MainWindow, mainTab, mainWindow, osname, tabGroup;
+    tabGroup = Ti.UI.createTabGroup({
+      tabsBackgroundColor: "#f9f9f9",
+      shadowImage: "ui/image/shadowimage.png",
+      tabsBackgroundImage: "ui/image/tabbar.png",
+      activeTabBackgroundImage: "ui/image/activetab.png",
+      activeTabIconTint: "#fffBD5"
+    });
+    osname = Ti.Platform.osname;
+    MainWindow = require("ui/" + osname + "/mainWindow");
+    mainWindow = new MainWindow();
+    mainTab = Titanium.UI.createTab({
+      window: mainWindow,
+      windowName: this.tabSetting[osname].main.windowName
+    });
+    tabGroup.addTab(mainTab);
+    return tabGroup.open();
+  };
 
   mainContoroller.prototype.init = function() {
     var loginID, password, _;
