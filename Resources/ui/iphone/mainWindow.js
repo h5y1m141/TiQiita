@@ -10,7 +10,10 @@ mainWindow = (function() {
     this.baseColor = {
       barColor: "#f9f9f9",
       backgroundColor: "#f9f9f9",
-      keyColor: "#44A5CB"
+      keyColor: '#4BA503',
+      textColor: "#333",
+      contentsColor: "#666",
+      grayTextColor: "#999"
     };
     this.window = Ti.UI.createWindow({
       title: "Qiita",
@@ -37,10 +40,10 @@ mainWindow = (function() {
           type: "Ti.UI.Label",
           bindId: "title",
           properties: {
-            color: "#333",
+            color: this.baseColor.textColor,
             font: {
               fontSize: 16,
-              fontFamily: 'Rounded M+ 1p'
+              fontWeight: 'bold'
             },
             width: 240,
             height: 20,
@@ -51,10 +54,9 @@ mainWindow = (function() {
           type: "Ti.UI.Label",
           bindId: "handleName",
           properties: {
-            color: "#333",
+            color: this.baseColor.keyColor,
             font: {
-              fontSize: 12,
-              fontFamily: 'Rounded M+ 1p'
+              fontSize: 12
             },
             width: 200,
             height: 15,
@@ -65,10 +67,9 @@ mainWindow = (function() {
           type: "Ti.UI.Label",
           bindId: "updateTime",
           properties: {
-            color: "#333",
+            color: this.baseColor.textColor,
             font: {
-              fontSize: 12,
-              fontFamily: 'Rounded M+ 1p'
+              fontSize: 12
             },
             width: 60,
             height: 15,
@@ -77,12 +78,38 @@ mainWindow = (function() {
           }
         }, {
           type: "Ti.UI.Label",
+          bindId: "tagIcon",
+          properties: {
+            color: this.baseColor.keyColor,
+            font: {
+              fontSize: 16,
+              fontFamily: 'LigatureSymbols'
+            },
+            width: 20,
+            height: 15,
+            left: 60,
+            top: 103
+          }
+        }, {
+          type: "Ti.UI.Label",
+          bindId: "tags",
+          properties: {
+            color: this.baseColor.keyColor,
+            font: {
+              fontSize: 12
+            },
+            width: 240,
+            height: 15,
+            left: 80,
+            top: 100
+          }
+        }, {
+          type: "Ti.UI.Label",
           bindId: "contents",
           properties: {
-            color: "#333",
+            color: this.baseColor.contentsColor,
             font: {
-              fontSize: 12,
-              fontFamily: 'Rounded M+ 1p'
+              fontSize: 12
             },
             width: 240,
             height: 50,
@@ -115,7 +142,7 @@ mainWindow = (function() {
       _items = data[_i];
       layout = {
         properties: {
-          height: 100
+          height: 120
         },
         title: {
           text: _items.title
@@ -130,7 +157,13 @@ mainWindow = (function() {
           text: _items.user.url_name
         },
         contents: {
-          text: _items.body.replace(/<\/?[^>]+>/gi, "")
+          text: _items.raw_body
+        },
+        tags: {
+          text: 'javascript,ruby,Titanium'
+        },
+        tagIcon: {
+          text: String.fromCharCode("0xe128")
         }
       };
       dataSet.push(layout);
@@ -144,11 +177,10 @@ mainWindow = (function() {
     var windowTitle;
     windowTitle = Ti.UI.createLabel({
       textAlign: 'center',
-      color: '#333',
+      color: this.baseColor.textColor,
       font: {
         fontSize: 18,
-        fontFamily: 'Rounded M+ 1p',
-        fontWeight: 'bold'
+        fontFamily: 'Rounded M+ 1p'
       },
       text: "Qiita"
     });

@@ -3,7 +3,10 @@ class mainWindow
     @baseColor =
       barColor:"#f9f9f9"
       backgroundColor:"#f9f9f9"
-      keyColor:"#44A5CB"
+      keyColor:'#4BA503'
+      textColor:"#333"
+      contentsColor:"#666"      
+      grayTextColor:"#999"      
       
     @window = Ti.UI.createWindow
       title:"Qiita"
@@ -29,10 +32,10 @@ class mainWindow
       type: "Ti.UI.Label"
       bindId:"title"
       properties:
-        color: "#333"
+        color: @baseColor.textColor
         font:
           fontSize:16
-          fontFamily : 'Rounded M+ 1p'
+          fontWeight:'bold'
         width:240
         height:20
         left:60
@@ -42,10 +45,9 @@ class mainWindow
       type: "Ti.UI.Label"
       bindId:"handleName"
       properties:
-        color: "#333"
+        color: @baseColor.keyColor
         font:
           fontSize:12
-          fontFamily : 'Rounded M+ 1p'
         width:200
         height:15
         left:60
@@ -55,23 +57,48 @@ class mainWindow
       type: "Ti.UI.Label"
       bindId:"updateTime"
       properties:
-        color: "#333"
+        color: @baseColor.textColor
         font:
           fontSize:12
-          fontFamily : 'Rounded M+ 1p'
+          # fontFamily : 'Rounded M+ 1p'
         width:60
         height:15
         right:0
         top:5
     ,
+      # tagIcon
+      type: "Ti.UI.Label"
+      bindId:"tagIcon"
+      properties:
+        color: @baseColor.keyColor
+        font:
+          fontSize:16
+          fontFamily:'LigatureSymbols'
+        width:20
+        height:15
+        left:60
+        top:103
+    ,
+      # tags
+      type: "Ti.UI.Label"
+      bindId:"tags"
+      properties:
+        color: @baseColor.keyColor
+        font:
+          fontSize:12
+        width:240
+        height:15
+        left:80
+        top:100
+    ,
       # contents
       type: "Ti.UI.Label"
       bindId:"contents"
       properties:
-        color: "#333"
+        color: @baseColor.contentsColor
         font:
           fontSize:12
-          fontFamily : 'Rounded M+ 1p'
+          # fontFamily : 'Rounded M+ 1p'
         width:240
         height:50
         left:60
@@ -82,6 +109,8 @@ class mainWindow
       templates:
         template: myTemplate
       defaultItemTemplate: "template"
+      
+      
 
     testData = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, "model/testData.json")
     file = testData.read().toString()
@@ -100,7 +129,7 @@ class mainWindow
     for _items in data
       layout =
         properties:
-          height:100
+          height:120
         title:
           text: _items.title
         icon:
@@ -110,7 +139,13 @@ class mainWindow
         handleName:
           text: _items.user.url_name
         contents:
-          text: _items.body.replace(/<\/?[^>]+>/gi, "")
+          # text: _items.body.replace(/<\/?[^>]+>/gi, "")
+          text: _items.raw_body
+        tags:
+          text: 'javascript,ruby,Titanium'
+        tagIcon:
+          text:String.fromCharCode("0xe128")
+                    
       dataSet.push(layout)
 
     section.setItems dataSet
@@ -121,11 +156,11 @@ class mainWindow
   _createNavbarElement:() ->
     windowTitle = Ti.UI.createLabel
       textAlign: 'center'
-      color:'#333'
+      color:@baseColor.textColor
       font:
         fontSize:18
         fontFamily : 'Rounded M+ 1p'
-        fontWeight:'bold'
+        # fontWeight:'bold'
       text:"Qiita"
 
     @window.setTitleControl windowTitle
