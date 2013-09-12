@@ -1,0 +1,94 @@
+<h1>Ti.Admob.View</h1>
+
+<h2>Description</h2>
+
+<p>A view for displaying ads delivered through Admob.</p>
+
+<p>You should explicitly size the ad to one of the following predefined sizes (width x height). An appropriate
+ad will be loaded from the server automatically:</p>
+
+<ul>
+<li>320x50</li>
+<li>300x250</li>
+<li>468x60</li>
+<li>728x90</li>
+</ul>
+
+<h2>Properties</h2>
+
+<h3>string publisherId</h3>
+
+<p>The publisher ID for admob.</p>
+
+<h3>string adBackgroundColor</h3>
+
+<p>The background color used for the ad.</p>
+
+<h3>boolean testing</h3>
+
+<p>Whether or not admob should be run in testing mode.  Running in testing mode
+returns test ads to the simulator when running in simulator, and the current
+device when running from device.</p>
+
+<h3>Date dateOfBirth</h3>
+
+<p>A date object representing the user's date of birth that should be used
+for determining ad delivery.</p>
+
+<h3>string gender</h3>
+
+<p>The user's gender for the purpose of determining ad delivery. This should be "male" or "female", in lower case.</p>
+
+<h3>string keywords</h3>
+
+<p>Keywords used to determine ad delivery.</p>
+
+<h3>object location</h3>
+
+<p>A dictionary with the location of the user for location-based ads:</p>
+
+<ul>
+<li>float latitude</li>
+<li>float longitude</li>
+<li>float accuracy</li>
+</ul>
+
+<h2>Events</h2>
+
+<h3>didReceiveAd</h3>
+
+<p>Sent when an ad request loaded an ad.  This is a good opportunity to add this
+ view to the hierarchy if it has not yet been added.  If the ad was received
+ as a part of the server-side auto refreshing, you can examine the
+ hasAutoRefreshed property of the view.</p>
+
+<h3>didFailToReceiveAd</h3>
+
+<p>Sent when an ad request failed.  Normally this is because no network
+ connection was available or no ads were available (i.e. no fill).</p>
+
+<h3>willPresentScreen</h3>
+
+<p>Sent just before presenting the user a full screen view, such as a browser,
+in response to clicking on an ad.  Use this opportunity to stop animations,
+time sensitive interactions, etc.</p>
+
+<p>Normally the user looks at the ad, dismisses it, and control returns to your
+application by firing off "didDismissScreen":.  However if the user hits the
+Home button or clicks on an App Store link your application will end. In that case,
+"willLeaveApplication" would fire.</p>
+
+<h3>willDismissScreen</h3>
+
+<p>Sent just before dismissing a full screen view.</p>
+
+<h3>didDismissScreen</h3>
+
+<p>Sent just after dismissing a full screen view.  Use this opportunity to
+restart anything you may have stopped as part of "willPresentScreen".</p>
+
+<h3>willLeaveApplication</h3>
+
+<p>Sent just before the application will background or terminate because the
+user clicked on an ad that will launch another application (such as the App
+Store).</p>

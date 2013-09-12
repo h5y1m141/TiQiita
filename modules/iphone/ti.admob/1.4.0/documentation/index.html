@@ -1,0 +1,85 @@
+<h1>Ti.Admob Module</h1>
+
+<h2>Description</h2>
+
+<p>Shows ads from Admob.</p>
+
+<h2>Getting Started</h2>
+
+<p>View the <a href="http://docs.appcelerator.com/titanium/latest/#!/guide/Using_Titanium_Modules">Using Titanium Modules</a> document for instructions on getting
+started with using this module in your application.</p>
+
+<h2>Requirements</h2>
+
+<p>The Google AdMob Ads SDK has the following requirements:</p>
+
+<ul>
+<li>iOS version 4.3 or later</li>
+<li>Xcode 4.5 or later</li>
+</ul>
+
+<p>The SDK also requires that the following frameworks are available when you build your application:</p>
+
+<ul>
+<li>StoreKit</li>
+<li>AudioToolbox</li>
+<li>MessageUI</li>
+<li>SystemConfiguration</li>
+<li>CoreGraphics</li>
+<li>AdSupport</li>
+</ul>
+
+<h2>Accessing the Ti.Admob Module</h2>
+
+<p>To access this module from JavaScript, you would do the following:</p>
+
+<pre><code>var Admob = require('ti.admob');
+</code></pre>
+
+<h2>Doubleclick for Publishers Developer Docs</h2>
+
+<p><a href="https://developers.google.com/mobile-ads-sdk/">https://developers.google.com/mobile-ads-sdk/</a></p>
+
+<h2>Functions</h2>
+
+<h3>Ti.Admob.createView({...})</h3>
+
+<p>Creates and returns a <a href="view.html">Ti.Admob.View</a> object which displays ads.</p>
+
+<h4>Arguments</h4>
+
+<p>parameters[object]: a dictionary object of properties defined in <a href="view.html">Ti.Admob.View</a>.</p>
+
+<h4>Example:</h4>
+
+<pre><code>Admob.createView({
+    top: 0, left: 0,
+    width: 320, height: 50,
+    publisherId: '&lt;&lt;YOUR PUBLISHER ID HERE&gt;&gt;',
+    adBackgroundColor: 'black',
+    testing: true,
+    dateOfBirth: new Date(1985, 10, 1, 12, 1, 1),
+    gender: 'male',
+    keywords: ''
+});
+</code></pre>
+
+<h2>Usage</h2>
+
+<p>See example.</p>
+
+<h2>Author</h2>
+
+<p>Jeff Haynie, Stephen Tramer</p>
+
+<h2>Module History</h2>
+
+<p>View the <a href="changelog.html">change log</a> for this module.</p>
+
+<h2>Feedback and Support</h2>
+
+<p>Please direct all questions, feedback, and concerns to <a href="mailto:info@appcelerator.com?subject=iOS%20Admob%20Module">info@appcelerator.com</a>.</p>
+
+<h2>License</h2>
+
+<p>Copyright(c) 2010-2013 by Appcelerator, Inc. All Rights Reserved. Please see the LICENSE file included in the distribution for further details.</p>
