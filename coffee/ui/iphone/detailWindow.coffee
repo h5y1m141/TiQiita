@@ -13,8 +13,13 @@ class detailWindow
       backgroundColor:@baseColor.backgroundColor
       navBarHidden: false
       tabBarHidden: false
+      
+    backBtn = Ti.UI.createButtonBar
+      labels: ['Back']
+      backgroundColor: "#ccc"
+      color: @baseColor.textColor
 
-
+    @detailWindow.setLeftNavButton(backBtn)
     
     # Qiita へのストックやはてブする時に必要となるTokenと
     # uuid，URLを設定 
