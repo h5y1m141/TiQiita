@@ -17,7 +17,8 @@ class mainWindow
       
     @_createNavbarElement()
     t = Titanium.UI.create2DMatrix().scale(0)
-    myTemplate = childTemplates:[
+    myTemplate =
+    childTemplates:[
       # icon
       type: "Ti.UI.ImageView"
       bindId:"icon"
@@ -103,12 +104,34 @@ class mainWindow
         height:50
         left:60
         top:45
+          
         
     ]      
     @listView = Ti.UI.createListView
+      top:0
+      left:0
       templates:
         template: myTemplate
       defaultItemTemplate: "template"
+
+    @listView.addEventListener('itemclick',(e) ->
+      # e.section.items[0]を参照することで
+      # secitonに配置したアイコン、タイトルやカスタムプロパティの値も全て取得できる
+
+      data =
+        uuid:e.section.items[0].properties.data.uuid
+        url:e.section.items[0].properties.data.url
+        title:e.section.items[0].properties.data.title
+        body:e.section.items[0].properties.data.body
+        
+      detailWindow = require('ui/iphone/detailWindow')
+      detailWindow = new detailWindow(data)
+      activeTab = Ti.API._activeTab
+      activeTab.open(detailWindow)
+
+
+    )
+      
       
       
 
@@ -118,7 +141,9 @@ class mainWindow
 
     @refresData(json)
     @window.add @listView
+    
     return @window
+    
   refresData: (data) =>        
 
     sections = []
@@ -127,9 +152,14 @@ class mainWindow
     dataSet = []
     # 都道府県のエリア毎に都道府県のrowを生成
     for _items in data
+
       layout =
         properties:
           height:120
+          accessoryType: Ti.UI.LIST_ACCESSORY_TYPE_DISCLOSURE
+          selectionStyle: Titanium.UI.iPhone.ListViewCellSelectionStyle.NONE
+          data:_items
+          
         title:
           text: _items.title
         icon:
@@ -139,8 +169,8 @@ class mainWindow
         handleName:
           text: _items.user.url_name
         contents:
-          # text: _items.body.replace(/<\/?[^>]+>/gi, "")
-          text: _items.raw_body
+          text: _items.body.replace(/<\/?[^>]+>/gi, "")
+          # text: _items.raw_body
         tags:
           text: 'javascript,ruby,Titanium'
         tagIcon:
@@ -166,5 +196,32 @@ class mainWindow
     @window.setTitleControl windowTitle
     return
     
+  _createAdView:() ->
+    # 画面下部に広告用のViewを配置するための高さ計算処理
+    nend = require('net.nend')
+    Config = require("model/loadConfig")
+    config = new Config()
+    nendConfig = config.getNendData()
+
+    adView = nend.createView
+      spotId:nendConfig.spotId
+      apiKey:nendConfig.apiKey
+      width:320
+      height:50
+      bottom: 0
+      left:0
+      zIndex:20
+      
+    adView.addEventListener('start',(e) ->
+      
+    )
+    adView.addEventListener('load',(e) ->
+      
+    )
+    adView.addEventListener('error',(e) ->
+      Ti.API.info "doesn't load ad data"
+    )
+
+    return adView
     
 module.exports = mainWindow  

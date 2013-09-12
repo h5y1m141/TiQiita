@@ -19,6 +19,15 @@ class mainContoroller
       activeTabBackgroundImage:"ui/image/activetab.png"  
       activeTabIconTint:"#fffBD5"
       
+    tabGroup.addEventListener('focus',(e) ->
+      tabGroup._activeTab = e.tab
+      tabGroup._activeTabIndex = e.index
+      if tabGroup._activeTabIndex is -1
+        return
+
+      Ti.API._activeTab = tabGroup._activeTab;
+
+    )
     osname = Ti.Platform.osname
 
     MainWindow = require("ui/#{osname}/mainWindow")

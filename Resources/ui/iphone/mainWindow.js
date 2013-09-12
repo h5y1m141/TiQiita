@@ -120,10 +120,25 @@ mainWindow = (function() {
       ]
     };
     this.listView = Ti.UI.createListView({
+      top: 0,
+      left: 0,
       templates: {
         template: myTemplate
       },
       defaultItemTemplate: "template"
+    });
+    this.listView.addEventListener('itemclick', function(e) {
+      var activeTab, data, detailWindow;
+      data = {
+        uuid: e.section.items[0].properties.data.uuid,
+        url: e.section.items[0].properties.data.url,
+        title: e.section.items[0].properties.data.title,
+        body: e.section.items[0].properties.data.body
+      };
+      detailWindow = require('ui/iphone/detailWindow');
+      detailWindow = new detailWindow(data);
+      activeTab = Ti.API._activeTab;
+      return activeTab.open(detailWindow);
     });
     testData = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, "model/testData.json");
     file = testData.read().toString();
@@ -142,7 +157,10 @@ mainWindow = (function() {
       _items = data[_i];
       layout = {
         properties: {
-          height: 120
+          height: 120,
+          accessoryType: Ti.UI.LIST_ACCESSORY_TYPE_DISCLOSURE,
+          selectionStyle: Titanium.UI.iPhone.ListViewCellSelectionStyle.NONE,
+          data: _items
         },
         title: {
           text: _items.title
@@ -157,7 +175,7 @@ mainWindow = (function() {
           text: _items.user.url_name
         },
         contents: {
-          text: _items.raw_body
+          text: _items.body.replace(/<\/?[^>]+>/gi, "")
         },
         tags: {
           text: 'javascript,ruby,Titanium'
@@ -185,6 +203,29 @@ mainWindow = (function() {
       text: "Qiita"
     });
     this.window.setTitleControl(windowTitle);
+  };
+
+  mainWindow.prototype._createAdView = function() {
+    var Config, adView, config, nend, nendConfig;
+    nend = require('net.nend');
+    Config = require("model/loadConfig");
+    config = new Config();
+    nendConfig = config.getNendData();
+    adView = nend.createView({
+      spotId: nendConfig.spotId,
+      apiKey: nendConfig.apiKey,
+      width: 320,
+      height: 50,
+      bottom: 0,
+      left: 0,
+      zIndex: 20
+    });
+    adView.addEventListener('start', function(e) {});
+    adView.addEventListener('load', function(e) {});
+    adView.addEventListener('error', function(e) {
+      return Ti.API.info("doesn't load ad data");
+    });
+    return adView;
   };
 
   return mainWindow;

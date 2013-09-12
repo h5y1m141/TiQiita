@@ -32,6 +32,14 @@ mainContoroller = (function() {
       activeTabBackgroundImage: "ui/image/activetab.png",
       activeTabIconTint: "#fffBD5"
     });
+    tabGroup.addEventListener('focus', function(e) {
+      tabGroup._activeTab = e.tab;
+      tabGroup._activeTabIndex = e.index;
+      if (tabGroup._activeTabIndex === -1) {
+        return;
+      }
+      return Ti.API._activeTab = tabGroup._activeTab;
+    });
     osname = Ti.Platform.osname;
     MainWindow = require("ui/" + osname + "/mainWindow");
     mainWindow = new MainWindow();
