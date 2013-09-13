@@ -3,7 +3,7 @@ var detailWindow;
 detailWindow = (function() {
 
   function detailWindow(data) {
-    var adView, adViewHeight, backBtn, barHeight, htmlHeaderElement, qiitaCSS, screenHeight, webViewHeight;
+    var adView, adViewHeight, barHeight, htmlHeaderElement, qiitaCSS, screenHeight, webViewHeight;
     this.baseColor = {
       barColor: "#f9f9f9",
       backgroundColor: "#f9f9f9",
@@ -17,12 +17,6 @@ detailWindow = (function() {
       navBarHidden: false,
       tabBarHidden: false
     });
-    backBtn = Ti.UI.createButtonBar({
-      labels: ['Back'],
-      backgroundColor: "#ccc",
-      color: this.baseColor.textColor
-    });
-    this.detailWindow.setLeftNavButton(backBtn);
     this.hatenaAccessTokenKey = Ti.App.Properties.getString("hatenaAccessTokenKey");
     this.QiitaToken = Ti.App.Properties.getString('QiitaToken');
     this.uuid = data.uuid;
@@ -275,19 +269,24 @@ detailWindow = (function() {
   };
 
   detailWindow.prototype._createAdView = function() {
-    var Admob, Config, adView, admobConfig, config;
+    var Config, adView, config, nend, nendConfig;
     Config = require("model/loadConfig");
     config = new Config();
-    admobConfig = config.getAdMobData();
-    Admob = require("ti.admob");
-    adView = Admob.createView({
+    nend = require('net.nend');
+    nendConfig = config.getNendData();
+    adView = nend.createView({
+      spotId: nendConfig.spotId,
+      apiKey: nendConfig.apiKey,
       width: 320,
-      height: 55,
+      height: 50,
       bottom: 0,
       left: 0,
-      zIndex: 20,
-      adBackgroundColor: 'black',
-      publisherId: admobConfig.publisherId
+      zIndex: 20
+    });
+    adView.addEventListener('start', function(e) {});
+    adView.addEventListener('load', function(e) {});
+    adView.addEventListener('error', function(e) {
+      return Ti.API.info("doesn't load ad data");
     });
     return adView;
     return adView;

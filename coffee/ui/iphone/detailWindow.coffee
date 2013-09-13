@@ -14,12 +14,6 @@ class detailWindow
       navBarHidden: false
       tabBarHidden: false
       
-    backBtn = Ti.UI.createButtonBar
-      labels: ['Back']
-      backgroundColor: "#ccc"
-      color: @baseColor.textColor
-
-    @detailWindow.setLeftNavButton(backBtn)
     
     # Qiita へのストックやはてブする時に必要となるTokenと
     # uuid，URLを設定 
@@ -289,40 +283,41 @@ class detailWindow
 
   _createAdView:() ->
     # 画面下部に広告用のViewを配置するための高さ計算処理
-    # nend = require('net.nend')
-    # nendConfig = config.getNendData()
     Config = require("model/loadConfig")
     config = new Config()
 
-    admobConfig = config.getAdMobData()
-    Admob = require("ti.admob")
-    adView = Admob.createView
-      width             :320
-      height            :55
-      bottom            :0
-      left              :0
-      zIndex            :20
-      adBackgroundColor :'black',
-      publisherId       :admobConfig.publisherId
+    # admobConfig = config.getAdMobData()
+    # Admob = require("ti.admob")
+    # adView = Admob.createView
+    #   width             :320
+    #   height            :55
+    #   bottom            :0
+    #   left              :0
+    #   zIndex            :20
+    #   adBackgroundColor :'black',
+    #   publisherId       :admobConfig.publisherId
 
-    # adView = nend.createView
-    #   spotId:nendConfig.spotId
-    #   apiKey:nendConfig.apiKey
-    #   width:320
-    #   height:50
-    #   bottom: 0
-    #   left:0
-    #   zIndex:20
+    nend = require('net.nend')
+    nendConfig = config.getNendData()
+
+    adView = nend.createView
+      spotId:nendConfig.spotId
+      apiKey:nendConfig.apiKey
+      width:320
+      height:50
+      bottom: 0
+      left:0
+      zIndex:20
       
-    # adView.addEventListener('start',(e) ->
+    adView.addEventListener('start',(e) ->
       
-    # )
-    # adView.addEventListener('load',(e) ->
+    )
+    adView.addEventListener('load',(e) ->
       
-    # )
-    # adView.addEventListener('error',(e) ->
-    #   Ti.API.info "doesn't load ad data"
-    # )
+    )
+    adView.addEventListener('error',(e) ->
+      Ti.API.info "doesn't load ad data"
+    )
 
     return adView
     
