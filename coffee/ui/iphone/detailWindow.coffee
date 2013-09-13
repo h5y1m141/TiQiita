@@ -13,8 +13,27 @@ class detailWindow
       backgroundColor:@baseColor.backgroundColor
       navBarHidden: false
       tabBarHidden: false
+
+    backBtn = Ti.UI.createLabel
+      backgroundColor:"transparent"
+      color:@baseColor.textColor
+      textAlign:'center'
+      width:28
+      height:28
+      font:
+        fontSize: 32
+        fontFamily:'LigatureSymbols'
+      text:String.fromCharCode("0xe080")
+            
       
-    
+    backBtn.addEventListener('click',(e)  =>
+      activeTab = Ti.API._activeTab
+      activeTab.close(@detailWindow,{animated:true})
+      
+    )
+      
+    @detailWindow.leftNavButton = backBtn
+        
     # Qiita へのストックやはてブする時に必要となるTokenと
     # uuid，URLを設定 
     @hatenaAccessTokenKey  = Ti.App.Properties.getString("hatenaAccessTokenKey")

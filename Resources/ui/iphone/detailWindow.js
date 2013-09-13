@@ -3,7 +3,8 @@ var detailWindow;
 detailWindow = (function() {
 
   function detailWindow(data) {
-    var adView, adViewHeight, barHeight, htmlHeaderElement, qiitaCSS, screenHeight, webViewHeight;
+    var adView, adViewHeight, backBtn, barHeight, htmlHeaderElement, qiitaCSS, screenHeight, webViewHeight,
+      _this = this;
     this.baseColor = {
       barColor: "#f9f9f9",
       backgroundColor: "#f9f9f9",
@@ -17,6 +18,26 @@ detailWindow = (function() {
       navBarHidden: false,
       tabBarHidden: false
     });
+    backBtn = Ti.UI.createLabel({
+      backgroundColor: "transparent",
+      color: this.baseColor.textColor,
+      textAlign: 'center',
+      width: 28,
+      height: 28,
+      font: {
+        fontSize: 32,
+        fontFamily: 'LigatureSymbols'
+      },
+      text: String.fromCharCode("0xe080")
+    });
+    backBtn.addEventListener('click', function(e) {
+      var activeTab;
+      activeTab = Ti.API._activeTab;
+      return activeTab.close(_this.detailWindow, {
+        animated: true
+      });
+    });
+    this.detailWindow.leftNavButton = backBtn;
     this.hatenaAccessTokenKey = Ti.App.Properties.getString("hatenaAccessTokenKey");
     this.QiitaToken = Ti.App.Properties.getString('QiitaToken');
     this.uuid = data.uuid;
