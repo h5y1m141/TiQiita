@@ -14,8 +14,26 @@ class detailWindow
       navBarHidden: false
       tabBarHidden: false
 
-
-    
+    backBtn = Ti.UI.createLabel
+      backgroundColor:"transparent"
+      color:@baseColor.textColor
+      textAlign:'center'
+      width:28
+      height:28
+      font:
+        fontSize: 32
+        fontFamily:'LigatureSymbols'
+      text:String.fromCharCode("0xe080")
+            
+      
+    backBtn.addEventListener('click',(e)  =>
+      activeTab = Ti.API._activeTab
+      activeTab.close(@detailWindow,{animated:true})
+      
+    )
+      
+    @detailWindow.leftNavButton = backBtn
+        
     # Qiita へのストックやはてブする時に必要となるTokenと
     # uuid，URLを設定 
     @hatenaAccessTokenKey  = Ti.App.Properties.getString("hatenaAccessTokenKey")
@@ -168,6 +186,7 @@ class detailWindow
       textAlign:'center'
     
     registMemoBtn.addEventListener('click',(e) =>
+      Ti.App.Analytics.trackEvent('detailWindow','registMemo','regist',1)      
       that = @
       ActivityIndicator = require('ui/activityIndicator')
       actInd = new ActivityIndicator()
@@ -202,6 +221,7 @@ class detailWindow
       textAlign:"center"
       
     cancelleBtn.addEventListener('click',(e) =>
+      Ti.App.Analytics.trackEvent('detailWindow','registMemo','cancell',1)      
       @_hideDialog(_view,Ti.API.info "done")
     )
     
@@ -284,40 +304,41 @@ class detailWindow
 
   _createAdView:() ->
     # 画面下部に広告用のViewを配置するための高さ計算処理
-    # nend = require('net.nend')
-    # nendConfig = config.getNendData()
     Config = require("model/loadConfig")
     config = new Config()
 
-    admobConfig = config.getAdMobData()
-    Admob = require("ti.admob")
-    adView = Admob.createView
-      width             :320
-      height            :55
-      bottom            :0
-      left              :0
-      zIndex            :20
-      adBackgroundColor :'black',
-      publisherId       :admobConfig.publisherId
+    # admobConfig = config.getAdMobData()
+    # Admob = require("ti.admob")
+    # adView = Admob.createView
+    #   width             :320
+    #   height            :55
+    #   bottom            :0
+    #   left              :0
+    #   zIndex            :20
+    #   adBackgroundColor :'black',
+    #   publisherId       :admobConfig.publisherId
 
-    # adView = nend.createView
-    #   spotId:nendConfig.spotId
-    #   apiKey:nendConfig.apiKey
-    #   width:320
-    #   height:50
-    #   bottom: 0
-    #   left:0
-    #   zIndex:20
+    nend = require('net.nend')
+    nendConfig = config.getNendData()
+
+    adView = nend.createView
+      spotId:nendConfig.spotId
+      apiKey:nendConfig.apiKey
+      width:320
+      height:50
+      bottom: 0
+      left:0
+      zIndex:20
       
-    # adView.addEventListener('start',(e) ->
+    adView.addEventListener('start',(e) ->
       
-    # )
-    # adView.addEventListener('load',(e) ->
+    )
+    adView.addEventListener('load',(e) ->
       
-    # )
-    # adView.addEventListener('error',(e) ->
-    #   Ti.API.info "doesn't load ad data"
-    # )
+    )
+    adView.addEventListener('error',(e) ->
+      Ti.API.info "doesn't load ad data"
+    )
 
     return adView
     

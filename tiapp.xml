@@ -53,7 +53,7 @@
         <theme>default</theme>
     </mobileweb>
     <modules>
-	<module platform="iphone" version="1.0.1">net.nend</module>
+	<module platform="iphone" version="1.0.2">net.nend</module>
 	<module platform="iphone" version="1.4.0">ti.admob</module>
     </modules>
 </ti:app>

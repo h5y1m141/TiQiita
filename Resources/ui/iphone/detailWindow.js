@@ -3,7 +3,8 @@ var detailWindow;
 detailWindow = (function() {
 
   function detailWindow(data) {
-    var adView, adViewHeight, barHeight, htmlHeaderElement, qiitaCSS, screenHeight, webViewHeight;
+    var adView, adViewHeight, backBtn, barHeight, htmlHeaderElement, qiitaCSS, screenHeight, webViewHeight,
+      _this = this;
     this.baseColor = {
       barColor: "#f9f9f9",
       backgroundColor: "#f9f9f9",
@@ -17,6 +18,26 @@ detailWindow = (function() {
       navBarHidden: false,
       tabBarHidden: false
     });
+    backBtn = Ti.UI.createLabel({
+      backgroundColor: "transparent",
+      color: this.baseColor.textColor,
+      textAlign: 'center',
+      width: 28,
+      height: 28,
+      font: {
+        fontSize: 32,
+        fontFamily: 'LigatureSymbols'
+      },
+      text: String.fromCharCode("0xe080")
+    });
+    backBtn.addEventListener('click', function(e) {
+      var activeTab;
+      activeTab = Ti.API._activeTab;
+      return activeTab.close(_this.detailWindow, {
+        animated: true
+      });
+    });
+    this.detailWindow.leftNavButton = backBtn;
     this.hatenaAccessTokenKey = Ti.App.Properties.getString("hatenaAccessTokenKey");
     this.QiitaToken = Ti.App.Properties.getString('QiitaToken');
     this.uuid = data.uuid;
@@ -154,6 +175,7 @@ detailWindow = (function() {
     });
     registMemoBtn.addEventListener('click', function(e) {
       var ActivityIndicator, actInd, that;
+      Ti.App.Analytics.trackEvent('detailWindow', 'registMemo', 'regist', 1);
       that = _this;
       ActivityIndicator = require('ui/activityIndicator');
       actInd = new ActivityIndicator();
@@ -186,6 +208,7 @@ detailWindow = (function() {
       textAlign: "center"
     });
     cancelleBtn.addEventListener('click', function(e) {
+      Ti.App.Analytics.trackEvent('detailWindow', 'registMemo', 'cancell', 1);
       return _this._hideDialog(_view, Ti.API.info("done"));
     });
     qiitaIcon = Ti.UI.createImageView({
@@ -269,19 +292,24 @@ detailWindow = (function() {
   };
 
   detailWindow.prototype._createAdView = function() {
-    var Admob, Config, adView, admobConfig, config;
+    var Config, adView, config, nend, nendConfig;
     Config = require("model/loadConfig");
     config = new Config();
-    admobConfig = config.getAdMobData();
-    Admob = require("ti.admob");
-    adView = Admob.createView({
+    nend = require('net.nend');
+    nendConfig = config.getNendData();
+    adView = nend.createView({
+      spotId: nendConfig.spotId,
+      apiKey: nendConfig.apiKey,
       width: 320,
-      height: 55,
+      height: 50,
       bottom: 0,
       left: 0,
-      zIndex: 20,
-      adBackgroundColor: 'black',
-      publisherId: admobConfig.publisherId
+      zIndex: 20
+    });
+    adView.addEventListener('start', function(e) {});
+    adView.addEventListener('load', function(e) {});
+    adView.addEventListener('error', function(e) {
+      return Ti.API.info("doesn't load ad data");
     });
     return adView;
     return adView;
