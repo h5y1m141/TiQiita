@@ -135,15 +135,6 @@ class Qiita
     self = @
       
     xhr = Ti.Network.createHTTPClient()
-    
-    xhr.ondatastream = (e) ->
-      if storedTo is "followingTags"
-        Ti.API.debug "フォローしてるタグの情報取得する際には何も行わない"
-      else
-        if Math.round(e.progress * 100) <= 100
-
-          Ti.API.info "xhr.ondatastream start progress is #{Math.round(e.progress * 100)}"
-          progressBar.value = e.progress
 
 
     Ti.API.info parameter.method + ":" + parameter.url
