@@ -135,6 +135,7 @@ mainWindow = (function() {
         title: e.section.items[0].properties.data.title,
         body: e.section.items[0].properties.data.body
       };
+      Ti.App.Analytics.trackPageview("/list/url?" + data.url);
       detailWindow = require('ui/iphone/detailWindow');
       detailWindow = new detailWindow(data);
       activeTab = Ti.API._activeTab;

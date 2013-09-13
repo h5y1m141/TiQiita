@@ -175,6 +175,7 @@ detailWindow = (function() {
     });
     registMemoBtn.addEventListener('click', function(e) {
       var ActivityIndicator, actInd, that;
+      Ti.App.Analytics.trackEvent('detailWindow', 'registMemo', 'regist', 1);
       that = _this;
       ActivityIndicator = require('ui/activityIndicator');
       actInd = new ActivityIndicator();
@@ -207,6 +208,7 @@ detailWindow = (function() {
       textAlign: "center"
     });
     cancelleBtn.addEventListener('click', function(e) {
+      Ti.App.Analytics.trackEvent('detailWindow', 'registMemo', 'cancell', 1);
       return _this._hideDialog(_view, Ti.API.info("done"));
     });
     qiitaIcon = Ti.UI.createImageView({

@@ -186,6 +186,7 @@ class detailWindow
       textAlign:'center'
     
     registMemoBtn.addEventListener('click',(e) =>
+      Ti.App.Analytics.trackEvent('detailWindow','registMemo','regist',1)      
       that = @
       ActivityIndicator = require('ui/activityIndicator')
       actInd = new ActivityIndicator()
@@ -220,6 +221,7 @@ class detailWindow
       textAlign:"center"
       
     cancelleBtn.addEventListener('click',(e) =>
+      Ti.App.Analytics.trackEvent('detailWindow','registMemo','cancell',1)      
       @_hideDialog(_view,Ti.API.info "done")
     )
     
