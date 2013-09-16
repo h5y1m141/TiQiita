@@ -123,10 +123,11 @@ class mainWindow
         nextURL = Ti.App.Properties.getString "#{currentPage}nextURL"
 
         qiita.getNextFeed(nextURL,currentPage,(result) =>
-          # @listView.insertSectionAt(20,result)
-          alert @listView
-          Ti.API.info "next entry loaded. number is #{result.length}"
-          Ti.API.info "#{result[0].title}"
+          items = @_createItems(result)
+          lastIndex = @_getLastItemIndex()
+          currentSection = @listView.sections[0]
+          return currentSection.insertItemsAt(lastIndex,items)
+
         )
       else
         
@@ -143,31 +144,24 @@ class mainWindow
         detailWindow = new detailWindow(data)
         activeTab = Ti.API._activeTab
         activeTab.open(detailWindow)
-      
 
     )
-      
-      
       
 
     @window.add @listView
     Qiita = require('model/qiita')
     qiita = new Qiita()
     qiita.getFeed( (result) =>
+
       MAXITEMCOUNT = 20
       return @refresData(result)
 
     )
     
     return @window
-    
-  refresData: (data) =>        
-
-    sections = []
-    section = Ti.UI.createListSection()
-      
+  _createItems:(data) ->
     dataSet = []
-    # 都道府県のエリア毎に都道府県のrowを生成
+
     for _items in data
       rawData = _items
       layout =
@@ -192,12 +186,22 @@ class mainWindow
           text: 'javascript,ruby,Titanium'
         tagIcon:
           text:String.fromCharCode("0xe128")
-                    
       dataSet.push(layout)
+                
+    return dataSet
+    
+  refresData: (data) =>
+    sections = []
+    section = Ti.UI.createListSection()
+    
+    dataSet = @_createItems(data)
       
     # 過去の投稿を読み込むためのもの
+    section = Ti.UI.createListSection()
     loadOld =
       loadOld:true
+      properties:
+        selectionStyle: Titanium.UI.iPhone.ListViewCellSelectionStyle.NONE
       title:
         text: 'load old'
       
@@ -208,6 +212,10 @@ class mainWindow
 
     return @listView.setSections sections
     
+  _getLastItemIndex: () ->
+    # -1 するのは、過去の投稿を読み込むためのitemが存在するため
+    return @listView.sections[0].items.length-1
+
   _createNavbarElement:() ->
     windowTitle = Ti.UI.createLabel
       textAlign: 'center'

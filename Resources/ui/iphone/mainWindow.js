@@ -138,9 +138,11 @@ mainWindow = (function() {
         currentPage = Ti.App.Properties.getString("currentPage");
         nextURL = Ti.App.Properties.getString("" + currentPage + "nextURL");
         return qiita.getNextFeed(nextURL, currentPage, function(result) {
-          alert(_this.listView);
-          Ti.API.info("next entry loaded. number is " + result.length);
-          return Ti.API.info("" + result[0].title);
+          var currentSection, items, lastIndex;
+          items = _this._createItems(result);
+          lastIndex = _this._getLastItemIndex();
+          currentSection = _this.listView.sections[0];
+          return currentSection.insertItemsAt(lastIndex, items);
         });
       } else {
         data = {
@@ -167,10 +169,8 @@ mainWindow = (function() {
     return this.window;
   }
 
-  mainWindow.prototype.refresData = function(data) {
-    var dataSet, layout, loadOld, rawData, section, sections, _i, _items, _len;
-    sections = [];
-    section = Ti.UI.createListSection();
+  mainWindow.prototype._createItems = function(data) {
+    var dataSet, layout, rawData, _i, _items, _len;
     dataSet = [];
     for (_i = 0, _len = data.length; _i < _len; _i++) {
       _items = data[_i];
@@ -206,8 +206,20 @@ mainWindow = (function() {
       };
       dataSet.push(layout);
     }
+    return dataSet;
+  };
+
+  mainWindow.prototype.refresData = function(data) {
+    var dataSet, loadOld, section, sections;
+    sections = [];
+    section = Ti.UI.createListSection();
+    dataSet = this._createItems(data);
+    section = Ti.UI.createListSection();
     loadOld = {
       loadOld: true,
+      properties: {
+        selectionStyle: Titanium.UI.iPhone.ListViewCellSelectionStyle.NONE
+      },
       title: {
         text: 'load old'
       }
@@ -216,6 +228,10 @@ mainWindow = (function() {
     section.setItems(dataSet);
     sections.push(section);
     return this.listView.setSections(sections);
+  };
+
+  mainWindow.prototype._getLastItemIndex = function() {
+    return this.listView.sections[0].items.length - 1;
   };
 
   mainWindow.prototype._createNavbarElement = function() {
