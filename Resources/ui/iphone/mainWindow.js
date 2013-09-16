@@ -6,7 +6,8 @@ mainWindow = (function() {
   function mainWindow() {
     this.refresData = __bind(this.refresData, this);
 
-    var file, json, myTemplate, t, testData;
+    var Qiita, myTemplate, qiita, t,
+      _this = this;
     this.baseColor = {
       barColor: "#f9f9f9",
       backgroundColor: "#f9f9f9",
@@ -128,40 +129,58 @@ mainWindow = (function() {
       defaultItemTemplate: "template"
     });
     this.listView.addEventListener('itemclick', function(e) {
-      var activeTab, data, detailWindow;
-      data = {
-        uuid: e.section.items[0].properties.data.uuid,
-        url: e.section.items[0].properties.data.url,
-        title: e.section.items[0].properties.data.title,
-        body: e.section.items[0].properties.data.body
-      };
-      Ti.App.Analytics.trackPageview("/list/url?" + data.url);
-      detailWindow = require('ui/iphone/detailWindow');
-      detailWindow = new detailWindow(data);
-      activeTab = Ti.API._activeTab;
-      return activeTab.open(detailWindow);
+      var Qiita, activeTab, currentPage, data, detailWindow, index, nextURL, qiita, that;
+      that = _this;
+      index = e.itemIndex;
+      if (e.section.items[index].loadOld === true) {
+        Qiita = require('model/qiita');
+        qiita = new Qiita();
+        currentPage = Ti.App.Properties.getString("currentPage");
+        nextURL = Ti.App.Properties.getString("" + currentPage + "nextURL");
+        return qiita.getNextFeed(nextURL, currentPage, function(result) {
+          var currentSection, items, lastIndex;
+          items = _this._createItems(result);
+          lastIndex = _this._getLastItemIndex();
+          currentSection = _this.listView.sections[0];
+          return currentSection.insertItemsAt(lastIndex, items);
+        });
+      } else {
+        data = {
+          uuid: e.section.items[index].properties.data.uuid,
+          url: e.section.items[index].properties.data.url,
+          title: e.section.items[index].properties.data.title,
+          body: e.section.items[index].properties.data.body
+        };
+        Ti.App.Analytics.trackPageview("/list/url?" + data.url);
+        detailWindow = require('ui/iphone/detailWindow');
+        detailWindow = new detailWindow(data);
+        activeTab = Ti.API._activeTab;
+        return activeTab.open(detailWindow);
+      }
     });
-    testData = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, "model/testData.json");
-    file = testData.read().toString();
-    json = JSON.parse(file);
-    this.refresData(json);
     this.window.add(this.listView);
+    Qiita = require('model/qiita');
+    qiita = new Qiita();
+    qiita.getFeed(function(result) {
+      var MAXITEMCOUNT;
+      MAXITEMCOUNT = 20;
+      return _this.refresData(result);
+    });
     return this.window;
   }
 
-  mainWindow.prototype.refresData = function(data) {
-    var dataSet, layout, section, sections, _i, _items, _len;
-    sections = [];
-    section = Ti.UI.createListSection();
+  mainWindow.prototype._createItems = function(data) {
+    var dataSet, layout, rawData, _i, _items, _len;
     dataSet = [];
     for (_i = 0, _len = data.length; _i < _len; _i++) {
       _items = data[_i];
+      rawData = _items;
       layout = {
         properties: {
           height: 120,
           accessoryType: Ti.UI.LIST_ACCESSORY_TYPE_DISCLOSURE,
           selectionStyle: Titanium.UI.iPhone.ListViewCellSelectionStyle.NONE,
-          data: _items
+          data: rawData
         },
         title: {
           text: _items.title
@@ -187,9 +206,32 @@ mainWindow = (function() {
       };
       dataSet.push(layout);
     }
+    return dataSet;
+  };
+
+  mainWindow.prototype.refresData = function(data) {
+    var dataSet, loadOld, section, sections;
+    sections = [];
+    section = Ti.UI.createListSection();
+    dataSet = this._createItems(data);
+    section = Ti.UI.createListSection();
+    loadOld = {
+      loadOld: true,
+      properties: {
+        selectionStyle: Titanium.UI.iPhone.ListViewCellSelectionStyle.NONE
+      },
+      title: {
+        text: 'load old'
+      }
+    };
+    dataSet.push(loadOld);
     section.setItems(dataSet);
     sections.push(section);
     return this.listView.setSections(sections);
+  };
+
+  mainWindow.prototype._getLastItemIndex = function() {
+    return this.listView.sections[0].items.length - 1;
   };
 
   mainWindow.prototype._createNavbarElement = function() {

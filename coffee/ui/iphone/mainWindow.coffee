@@ -6,8 +6,7 @@ class mainWindow
       keyColor:'#4BA503'
       textColor:"#333"
       contentsColor:"#666"      
-      grayTextColor:"#999"      
-      
+      grayTextColor:"#999"
     @window = Ti.UI.createWindow
       title:"Qiita"
       barColor:@baseColor.barColor
@@ -114,51 +113,63 @@ class mainWindow
         template: myTemplate
       defaultItemTemplate: "template"
 
-    @listView.addEventListener('itemclick',(e) ->
-      # e.section.items[0]を参照することで
-      # secitonに配置したアイコン、タイトルやカスタムプロパティの値も全て取得できる
+    @listView.addEventListener('itemclick',(e) =>
+      that = @
+      index = e.itemIndex
+      if e.section.items[index].loadOld is true
+        Qiita = require('model/qiita')
+        qiita = new Qiita()
+        currentPage = Ti.App.Properties.getString "currentPage"
+        nextURL = Ti.App.Properties.getString "#{currentPage}nextURL"
 
-      data =
-        uuid:e.section.items[0].properties.data.uuid
-        url:e.section.items[0].properties.data.url
-        title:e.section.items[0].properties.data.title
-        body:e.section.items[0].properties.data.body
-      Ti.App.Analytics.trackPageview "/list/url?#{data.url}"
-      detailWindow = require('ui/iphone/detailWindow')
-      detailWindow = new detailWindow(data)
-      activeTab = Ti.API._activeTab
-      activeTab.open(detailWindow)
-      
+        qiita.getNextFeed(nextURL,currentPage,(result) =>
+          items = @_createItems(result)
+          lastIndex = @_getLastItemIndex()
+          currentSection = @listView.sections[0]
+          return currentSection.insertItemsAt(lastIndex,items)
+
+        )
+      else
+        
+        # e.section.items[index]を参照することで
+        # secitonに配置したアイコン、タイトルやカスタムプロパティの値も全て取得できる
+
+        data =
+          uuid:e.section.items[index].properties.data.uuid
+          url:e.section.items[index].properties.data.url
+          title:e.section.items[index].properties.data.title
+          body:e.section.items[index].properties.data.body
+        Ti.App.Analytics.trackPageview "/list/url?#{data.url}"
+        detailWindow = require('ui/iphone/detailWindow')
+        detailWindow = new detailWindow(data)
+        activeTab = Ti.API._activeTab
+        activeTab.open(detailWindow)
 
     )
       
-      
-      
 
-    testData = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, "model/testData.json")
-    file = testData.read().toString()
-    json = JSON.parse(file)
-
-    @refresData(json)
     @window.add @listView
+    Qiita = require('model/qiita')
+    qiita = new Qiita()
+    qiita.getFeed( (result) =>
+
+      MAXITEMCOUNT = 20
+      return @refresData(result)
+
+    )
     
     return @window
-    
-  refresData: (data) =>        
-
-    sections = []
-    section = Ti.UI.createListSection()
-      
+  _createItems:(data) ->
     dataSet = []
-    # 都道府県のエリア毎に都道府県のrowを生成
-    for _items in data
 
+    for _items in data
+      rawData = _items
       layout =
         properties:
           height:120
           accessoryType: Ti.UI.LIST_ACCESSORY_TYPE_DISCLOSURE
           selectionStyle: Titanium.UI.iPhone.ListViewCellSelectionStyle.NONE
-          data:_items
+          data:rawData
           
         title:
           text: _items.title
@@ -175,14 +186,36 @@ class mainWindow
           text: 'javascript,ruby,Titanium'
         tagIcon:
           text:String.fromCharCode("0xe128")
-                    
       dataSet.push(layout)
-
+                
+    return dataSet
+    
+  refresData: (data) =>
+    sections = []
+    section = Ti.UI.createListSection()
+    
+    dataSet = @_createItems(data)
+      
+    # 過去の投稿を読み込むためのもの
+    section = Ti.UI.createListSection()
+    loadOld =
+      loadOld:true
+      properties:
+        selectionStyle: Titanium.UI.iPhone.ListViewCellSelectionStyle.NONE
+      title:
+        text: 'load old'
+      
+    dataSet.push(loadOld)
+    
     section.setItems dataSet
     sections.push section
 
     return @listView.setSections sections
     
+  _getLastItemIndex: () ->
+    # -1 するのは、過去の投稿を読み込むためのitemが存在するため
+    return @listView.sections[0].items.length-1
+
   _createNavbarElement:() ->
     windowTitle = Ti.UI.createLabel
       textAlign: 'center'
