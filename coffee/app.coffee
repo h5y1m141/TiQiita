@@ -66,5 +66,10 @@ QiitaLoginPassword = Ti.App.Properties.getString('QiitaLoginPassword')
 if testsEnabled is true
   require('test/tests')
 else
-  maincontroller.createTabGroup()
+  # maincontroller.createTabGroup()
+  osname = Ti.Platform.osname
+
+  MainWindow = require("ui/#{osname}/mainWindow")
+  mainWindow = new MainWindow()
+  mainWindow.open()
 
