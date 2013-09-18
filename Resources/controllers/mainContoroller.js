@@ -7,6 +7,12 @@ mainContoroller = (function() {
     this._hideStatusView = __bind(this._hideStatusView, this);
 
     this._showStatusView = __bind(this._showStatusView, this);
+
+    var Hatena, Qiita;
+    Hatena = require("model/hatena");
+    this.hatena = new Hatena();
+    Qiita = require("model/qiita");
+    this.qiita = new Qiita();
     this.tabSetting = {
       "iphone": {
         "main": {
@@ -56,7 +62,7 @@ mainContoroller = (function() {
     loginID = Ti.App.Properties.getString('QiitaLoginID');
     password = Ti.App.Properties.getString('QiitaLoginPassword');
     _ = require("lib/underscore-min");
-    if (qiita.isConnected() === false) {
+    if (this.qiita.isConnected() === false) {
       this._alertViewShow(this.networkDisconnectedMessage);
     } else if ((loginID != null) === false || loginID === "") {
       rootWindow.toggleRightView();
@@ -72,7 +78,7 @@ mainContoroller = (function() {
 
   mainContoroller.prototype.networkConnectionCheck = function(callback) {
     var currentPage;
-    if (qiita.isConnected() === false) {
+    if (this.qiita.isConnected() === false) {
       this._alertViewShow(this.networkDisconnectedMessage);
       currentPage = Ti.App.Properties.getString("currentPage");
       Ti.API.info("networkConnectionCheck " + currentPage);
@@ -150,7 +156,7 @@ mainContoroller = (function() {
     nextURL = Ti.App.Properties.getString("" + currentPage + "nextURL");
     Ti.API.info(nextURL);
     if (nextURL !== null) {
-      qiita.getNextFeed(nextURL, storedTo, function(result) {
+      this.qiita.getNextFeed(nextURL, storedTo, function(result) {
         var json, lastIndex, r, _i, _len, _results;
         _this._hideStatusView();
         Ti.API.info("getNextFeed start. result is " + result.length);
@@ -172,13 +178,12 @@ mainContoroller = (function() {
   };
 
   mainContoroller.prototype.stockItem = function(uuid, url, contents, qiitaPostFlg, hatenaPostFlg, callback) {
-    var Hatena, hatena, hatenaPostResult, qiitaPostResult;
-    Hatena = require("model/hatena");
-    hatena = new Hatena();
+    var hatena, hatenaPostResult, qiitaPostResult;
+    hatena = this.hatena;
     qiitaPostResult = false;
     hatenaPostResult = false;
     if (qiitaPostFlg === true) {
-      return qiita.putStock(uuid, function(qiitaresult) {
+      return this.qiita.putStock(uuid, function(qiitaresult) {
         var result;
         if (qiitaresult === 'success') {
           qiitaPostResult = true;

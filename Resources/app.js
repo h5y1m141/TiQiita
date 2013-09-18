@@ -1,4 +1,4 @@
-var Config, MainContoroller, QiitaLoginID, QiitaLoginPassword, analytics, config, gaKey, gaModule, maincontroller, testsEnabled;
+var Config, MainContoroller, MainWindow, QiitaLoginID, QiitaLoginPassword, analytics, config, gaKey, gaModule, mainWindow, maincontroller, osname, testsEnabled;
 
 Config = require("model/loadConfig");
 
@@ -61,5 +61,8 @@ QiitaLoginPassword = Ti.App.Properties.getString('QiitaLoginPassword');
 if (testsEnabled === true) {
   require('test/tests');
 } else {
-  maincontroller.createTabGroup();
+  osname = Ti.Platform.osname;
+  MainWindow = require("ui/" + osname + "/mainWindow");
+  mainWindow = new MainWindow();
+  mainWindow.open();
 }

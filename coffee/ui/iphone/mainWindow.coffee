@@ -12,10 +12,65 @@ class mainWindow
       barColor:@baseColor.barColor
       backgroundColor: @baseColor.backgroundColor
       tabBarHidden:true
-      navBarHidden:false
+      navBarHidden:true
       
-    @_createNavbarElement()
-    t = Titanium.UI.create2DMatrix().scale(0)
+    ConfigMenu = require("ui/iphone/configMenu")
+    configMenu = new ConfigMenu()
+    @window.add configMenu
+    @slideState = false
+    
+    menuBtn = Ti.UI.createLabel
+      backgroundColor:"transparent"
+      color:"#f9f9f9"
+      width:28
+      height:28
+      top:5
+      left:10
+      font:
+        fontSize: 32
+        fontFamily:'LigatureSymbols'
+      text:String.fromCharCode("0xe08e")
+
+    menuBtn.addEventListener('click',(e) =>
+      if @slideState is true
+        transform = Titanium.UI.create2DMatrix()
+        animation = Titanium.UI.createAnimation()
+        animation.left = 0
+        
+        animation.transform = transform
+        animation.duration = 250
+        
+        @listView.animate(animation)
+        navView.animate(animation)
+        @slideState = false
+      else
+        
+        transform = Titanium.UI.create2DMatrix()
+        animation = Titanium.UI.createAnimation()
+        animation.left = 200
+        
+        animation.transform = transform
+        animation.duration = 250
+        
+        @listView.animate(animation)
+        navView.animate(animation)        
+        @slideState = true        
+    ) 
+    
+    navView = Ti.UI.createView
+      width:Ti.UI.FULL
+      height:40
+      top:0
+      left:0
+      backgroundColor:@baseColor.keyColor
+      # opacity:0.5      
+      zIndex:25
+            
+    navView.add menuBtn
+      
+    @window.add navView
+      
+
     myTemplate =
     childTemplates:[
       # icon
@@ -107,12 +162,13 @@ class mainWindow
         
     ]      
     @listView = Ti.UI.createListView
-      top:0
+      top:40
       left:0
       templates:
         template: myTemplate
       defaultItemTemplate: "template"
-
+      
+      
     @listView.addEventListener('itemclick',(e) =>
       that = @
       index = e.itemIndex
@@ -139,11 +195,21 @@ class mainWindow
           url:e.section.items[index].properties.data.url
           title:e.section.items[index].properties.data.title
           body:e.section.items[index].properties.data.body
+          icon:e.section.items[index].properties.data.user.profile_image_url
         Ti.App.Analytics.trackPageview "/list/url?#{data.url}"
+        
+        
         detailWindow = require('ui/iphone/detailWindow')
         detailWindow = new detailWindow(data)
-        activeTab = Ti.API._activeTab
-        activeTab.open(detailWindow)
+        detailWindow.top = Ti.Platform.displayCaps.platformHeight        
+        # detailWindow.left = 320
+        animation = Ti.UI.createAnimation()
+        # animation.left = 0
+        animation.top = 0
+        animation.duration = 300
+        detailWindow.open(animation)
+        
+                
 
     )
       
@@ -167,7 +233,6 @@ class mainWindow
       layout =
         properties:
           height:120
-          accessoryType: Ti.UI.LIST_ACCESSORY_TYPE_DISCLOSURE
           selectionStyle: Titanium.UI.iPhone.ListViewCellSelectionStyle.NONE
           data:rawData
           
@@ -216,18 +281,6 @@ class mainWindow
     # -1 するのは、過去の投稿を読み込むためのitemが存在するため
     return @listView.sections[0].items.length-1
 
-  _createNavbarElement:() ->
-    windowTitle = Ti.UI.createLabel
-      textAlign: 'center'
-      color:@baseColor.textColor
-      font:
-        fontSize:18
-        fontFamily : 'Rounded M+ 1p'
-        # fontWeight:'bold'
-      text:"Qiita"
-
-    @window.setTitleControl windowTitle
-    return
     
   _createAdView:() ->
     # 画面下部に広告用のViewを配置するための高さ計算処理

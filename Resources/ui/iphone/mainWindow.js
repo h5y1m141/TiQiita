@@ -6,7 +6,7 @@ mainWindow = (function() {
   function mainWindow() {
     this.refresData = __bind(this.refresData, this);
 
-    var Qiita, myTemplate, qiita, t,
+    var ConfigMenu, Qiita, configMenu, menuBtn, myTemplate, navView, qiita,
       _this = this;
     this.baseColor = {
       barColor: "#f9f9f9",
@@ -21,10 +21,57 @@ mainWindow = (function() {
       barColor: this.baseColor.barColor,
       backgroundColor: this.baseColor.backgroundColor,
       tabBarHidden: true,
-      navBarHidden: false
+      navBarHidden: true
     });
-    this._createNavbarElement();
-    t = Titanium.UI.create2DMatrix().scale(0);
+    ConfigMenu = require("ui/iphone/configMenu");
+    configMenu = new ConfigMenu();
+    this.window.add(configMenu);
+    this.slideState = false;
+    menuBtn = Ti.UI.createLabel({
+      backgroundColor: "transparent",
+      color: "#f9f9f9",
+      width: 28,
+      height: 28,
+      top: 5,
+      left: 10,
+      font: {
+        fontSize: 32,
+        fontFamily: 'LigatureSymbols'
+      },
+      text: String.fromCharCode("0xe08e")
+    });
+    menuBtn.addEventListener('click', function(e) {
+      var animation, transform;
+      if (_this.slideState === true) {
+        transform = Titanium.UI.create2DMatrix();
+        animation = Titanium.UI.createAnimation();
+        animation.left = 0;
+        animation.transform = transform;
+        animation.duration = 250;
+        _this.listView.animate(animation);
+        navView.animate(animation);
+        return _this.slideState = false;
+      } else {
+        transform = Titanium.UI.create2DMatrix();
+        animation = Titanium.UI.createAnimation();
+        animation.left = 200;
+        animation.transform = transform;
+        animation.duration = 250;
+        _this.listView.animate(animation);
+        navView.animate(animation);
+        return _this.slideState = true;
+      }
+    });
+    navView = Ti.UI.createView({
+      width: Ti.UI.FULL,
+      height: 40,
+      top: 0,
+      left: 0,
+      backgroundColor: this.baseColor.keyColor,
+      zIndex: 25
+    });
+    navView.add(menuBtn);
+    this.window.add(navView);
     myTemplate = {
       childTemplates: [
         {
@@ -121,7 +168,7 @@ mainWindow = (function() {
       ]
     };
     this.listView = Ti.UI.createListView({
-      top: 0,
+      top: 40,
       left: 0,
       templates: {
         template: myTemplate
@@ -129,7 +176,7 @@ mainWindow = (function() {
       defaultItemTemplate: "template"
     });
     this.listView.addEventListener('itemclick', function(e) {
-      var Qiita, activeTab, currentPage, data, detailWindow, index, nextURL, qiita, that;
+      var Qiita, animation, currentPage, data, detailWindow, index, nextURL, qiita, that;
       that = _this;
       index = e.itemIndex;
       if (e.section.items[index].loadOld === true) {
@@ -149,13 +196,17 @@ mainWindow = (function() {
           uuid: e.section.items[index].properties.data.uuid,
           url: e.section.items[index].properties.data.url,
           title: e.section.items[index].properties.data.title,
-          body: e.section.items[index].properties.data.body
+          body: e.section.items[index].properties.data.body,
+          icon: e.section.items[index].properties.data.user.profile_image_url
         };
         Ti.App.Analytics.trackPageview("/list/url?" + data.url);
         detailWindow = require('ui/iphone/detailWindow');
         detailWindow = new detailWindow(data);
-        activeTab = Ti.API._activeTab;
-        return activeTab.open(detailWindow);
+        detailWindow.top = Ti.Platform.displayCaps.platformHeight;
+        animation = Ti.UI.createAnimation();
+        animation.top = 0;
+        animation.duration = 300;
+        return detailWindow.open(animation);
       }
     });
     this.window.add(this.listView);
@@ -178,7 +229,6 @@ mainWindow = (function() {
       layout = {
         properties: {
           height: 120,
-          accessoryType: Ti.UI.LIST_ACCESSORY_TYPE_DISCLOSURE,
           selectionStyle: Titanium.UI.iPhone.ListViewCellSelectionStyle.NONE,
           data: rawData
         },
@@ -232,20 +282,6 @@ mainWindow = (function() {
 
   mainWindow.prototype._getLastItemIndex = function() {
     return this.listView.sections[0].items.length - 1;
-  };
-
-  mainWindow.prototype._createNavbarElement = function() {
-    var windowTitle;
-    windowTitle = Ti.UI.createLabel({
-      textAlign: 'center',
-      color: this.baseColor.textColor,
-      font: {
-        fontSize: 18,
-        fontFamily: 'Rounded M+ 1p'
-      },
-      text: "Qiita"
-    });
-    this.window.setTitleControl(windowTitle);
   };
 
   mainWindow.prototype._createAdView = function() {
