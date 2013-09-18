@@ -288,7 +288,7 @@ Qiita = (function() {
       url_name: Ti.App.Properties.getString('QiitaLoginID'),
       password: Ti.App.Properties.getString('QiitaLoginPassword')
     };
-    return qiita._auth(param, function(token) {
+    return this._auth(param, function(token) {
       var method, url, xhr;
       xhr = Ti.Network.createHTTPClient();
       method = 'PUT';
