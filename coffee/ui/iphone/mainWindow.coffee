@@ -233,7 +233,6 @@ class mainWindow
       layout =
         properties:
           height:120
-          accessoryType: Ti.UI.LIST_ACCESSORY_TYPE_DISCLOSURE
           selectionStyle: Titanium.UI.iPhone.ListViewCellSelectionStyle.NONE
           data:rawData
           

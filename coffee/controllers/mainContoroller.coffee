@@ -1,5 +1,10 @@
 class mainContoroller
   constructor:() ->
+    Hatena = require("model/hatena")
+    @hatena = new Hatena()
+    Qiita = require("model/qiita")
+    @qiita = new Qiita()
+    
     @tabSetting =
       "iphone":
         "main":
@@ -44,7 +49,7 @@ class mainContoroller
     password = Ti.App.Properties.getString 'QiitaLoginPassword'
     _ = require("lib/underscore-min")
 
-    if qiita.isConnected() is false
+    if @qiita.isConnected() is false
 
       @_alertViewShow @networkDisconnectedMessage
 
@@ -66,7 +71,7 @@ class mainContoroller
 
   networkConnectionCheck:(callback) ->
 
-    if qiita.isConnected() is false
+    if @qiita.isConnected() is false
       @_alertViewShow @networkDisconnectedMessage
       currentPage = Ti.App.Properties.getString "currentPage"
       Ti.API.info "networkConnectionCheck #{currentPage}"
@@ -147,7 +152,7 @@ class mainContoroller
     Ti.API.info nextURL
     
     if nextURL isnt null
-      qiita.getNextFeed(nextURL,storedTo,(result) =>
+      @qiita.getNextFeed(nextURL,storedTo,(result) =>
         @_hideStatusView()
         Ti.API.info "getNextFeed start. result is #{result.length}"
 
@@ -165,9 +170,7 @@ class mainContoroller
     return true
     
   stockItem: (uuid,url,contents,qiitaPostFlg,hatenaPostFlg,callback) ->
-    Hatena = require("model/hatena")
-    hatena = new Hatena()
-    
+    hatena = @hatena    
     # 最初にQiitaへの投稿処理を必要に応じて実施して
     # それが終わったらはてブした上でそれぞれの投稿処理が
     # 成功失敗の情報をcallback関数に渡す
@@ -176,7 +179,7 @@ class mainContoroller
     hatenaPostResult = false
     
     if qiitaPostFlg is true
-      qiita.putStock(uuid,(qiitaresult) ->
+      @qiita.putStock(uuid,(qiitaresult) ->
         if qiitaresult is 'success'
           qiitaPostResult = true
 

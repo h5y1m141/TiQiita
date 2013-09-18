@@ -46,30 +46,26 @@ detailWindow = (function() {
   }
 
   detailWindow.prototype._createDialog = function() {
-    var cancelleBtn, contents, hatenaIcon, hatenaPostFlg, hatenaPostLabel, hatenaPostSwitch, hintLabel, qiitaIcon, qiitaPostFlg, qiitaPostLabel, qiitaPostSwitch, registMemoBtn, selectedValue, t, textArea, textCounter, _view,
+    var cancelleBtn, contents, hatenaIcon, hatenaPostFlg, hatenaPostLabel, hatenaPostSwitch, hintLabel, qiitaIcon, qiitaPostFlg, qiitaPostLabel, qiitaPostSwitch, registMemoBtn, selectedValue, textArea, textCounter, _view,
       _this = this;
-    t = Titanium.UI.create2DMatrix().scale(0.0);
     selectedValue = false;
     qiitaPostFlg = false;
     hatenaPostFlg = false;
     _view = Ti.UI.createView({
-      width: 300,
-      height: 280,
-      top: 10,
-      left: 10,
-      borderRadius: 10,
-      opacity: 0.9,
-      backgroundColor: "#333",
-      zIndex: 20,
-      transform: t
+      width: Ti.UI.FULL,
+      height: Ti.Platform.displayCaps.platformHeight - 40,
+      top: Ti.Platform.displayCaps.platformHeight,
+      left: 0,
+      backgroundColor: "#ddd",
+      zIndex: 20
     });
     contents = "";
     textArea = Titanium.UI.createTextArea({
       value: '',
       height: 100,
-      width: 280,
-      top: 100,
-      left: 10,
+      width: 300,
+      top: 5,
+      left: 5,
       textAlign: 'left',
       borderWidth: 2,
       borderColor: "#dfdfdf",
@@ -82,7 +78,7 @@ detailWindow = (function() {
         fontSize: 12,
         fontFamily: 'Rounded M+ 1p'
       },
-      color: "222",
+      color: "#222",
       top: 5,
       left: 7,
       widht: 100,
@@ -137,7 +133,7 @@ detailWindow = (function() {
       }
     });
     registMemoBtn = Ti.UI.createLabel({
-      bottom: 10,
+      bottom: 30,
       right: 20,
       width: 120,
       height: 40,
@@ -154,7 +150,7 @@ detailWindow = (function() {
       textAlign: 'center'
     });
     registMemoBtn.addEventListener('click', function(e) {
-      var ActivityIndicator, actInd, that;
+      var ActivityIndicator, actInd, mainController, that;
       Ti.App.Analytics.trackEvent('detailWindow', 'registMemo', 'regist', 1);
       that = _this;
       ActivityIndicator = require('ui/activityIndicator');
@@ -163,7 +159,9 @@ detailWindow = (function() {
       actInd.show();
       Ti.API.info(qiitaPostFlg);
       Ti.API.info(hatenaPostFlg);
-      return mainContoroller.stockItem(that.uuid, that.url, contents, qiitaPostFlg, hatenaPostFlg, function(result) {
+      mainController = require("controllers/mainContoroller");
+      mainController = new mainController();
+      return mainController.stockItem(that.uuid, that.url, contents, qiitaPostFlg, hatenaPostFlg, function(result) {
         if (result) {
           actInd.hide();
           that._hideDialog(_view, Ti.API.info("投稿処理が完了"));
@@ -176,7 +174,7 @@ detailWindow = (function() {
       width: 120,
       height: 40,
       left: 20,
-      bottom: 10,
+      bottom: 30,
       borderRadius: 5,
       backgroundColor: "#d8514b",
       color: "#f9f9f9",
@@ -193,7 +191,7 @@ detailWindow = (function() {
     });
     qiitaIcon = Ti.UI.createImageView({
       image: "ui/image/logo-square.png",
-      top: 10,
+      top: 110,
       left: 10,
       width: 35,
       height: 35
@@ -205,7 +203,7 @@ detailWindow = (function() {
     }
     qiitaPostSwitch = Ti.UI.createSwitch({
       value: qiitaPostFlg,
-      top: 15,
+      top: 110,
       left: 200
     });
     qiitaPostSwitch.addEventListener('change', function(e) {
@@ -218,8 +216,8 @@ detailWindow = (function() {
         fontSize: 16,
         fontFamily: 'Rounded M+ 1p'
       },
-      color: "#f9f9f9",
-      top: 20,
+      color: "#222",
+      top: 120,
       left: 50,
       widht: 100,
       height: 20,
@@ -227,7 +225,7 @@ detailWindow = (function() {
     });
     hatenaIcon = Ti.UI.createImageView({
       image: "ui/image/hatena.png",
-      top: 50,
+      top: 150,
       left: 10,
       width: 35,
       height: 35
@@ -239,7 +237,7 @@ detailWindow = (function() {
     }
     hatenaPostSwitch = Ti.UI.createSwitch({
       value: hatenaPostFlg,
-      top: 55,
+      top: 155,
       left: 200
     });
     hatenaPostSwitch.addEventListener('change', function(e) {
@@ -252,8 +250,8 @@ detailWindow = (function() {
         fontSize: 16,
         fontFamily: 'Rounded M+ 1p'
       },
-      color: "#f9f9f9",
-      top: 60,
+      color: "#222",
+      top: 160,
       left: 50,
       widht: 100,
       height: 20,
@@ -292,26 +290,26 @@ detailWindow = (function() {
       return Ti.API.info("doesn't load ad data");
     });
     return adView;
-    return adView;
   };
 
   detailWindow.prototype._showDialog = function(_view) {
-    var animation, t1;
-    t1 = Titanium.UI.create2DMatrix();
-    t1 = t1.scale(1.0);
-    animation = Titanium.UI.createAnimation();
-    animation.transform = t1;
-    animation.duration = 250;
+    var animation, slideTopPostion;
+    this.webView.opacity = 0.5;
+    slideTopPostion = Ti.Platform.displayCaps.platformHeight - _view.height;
+    Ti.API.info(slideTopPostion);
+    Ti.API.info(_view.height);
+    animation = Ti.UI.createAnimation();
+    animation.top = slideTopPostion;
+    animation.duration = 300;
     return _view.animate(animation);
   };
 
   detailWindow.prototype._hideDialog = function(_view, callback) {
-    var animation, t1;
-    t1 = Titanium.UI.create2DMatrix();
-    t1 = t1.scale(0.0);
-    animation = Titanium.UI.createAnimation();
-    animation.transform = t1;
-    animation.duration = 250;
+    var animation;
+    this.webView.opacity = 1.0;
+    animation = Ti.UI.createAnimation();
+    animation.top = Ti.Platform.displayCaps.platformHeight;
+    animation.duration = 300;
     _view.animate(animation);
     return animation.addEventListener('complete', function(e) {
       return callback;
@@ -331,16 +329,17 @@ detailWindow = (function() {
     shareBtn = Ti.UI.createLabel({
       backgroundColor: "transparent",
       color: this.baseColor.textColor,
-      width: 28,
-      height: 28,
-      right: 5,
+      width: 40,
+      height: 40,
+      right: 0,
       font: {
-        fontSize: 32,
+        fontSize: 36,
         fontFamily: 'LigatureSymbols'
       },
       text: String.fromCharCode("0xe118")
     });
     shareBtn.addEventListener('click', function(e) {
+      Ti.API.info("shareBtn click. @dialog is " + _this.dialog);
       return _this._showDialog(_this.dialog);
     });
     backBtn = Ti.UI.createLabel({

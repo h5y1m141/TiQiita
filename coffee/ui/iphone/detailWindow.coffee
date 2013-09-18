@@ -55,31 +55,26 @@ class detailWindow
     
   _createDialog:() ->
 
-    t = Titanium.UI.create2DMatrix().scale(0.0)
     selectedValue = false
     qiitaPostFlg = false
     hatenaPostFlg = false
         
     _view = Ti.UI.createView
-      width:300
-      height:280
-      top:10
-      left:10
-      borderRadius:10
-      opacity:0.9
-      backgroundColor:"#333"      
+      width:Ti.UI.FULL
+      height:Ti.Platform.displayCaps.platformHeight - 40
+      top:Ti.Platform.displayCaps.platformHeight
+      left:0
+      backgroundColor:"#ddd"      
       zIndex:20
-      transform:t
-    
         
     contents = ""
 
     textArea = Titanium.UI.createTextArea
       value:''
       height:100
-      width:280
-      top:100
-      left:10
+      width:300
+      top:5
+      left:5
       textAlign:'left'
       borderWidth:2
       borderColor:"#dfdfdf"
@@ -91,7 +86,7 @@ class detailWindow
       font:
         fontSize:12
         fontFamily :'Rounded M+ 1p'
-      color:"222"
+      color:"#222"
       top:5
       left:7
       widht:100
@@ -151,7 +146,7 @@ class detailWindow
     )
     
     registMemoBtn = Ti.UI.createLabel
-      bottom:10
+      bottom:30
       right:20
       width:120
       height:40
@@ -177,7 +172,9 @@ class detailWindow
       
       Ti.API.info qiitaPostFlg
       Ti.API.info hatenaPostFlg
-      mainContoroller.stockItem(that.uuid,that.url,contents,qiitaPostFlg,hatenaPostFlg,(result) ->
+      mainController = require("controllers/mainContoroller")
+      mainController = new mainController()
+      mainController.stockItem(that.uuid,that.url,contents,qiitaPostFlg,hatenaPostFlg,(result) ->
         ## result = [qiitaPostResult,hatenaPostResult]となってる
         if result
           actInd.hide()
@@ -191,7 +188,7 @@ class detailWindow
       width:120
       height:40
       left:20
-      bottom:10
+      bottom:30
       borderRadius:5
       backgroundColor:"#d8514b"
       color:"#f9f9f9"
@@ -208,7 +205,7 @@ class detailWindow
     
     qiitaIcon = Ti.UI.createImageView
       image:"ui/image/logo-square.png"
-      top:10
+      top:110
       left:10
       width:35
       height:35
@@ -220,7 +217,7 @@ class detailWindow
       
     qiitaPostSwitch = Ti.UI.createSwitch
       value:qiitaPostFlg
-      top:15
+      top:110
       left:200
       
     qiitaPostSwitch.addEventListener('change',(e)  ->
@@ -232,8 +229,8 @@ class detailWindow
       font:
         fontSize:16
         fontFamily :'Rounded M+ 1p'
-      color:"#f9f9f9"
-      top:20
+      color:"#222"
+      top:120
       left:50
       widht:100
       height:20
@@ -241,7 +238,7 @@ class detailWindow
         
     hatenaIcon = Ti.UI.createImageView
       image:"ui/image/hatena.png"
-      top:50
+      top:150
       left:10
       width:35
       height:35
@@ -253,7 +250,7 @@ class detailWindow
       
     hatenaPostSwitch = Ti.UI.createSwitch
       value:hatenaPostFlg
-      top:55
+      top:155
       left:200
     hatenaPostSwitch.addEventListener('change',(e) ->
       hatenaPostFlg = e.source.value
@@ -264,8 +261,8 @@ class detailWindow
       font:
         fontSize:16
         fontFamily :'Rounded M+ 1p'
-      color:"#f9f9f9"
-      top:60
+      color:"#222"
+      top:160
       left:50
       widht:100
       height:20
@@ -322,30 +319,26 @@ class detailWindow
     )
 
     return adView
-    
 
-    return adView
-    
-
-
-  # 引数に取ったviewに対してせり出すようにするアニメーションを適用
   _showDialog:(_view) ->
-    t1 = Titanium.UI.create2DMatrix()
-    t1 = t1.scale(1.0)
-    animation = Titanium.UI.createAnimation()
-    animation.transform = t1
-    animation.duration = 250
-    return _view.animate(animation)
-    
-  # 引数に取ったviewに対してズームインするようなアニメーションを適用
-  # することで非表示のように見せる
-  _hideDialog:(_view,callback) ->        
-    t1 = Titanium.UI.create2DMatrix()
-    t1 = t1.scale(0.0)
-    animation = Titanium.UI.createAnimation()
-    animation.transform = t1
-    animation.duration = 250
+    @webView.opacity = 0.5
+
+    slideTopPostion = Ti.Platform.displayCaps.platformHeight - _view.height
+    Ti.API.info slideTopPostion
+    Ti.API.info _view.height
+    animation = Ti.UI.createAnimation()
+    animation.top = slideTopPostion
+    animation.duration = 300
     _view.animate(animation)
+    
+    
+  _hideDialog:(_view,callback) ->
+    @webView.opacity = 1.0
+    animation = Ti.UI.createAnimation()
+    animation.top = Ti.Platform.displayCaps.platformHeight
+    animation.duration = 300
+    _view.animate(animation)
+    
     
     animation.addEventListener('complete',(e) ->
       return callback
@@ -363,15 +356,16 @@ class detailWindow
     shareBtn = Ti.UI.createLabel
       backgroundColor:"transparent"
       color:@baseColor.textColor
-      width:28
-      height:28
-      right:5
+      width:40
+      height:40
+      right:0
       font:
-        fontSize: 32
+        fontSize: 36
         fontFamily:'LigatureSymbols'
       text:String.fromCharCode("0xe118")
       
     shareBtn.addEventListener('click',(e) =>
+      Ti.API.info "shareBtn click. @dialog is #{@dialog}"
       @_showDialog(@dialog)
     )
 
