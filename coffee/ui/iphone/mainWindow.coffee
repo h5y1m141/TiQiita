@@ -63,7 +63,7 @@ class mainWindow
       top:0
       left:0
       backgroundColor:@baseColor.keyColor
-      opacity:0.5      
+      # opacity:0.5      
       zIndex:25
             
     navView.add menuBtn
@@ -195,10 +195,21 @@ class mainWindow
           url:e.section.items[index].properties.data.url
           title:e.section.items[index].properties.data.title
           body:e.section.items[index].properties.data.body
+          icon:e.section.items[index].properties.data.user.profile_image_url
         Ti.App.Analytics.trackPageview "/list/url?#{data.url}"
+        
+        
         detailWindow = require('ui/iphone/detailWindow')
         detailWindow = new detailWindow(data)
-        detailWindow.open()
+        detailWindow.top = Ti.Platform.displayCaps.platformHeight        
+        # detailWindow.left = 320
+        animation = Ti.UI.createAnimation()
+        # animation.left = 0
+        animation.top = 0
+        animation.duration = 300
+        detailWindow.open(animation)
+        
+                
 
     )
       

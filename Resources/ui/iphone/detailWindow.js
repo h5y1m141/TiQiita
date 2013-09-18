@@ -3,13 +3,13 @@ var detailWindow;
 detailWindow = (function() {
 
   function detailWindow(data) {
-    var adView, adViewHeight, backBtn, barHeight, htmlHeaderElement, qiitaCSS, screenHeight, webViewHeight,
-      _this = this;
+    var adView, adViewHeight, barHeight, htmlHeaderElement, qiitaCSS, screenHeight, webViewHeight;
     this.baseColor = {
       barColor: "#f9f9f9",
       backgroundColor: "#f9f9f9",
+      barBackgroundColor: "#222",
       keyColor: '#4BA503',
-      textColor: "#333"
+      textColor: "#f9f9f9"
     };
     this.detailWindow = Ti.UI.createWindow({
       left: 0,
@@ -18,31 +18,11 @@ detailWindow = (function() {
       navBarHidden: false,
       tabBarHidden: false
     });
-    backBtn = Ti.UI.createLabel({
-      backgroundColor: "transparent",
-      color: this.baseColor.textColor,
-      textAlign: 'center',
-      width: 28,
-      height: 28,
-      font: {
-        fontSize: 32,
-        fontFamily: 'LigatureSymbols'
-      },
-      text: String.fromCharCode("0xe080")
-    });
-    backBtn.addEventListener('click', function(e) {
-      var activeTab;
-      activeTab = Ti.API._activeTab;
-      return activeTab.close(_this.detailWindow, {
-        animated: true
-      });
-    });
-    this.detailWindow.leftNavButton = backBtn;
     this.hatenaAccessTokenKey = Ti.App.Properties.getString("hatenaAccessTokenKey");
     this.QiitaToken = Ti.App.Properties.getString('QiitaToken');
     this.uuid = data.uuid;
     this.url = data.url;
-    this._createNavBar(data.title);
+    this._createTitleView(data.title, data.icon);
     qiitaCSS = 'ui/css/qiitaColor.css';
     htmlHeaderElement = "<html><head><meta name='viewport' content='width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1'><link rel='stylesheet' href='" + qiitaCSS + "' type='text/css'></link></head>";
     screenHeight = Ti.Platform.displayCaps.platformHeight;
@@ -50,7 +30,7 @@ detailWindow = (function() {
     barHeight = 40;
     webViewHeight = screenHeight - (barHeight + adViewHeight);
     this.webView = Ti.UI.createWebView({
-      top: 0,
+      top: barHeight,
       left: 0,
       zIndex: 5,
       width: 320,
@@ -338,10 +318,17 @@ detailWindow = (function() {
     });
   };
 
-  detailWindow.prototype._createNavBar = function(title) {
-    var backBtn, listWindowTitle, menuBtn,
+  detailWindow.prototype._createTitleView = function(title, image) {
+    var backBtn, shareBtn, _icon, _title, _view,
       _this = this;
-    menuBtn = Ti.UI.createLabel({
+    _view = Ti.UI.createView({
+      top: 0,
+      left: 0,
+      width: Ti.UI.FULL,
+      height: 40,
+      backgroundColor: this.baseColor.keyColor
+    });
+    shareBtn = Ti.UI.createLabel({
       backgroundColor: "transparent",
       color: this.baseColor.textColor,
       width: 28,
@@ -351,9 +338,9 @@ detailWindow = (function() {
         fontSize: 32,
         fontFamily: 'LigatureSymbols'
       },
-      text: String.fromCharCode("0xe08e")
+      text: String.fromCharCode("0xe118")
     });
-    menuBtn.addEventListener('click', function(e) {
+    shareBtn.addEventListener('click', function(e) {
       return _this._showDialog(_this.dialog);
     });
     backBtn = Ti.UI.createLabel({
@@ -361,23 +348,43 @@ detailWindow = (function() {
       color: this.baseColor.textColor,
       width: 28,
       height: 28,
-      right: 5,
+      left: 10,
       font: {
         fontSize: 32,
         fontFamily: 'LigatureSymbols'
       },
-      text: String.fromCharCode("0xe080")
+      text: String.fromCharCode("0xe03e")
     });
-    listWindowTitle = Ti.UI.createLabel({
+    backBtn.addEventListener('click', function(e) {
+      var animation;
+      animation = Ti.UI.createAnimation();
+      animation.top = Ti.Platform.displayCaps.platformHeight;
+      animation.duration = 300;
+      return _this.detailWindow.close(animation);
+    });
+    _title = Ti.UI.createLabel({
       textAlign: 'left',
+      top: 5,
+      left: 50,
+      width: 220,
       color: this.baseColor.textColor,
       font: {
         fontSize: 14
       },
       text: title
     });
-    this.detailWindow.setTitleControl(listWindowTitle);
-    return this.detailWindow.rightNavButton = menuBtn;
+    _icon = Ti.UI.createImageView({
+      image: image,
+      defaultImage: "ui/image/logo.png",
+      top: 10,
+      left: 10,
+      width: 35,
+      height: 35
+    });
+    _view.add(backBtn);
+    _view.add(shareBtn);
+    _view.add(_title);
+    return this.detailWindow.add(_view);
   };
 
   return detailWindow;

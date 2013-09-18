@@ -68,7 +68,6 @@ mainWindow = (function() {
       top: 0,
       left: 0,
       backgroundColor: this.baseColor.keyColor,
-      opacity: 0.5,
       zIndex: 25
     });
     navView.add(menuBtn);
@@ -177,7 +176,7 @@ mainWindow = (function() {
       defaultItemTemplate: "template"
     });
     this.listView.addEventListener('itemclick', function(e) {
-      var Qiita, currentPage, data, detailWindow, index, nextURL, qiita, that;
+      var Qiita, animation, currentPage, data, detailWindow, index, nextURL, qiita, that;
       that = _this;
       index = e.itemIndex;
       if (e.section.items[index].loadOld === true) {
@@ -197,12 +196,17 @@ mainWindow = (function() {
           uuid: e.section.items[index].properties.data.uuid,
           url: e.section.items[index].properties.data.url,
           title: e.section.items[index].properties.data.title,
-          body: e.section.items[index].properties.data.body
+          body: e.section.items[index].properties.data.body,
+          icon: e.section.items[index].properties.data.user.profile_image_url
         };
         Ti.App.Analytics.trackPageview("/list/url?" + data.url);
         detailWindow = require('ui/iphone/detailWindow');
         detailWindow = new detailWindow(data);
-        return detailWindow.open();
+        detailWindow.top = Ti.Platform.displayCaps.platformHeight;
+        animation = Ti.UI.createAnimation();
+        animation.top = 0;
+        animation.duration = 300;
+        return detailWindow.open(animation);
       }
     });
     this.window.add(this.listView);
