@@ -4,6 +4,8 @@ var mainContoroller,
 mainContoroller = (function() {
 
   function mainContoroller() {
+    this.stockItem = __bind(this.stockItem, this);
+
     this._hideStatusView = __bind(this._hideStatusView, this);
 
     this._showStatusView = __bind(this._showStatusView, this);
@@ -55,6 +57,27 @@ mainContoroller = (function() {
     });
     tabGroup.addTab(mainTab);
     return tabGroup.open();
+  };
+
+  mainContoroller.prototype.qiitaLogin = function() {
+    var param,
+      _this = this;
+    param = {
+      url_name: Ti.App.Properties.getString('QiitaLoginID'),
+      password: Ti.App.Properties.getString('QiitaLoginPassword')
+    };
+    Ti.API.debug("[INFO] login start.");
+    return this.qiita._auth(param, function(token) {
+      Ti.API.debug("token is " + token);
+      if (token === null) {
+        return alert("ユーザIDかパスワードが間違ってます");
+      } else {
+        alert("認証出来ました");
+        Ti.App.Properties.setString('QiitaLoginID', param.url_name);
+        Ti.App.Properties.setString('QiitaLoginPassword', param.password);
+        return Ti.App.Properties.setString('QiitaToken', token);
+      }
+    });
   };
 
   mainContoroller.prototype.init = function() {

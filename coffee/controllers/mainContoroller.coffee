@@ -43,7 +43,25 @@ class mainContoroller
 
     tabGroup.addTab mainTab
     tabGroup.open()
-      
+    
+  qiitaLogin:() ->
+    param =
+      url_name: Ti.App.Properties.getString('QiitaLoginID'),
+      password: Ti.App.Properties.getString('QiitaLoginPassword')
+
+    Ti.API.debug "[INFO] login start."  
+    @qiita._auth(param, (token)=>
+      Ti.API.debug "token is #{token}"
+      if token is null
+        alert "ユーザIDかパスワードが間違ってます"
+        
+      else
+        alert "認証出来ました"
+        Ti.App.Properties.setString 'QiitaLoginID', param.url_name
+        Ti.App.Properties.setString 'QiitaLoginPassword', param.password
+        Ti.App.Properties.setString 'QiitaToken', token
+    )
+           
   init:() ->
     loginID  = Ti.App.Properties.getString 'QiitaLoginID'
     password = Ti.App.Properties.getString 'QiitaLoginPassword'
@@ -169,7 +187,7 @@ class mainContoroller
       )
     return true
     
-  stockItem: (uuid,url,contents,qiitaPostFlg,hatenaPostFlg,callback) ->
+  stockItem: (uuid,url,contents,qiitaPostFlg,hatenaPostFlg,callback) =>
     hatena = @hatena    
     # 最初にQiitaへの投稿処理を必要に応じて実施して
     # それが終わったらはてブした上でそれぞれの投稿処理が

@@ -3,21 +3,44 @@ var configMenu;
 configMenu = (function() {
 
   function configMenu() {
-    var QiitaLoginID, QiitaLoginPassword, groupData, hatenaIconImage, platformSection, row1, row2, row3, row3label, textField1, textField2;
-    groupData = Ti.UI.createTableViewSection({
-      headerTitle: "Qiitaアカウント設定"
-    });
-    QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID');
-    QiitaLoginPassword = Ti.App.Properties.getString('QiitaLoginPassword');
-    row1 = Ti.UI.createTableViewRow({
+    var qiitaAccountSection, socialAccountSection, view;
+    this.baseColor = {
+      backgroundColor: "#f9f9f9",
+      barBackgroundColor: "#222",
+      keyColor: '#4BA503',
+      textColor: "#f9f9f9"
+    };
+    this.QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID');
+    this.QiitaLoginPassword = Ti.App.Properties.getString('QiitaLoginPassword');
+    qiitaAccountSection = this._createQiitaAccountSection();
+    socialAccountSection = this._createSocialAccountSection();
+    view = Ti.UI.createView({
       width: 200,
-      height: Ti.UI.FILL
+      height: Ti.Platform.displayCaps.platformHeight,
+      backgroundColor: this.baseColor.backgroundColor,
+      top: 0,
+      left: 0
+    });
+    view.add(qiitaAccountSection);
+    view.add(socialAccountSection);
+    return view;
+  }
+
+  configMenu.prototype._createQiitaAccountSection = function() {
+    var loginBtn, textField1, textField2, _view;
+    _view = Ti.UI.createView({
+      width: 200,
+      height: 200,
+      top: 10,
+      left: 0,
+      backgroundColor: this.baseColor.backgroundColor,
+      zIndex: 20
     });
     textField1 = Ti.UI.createTextField({
       color: "#222",
       top: 5,
       left: 10,
-      width: 230,
+      width: 180,
       height: 30,
       hintText: "QiitaユーザID",
       font: {
@@ -32,17 +55,11 @@ configMenu = (function() {
     textField1.addEventListener('change', function(e) {
       return Ti.App.Properties.setString('QiitaLoginID', e.value);
     });
-    row1.add(textField1);
-    row1.className = 'url_name';
-    row2 = Ti.UI.createTableViewRow({
-      width: 200,
-      height: Ti.UI.FILL
-    });
     textField2 = Ti.UI.createTextField({
       color: "#222",
-      top: 5,
+      top: 50,
       left: 10,
-      width: 230,
+      width: 180,
       height: 30,
       hintText: "パスワード入力",
       font: {
@@ -58,45 +75,52 @@ configMenu = (function() {
     textField2.addEventListener('change', function(e) {
       return Ti.App.Properties.setString('QiitaLoginPassword', e.value);
     });
-    row2.add(textField2);
-    row2.className = 'password';
     if (QiitaLoginID !== null) {
       textField1.value = QiitaLoginID;
     }
     if (QiitaLoginPassword !== null) {
       textField2.value = QiitaLoginPassword;
     }
-    row3 = Ti.UI.createTableViewRow({
-      width: 200,
-      height: 50,
-      backgroundColor: '#59BB0C'
-    });
-    row3label = Ti.UI.createLabel({
-      color: "#fff",
-      top: 15,
-      left: 5,
-      width: 250,
-      height: 20,
+    loginBtn = Ti.UI.createLabel({
+      width: 120,
+      height: 40,
+      top: 100,
+      left: 10,
+      backgroundImage: "NONE",
+      borderWidth: 0,
+      borderRadius: 5,
+      color: this.baseColor.textColor,
+      backgroundColor: "#4cda64",
       font: {
-        fontSize: 20,
-        fontWeight: 'bold'
+        fontSize: 14,
+        fontFamily: 'Rounded M+ 1p'
       },
-      textAlign: 1,
-      text: "ログインする"
+      text: "ログインする",
+      textAlign: 'center'
     });
-    row3.add(row3label);
-    groupData.add(row1);
-    groupData.add(row2);
-    groupData.add(row3);
-    platformSection = Ti.UI.createTableViewSection({
-      headerTitle: "SNSアカウント設定"
+    loginBtn.addEventListener('click', function(e) {
+      var mainController;
+      mainController = require("controllers/mainContoroller");
+      mainController = new mainController();
+      textField2.enabled = false;
+      return mainController.qiitaLogin();
     });
-    this.hatenaRow = Ti.UI.createTableViewRow({
-      touchEnabled: false,
-      height: Ti.UI.FILL,
-      selectionStyle: Ti.UI.iPhone.TableViewCellSelectionStyle.NONE
+    _view.add(textField1);
+    _view.add(textField2);
+    _view.add(loginBtn);
+    return _view;
+  };
+
+  configMenu.prototype._createSocialAccountSection = function() {
+    var hatenaIconImage, hatenaSwitch, _view;
+    _view = Ti.UI.createView({
+      width: Ti.UI.FULL,
+      height: 180,
+      top: 200,
+      left: 0,
+      backgroundColor: this.baseColor.backgroundColor,
+      zIndex: 20
     });
-    this.hatenaRow.addEventListener('click', function() {});
     hatenaIconImage = Ti.UI.createImageView({
       width: 35,
       height: 35,
@@ -104,23 +128,20 @@ configMenu = (function() {
       left: 5,
       image: "ui/image/hatena.png"
     });
-    this.hatenaLabel = Ti.UI.createLabel({
-      left: 50,
-      width: 100,
-      text: "はてな"
-    });
     if (Ti.App.Properties.getBool("hatenaAccessTokenKey") != null) {
-      this.hatenaSwitch = Ti.UI.createSwitch({
-        right: 10,
+      hatenaSwitch = Ti.UI.createSwitch({
+        left: 50,
+        top: 5,
         value: true
       });
     } else {
-      this.hatenaSwitch = Ti.UI.createSwitch({
-        right: 10,
+      hatenaSwitch = Ti.UI.createSwitch({
+        top: 5,
+        left: 50,
         value: false
       });
     }
-    this.hatenaSwitch.addEventListener("change", function(e) {
+    hatenaSwitch.addEventListener("change", function(e) {
       var Hatena, hatena;
       if (e.value === true) {
         Hatena = require("model/hatena");
@@ -131,34 +152,9 @@ configMenu = (function() {
         return Ti.App.Properties.removeProperty("hatenaAccessTokenSecret");
       }
     });
-    this.hatenaRow.add(hatenaIconImage);
-    this.hatenaRow.add(this.hatenaLabel);
-    this.hatenaRow.add(this.hatenaSwitch);
-    platformSection.add(this.hatenaRow);
-    this.tableView = Ti.UI.createTableView({
-      zIndex: 0,
-      data: [groupData, platformSection],
-      style: Ti.UI.iPhone.TableViewStyle.GROUPED,
-      top: 40,
-      left: 0,
-      width: 200,
-      height: 400
-    });
-    this.tableView.addEventListener('click', function(e) {
-      var LoginCommand, loginCommand;
-      if (e.index === 2) {
-        textField2.enabled = false;
-        actInd.show();
-        LoginCommand = require("model/loginCommand");
-        loginCommand = new LoginCommand();
-        return loginCommand.execute();
-      }
-    });
-    return this.tableView;
-  }
-
-  configMenu.prototype.changeHatenaRowElement = function(switchFlg) {
-    this.hatenaSwitch.value = switchFlg;
+    _view.add(hatenaIconImage);
+    _view.add(hatenaSwitch);
+    return _view;
   };
 
   return configMenu;
