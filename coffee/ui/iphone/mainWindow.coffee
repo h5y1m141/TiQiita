@@ -36,32 +36,15 @@ class mainWindow
       text:String.fromCharCode("0xe08e")
 
     menuBtn.addEventListener('click',(e) =>
+      Ti.API.info @slideState
       if @slideState is true
-        transform = Titanium.UI.create2DMatrix()
-        animation = Titanium.UI.createAnimation()
-        animation.left = 0
-        
-        animation.transform = transform
-        animation.duration = 250
-        
-        mainListView.animate(animation)
-        navView.animate(animation)
-        @slideState = false
+        @resetSlide()
       else
-        
-        transform = Titanium.UI.create2DMatrix()
-        animation = Titanium.UI.createAnimation()
-        animation.left = 200
-        
-        animation.transform = transform
-        animation.duration = 250
-        
-        mainListView.animate(animation)
-        navView.animate(animation)        
-        @slideState = true        
+        @slideWindow()
+
     ) 
     
-    navView = Ti.UI.createView
+    @navView = Ti.UI.createView
       width:Ti.UI.FULL
       height:40
       top:0
@@ -70,14 +53,37 @@ class mainWindow
       # opacity:0.5      
       zIndex:25
             
-    navView.add menuBtn
-    @window.add navView
+    @navView.add menuBtn
+    @window.add @navView
       
     
     return @window
     
-
+  resetSlide:() ->  
+    transform = Titanium.UI.create2DMatrix()
+    animation = Titanium.UI.createAnimation()
+    animation.left = 0
+    animation.transform = transform
+    animation.duration = 250
     
+    mainListView.animate(animation)
+    @navView.animate(animation)
+    @slideState = false
+    return
+  
+  slideWindow:() ->    
+    transform = Titanium.UI.create2DMatrix()
+    animation = Titanium.UI.createAnimation()
+    animation.left = 200
+    
+    animation.transform = transform
+    animation.duration = 250
+    
+    mainListView.animate(animation)
+    @navView.animate(animation)        
+    @slideState = true
+    return
+        
   _createAdView:() ->
     # 画面下部に広告用のViewを配置するための高さ計算処理
     nend = require('net.nend')

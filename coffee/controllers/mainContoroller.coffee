@@ -85,9 +85,7 @@ class mainContoroller
           Ti.API.info "loadOldEntry hide"  
         else
           Ti.API.info storedTo
-          rows.push(mainTableView.createRowForLoadOldEntry(storedTo))
-        
-        mainTable.setData rows
+          @refresData(result)
 
       )
 
@@ -96,10 +94,7 @@ class mainContoroller
 
         (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
       )
-    
-      result.push(mainTableView.createRow(json)) for json in items
-      result.push(mainTableView.createRowForLoadOldEntry(storedTo))
-      mainTable.setData result
+      @refresData(items)
     
   setItems:() ->
     that = @

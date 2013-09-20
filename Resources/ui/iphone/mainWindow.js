@@ -3,7 +3,7 @@ var mainWindow;
 mainWindow = (function() {
 
   function mainWindow() {
-    var ConfigMenu, configMenu, menuBtn, menuTable, navView,
+    var ConfigMenu, configMenu, menuBtn, menuTable,
       _this = this;
     this.baseColor = {
       barColor: "#f9f9f9",
@@ -40,28 +40,14 @@ mainWindow = (function() {
       text: String.fromCharCode("0xe08e")
     });
     menuBtn.addEventListener('click', function(e) {
-      var animation, transform;
+      Ti.API.info(_this.slideState);
       if (_this.slideState === true) {
-        transform = Titanium.UI.create2DMatrix();
-        animation = Titanium.UI.createAnimation();
-        animation.left = 0;
-        animation.transform = transform;
-        animation.duration = 250;
-        mainListView.animate(animation);
-        navView.animate(animation);
-        return _this.slideState = false;
+        return _this.resetSlide();
       } else {
-        transform = Titanium.UI.create2DMatrix();
-        animation = Titanium.UI.createAnimation();
-        animation.left = 200;
-        animation.transform = transform;
-        animation.duration = 250;
-        mainListView.animate(animation);
-        navView.animate(animation);
-        return _this.slideState = true;
+        return _this.slideWindow();
       }
     });
-    navView = Ti.UI.createView({
+    this.navView = Ti.UI.createView({
       width: Ti.UI.FULL,
       height: 40,
       top: 0,
@@ -69,10 +55,34 @@ mainWindow = (function() {
       backgroundColor: this.baseColor.keyColor,
       zIndex: 25
     });
-    navView.add(menuBtn);
-    this.window.add(navView);
+    this.navView.add(menuBtn);
+    this.window.add(this.navView);
     return this.window;
   }
+
+  mainWindow.prototype.resetSlide = function() {
+    var animation, transform;
+    transform = Titanium.UI.create2DMatrix();
+    animation = Titanium.UI.createAnimation();
+    animation.left = 0;
+    animation.transform = transform;
+    animation.duration = 250;
+    mainListView.animate(animation);
+    this.navView.animate(animation);
+    this.slideState = false;
+  };
+
+  mainWindow.prototype.slideWindow = function() {
+    var animation, transform;
+    transform = Titanium.UI.create2DMatrix();
+    animation = Titanium.UI.createAnimation();
+    animation.left = 200;
+    animation.transform = transform;
+    animation.duration = 250;
+    mainListView.animate(animation);
+    this.navView.animate(animation);
+    this.slideState = true;
+  };
 
   mainWindow.prototype._createAdView = function() {
     var Config, adView, config, nend, nendConfig;

@@ -81,7 +81,7 @@ mainContoroller = (function() {
   };
 
   mainContoroller.prototype.getFeedByTag = function(tagName) {
-    var MAXITEMCOUNT, items, json, moment, momentja, storedTo, _i, _len,
+    var MAXITEMCOUNT, items, moment, momentja, storedTo,
       _this = this;
     storedTo = "followingTag" + tagName;
     items = JSON.parse(Ti.App.Properties.getString(storedTo));
@@ -99,12 +99,11 @@ mainContoroller = (function() {
         });
         Ti.API.info(result.length);
         if (result.length !== MAXITEMCOUNT) {
-          Ti.API.info("loadOldEntry hide");
+          return Ti.API.info("loadOldEntry hide");
         } else {
           Ti.API.info(storedTo);
-          rows.push(mainTableView.createRowForLoadOldEntry(storedTo));
+          return _this.refresData(result);
         }
-        return mainTable.setData(rows);
       });
     } else {
       items.sort(function(a, b) {
@@ -114,12 +113,7 @@ mainContoroller = (function() {
           return 1;
         }
       });
-      for (_i = 0, _len = items.length; _i < _len; _i++) {
-        json = items[_i];
-        result.push(mainTableView.createRow(json));
-      }
-      result.push(mainTableView.createRowForLoadOldEntry(storedTo));
-      return mainTable.setData(result);
+      return this.refresData(items);
     }
   };
 
