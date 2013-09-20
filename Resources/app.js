@@ -65,7 +65,8 @@ if (testsEnabled === true) {
   ListView = require("ui/" + this.osname + "/listView");
   MainWindow = require("ui/" + osname + "/mainWindow");
   mainListView = new ListView();
-  mainWindow = new MainWindow();
+  MainWindow = new MainWindow();
+  mainWindow = MainWindow.getWindow();
   mainWindow.add(mainListView);
   maincontroller.getFeed();
   mainWindow.open();

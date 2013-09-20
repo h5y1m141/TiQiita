@@ -56,9 +56,9 @@ class mainWindow
     @navView.add menuBtn
     @window.add @navView
       
-    
+  getWindow:() ->
     return @window
-    
+      
   resetSlide:() ->  
     transform = Titanium.UI.create2DMatrix()
     animation = Titanium.UI.createAnimation()

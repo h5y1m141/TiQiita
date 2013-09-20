@@ -36,6 +36,7 @@ menuTable = (function() {
     });
     this.menuTable.addEventListener('click', function(e) {
       var curretRowIndex, mainController, tagName;
+      MainWindow.resetSlide();
       curretRowIndex = e.index;
       tagName = _this.menuTable.data[0].rows[curretRowIndex].className;
       mainController = require("controllers/mainContoroller");

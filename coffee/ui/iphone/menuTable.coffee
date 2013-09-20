@@ -31,7 +31,7 @@ class menuTable
       top:0
       
     @menuTable.addEventListener('click',(e) =>
-
+      MainWindow.resetSlide()
       curretRowIndex = e.index
       tagName = @menuTable.data[0].rows[curretRowIndex].className
       mainController = require("controllers/mainContoroller")

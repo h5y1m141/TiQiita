@@ -57,8 +57,11 @@ mainWindow = (function() {
     });
     this.navView.add(menuBtn);
     this.window.add(this.navView);
-    return this.window;
   }
+
+  mainWindow.prototype.getWindow = function() {
+    return this.window;
+  };
 
   mainWindow.prototype.resetSlide = function() {
     var animation, transform;
