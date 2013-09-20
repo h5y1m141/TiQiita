@@ -80,6 +80,126 @@ mainContoroller = (function() {
     });
   };
 
+  mainContoroller.prototype.getFeedByTag = function(tagName) {
+    var MAXITEMCOUNT, items, json, moment, momentja, storedTo, _i, _len,
+      _this = this;
+    storedTo = "followingTag" + tagName;
+    items = JSON.parse(Ti.App.Properties.getString(storedTo));
+    moment = require('lib/moment.min');
+    momentja = require('lib/momentja');
+    MAXITEMCOUNT = 20;
+    if ((items != null) === false || items === "") {
+      return this.qiita.getFeedByTag(tagName, function(result, links) {
+        result.sort(function(a, b) {
+          if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
+            return -1;
+          } else {
+            return 1;
+          }
+        });
+        Ti.API.info(result.length);
+        if (result.length !== MAXITEMCOUNT) {
+          Ti.API.info("loadOldEntry hide");
+        } else {
+          Ti.API.info(storedTo);
+          rows.push(mainTableView.createRowForLoadOldEntry(storedTo));
+        }
+        return mainTable.setData(rows);
+      });
+    } else {
+      items.sort(function(a, b) {
+        if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
+          return -1;
+        } else {
+          return 1;
+        }
+      });
+      for (_i = 0, _len = items.length; _i < _len; _i++) {
+        json = items[_i];
+        result.push(mainTableView.createRow(json));
+      }
+      result.push(mainTableView.createRowForLoadOldEntry(storedTo));
+      return mainTable.setData(result);
+    }
+  };
+
+  mainContoroller.prototype.setItems = function() {
+    var that;
+    that = this;
+    return this.qiita.getFeed(function(result) {
+      return that.refresData(result);
+    });
+  };
+
+  mainContoroller.prototype.getFeed = function() {
+    var that;
+    that = this;
+    return this.qiita.getFeed(function(result) {
+      return that.refresData(result);
+    });
+  };
+
+  mainContoroller.prototype.refresData = function(data) {
+    var dataSet, loadOld, section, sections;
+    sections = [];
+    section = Ti.UI.createListSection();
+    dataSet = this.createItems(data);
+    section = Ti.UI.createListSection();
+    loadOld = {
+      loadOld: true,
+      properties: {
+        selectionStyle: Titanium.UI.iPhone.ListViewCellSelectionStyle.NONE
+      },
+      title: {
+        text: 'load old'
+      }
+    };
+    dataSet.push(loadOld);
+    section.setItems(dataSet);
+    sections.push(section);
+    Ti.API.info(mainListView);
+    return mainListView.setSections(sections);
+  };
+
+  mainContoroller.prototype.createItems = function(data) {
+    var dataSet, layout, rawData, _i, _items, _len;
+    dataSet = [];
+    for (_i = 0, _len = data.length; _i < _len; _i++) {
+      _items = data[_i];
+      rawData = _items;
+      layout = {
+        properties: {
+          height: 120,
+          selectionStyle: Titanium.UI.iPhone.ListViewCellSelectionStyle.NONE,
+          data: rawData
+        },
+        title: {
+          text: _items.title
+        },
+        icon: {
+          image: _items.user.profile_image_url
+        },
+        updateTime: {
+          text: _items.updated_at_in_words
+        },
+        handleName: {
+          text: _items.user.url_name
+        },
+        contents: {
+          text: _items.body.replace(/<\/?[^>]+>/gi, "")
+        },
+        tags: {
+          text: 'javascript,ruby,Titanium'
+        },
+        tagIcon: {
+          text: String.fromCharCode("0xe128")
+        }
+      };
+      dataSet.push(layout);
+    }
+    return dataSet;
+  };
+
   mainContoroller.prototype.init = function() {
     var loginID, password, _;
     loginID = Ti.App.Properties.getString('QiitaLoginID');

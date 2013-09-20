@@ -4,7 +4,7 @@ class mainContoroller
     @hatena = new Hatena()
     Qiita = require("model/qiita")
     @qiita = new Qiita()
-    
+        
     @tabSetting =
       "iphone":
         "main":
@@ -61,7 +61,113 @@ class mainContoroller
         Ti.App.Properties.setString 'QiitaLoginPassword', param.password
         Ti.App.Properties.setString 'QiitaToken', token
     )
-           
+    
+  getFeedByTag:(tagName) ->
+    storedTo = "followingTag#{tagName}"
+    items = JSON.parse(Ti.App.Properties.getString(storedTo))
+    moment = require('lib/moment.min')
+    momentja = require('lib/momentja')
+    
+    MAXITEMCOUNT = 20 # 1リクエスト辺りに読み込まれる最大件数
+    if items? is false or items is ""
+      @qiita.getFeedByTag(tagName, (result,links) =>
+        # http://d.hatena.ne.jp/yatemmma/20110723/1311534794を参考に実装
+        # なお比較した結果、1を最初に返すと更新日古い順番にソートされる
+        result.sort( (a, b) ->
+
+          (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
+        )
+        
+        # rows.push(mainTableView.createRow(json)) for json in result
+        Ti.API.info result.length
+        
+        if result.length isnt MAXITEMCOUNT
+          Ti.API.info "loadOldEntry hide"  
+        else
+          Ti.API.info storedTo
+          rows.push(mainTableView.createRowForLoadOldEntry(storedTo))
+        
+        mainTable.setData rows
+
+      )
+
+    else
+      items.sort( (a, b) ->
+
+        (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
+      )
+    
+      result.push(mainTableView.createRow(json)) for json in items
+      result.push(mainTableView.createRowForLoadOldEntry(storedTo))
+      mainTable.setData result
+    
+  setItems:() ->
+    that = @
+    @qiita.getFeed( (result) ->
+      that.refresData(result)
+    )
+
+  getFeed:() ->
+    that = @
+    @qiita.getFeed( (result) ->
+      that.refresData(result)
+    )
+
+    
+  refresData: (data) ->
+    sections = []
+    section = Ti.UI.createListSection()
+    
+    dataSet = @createItems(data)
+      
+    # 過去の投稿を読み込むためのもの
+    section = Ti.UI.createListSection()
+    loadOld =
+      loadOld:true
+      properties:
+        selectionStyle: Titanium.UI.iPhone.ListViewCellSelectionStyle.NONE
+      title:
+        text: 'load old'
+      
+    dataSet.push(loadOld)
+    
+    section.setItems dataSet
+    sections.push section
+    # app.jsでmainListView = new ListView()としている
+    # ListViewにアイテムをセット
+    Ti.API.info mainListView
+    return mainListView.setSections sections
+    
+  createItems:(data) ->
+    dataSet = []
+
+    for _items in data
+      rawData = _items
+      layout =
+        properties:
+          height:120
+          selectionStyle: Titanium.UI.iPhone.ListViewCellSelectionStyle.NONE
+          data:rawData
+          
+        title:
+          text: _items.title
+        icon:
+          image: _items.user.profile_image_url
+        updateTime:
+          text: _items.updated_at_in_words
+        handleName:
+          text: _items.user.url_name
+        contents:
+          text: _items.body.replace(/<\/?[^>]+>/gi, "")
+          # text: _items.raw_body
+        tags:
+          text: 'javascript,ruby,Titanium'
+        tagIcon:
+          text:String.fromCharCode("0xe128")
+      dataSet.push(layout)
+                
+    return dataSet
+
   init:() ->
     loginID  = Ti.App.Properties.getString 'QiitaLoginID'
     password = Ti.App.Properties.getString 'QiitaLoginPassword'
