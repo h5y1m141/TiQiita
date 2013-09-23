@@ -102,7 +102,7 @@ class listView
     @listView = Ti.UI.createListView
       top:40
       left:0
-      zIndex:10
+      zIndex:20
       templates:
         template: myTemplate
       defaultItemTemplate: "template"      
@@ -114,6 +114,7 @@ class listView
         qiita = new Qiita()
         currentPage = Ti.App.Properties.getString "currentPage"
         nextURL = Ti.App.Properties.getString "#{currentPage}nextURL"
+        Ti.API.info "currentPage is #{currentPage} and nextURL is #{nextURL}"
 
         qiita.getNextFeed(nextURL,currentPage,(result) =>
           items = @createItems(result)

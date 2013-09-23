@@ -114,7 +114,7 @@ listView = (function() {
     this.listView = Ti.UI.createListView({
       top: 40,
       left: 0,
-      zIndex: 10,
+      zIndex: 20,
       templates: {
         template: myTemplate
       },
@@ -129,6 +129,7 @@ listView = (function() {
         qiita = new Qiita();
         currentPage = Ti.App.Properties.getString("currentPage");
         nextURL = Ti.App.Properties.getString("" + currentPage + "nextURL");
+        Ti.API.info("currentPage is " + currentPage + " and nextURL is " + nextURL);
         return qiita.getNextFeed(nextURL, currentPage, function(result) {
           var currentSection, items, lastIndex;
           items = _this.createItems(result);
