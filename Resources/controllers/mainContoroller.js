@@ -4,9 +4,7 @@ var mainContoroller,
 mainContoroller = (function() {
 
   function mainContoroller() {
-    this._hideStatusView = __bind(this._hideStatusView, this);
-
-    this._showStatusView = __bind(this._showStatusView, this);
+    this.stockItem = __bind(this.stockItem, this);
 
     var Hatena, Qiita;
     Hatena = require("model/hatena");
@@ -25,8 +23,6 @@ mainContoroller = (function() {
         }
       }
     };
-    this.networkDisconnectedMessage = "ネットワーク接続出来ません。ネットワーク設定を再度ご確認ください";
-    this.authenticationFailMessage = "ユーザIDかパスワードに誤りがあるためログインできません";
   }
 
   mainContoroller.prototype.createTabGroup = function() {
@@ -57,23 +53,258 @@ mainContoroller = (function() {
     return tabGroup.open();
   };
 
-  mainContoroller.prototype.init = function() {
-    var loginID, password, _;
-    loginID = Ti.App.Properties.getString('QiitaLoginID');
-    password = Ti.App.Properties.getString('QiitaLoginPassword');
-    _ = require("lib/underscore-min");
-    if (this.qiita.isConnected() === false) {
-      this._alertViewShow(this.networkDisconnectedMessage);
-    } else if ((loginID != null) === false || loginID === "") {
-      rootWindow.toggleRightView();
-      commandController.useMenu("storedStocks");
+  mainContoroller.prototype.qiitaLogin = function() {
+    var param,
+      _this = this;
+    param = {
+      url_name: Ti.App.Properties.getString('QiitaLoginID'),
+      password: Ti.App.Properties.getString('QiitaLoginPassword')
+    };
+    Ti.API.debug("[INFO] login start.");
+    return this.qiita._auth(param, function(token) {
+      Ti.API.debug("token is " + token);
+      if (token === null) {
+        alert("ユーザIDかパスワードが間違ってます");
+        return configMenu.hide();
+      } else {
+        alert("認証出来ました");
+        configMenu.hide();
+        Ti.App.Properties.setString('QiitaLoginID', param.url_name);
+        Ti.App.Properties.setString('QiitaLoginPassword', param.password);
+        return Ti.App.Properties.setString('QiitaToken', token);
+      }
+    });
+  };
+
+  mainContoroller.prototype.getFeedByTag = function(tagName) {
+    var MAXITEMCOUNT, items, moment, momentja, storedTo,
+      _this = this;
+    storedTo = "followingTag" + tagName;
+    items = JSON.parse(Ti.App.Properties.getString(storedTo));
+    moment = require('lib/moment.min');
+    momentja = require('lib/momentja');
+    MAXITEMCOUNT = 20;
+    if ((items != null) === false || items === "") {
+      return this.qiita.getFeedByTag(tagName, function(result, links) {
+        result.sort(function(a, b) {
+          if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
+            return -1;
+          } else {
+            return 1;
+          }
+        });
+        Ti.API.info(result.length);
+        if (result.length !== MAXITEMCOUNT) {
+          return Ti.API.info("loadOldEntry hide");
+        } else {
+          Ti.API.info(storedTo);
+          return _this.refresData(result);
+        }
+      });
     } else {
-      Ti.API.info("start mainWindow");
-      Ti.API.info(Ti.App.Properties.getString('QiitaToken'));
-      this.refreshMenuTable();
-      commandController.useMenu("storedStocks");
+      items.sort(function(a, b) {
+        if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
+          return -1;
+        } else {
+          return 1;
+        }
+      });
+      return this.refresData(items);
     }
-    return true;
+  };
+
+  mainContoroller.prototype.getFeed = function() {
+    var MAXITEMCOUNT, items, moment, momentja,
+      _this = this;
+    items = JSON.parse(Ti.App.Properties.getString("storedStocks"));
+    moment = require('lib/moment.min');
+    momentja = require('lib/momentja');
+    MAXITEMCOUNT = 20;
+    if ((items != null) === false || items === "") {
+      return this.qiita.getFeed(function(result, links) {
+        result.sort(function(a, b) {
+          if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
+            return -1;
+          } else {
+            return 1;
+          }
+        });
+        if (result.length !== MAXITEMCOUNT) {
+          return Ti.API.info("loadOldEntry hide");
+        } else {
+          return _this.refresData(result);
+        }
+      });
+    } else {
+      items.sort(function(a, b) {
+        if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
+          return -1;
+        } else {
+          return 1;
+        }
+      });
+      return this.refresData(items);
+    }
+  };
+
+  mainContoroller.prototype.getMyStocks = function() {
+    var MAXITEMCOUNT, items, moment, momentja;
+    MAXITEMCOUNT = 20;
+    items = JSON.parse(Ti.App.Properties.getString('storedMyStocks'));
+    moment = require('lib/moment.min');
+    momentja = require('lib/momentja');
+    if ((items != null) === false || items === "") {
+
+    } else {
+      items.sort(function(a, b) {
+        if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
+          return -1;
+        } else {
+          return 1;
+        }
+      });
+      return this.refresData(items);
+    }
+  };
+
+  mainContoroller.prototype.getFollowerItems = function() {
+    var items, moment, momentja, qiitaUser,
+      _this = this;
+    items = JSON.parse(Ti.App.Properties.getString("followerItems"));
+    moment = require('lib/moment.min');
+    momentja = require('lib/momentja');
+    if ((items != null) === false || items === "") {
+      qiitaUser = require("model/qiitaUser");
+      qiitaUser = new qiitaUser();
+      return qiitaUser.getfollowingUserList(function(userList) {
+        var item, xhr, _i, _items, _len, _url;
+        for (_i = 0, _len = userList.length; _i < _len; _i++) {
+          item = userList[_i];
+          _url = "https://qiita.com/api/v1/users/" + item.url_name + "/items?per_page=5";
+          _items = [];
+          xhr = Ti.Network.createHTTPClient();
+          xhr.open("GET", _url);
+          xhr.onload = function() {
+            var _j, _len1, _results;
+            if (this.status === 200) {
+              items = JSON.parse(this.responseText);
+              if (items !== null) {
+                _results = [];
+                for (_j = 0, _len1 = items.length; _j < _len1; _j++) {
+                  item = items[_j];
+                  _results.push(_items.push(item));
+                }
+                return _results;
+              }
+            }
+          };
+          xhr.onerror = function(e) {
+            var error;
+            error = JSON.parse(this.responseText);
+            return Ti.API.info(error);
+          };
+          xhr.timeout = 5000;
+          xhr.send();
+        }
+        return setTimeout((function() {
+          _items.sort(function(a, b) {
+            if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
+              return -1;
+            } else {
+              return 1;
+            }
+          });
+          Ti.App.Properties.setString("followerItems", JSON.stringify(_items));
+          return _this.refresData(_items);
+        }), 10000);
+      });
+    } else {
+      items.sort(function(a, b) {
+        if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
+          return -1;
+        } else {
+          return 1;
+        }
+      });
+      return this.refresData(items);
+    }
+  };
+
+  mainContoroller.prototype.setItems = function() {
+    var that;
+    that = this;
+    return this.qiita.getFeed(function(result) {
+      return that.refresData(result);
+    });
+  };
+
+  mainContoroller.prototype.getFeed = function() {
+    var that;
+    that = this;
+    return this.qiita.getFeed(function(result) {
+      return that.refresData(result);
+    });
+  };
+
+  mainContoroller.prototype.refresData = function(data) {
+    var dataSet, loadOld, section, sections;
+    sections = [];
+    section = Ti.UI.createListSection();
+    dataSet = this.createItems(data);
+    section = Ti.UI.createListSection();
+    loadOld = {
+      loadOld: true,
+      properties: {
+        selectionStyle: Titanium.UI.iPhone.ListViewCellSelectionStyle.NONE
+      },
+      title: {
+        text: 'load old'
+      }
+    };
+    dataSet.push(loadOld);
+    section.setItems(dataSet);
+    sections.push(section);
+    Ti.API.info(mainListView);
+    return mainListView.setSections(sections);
+  };
+
+  mainContoroller.prototype.createItems = function(data) {
+    var dataSet, layout, rawData, _i, _items, _len;
+    dataSet = [];
+    for (_i = 0, _len = data.length; _i < _len; _i++) {
+      _items = data[_i];
+      rawData = _items;
+      layout = {
+        properties: {
+          height: 120,
+          selectionStyle: Titanium.UI.iPhone.ListViewCellSelectionStyle.NONE,
+          data: rawData
+        },
+        title: {
+          text: _items.title
+        },
+        icon: {
+          image: _items.user.profile_image_url
+        },
+        updateTime: {
+          text: _items.updated_at_in_words
+        },
+        handleName: {
+          text: _items.user.url_name
+        },
+        contents: {
+          text: _items.body.replace(/<\/?[^>]+>/gi, "")
+        },
+        tags: {
+          text: 'javascript,ruby,Titanium'
+        },
+        tagIcon: {
+          text: String.fromCharCode("0xe128")
+        }
+      };
+      dataSet.push(layout);
+    }
+    return dataSet;
   };
 
   mainContoroller.prototype.networkConnectionCheck = function(callback) {
@@ -95,86 +326,6 @@ mainContoroller = (function() {
     } else {
       return callback();
     }
-  };
-
-  mainContoroller.prototype._alertViewShow = function(messsage) {
-    alertView.editMessage(messsage);
-    return alertView.animate();
-  };
-
-  mainContoroller.prototype.refreshMenuTable = function() {
-    Ti.API.debug("refreshMenuTable");
-    return menuTable.refreshMenu();
-  };
-
-  mainContoroller.prototype.loadEntry = function() {
-    var currentPage, items;
-    currentPage = Ti.App.Properties.getString("currentPage");
-    Ti.API.info("qiitaController.loadEntry start. currentPage is " + currentPage);
-    Ti.App.Properties.setString(currentPage, null);
-    items = JSON.parse(Ti.App.Properties.getString(currentPage));
-    return commandController.useMenu(currentPage);
-  };
-
-  mainContoroller.prototype._showStatusView = function() {
-    Ti.API.info("[ACTION] スライド開始");
-    progressBar.value = 0;
-    progressBar.show();
-    return statusView.animate({
-      duration: 400,
-      top: 0
-    }, function() {
-      Ti.API.debug("mainTable を上にずらす");
-      return mainTable.animate({
-        duration: 200,
-        top: 50
-      });
-    });
-  };
-
-  mainContoroller.prototype._hideStatusView = function() {
-    Ti.API.info("[ACTION] スライドから標準状態に戻る。垂直方向");
-    return mainTable.animate({
-      duration: 200,
-      top: 0
-    }, function() {
-      Ti.API.debug("mainTable back");
-      progressBar.hide();
-      return statusView.animate({
-        duration: 400,
-        top: -50
-      });
-    });
-  };
-
-  mainContoroller.prototype.loadOldEntry = function(storedTo) {
-    var MAXITEMCOUNT, currentPage, nextURL,
-      _this = this;
-    this._showStatusView();
-    MAXITEMCOUNT = 20;
-    currentPage = Ti.App.Properties.getString("currentPage");
-    nextURL = Ti.App.Properties.getString("" + currentPage + "nextURL");
-    Ti.API.info(nextURL);
-    if (nextURL !== null) {
-      this.qiita.getNextFeed(nextURL, storedTo, function(result) {
-        var json, lastIndex, r, _i, _len, _results;
-        _this._hideStatusView();
-        Ti.API.info("getNextFeed start. result is " + result.length);
-        if (result.length !== MAXITEMCOUNT) {
-          return mainTableView.hideLastRow();
-        } else {
-          _results = [];
-          for (_i = 0, _len = result.length; _i < _len; _i++) {
-            json = result[_i];
-            r = mainTableView.createRow(json);
-            lastIndex = mainTableView.lastRowIndex();
-            _results.push(mainTableView.insertRow(lastIndex, r));
-          }
-          return _results;
-        }
-      });
-    }
-    return true;
   };
 
   mainContoroller.prototype.stockItem = function(uuid, url, contents, qiitaPostFlg, hatenaPostFlg, callback) {
@@ -227,38 +378,6 @@ mainContoroller = (function() {
       Ti.App.Properties.setString('stockUUID', json.uuid);
       return Ti.App.Properties.setString('stockID', json.id);
     }
-  };
-
-  mainContoroller.prototype.slideMainTable = function(direction) {
-    var slideState;
-    slideState = Ti.App.Properties.getBool("stateMainTableSlide");
-    Ti.API.info("[SLIDEMAINTABLE] direction is " + direction + ".slideState is " + slideState);
-    if (slideState === false && direction === "vertical") {
-      return this.state = this.state.moveDown();
-    } else if (slideState === true && direction === "vertical") {
-      return this.state = this.state.moveUP();
-    } else {
-
-    }
-  };
-
-  mainContoroller.prototype.selectMenu = function(menuName) {
-    Ti.API.info("mainController.selectMenu start. menuName is " + menuName);
-    return commandController.useMenu(menuName);
-  };
-
-  mainContoroller.prototype.webViewContentsUpdate = function(body) {
-    return webview.contentsUpdate(body);
-  };
-
-  mainContoroller.prototype.webViewHeaderUpdate = function(json) {
-    return webview.headerUpdate(json);
-  };
-
-  mainContoroller.prototype.moveToWebViewWindow = function() {
-    Ti.API.info("webview show finish " + (moment()));
-    Ti.API.info("" + (webview.getStockUUID()));
-    navController.open(webWindow);
   };
 
   return mainContoroller;

@@ -26,6 +26,7 @@ Hatena = (function() {
           var iconImage, json, switchFlg;
           if (e.success) {
             json = JSON.parse(e.result.text);
+            Ti.App.Properties.setString("hatenaProfileImageURL", json.profile_image_url);
             return iconImage = Ti.UI.createImageView({
               width: 40,
               height: 40,
@@ -34,8 +35,7 @@ Hatena = (function() {
               image: json.profile_image_url
             });
           } else {
-            switchFlg = false;
-            return configMenu.changeHatenaRowElement(switchFlg);
+            return switchFlg = false;
           }
         });
       } else {

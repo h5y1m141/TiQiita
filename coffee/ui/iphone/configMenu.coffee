@@ -1,21 +1,76 @@
 class configMenu
   constructor: () ->
-    groupData = Ti.UI.createTableViewSection(
-      headerTitle: "Qiitaアカウント設定"
-    )
+    @baseColor =
+      backgroundColor:"#f9f9f9"
+      barBackgroundColor:"#222"
+      keyColor:'#4BA503'
+      textColor:"#f9f9f9"    
 
-    QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID')
-    QiitaLoginPassword = Ti.App.Properties.getString('QiitaLoginPassword')
+    @QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID')
+    @QiitaLoginPassword = Ti.App.Properties.getString('QiitaLoginPassword')
     
-    row1 = Ti.UI.createTableViewRow
-      width: 200
-      height: Ti.UI.FILL
+    t = Titanium.UI.create2DMatrix().scale(0.0)    
+    @view = Ti.UI.createView
+      width:200
+      height:200
+      backgroundColor:@baseColor.backgroundColor
+      top:80
+      left:0
+      zIndex:10
+      transform:t
+      
+    qiitaAccountSection = @_createQiitaAccountSection()
+    @view.add qiitaAccountSection
+    
 
+  getMenu:() ->
+    return @view
+
+  show:(accountName) ->
+
+    if accountName is 'qiita'
+      t1 = Titanium.UI.create2DMatrix()
+      t1 = t1.scale(1.0)
+      animation = Titanium.UI.createAnimation()
+      animation.transform = t1
+      animation.duration = 250
+      return @view.animate(animation)
+      
+    else if accountName is 'hatena'
+      Hatena = require("model/hatena")
+      hatena = new Hatena()
+      return hatena.login()    
+
+    else if accountName is 'twitter'
+      Twitter = require("model/twitter")
+      twitter = new Twitter()
+      return twitter.login()
+    else
+      Ti.API.info 'no action'
+    
+      
+    
+  hide:() ->
+    t1 = Titanium.UI.create2DMatrix()
+    t1 = t1.scale(0.0)
+    animation = Titanium.UI.createAnimation()
+    animation.transform = t1
+    animation.duration = 250
+    return @view.animate(animation)
+    
+  _createQiitaAccountSection:() ->
+    _view = Ti.UI.createView
+      width:200
+      height:200
+      top:10
+      left:0
+      backgroundColor:@baseColor.backgroundColor
+      zIndex:20
     textField1 = Ti.UI.createTextField
       color:"#222"
       top:5
       left:10
-      width:230
+      width:180
       height:30
       hintText:"QiitaユーザID"
       font:
@@ -31,18 +86,11 @@ class configMenu
       Ti.App.Properties.setString('QiitaLoginID',e.value)
     )
     
-    row1.add textField1
-    row1.className = 'url_name'
-
-    row2 = Ti.UI.createTableViewRow
-      width: 200
-      height:Ti.UI.FILL
-
     textField2 = Ti.UI.createTextField
       color:"#222"
-      top:5
+      top:50
       left:10
-      width:230
+      width:180
       height:30
       hintText:"パスワード入力"
       font:
@@ -58,59 +106,72 @@ class configMenu
     textField2.addEventListener('change',(e) ->
       Ti.App.Properties.setString('QiitaLoginPassword',e.value)
     )
-
-    
-
-    row2.add textField2
-    row2.className = 'password'
     
     if QiitaLoginID isnt null
       textField1.value = QiitaLoginID
 
     if QiitaLoginPassword isnt null
       textField2.value = QiitaLoginPassword
-
-    row3 = Ti.UI.createTableViewRow
-      width: 200
-      height:50
-      backgroundColor:'#59BB0C'  
-
-
-    row3label = Ti.UI.createLabel
-      color:"#fff"
-      top:15
-      left:5
-      width:250
-      height:20
+      
+    loginBtn = Ti.UI.createLabel
+      width:80
+      height:40
+      top:100
+      right:10
+      backgroundImage:"NONE"
+      borderWidth:0
+      borderRadius:5
+      color:@baseColor.textColor
+      backgroundColor:"#4cda64"
       font:
-        fontSize:20
-        fontWeight:'bold'
-      textAlign:1
-      text:"ログインする"
-
-
-    row3.add row3label
-
-    groupData.add row1
-    groupData.add row2
-    groupData.add row3
-
-    # SNS 
-    platformSection = Ti.UI.createTableViewSection(headerTitle: "SNSアカウント設定")
-
-    @hatenaRow = Ti.UI.createTableViewRow
-      touchEnabled: false
-      height: Ti.UI.FILL
-      selectionStyle: Ti.UI.iPhone.TableViewCellSelectionStyle.NONE
+        fontSize:14
+      text:"ログイン"
+      textAlign:'center'
     
-
-    @hatenaRow.addEventListener('click',()->
-      # Ti.API.info "start hatena"
-      # Hatena = require("model/hatena")
-      # hatena = new Hatena()
-      # hatena.login()
+    loginBtn.addEventListener('click',(e) ->
+      mainController = require("controllers/mainContoroller")
+      mainController = new mainController()
+      textField2.enabled = false
+      return mainController.qiitaLogin()
+            
     )
+    cancelBtn = Ti.UI.createLabel
+      width:80
+      height:40
+      top:100
+      left:10
+      backgroundImage:"NONE"
+      borderWidth:0
+      borderRadius:5
+      color:@baseColor.textColor
+      backgroundColor:"#d8514b"
+      font:
+        fontSize:14
+      text:"キャンセル"
+      textAlign:'center'
     
+    cancelBtn.addEventListener('click',(e) =>
+      Ti.API.info @
+      return @hide()
+            
+    )
+
+    _view.add textField1
+    _view.add textField2
+    _view.add loginBtn
+    _view.add cancelBtn
+    
+    return _view
+
+    
+  _createSocialAccountSection:() ->
+    _view = Ti.UI.createView
+      width:200
+      height:180
+      top:0
+      left:0
+      backgroundColor:@baseColor.backgroundColor
+      zIndex:20
     hatenaIconImage = Ti.UI.createImageView
       width:35
       height:35
@@ -118,26 +179,21 @@ class configMenu
       left:5
       image:"ui/image/hatena.png"
       
-    @hatenaLabel = Ti.UI.createLabel(
-      left: 50
-      width:100
-      text: "はてな"
-    )
     if Ti.App.Properties.getBool("hatenaAccessTokenKey")?
-      @hatenaSwitch = Ti.UI.createSwitch(
-        right: 10
-        value: true
-      )
+      hatenaSwitch = Ti.UI.createSwitch
+        left:50
+        top:5
+        value:true
 
     else
-      @hatenaSwitch = Ti.UI.createSwitch(
-        right: 10
-        value: false
-      )  
+      hatenaSwitch = Ti.UI.createSwitch
+        top:5
+        left:50
+        value:false
 
       
     
-    @hatenaSwitch.addEventListener "change", (e) ->
+    hatenaSwitch.addEventListener("change", (e) ->
       if e.value is true
 
         Hatena = require("model/hatena")
@@ -146,42 +202,12 @@ class configMenu
       else
         Ti.App.Properties.removeProperty("hatenaAccessTokenKey")
         Ti.App.Properties.removeProperty("hatenaAccessTokenSecret")
-     
-
-    @hatenaRow.add hatenaIconImage
-
-    @hatenaRow.add @hatenaLabel
-    @hatenaRow.add @hatenaSwitch
-
-
-    platformSection.add @hatenaRow
-
-    @tableView = Ti.UI.createTableView
-      zIndex:0
-      data: [groupData,platformSection]
-      style: Ti.UI.iPhone.TableViewStyle.GROUPED
-      top: 40
-      left:0
-      width:200
-      height:400
-      
-    @tableView.addEventListener('click',(e) ->  
-      if e.index is 2
-        textField2.enabled = false
-        actInd.show()
-        LoginCommand = require("model/loginCommand")
-        loginCommand = new LoginCommand()
-        loginCommand.execute()
-
     )
-    return @tableView
-
-
-  changeHatenaRowElement: (switchFlg) ->
-    @hatenaSwitch.value = switchFlg
-    return 
-
-
+         
+    _view.add hatenaIconImage
+    _view.add hatenaSwitch
+    
+    return _view
 
 
 module.exports = configMenu

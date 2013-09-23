@@ -293,7 +293,7 @@ class Qiita
       url_name: Ti.App.Properties.getString('QiitaLoginID'),
       password: Ti.App.Properties.getString('QiitaLoginPassword')
 
-    qiita._auth(param, (token)=>
+    @_auth(param, (token)=>
       xhr = Ti.Network.createHTTPClient()
       method = 'PUT'
       url = "https://qiita.com/api/v1/items/#{uuid}/stock"
