@@ -22,6 +22,7 @@ class Hatena
         @hatena.request "applications/my.json", {}, {}, "POST", (e) ->
           if e.success
             json = JSON.parse(e.result.text)
+            Ti.App.Properties.setString "hatenaProfileImageURL", json.profile_image_url
             iconImage = Ti.UI.createImageView
               width:40
               height:40
@@ -31,7 +32,7 @@ class Hatena
             
           else
             switchFlg = false
-            configMenu.changeHatenaRowElement(switchFlg)  
+
 
 
       else
