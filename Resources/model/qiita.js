@@ -126,16 +126,6 @@ Qiita = (function() {
     var self, xhr;
     self = this;
     xhr = Ti.Network.createHTTPClient();
-    xhr.ondatastream = function(e) {
-      if (storedTo === "followingTags") {
-        return Ti.API.debug("フォローしてるタグの情報取得する際には何も行わない");
-      } else {
-        if (Math.round(e.progress * 100) <= 100) {
-          Ti.API.info("xhr.ondatastream start progress is " + (Math.round(e.progress * 100)));
-          return progressBar.value = e.progress;
-        }
-      }
-    };
     Ti.API.info(parameter.method + ":" + parameter.url);
     xhr.open(parameter.method, parameter.url);
     xhr.onload = function() {
@@ -298,7 +288,7 @@ Qiita = (function() {
       url_name: Ti.App.Properties.getString('QiitaLoginID'),
       password: Ti.App.Properties.getString('QiitaLoginPassword')
     };
-    return qiita._auth(param, function(token) {
+    return this._auth(param, function(token) {
       var method, url, xhr;
       xhr = Ti.Network.createHTTPClient();
       method = 'PUT';

@@ -1,16 +1,14 @@
-var mainWindow,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+var mainWindow;
 
 mainWindow = (function() {
 
   function mainWindow() {
-    this.refresData = __bind(this.refresData, this);
-
-    var file, json, myTemplate, t, testData;
+    var menuBtn, menuTable,
+      _this = this;
     this.baseColor = {
       barColor: "#f9f9f9",
       backgroundColor: "#f9f9f9",
-      keyColor: '#4BA503',
+      keyColor: '#59BB0C',
       textColor: "#333",
       contentsColor: "#666",
       grayTextColor: "#999"
@@ -20,190 +18,71 @@ mainWindow = (function() {
       barColor: this.baseColor.barColor,
       backgroundColor: this.baseColor.backgroundColor,
       tabBarHidden: true,
-      navBarHidden: false
+      navBarHidden: true
     });
-    this._createNavbarElement();
-    t = Titanium.UI.create2DMatrix().scale(0);
-    myTemplate = {
-      childTemplates: [
-        {
-          type: "Ti.UI.ImageView",
-          bindId: "icon",
-          properties: {
-            defaultImage: "ui/image/logo.png",
-            width: 40,
-            height: 40,
-            left: 5,
-            top: 5
-          }
-        }, {
-          type: "Ti.UI.Label",
-          bindId: "title",
-          properties: {
-            color: this.baseColor.textColor,
-            font: {
-              fontSize: 16,
-              fontWeight: 'bold'
-            },
-            width: 240,
-            height: 20,
-            left: 60,
-            top: 25
-          }
-        }, {
-          type: "Ti.UI.Label",
-          bindId: "handleName",
-          properties: {
-            color: this.baseColor.keyColor,
-            font: {
-              fontSize: 12
-            },
-            width: 200,
-            height: 15,
-            left: 60,
-            top: 5
-          }
-        }, {
-          type: "Ti.UI.Label",
-          bindId: "updateTime",
-          properties: {
-            color: this.baseColor.textColor,
-            font: {
-              fontSize: 12
-            },
-            width: 60,
-            height: 15,
-            right: 0,
-            top: 5
-          }
-        }, {
-          type: "Ti.UI.Label",
-          bindId: "tagIcon",
-          properties: {
-            color: this.baseColor.keyColor,
-            font: {
-              fontSize: 16,
-              fontFamily: 'LigatureSymbols'
-            },
-            width: 20,
-            height: 15,
-            left: 60,
-            top: 103
-          }
-        }, {
-          type: "Ti.UI.Label",
-          bindId: "tags",
-          properties: {
-            color: this.baseColor.keyColor,
-            font: {
-              fontSize: 12
-            },
-            width: 240,
-            height: 15,
-            left: 80,
-            top: 100
-          }
-        }, {
-          type: "Ti.UI.Label",
-          bindId: "contents",
-          properties: {
-            color: this.baseColor.contentsColor,
-            font: {
-              fontSize: 12
-            },
-            width: 240,
-            height: 50,
-            left: 60,
-            top: 45
-          }
-        }
-      ]
-    };
-    this.listView = Ti.UI.createListView({
+    menuTable = require("ui/iphone/menuTable");
+    menuTable = new menuTable();
+    this.window.add(menuTable);
+    this.slideState = false;
+    menuBtn = Ti.UI.createLabel({
+      backgroundColor: "transparent",
+      color: "#f9f9f9",
+      width: 28,
+      height: 28,
+      top: 5,
+      left: 10,
+      font: {
+        fontSize: 32,
+        fontFamily: 'LigatureSymbols'
+      },
+      text: String.fromCharCode("0xe08e")
+    });
+    menuBtn.addEventListener('click', function(e) {
+      Ti.API.info(_this.slideState);
+      if (_this.slideState === true) {
+        return _this.resetSlide();
+      } else {
+        return _this.slideWindow();
+      }
+    });
+    this.navView = Ti.UI.createView({
+      width: Ti.UI.FULL,
+      height: 40,
       top: 0,
       left: 0,
-      templates: {
-        template: myTemplate
-      },
-      defaultItemTemplate: "template"
+      backgroundColor: this.baseColor.keyColor,
+      zIndex: 25
     });
-    this.listView.addEventListener('itemclick', function(e) {
-      var activeTab, data, detailWindow;
-      data = {
-        uuid: e.section.items[0].properties.data.uuid,
-        url: e.section.items[0].properties.data.url,
-        title: e.section.items[0].properties.data.title,
-        body: e.section.items[0].properties.data.body
-      };
-      Ti.App.Analytics.trackPageview("/list/url?" + data.url);
-      detailWindow = require('ui/iphone/detailWindow');
-      detailWindow = new detailWindow(data);
-      activeTab = Ti.API._activeTab;
-      return activeTab.open(detailWindow);
-    });
-    testData = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, "model/testData.json");
-    file = testData.read().toString();
-    json = JSON.parse(file);
-    this.refresData(json);
-    this.window.add(this.listView);
-    return this.window;
+    this.navView.add(menuBtn);
+    this.window.add(this.navView);
   }
 
-  mainWindow.prototype.refresData = function(data) {
-    var dataSet, layout, section, sections, _i, _items, _len;
-    sections = [];
-    section = Ti.UI.createListSection();
-    dataSet = [];
-    for (_i = 0, _len = data.length; _i < _len; _i++) {
-      _items = data[_i];
-      layout = {
-        properties: {
-          height: 120,
-          accessoryType: Ti.UI.LIST_ACCESSORY_TYPE_DISCLOSURE,
-          selectionStyle: Titanium.UI.iPhone.ListViewCellSelectionStyle.NONE,
-          data: _items
-        },
-        title: {
-          text: _items.title
-        },
-        icon: {
-          image: _items.user.profile_image_url
-        },
-        updateTime: {
-          text: _items.updated_at_in_words
-        },
-        handleName: {
-          text: _items.user.url_name
-        },
-        contents: {
-          text: _items.body.replace(/<\/?[^>]+>/gi, "")
-        },
-        tags: {
-          text: 'javascript,ruby,Titanium'
-        },
-        tagIcon: {
-          text: String.fromCharCode("0xe128")
-        }
-      };
-      dataSet.push(layout);
-    }
-    section.setItems(dataSet);
-    sections.push(section);
-    return this.listView.setSections(sections);
+  mainWindow.prototype.getWindow = function() {
+    return this.window;
   };
 
-  mainWindow.prototype._createNavbarElement = function() {
-    var windowTitle;
-    windowTitle = Ti.UI.createLabel({
-      textAlign: 'center',
-      color: this.baseColor.textColor,
-      font: {
-        fontSize: 18,
-        fontFamily: 'Rounded M+ 1p'
-      },
-      text: "Qiita"
-    });
-    this.window.setTitleControl(windowTitle);
+  mainWindow.prototype.resetSlide = function() {
+    var animation, transform;
+    transform = Titanium.UI.create2DMatrix();
+    animation = Titanium.UI.createAnimation();
+    animation.left = 0;
+    animation.transform = transform;
+    animation.duration = 250;
+    mainListView.animate(animation);
+    this.navView.animate(animation);
+    this.slideState = false;
+  };
+
+  mainWindow.prototype.slideWindow = function() {
+    var animation, transform;
+    transform = Titanium.UI.create2DMatrix();
+    animation = Titanium.UI.createAnimation();
+    animation.left = 200;
+    animation.transform = transform;
+    animation.duration = 250;
+    mainListView.animate(animation);
+    this.navView.animate(animation);
+    this.slideState = true;
   };
 
   mainWindow.prototype._createAdView = function() {

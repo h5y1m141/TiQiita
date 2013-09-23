@@ -58,7 +58,7 @@ testsEnabled = false
 
 # 以下からコントローラー読み込み
 MainContoroller = require('controllers/mainContoroller')
-maincontroller =new MainContoroller()
+maincontroller = new MainContoroller()
 
 QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID')
 QiitaLoginPassword = Ti.App.Properties.getString('QiitaLoginPassword')
@@ -67,6 +67,23 @@ if testsEnabled is true
   require('test/tests')
 else
 
-  maincontroller.createTabGroup()
+  # maincontroller.createTabGroup()
+  
+
+  osname = Ti.Platform.osname
+  ListView = require("ui/#{@osname}/listView")
+  MainWindow = require("ui/#{osname}/mainWindow")
+  configMenu = require("ui/#{osname}/configMenu")
+  
+  mainListView = new ListView()
+  MainWindow = new MainWindow()
+  configMenu = new configMenu()
+  menu = configMenu.getMenu()
+  mainWindow = MainWindow.getWindow()
+  mainWindow.add mainListView
+  mainWindow.add menu
+  maincontroller.getFeed()
+  mainWindow.open()
+
 
 
