@@ -35,15 +35,40 @@ menuTable = (function() {
       top: 0
     });
     this.menuTable.addEventListener('click', function(e) {
-      var curretRowIndex, mainController, tagName;
-      MainWindow.resetSlide();
+      var accountName, className, curretRowIndex, mainController, tagName;
       curretRowIndex = e.index;
-      tagName = _this.menuTable.data[0].rows[curretRowIndex].className;
+      className = _this.menuTable.data[0].rows[curretRowIndex].className;
+      tagName = _this.menuTable.data[0].rows[curretRowIndex].tagName;
+      accountName = _this.menuTable.data[0].rows[curretRowIndex].accountName;
       mainController = require("controllers/mainContoroller");
       mainController = new mainController();
-      return mainController.getFeedByTag(tagName);
+      if (className === "storedStocks") {
+        Ti.App.Properties.setString("currentPage", "storedStocks");
+        MainWindow.resetSlide();
+        return mainController.getFeed();
+      } else if (className === "storedMyStocks") {
+        Ti.App.Properties.setString("currentPage", "storedMyStocks");
+        MainWindow.resetSlide();
+        return mainController.getMyStocks();
+      } else if (className === "followerItems") {
+        Ti.App.Properties.setString("currentPage", "followerItems");
+        MainWindow.resetSlide();
+        return mainController.getFollowerItems();
+      } else if (className === "tags") {
+        Ti.App.Properties.setString("currentPage", "followingTag" + tagName);
+        MainWindow.resetSlide();
+        return mainController.getFeedByTag(tagName);
+      } else if (className === "accountSetting") {
+        return configMenu.show(accountName);
+      } else if (className === "noevent") {
+        return Ti.API.info("no event fired!");
+      } else {
+        return Ti.API.info("no event fired!");
+      }
     });
-    rows = [this.makeAllLabelRow()];
+    rows = [];
+    this.makeConfigRow(rows);
+    rows.push(this.makeAllLabelRow());
     this.refreshMenu();
     this.menuTable.setData(rows);
     return this.menuTable;
@@ -78,6 +103,77 @@ menuTable = (function() {
     allLabelRow.add(allStockBtn);
     allLabelRow.add(allLabel);
     return allLabelRow;
+  };
+
+  menuTable.prototype.makeConfigRow = function(rows) {
+    var Btn, Label, accountInfo, baseRow, data, iconImage, profileImage, _i, _label, _len, _row;
+    accountInfo = [
+      {
+        name: 'qiita',
+        iconImage: 'ui/image/qiita.png'
+      }, {
+        name: 'hatena',
+        iconImage: 'ui/image/hatena.png'
+      }, {
+        name: 'twitter',
+        iconImage: 'ui/image/twitter.png'
+      }
+    ];
+    baseRow = Ti.UI.createTableViewRow(this.rowColorTheme);
+    Label = Ti.UI.createLabel(this.fontThemeWhite);
+    Label.text = "アカウント設定";
+    Label.top = 10;
+    Label.left = 35;
+    Btn = Ti.UI.createImageView({
+      image: "ui/image/light_gear.png",
+      left: 5,
+      top: 10,
+      backgroundColor: "transparent"
+    });
+    baseRow.add(Label);
+    baseRow.add(Btn);
+    baseRow.className = 'noevent';
+    rows.push(baseRow);
+    for (_i = 0, _len = accountInfo.length; _i < _len; _i++) {
+      data = accountInfo[_i];
+      _row = Ti.UI.createTableViewRow(this.rowColorTheme);
+      _row.className = 'accountSetting';
+      _row.accountName = data.name;
+      profileImage = Ti.App.Properties.getString("" + data.name + "ProfileImageURL");
+      Ti.API.info(Ti.App.Properties.getString("hatenaProfileImageURL"));
+      if (profileImage === null) {
+        iconImage = Ti.UI.createImageView({
+          width: 30,
+          height: 30,
+          top: 5,
+          left: 5,
+          image: data.iconImage
+        });
+      } else {
+        iconImage = Ti.UI.createImageView({
+          width: 30,
+          height: 30,
+          top: 5,
+          left: 5,
+          image: profileImage
+        });
+      }
+      _row.add(iconImage);
+      _label = Ti.UI.createLabel({
+        width: 200,
+        height: 40,
+        top: 1,
+        left: 60,
+        color: '#fff',
+        font: {
+          fontSize: 12,
+          fontWeight: 'bold'
+        },
+        text: data.name
+      });
+      _row.add(_label);
+      rows.push(_row);
+    }
   };
 
   menuTable.prototype.makeStockRow = function() {
@@ -116,6 +212,7 @@ menuTable = (function() {
     });
     tagRow.add(tagLabel);
     tagRow.add(tagBtn);
+    tagRow.className = 'noevent';
     return tagRow;
   };
 
@@ -170,14 +267,21 @@ menuTable = (function() {
       var _this = this;
       Ti.API.debug("token is " + token);
       if (token === null) {
-        return alert("ユーザIDかパスワードが間違ってます");
+        return Ti.API.info("ユーザIDかパスワードが間違ってます");
       } else {
         return qiita.getFollowingTags(function(result, links) {
           var json, menuRow, rows, textLabel, _i, _len;
+          rows = [];
           if (result.length === 0) {
-            rows = [that.makeAllLabelRow(), that.makeStockRow()];
+            that.makeConfigRow(rows);
+            rows.push(that.makeAllLabelRow());
+            rows.push(that.makeStockRow());
           } else {
-            rows = [that.makeAllLabelRow(), that.makeStockRow(), that.makeFollowerItemsRow(), that.makeTagRow()];
+            that.makeConfigRow(rows);
+            rows.push(that.makeAllLabelRow());
+            rows.push(that.makeStockRow());
+            rows.push(that.makeFollowerItemsRow());
+            rows.push(that.makeTagRow());
             for (_i = 0, _len = result.length; _i < _len; _i++) {
               json = result[_i];
               Ti.App.Properties.setString("followingTag" + json.url_name + "nextURL", null);
@@ -196,7 +300,8 @@ menuTable = (function() {
                 text: json.name
               });
               menuRow.add(textLabel);
-              menuRow.className = "" + json.url_name;
+              menuRow.className = "tags";
+              menuRow.tagName = "" + json.url_name;
               rows.push(menuRow);
             }
           }
