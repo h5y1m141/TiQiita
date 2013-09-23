@@ -23,8 +23,6 @@ mainContoroller = (function() {
         }
       }
     };
-    this.networkDisconnectedMessage = "ネットワーク接続出来ません。ネットワーク設定を再度ご確認ください";
-    this.authenticationFailMessage = "ユーザIDかパスワードに誤りがあるためログインできません";
   }
 
   mainContoroller.prototype.createTabGroup = function() {
@@ -66,9 +64,11 @@ mainContoroller = (function() {
     return this.qiita._auth(param, function(token) {
       Ti.API.debug("token is " + token);
       if (token === null) {
-        return alert("ユーザIDかパスワードが間違ってます");
+        alert("ユーザIDかパスワードが間違ってます");
+        return configMenu.hide();
       } else {
         alert("認証出来ました");
+        configMenu.hide();
         Ti.App.Properties.setString('QiitaLoginID', param.url_name);
         Ti.App.Properties.setString('QiitaLoginPassword', param.password);
         return Ti.App.Properties.setString('QiitaToken', token);
@@ -100,6 +100,123 @@ mainContoroller = (function() {
           Ti.API.info(storedTo);
           return _this.refresData(result);
         }
+      });
+    } else {
+      items.sort(function(a, b) {
+        if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
+          return -1;
+        } else {
+          return 1;
+        }
+      });
+      return this.refresData(items);
+    }
+  };
+
+  mainContoroller.prototype.getFeed = function() {
+    var MAXITEMCOUNT, items, moment, momentja,
+      _this = this;
+    items = JSON.parse(Ti.App.Properties.getString("storedStocks"));
+    moment = require('lib/moment.min');
+    momentja = require('lib/momentja');
+    MAXITEMCOUNT = 20;
+    if ((items != null) === false || items === "") {
+      return this.qiita.getFeed(function(result, links) {
+        result.sort(function(a, b) {
+          if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
+            return -1;
+          } else {
+            return 1;
+          }
+        });
+        if (result.length !== MAXITEMCOUNT) {
+          return Ti.API.info("loadOldEntry hide");
+        } else {
+          return _this.refresData(result);
+        }
+      });
+    } else {
+      items.sort(function(a, b) {
+        if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
+          return -1;
+        } else {
+          return 1;
+        }
+      });
+      return this.refresData(items);
+    }
+  };
+
+  mainContoroller.prototype.getMyStocks = function() {
+    var MAXITEMCOUNT, items, moment, momentja;
+    MAXITEMCOUNT = 20;
+    items = JSON.parse(Ti.App.Properties.getString('storedMyStocks'));
+    moment = require('lib/moment.min');
+    momentja = require('lib/momentja');
+    if ((items != null) === false || items === "") {
+
+    } else {
+      items.sort(function(a, b) {
+        if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
+          return -1;
+        } else {
+          return 1;
+        }
+      });
+      return this.refresData(items);
+    }
+  };
+
+  mainContoroller.prototype.getFollowerItems = function() {
+    var items, moment, momentja, qiitaUser,
+      _this = this;
+    items = JSON.parse(Ti.App.Properties.getString("followerItems"));
+    moment = require('lib/moment.min');
+    momentja = require('lib/momentja');
+    if ((items != null) === false || items === "") {
+      qiitaUser = require("model/qiitaUser");
+      qiitaUser = new qiitaUser();
+      return qiitaUser.getfollowingUserList(function(userList) {
+        var item, xhr, _i, _items, _len, _url;
+        for (_i = 0, _len = userList.length; _i < _len; _i++) {
+          item = userList[_i];
+          _url = "https://qiita.com/api/v1/users/" + item.url_name + "/items?per_page=5";
+          _items = [];
+          xhr = Ti.Network.createHTTPClient();
+          xhr.open("GET", _url);
+          xhr.onload = function() {
+            var _j, _len1, _results;
+            if (this.status === 200) {
+              items = JSON.parse(this.responseText);
+              if (items !== null) {
+                _results = [];
+                for (_j = 0, _len1 = items.length; _j < _len1; _j++) {
+                  item = items[_j];
+                  _results.push(_items.push(item));
+                }
+                return _results;
+              }
+            }
+          };
+          xhr.onerror = function(e) {
+            var error;
+            error = JSON.parse(this.responseText);
+            return Ti.API.info(error);
+          };
+          xhr.timeout = 5000;
+          xhr.send();
+        }
+        return setTimeout((function() {
+          _items.sort(function(a, b) {
+            if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
+              return -1;
+            } else {
+              return 1;
+            }
+          });
+          Ti.App.Properties.setString("followerItems", JSON.stringify(_items));
+          return _this.refresData(_items);
+        }), 10000);
       });
     } else {
       items.sort(function(a, b) {

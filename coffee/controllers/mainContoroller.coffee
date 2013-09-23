@@ -14,8 +14,7 @@ class mainContoroller
         "main":
           "windowName":"mainWindow"      
 
-    @networkDisconnectedMessage = "ネットワーク接続出来ません。ネットワーク設定を再度ご確認ください"
-    @authenticationFailMessage = "ユーザIDかパスワードに誤りがあるためログインできません"
+
   createTabGroup:() ->
     tabGroup = Ti.UI.createTabGroup
       tabsBackgroundColor:"#f9f9f9"
@@ -54,12 +53,14 @@ class mainContoroller
       Ti.API.debug "token is #{token}"
       if token is null
         alert "ユーザIDかパスワードが間違ってます"
-        
+        configMenu.hide()
       else
         alert "認証出来ました"
+        configMenu.hide()        
         Ti.App.Properties.setString 'QiitaLoginID', param.url_name
         Ti.App.Properties.setString 'QiitaLoginPassword', param.password
         Ti.App.Properties.setString 'QiitaToken', token
+        
     )
     
   getFeedByTag:(tagName) ->
@@ -95,7 +96,95 @@ class mainContoroller
         (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
       )
       @refresData(items)
+  getFeed:() ->
+    items = JSON.parse(Ti.App.Properties.getString("storedStocks"))
+    moment = require('lib/moment.min')
+    momentja = require('lib/momentja')
+    MAXITEMCOUNT = 20 # 1リクエスト辺りに読み込まれる最大件数
     
+    if items? is false or items is ""
+      @qiita.getFeed( (result,links) =>
+        result.sort( (a, b) ->
+          (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
+        )
+        
+        if result.length isnt MAXITEMCOUNT
+          Ti.API.info "loadOldEntry hide"
+        else
+          @refresData(result)
+
+      )
+      
+    else
+      items.sort( (a, b) ->
+
+        (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
+      )
+      @refresData(items)    
+            
+  getMyStocks:() ->
+    MAXITEMCOUNT = 20 # 1リクエスト辺りに読み込まれる最大件数
+    items = JSON.parse(Ti.App.Properties.getString('storedMyStocks'))
+    moment = require('lib/moment.min')
+    momentja = require('lib/momentja')
+    if items? is false or items is ""
+      
+    else
+      items.sort( (a, b) ->
+
+        (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
+      )
+      @refresData(items)
+      
+  # フォロワー投稿を取得するメソッド
+  getFollowerItems:() ->
+    items = JSON.parse(Ti.App.Properties.getString("followerItems"))
+    moment = require('lib/moment.min')
+    momentja = require('lib/momentja')
+    
+    if items? is false or items is ""
+      qiitaUser = require("model/qiitaUser")
+      qiitaUser = new qiitaUser()
+      qiitaUser.getfollowingUserList( (userList) =>
+        # 1)フォローしてるユーザ情報のuserListを
+        # 順番にループして個々のユーザの投稿情報を取得
+        for item in userList
+          _url = "https://qiita.com/api/v1/users/#{item.url_name}/items?per_page=5"
+          _items = []
+          xhr = Ti.Network.createHTTPClient()
+          xhr.open("GET",_url)
+          xhr.onload = ->
+            if @.status is 200
+              items = JSON.parse(@.responseText)
+              if items isnt null
+                for item in items
+                  _items.push item
+
+          xhr.onerror = (e) ->
+            error = JSON.parse(@.responseText)
+            Ti.API.info error
+          xhr.timeout = 5000  
+          xhr.send()
+          
+        # 1)の処理は非同期で実施されるため、最終的に
+        # 全部のユーザの投稿情報を取得するのに時間がかかるため
+        # ひとまず10秒間まってから取得した投稿情報のローカルへのキャッシュを実施
+        setTimeout (=>
+          _items.sort( (a, b) ->
+            (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
+          )
+          # フォローしてるユーザの投稿情報をローカルにキャッシュ
+          Ti.App.Properties.setString("followerItems",JSON.stringify(_items))
+          @refresData(_items)
+        ),10000          
+      )
+    else
+      items.sort( (a, b) ->
+
+        (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
+      )
+      @refresData(items)      
+              
   setItems:() ->
     that = @
     @qiita.getFeed( (result) ->
