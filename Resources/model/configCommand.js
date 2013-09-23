@@ -1,6 +1,9 @@
 var configCommand;
+
 configCommand = (function() {
+
   function configCommand() {}
+
   configCommand.prototype.execute = function() {
     var configMenu, configWindow, menu;
     configMenu = require("ui/configMenu");
@@ -11,6 +14,9 @@ configCommand = (function() {
     configWindow.add(menu);
     return tab.open(configWindow);
   };
+
   return configCommand;
+
 })();
+
 module.exports = configCommand;
