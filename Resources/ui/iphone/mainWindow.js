@@ -3,7 +3,7 @@ var mainWindow;
 mainWindow = (function() {
 
   function mainWindow() {
-    var ConfigMenu, configMenu, menuBtn, menuTable,
+    var menuBtn, menuTable,
       _this = this;
     this.baseColor = {
       barColor: "#f9f9f9",
@@ -20,8 +20,6 @@ mainWindow = (function() {
       tabBarHidden: true,
       navBarHidden: true
     });
-    ConfigMenu = require("ui/iphone/configMenu");
-    configMenu = new ConfigMenu();
     menuTable = require("ui/iphone/menuTable");
     menuTable = new menuTable();
     this.window.add(menuTable);

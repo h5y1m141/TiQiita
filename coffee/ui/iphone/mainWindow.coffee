@@ -14,13 +14,11 @@ class mainWindow
       tabBarHidden:true
       navBarHidden:true
       
-    ConfigMenu = require("ui/iphone/configMenu")
-    configMenu = new ConfigMenu()
     
     menuTable = require("ui/iphone/menuTable")
     menuTable = new menuTable()
     @window.add menuTable
-    # @window.add configMenu
+
     @slideState = false
     
     menuBtn = Ti.UI.createLabel

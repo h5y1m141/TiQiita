@@ -1,4 +1,4 @@
-var Config, ListView, MainContoroller, MainWindow, QiitaLoginID, QiitaLoginPassword, analytics, config, gaKey, gaModule, mainListView, mainWindow, maincontroller, osname, testsEnabled;
+var Config, ListView, MainContoroller, MainWindow, QiitaLoginID, QiitaLoginPassword, analytics, config, configMenu, gaKey, gaModule, mainListView, mainWindow, maincontroller, menu, osname, testsEnabled;
 
 Config = require("model/loadConfig");
 
@@ -64,10 +64,14 @@ if (testsEnabled === true) {
   osname = Ti.Platform.osname;
   ListView = require("ui/" + this.osname + "/listView");
   MainWindow = require("ui/" + osname + "/mainWindow");
+  configMenu = require("ui/" + osname + "/configMenu");
   mainListView = new ListView();
   MainWindow = new MainWindow();
+  configMenu = new configMenu();
+  menu = configMenu.getMenu();
   mainWindow = MainWindow.getWindow();
   mainWindow.add(mainListView);
+  mainWindow.add(menu);
   maincontroller.getFeed();
   mainWindow.open();
 }

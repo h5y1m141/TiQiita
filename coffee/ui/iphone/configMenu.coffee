@@ -8,22 +8,56 @@ class configMenu
 
     @QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID')
     @QiitaLoginPassword = Ti.App.Properties.getString('QiitaLoginPassword')
-    qiitaAccountSection = @_createQiitaAccountSection()
-    socialAccountSection = @_createSocialAccountSection()
     
-    view = Ti.UI.createView
+    t = Titanium.UI.create2DMatrix().scale(0.0)    
+    @view = Ti.UI.createView
       width:200
-      height:Ti.Platform.displayCaps.platformHeight
+      height:200
       backgroundColor:@baseColor.backgroundColor
-      top:0
+      top:80
       left:0
+      zIndex:10
+      transform:t
+      
+    qiitaAccountSection = @_createQiitaAccountSection()
+    @view.add qiitaAccountSection
     
-    view.add qiitaAccountSection
-    view.add socialAccountSection
+
+  getMenu:() ->
+    return @view
+
+  show:(accountName) ->
+
+    if accountName is 'qiita'
+      t1 = Titanium.UI.create2DMatrix()
+      t1 = t1.scale(1.0)
+      animation = Titanium.UI.createAnimation()
+      animation.transform = t1
+      animation.duration = 250
+      return @view.animate(animation)
+      
+    else if accountName is 'hatena'
+      Hatena = require("model/hatena")
+      hatena = new Hatena()
+      return hatena.login()    
+
+    else if accountName is 'twitter'
+      Twitter = require("model/twitter")
+      twitter = new Twitter()
+      return twitter.login()
+    else
+      Ti.API.info 'no action'
     
-    return view
-
-
+      
+    
+  hide:() ->
+    t1 = Titanium.UI.create2DMatrix()
+    t1 = t1.scale(0.0)
+    animation = Titanium.UI.createAnimation()
+    animation.transform = t1
+    animation.duration = 250
+    return @view.animate(animation)
+    
   _createQiitaAccountSection:() ->
     _view = Ti.UI.createView
       width:200
@@ -80,10 +114,10 @@ class configMenu
       textField2.value = QiitaLoginPassword
       
     loginBtn = Ti.UI.createLabel
-      width:120
+      width:80
       height:40
       top:100
-      left:10
+      right:10
       backgroundImage:"NONE"
       borderWidth:0
       borderRadius:5
@@ -91,8 +125,7 @@ class configMenu
       backgroundColor:"#4cda64"
       font:
         fontSize:14
-        fontFamily :'Rounded M+ 1p'
-      text:"ログインする"
+      text:"ログイン"
       textAlign:'center'
     
     loginBtn.addEventListener('click',(e) ->
@@ -102,19 +135,40 @@ class configMenu
       return mainController.qiitaLogin()
             
     )
+    cancelBtn = Ti.UI.createLabel
+      width:80
+      height:40
+      top:100
+      left:10
+      backgroundImage:"NONE"
+      borderWidth:0
+      borderRadius:5
+      color:@baseColor.textColor
+      backgroundColor:"#d8514b"
+      font:
+        fontSize:14
+      text:"キャンセル"
+      textAlign:'center'
+    
+    cancelBtn.addEventListener('click',(e) =>
+      Ti.API.info @
+      return @hide()
+            
+    )
 
     _view.add textField1
     _view.add textField2
     _view.add loginBtn
+    _view.add cancelBtn
     
     return _view
 
     
   _createSocialAccountSection:() ->
     _view = Ti.UI.createView
-      width:Ti.UI.FULL
+      width:200
       height:180
-      top:200
+      top:0
       left:0
       backgroundColor:@baseColor.backgroundColor
       zIndex:20

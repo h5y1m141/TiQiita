@@ -3,7 +3,7 @@ var configMenu;
 configMenu = (function() {
 
   function configMenu() {
-    var qiitaAccountSection, socialAccountSection, view;
+    var qiitaAccountSection, t;
     this.baseColor = {
       backgroundColor: "#f9f9f9",
       barBackgroundColor: "#222",
@@ -12,22 +12,59 @@ configMenu = (function() {
     };
     this.QiitaLoginID = Ti.App.Properties.getString('QiitaLoginID');
     this.QiitaLoginPassword = Ti.App.Properties.getString('QiitaLoginPassword');
-    qiitaAccountSection = this._createQiitaAccountSection();
-    socialAccountSection = this._createSocialAccountSection();
-    view = Ti.UI.createView({
+    t = Titanium.UI.create2DMatrix().scale(0.0);
+    this.view = Ti.UI.createView({
       width: 200,
-      height: Ti.Platform.displayCaps.platformHeight,
+      height: 200,
       backgroundColor: this.baseColor.backgroundColor,
-      top: 0,
-      left: 0
+      top: 80,
+      left: 0,
+      zIndex: 10,
+      transform: t
     });
-    view.add(qiitaAccountSection);
-    view.add(socialAccountSection);
-    return view;
+    qiitaAccountSection = this._createQiitaAccountSection();
+    this.view.add(qiitaAccountSection);
   }
 
+  configMenu.prototype.getMenu = function() {
+    return this.view;
+  };
+
+  configMenu.prototype.show = function(accountName) {
+    var Hatena, Twitter, animation, hatena, t1, twitter;
+    if (accountName === 'qiita') {
+      t1 = Titanium.UI.create2DMatrix();
+      t1 = t1.scale(1.0);
+      animation = Titanium.UI.createAnimation();
+      animation.transform = t1;
+      animation.duration = 250;
+      return this.view.animate(animation);
+    } else if (accountName === 'hatena') {
+      Hatena = require("model/hatena");
+      hatena = new Hatena();
+      return hatena.login();
+    } else if (accountName === 'twitter') {
+      Twitter = require("model/twitter");
+      twitter = new Twitter();
+      return twitter.login();
+    } else {
+      return Ti.API.info('no action');
+    }
+  };
+
+  configMenu.prototype.hide = function() {
+    var animation, t1;
+    t1 = Titanium.UI.create2DMatrix();
+    t1 = t1.scale(0.0);
+    animation = Titanium.UI.createAnimation();
+    animation.transform = t1;
+    animation.duration = 250;
+    return this.view.animate(animation);
+  };
+
   configMenu.prototype._createQiitaAccountSection = function() {
-    var loginBtn, textField1, textField2, _view;
+    var cancelBtn, loginBtn, textField1, textField2, _view,
+      _this = this;
     _view = Ti.UI.createView({
       width: 200,
       height: 200,
@@ -82,20 +119,19 @@ configMenu = (function() {
       textField2.value = QiitaLoginPassword;
     }
     loginBtn = Ti.UI.createLabel({
-      width: 120,
+      width: 80,
       height: 40,
       top: 100,
-      left: 10,
+      right: 10,
       backgroundImage: "NONE",
       borderWidth: 0,
       borderRadius: 5,
       color: this.baseColor.textColor,
       backgroundColor: "#4cda64",
       font: {
-        fontSize: 14,
-        fontFamily: 'Rounded M+ 1p'
+        fontSize: 14
       },
-      text: "ログインする",
+      text: "ログイン",
       textAlign: 'center'
     });
     loginBtn.addEventListener('click', function(e) {
@@ -105,18 +141,39 @@ configMenu = (function() {
       textField2.enabled = false;
       return mainController.qiitaLogin();
     });
+    cancelBtn = Ti.UI.createLabel({
+      width: 80,
+      height: 40,
+      top: 100,
+      left: 10,
+      backgroundImage: "NONE",
+      borderWidth: 0,
+      borderRadius: 5,
+      color: this.baseColor.textColor,
+      backgroundColor: "#d8514b",
+      font: {
+        fontSize: 14
+      },
+      text: "キャンセル",
+      textAlign: 'center'
+    });
+    cancelBtn.addEventListener('click', function(e) {
+      Ti.API.info(_this);
+      return _this.hide();
+    });
     _view.add(textField1);
     _view.add(textField2);
     _view.add(loginBtn);
+    _view.add(cancelBtn);
     return _view;
   };
 
   configMenu.prototype._createSocialAccountSection = function() {
     var hatenaIconImage, hatenaSwitch, _view;
     _view = Ti.UI.createView({
-      width: Ti.UI.FULL,
+      width: 200,
       height: 180,
-      top: 200,
+      top: 0,
       left: 0,
       backgroundColor: this.baseColor.backgroundColor,
       zIndex: 20
