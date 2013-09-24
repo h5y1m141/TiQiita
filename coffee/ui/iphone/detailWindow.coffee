@@ -4,7 +4,7 @@ class detailWindow
       barColor:"#f9f9f9"
       backgroundColor:"#f9f9f9"
       barBackgroundColor:"#222"
-      keyColor:'#4BA503'
+      keyColor:'#59BB0C'      
       textColor:"#f9f9f9"    
 
     @detailWindow = Ti.UI.createWindow
