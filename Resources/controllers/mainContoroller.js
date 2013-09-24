@@ -71,7 +71,11 @@ mainContoroller = (function() {
         configMenu.hide();
         Ti.App.Properties.setString('QiitaLoginID', param.url_name);
         Ti.App.Properties.setString('QiitaLoginPassword', param.password);
-        return Ti.App.Properties.setString('QiitaToken', token);
+        Ti.App.Properties.setString('QiitaToken', token);
+        return _this.qiita.getUserInfo(param.url_name, function(json) {
+          Ti.API.info("getUserInfo done userInfo is " + json.profile_image_url);
+          return Ti.App.Properties.setString("qiitaProfileImageURL", json.profile_image_url);
+        });
       }
     });
   };

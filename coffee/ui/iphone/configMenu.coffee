@@ -151,7 +151,7 @@ class configMenu
       textAlign:'center'
     
     cancelBtn.addEventListener('click',(e) =>
-      Ti.API.info @
+
       return @hide()
             
     )

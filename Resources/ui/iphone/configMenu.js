@@ -158,7 +158,6 @@ configMenu = (function() {
       textAlign: 'center'
     });
     cancelBtn.addEventListener('click', function(e) {
-      Ti.API.info(_this);
       return _this.hide();
     });
     _view.add(textField1);
