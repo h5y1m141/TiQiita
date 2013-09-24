@@ -70,10 +70,9 @@ class menuTable
     rows = []
     @makeConfigRow(rows)
     rows.push(@makeAllLabelRow())
-
     @refreshMenu()
-
     @menuTable.setData rows
+    
     return
     
   getMenuTable:() ->

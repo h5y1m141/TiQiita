@@ -74,7 +74,8 @@ mainContoroller = (function() {
         Ti.App.Properties.setString('QiitaToken', token);
         return _this.qiita.getUserInfo(param.url_name, function(json) {
           Ti.API.info("getUserInfo done userInfo is " + json.profile_image_url);
-          return Ti.App.Properties.setString("qiitaProfileImageURL", json.profile_image_url);
+          Ti.App.Properties.setString("qiitaProfileImageURL", json.profile_image_url);
+          return MenuTable.refreshMenu();
         });
       }
     });

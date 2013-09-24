@@ -1,4 +1,4 @@
-var Config, ListView, MainContoroller, MainWindow, MenuTable, QiitaLoginID, QiitaLoginPassword, analytics, config, configMenu, configmenu, gaKey, gaModule, mainListView, mainWindow, maincontroller, menuTable, osname, testsEnabled;
+var Config, ListView, MainContoroller, MainWindow, MenuTable, QiitaLoginID, QiitaLoginPassword, analytics, config, configMenu, configmenu, gaKey, gaModule, mainListView, mainWindow, maincontroller, menu, osname, testsEnabled;
 
 Config = require("model/loadConfig");
 
@@ -69,13 +69,13 @@ if (testsEnabled === true) {
   mainListView = new ListView();
   MainWindow = new MainWindow();
   configMenu = new configMenu();
-  menuTable = new MenuTable();
+  MenuTable = new MenuTable();
   configmenu = configMenu.getMenu();
   mainWindow = MainWindow.getWindow();
-  menuTable = menuTable.getMenuTable();
+  menu = MenuTable.getMenuTable();
   mainWindow.add(mainListView);
   mainWindow.add(configmenu);
-  mainWindow.add(menuTable);
+  mainWindow.add(menu);
   maincontroller.getFeed();
   mainWindow.open();
 }

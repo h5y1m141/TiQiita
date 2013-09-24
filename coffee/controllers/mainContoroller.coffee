@@ -64,6 +64,9 @@ class mainContoroller
         @qiita.getUserInfo(param.url_name,(json) ->
           Ti.API.info "getUserInfo done userInfo is #{json.profile_image_url}"
           Ti.App.Properties.setString "qiitaProfileImageURL", json.profile_image_url
+          # メニューをリフレッシュしてアイコン画像を反映させる
+
+          MenuTable.refreshMenu()
         )
         
     )
