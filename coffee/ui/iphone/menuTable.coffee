@@ -19,8 +19,7 @@ class menuTable
       borderColor:'#ededed'
       height:40
       backgroundColor:@backgroundColorSub
-
-    
+      
     @menuTable = Ti.UI.createTableView
       backgroundColor:backgroundColorBase
       separatorStyle:1
@@ -63,8 +62,6 @@ class menuTable
         Ti.API.info "no event fired!"
       else
         Ti.API.info "no event fired!"
-        
-        
 
     )
     rows = []

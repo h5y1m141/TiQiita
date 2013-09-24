@@ -26,6 +26,7 @@ class Twitter
             profileImageURL = json.profile_image_url
             Ti.API.info profileImageURL
             Ti.App.Properties.setString "twitterProfileImageURL", profileImageURL
+            MenuTable.refreshMenu()
             
           else
             switchFlg = false

@@ -26,7 +26,8 @@ Hatena = (function() {
           var json, switchFlg;
           if (e.success) {
             json = JSON.parse(e.result.text);
-            return Ti.App.Properties.setString("hatenaProfileImageURL", json.profile_image_url);
+            Ti.App.Properties.setString("hatenaProfileImageURL", json.profile_image_url);
+            return MenuTable.refreshMenu();
           } else {
             return switchFlg = false;
           }

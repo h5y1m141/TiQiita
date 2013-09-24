@@ -28,7 +28,8 @@ Twitter = (function() {
             json = JSON.parse(e.result.text);
             profileImageURL = json.profile_image_url;
             Ti.API.info(profileImageURL);
-            return Ti.App.Properties.setString("twitterProfileImageURL", profileImageURL);
+            Ti.App.Properties.setString("twitterProfileImageURL", profileImageURL);
+            return MenuTable.refreshMenu();
           } else {
             return switchFlg = false;
           }

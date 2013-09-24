@@ -23,6 +23,7 @@ class Hatena
           if e.success
             json = JSON.parse(e.result.text)
             Ti.App.Properties.setString "hatenaProfileImageURL", json.profile_image_url
+            MenuTable.refreshMenu()
             
           else
             switchFlg = false
