@@ -146,8 +146,8 @@ class Qiita
 
       # アプリ起動中にキャッシュしたい情報かどうかをこのstoredToパラメータ
       # にて行う。
-      if storedTo is "followingTags"
-        Ti.API.debug "フォローしてるタグの情報取得する際には何も行わない"
+      if storedTo is "followingTags" or storedTo is false
+        Ti.API.debug "キャッシュ処理は実施しませんでした"
       else
 
         Ti.API.info "start _storedStocks #{storedTo}"
@@ -261,6 +261,13 @@ class Qiita
       "method":'GET'
     @._request(param,storedTo,callback)
 
+  getUserInfo:(userName,callback) ->
+    url = "https://qiita.com/api/v1/users/#{userName}"
+    param =
+      "url": url
+      "method":'GET'
+
+    @._request(param,false,callback)
 
   getMyStocks:(callback) =>
 
