@@ -73,14 +73,21 @@ else
   ListView = require("ui/#{@osname}/listView")
   MainWindow = require("ui/#{osname}/mainWindow")
   configMenu = require("ui/#{osname}/configMenu")
-  
+  MenuTable = require("ui/iphone/menuTable")
+
   mainListView = new ListView()
   MainWindow = new MainWindow()
   configMenu = new configMenu()
-  menu = configMenu.getMenu()
+  MenuTable = new MenuTable()
+    
+  configmenu = configMenu.getMenu()
   mainWindow = MainWindow.getWindow()
+  menu = MenuTable.getMenuTable()
+  
   mainWindow.add mainListView
+  mainWindow.add configmenu
   mainWindow.add menu
+  
   maincontroller.getFeed()
   mainWindow.open()
 

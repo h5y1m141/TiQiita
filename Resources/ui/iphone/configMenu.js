@@ -158,59 +158,12 @@ configMenu = (function() {
       textAlign: 'center'
     });
     cancelBtn.addEventListener('click', function(e) {
-      Ti.API.info(_this);
       return _this.hide();
     });
     _view.add(textField1);
     _view.add(textField2);
     _view.add(loginBtn);
     _view.add(cancelBtn);
-    return _view;
-  };
-
-  configMenu.prototype._createSocialAccountSection = function() {
-    var hatenaIconImage, hatenaSwitch, _view;
-    _view = Ti.UI.createView({
-      width: 200,
-      height: 180,
-      top: 0,
-      left: 0,
-      backgroundColor: this.baseColor.backgroundColor,
-      zIndex: 20
-    });
-    hatenaIconImage = Ti.UI.createImageView({
-      width: 35,
-      height: 35,
-      top: 5,
-      left: 5,
-      image: "ui/image/hatena.png"
-    });
-    if (Ti.App.Properties.getBool("hatenaAccessTokenKey") != null) {
-      hatenaSwitch = Ti.UI.createSwitch({
-        left: 50,
-        top: 5,
-        value: true
-      });
-    } else {
-      hatenaSwitch = Ti.UI.createSwitch({
-        top: 5,
-        left: 50,
-        value: false
-      });
-    }
-    hatenaSwitch.addEventListener("change", function(e) {
-      var Hatena, hatena;
-      if (e.value === true) {
-        Hatena = require("model/hatena");
-        hatena = new Hatena();
-        return hatena.login();
-      } else {
-        Ti.App.Properties.removeProperty("hatenaAccessTokenKey");
-        return Ti.App.Properties.removeProperty("hatenaAccessTokenSecret");
-      }
-    });
-    _view.add(hatenaIconImage);
-    _view.add(hatenaSwitch);
     return _view;
   };
 

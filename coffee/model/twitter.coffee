@@ -1,28 +1,31 @@
-class Hatena
+class Twitter
   constructor: () ->
-    configJSON = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'config/hatena.json')
+    configJSON = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, 'config/twitter.json')
     file = configJSON.read().toString();
     config = JSON.parse(file);
 
-    @hatena = require('lib/hatena').Hatena(
+    @twitter = require('lib/twitter').Twitter(
       consumerKey: config.consumerKey
       consumerSecret: config.consumerSecret
-      accessTokenKey: Ti.App.Properties.getString('hatenaAccessTokenKey', '')
-      accessTokenSecret: Ti.App.Properties.getString('hatenaAccessTokenSecret', '')
+      accessTokenKey: Ti.App.Properties.getString('twitterAccessTokenKey', '')
+      accessTokenSecret: Ti.App.Properties.getString('twitterAccessTokenSecret', '')
       scope: 'read_public,write_public'
     )
 
 
   login:() ->
 
-    @hatena.addEventListener "login", (e) =>
+    @twitter.addEventListener "login", (e) =>
       if e.success
-        Ti.App.Properties.setString "hatenaAccessTokenKey", e.accessTokenKey
-        Ti.App.Properties.setString "hatenaAccessTokenSecret", e.accessTokenSecret
-        @hatena.request "applications/my.json", {}, {}, "POST", (e) ->
+        Ti.App.Properties.setString 'twitterAccessTokenKey', e.accessTokenKey
+        Ti.App.Properties.setString 'twitterAccessTokenSecret', e.accessTokenSecret
+        @twitter.request "1.1/account/verify_credentials.json", {}, {}, "GET", (e) ->
           if e.success
             json = JSON.parse(e.result.text)
-            Ti.App.Properties.setString "hatenaProfileImageURL", json.profile_image_url
+
+            profileImageURL = json.profile_image_url
+            Ti.API.info profileImageURL
+            Ti.App.Properties.setString "twitterProfileImageURL", profileImageURL
             MenuTable.refreshMenu()
             
           else
@@ -34,12 +37,12 @@ class Hatena
 
     
 
-    @hatena.authorize()
+    @twitter.authorize()
 
 
     return true
 
-  postBookmark:(url,contents,callback) ->
+  postTweet:(url,contents,callback) ->
       
     Ti.API.info "hanate postBookmark start. url is #{url} and contents is #{contents}"
     xml = """
@@ -60,9 +63,9 @@ class Hatena
       )
     else
       alertDialog = Ti.UI.createAlertDialog()
-      alertDialog.setTitle "はてなのアカウント認証に失敗してるようです。\nこのアプリの設定画面のはてなのアカウントの設定を念のためご確認ください"
+      alertDialog.setTitle "Twitterアカウント認証に失敗してるようです。\nこのアプリの設定画面のアカウントの設定を念のためご確認ください"
       alertDialog.show()
       
 
 
-module.exports = Hatena
+module.exports = Twitter

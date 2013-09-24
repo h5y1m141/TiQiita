@@ -60,6 +60,14 @@ class mainContoroller
         Ti.App.Properties.setString 'QiitaLoginID', param.url_name
         Ti.App.Properties.setString 'QiitaLoginPassword', param.password
         Ti.App.Properties.setString 'QiitaToken', token
+        #  認証済とわかるように、Qiitaのユーザ情報からアイコン画像のパスを取得しておく
+        @qiita.getUserInfo(param.url_name,(json) ->
+          Ti.API.info "getUserInfo done userInfo is #{json.profile_image_url}"
+          Ti.App.Properties.setString "qiitaProfileImageURL", json.profile_image_url
+          # メニューをリフレッシュしてアイコン画像を反映させる
+
+          MenuTable.refreshMenu()
+        )
         
     )
     
