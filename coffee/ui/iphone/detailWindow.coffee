@@ -175,7 +175,7 @@ class detailWindow
       Ti.API.info hatenaPostFlg
       mainController = require("controllers/mainContoroller")
       mainController = new mainController()
-      mainController.stockItem(that.uuid,that.url,contents,qiitaPostFlg,hatenaPostFlg,(result) ->
+      mainController.stockItem(that.uuid,that.url,contents,qiitaPostFlg,hatenaPostFlg,tweetFlg,(result) ->
         ## result = [qiitaPostResult,hatenaPostResult]となってる
         if result
           actInd.hide()

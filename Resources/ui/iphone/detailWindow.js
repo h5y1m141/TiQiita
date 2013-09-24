@@ -163,7 +163,7 @@ detailWindow = (function() {
       Ti.API.info(hatenaPostFlg);
       mainController = require("controllers/mainContoroller");
       mainController = new mainController();
-      return mainController.stockItem(that.uuid, that.url, contents, qiitaPostFlg, hatenaPostFlg, function(result) {
+      return mainController.stockItem(that.uuid, that.url, contents, qiitaPostFlg, hatenaPostFlg, tweetFlg, function(result) {
         if (result) {
           actInd.hide();
           that._hideDialog(_view, Ti.API.info("投稿処理が完了"));
