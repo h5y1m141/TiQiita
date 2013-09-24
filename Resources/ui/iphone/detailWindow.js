@@ -19,6 +19,7 @@ detailWindow = (function() {
       tabBarHidden: false
     });
     this.hatenaAccessTokenKey = Ti.App.Properties.getString("hatenaAccessTokenKey");
+    this.twitterAccessTokenKey = Ti.App.Properties.getString('twitterAccessTokenKey');
     this.QiitaToken = Ti.App.Properties.getString('QiitaToken');
     this.uuid = data.uuid;
     this.url = data.url;
@@ -46,11 +47,12 @@ detailWindow = (function() {
   }
 
   detailWindow.prototype._createDialog = function() {
-    var cancelleBtn, contents, hatenaIcon, hatenaPostFlg, hatenaPostLabel, hatenaPostSwitch, hintLabel, qiitaIcon, qiitaPostFlg, qiitaPostLabel, qiitaPostSwitch, registMemoBtn, selectedValue, textArea, textCounter, _view,
+    var cancelleBtn, contents, hatenaIcon, hatenaPostFlg, hatenaPostLabel, hatenaPostSwitch, hintLabel, qiitaIcon, qiitaPostFlg, qiitaPostLabel, qiitaPostSwitch, registMemoBtn, selectedValue, textArea, textCounter, tweetFlg, tweetLabel, tweetSwitch, twitterIcon, _view,
       _this = this;
     selectedValue = false;
     qiitaPostFlg = false;
     hatenaPostFlg = false;
+    tweetFlg = false;
     _view = Ti.UI.createView({
       width: Ti.UI.FULL,
       height: Ti.Platform.displayCaps.platformHeight - 40,
@@ -257,12 +259,49 @@ detailWindow = (function() {
       height: 20,
       backgroundColor: 'transparent'
     });
+    twitterIcon = Ti.UI.createImageView({
+      image: "ui/image/twitter.png",
+      top: 190,
+      left: 10,
+      width: 35,
+      height: 35
+    });
+    if ((this.twitterAccessTokenKey != null) === true) {
+      tweetFlg = true;
+    } else {
+      tweetFlg = false;
+    }
+    tweetSwitch = Ti.UI.createSwitch({
+      value: tweetFlg,
+      top: 195,
+      left: 200
+    });
+    tweetSwitch.addEventListener('change', function(e) {
+      return tweetFlg = e.source.value;
+    });
+    tweetLabel = Ti.UI.createLabel({
+      text: "tweetする",
+      textAlign: 'left',
+      font: {
+        fontSize: 16,
+        fontFamily: 'Rounded M+ 1p'
+      },
+      color: "#222",
+      top: 195,
+      left: 50,
+      widht: 100,
+      height: 20,
+      backgroundColor: 'transparent'
+    });
     _view.add(qiitaIcon);
     _view.add(qiitaPostSwitch);
     _view.add(qiitaPostLabel);
     _view.add(hatenaIcon);
     _view.add(hatenaPostSwitch);
     _view.add(hatenaPostLabel);
+    _view.add(twitterIcon);
+    _view.add(tweetSwitch);
+    _view.add(tweetLabel);
     _view.add(textArea);
     _view.add(registMemoBtn);
     _view.add(cancelleBtn);

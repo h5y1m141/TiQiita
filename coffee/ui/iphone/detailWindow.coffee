@@ -14,9 +14,9 @@ class detailWindow
       navBarHidden: false
       tabBarHidden: false
 
-    # Qiita へのストックやはてブする時に必要となるTokenと
-    # uuid，URLを設定 
+    # Qiita へのストック、はてブ、Tweetする時に必要となるTokenとuuid，URLを設定 
     @hatenaAccessTokenKey  = Ti.App.Properties.getString("hatenaAccessTokenKey")
+    @twitterAccessTokenKey = Ti.App.Properties.getString('twitterAccessTokenKey')
     @QiitaToken = Ti.App.Properties.getString('QiitaToken')
     @uuid = data.uuid
     @url  = data.url        
@@ -58,6 +58,7 @@ class detailWindow
     selectedValue = false
     qiitaPostFlg = false
     hatenaPostFlg = false
+    tweetFlg = false
         
     _view = Ti.UI.createView
       width:Ti.UI.FULL
@@ -267,6 +268,40 @@ class detailWindow
       widht:100
       height:20
       backgroundColor: 'transparent'
+      
+    twitterIcon = Ti.UI.createImageView
+      image:"ui/image/twitter.png"
+      top:190
+      left:10
+      width:35
+      height:35
+      
+    if @twitterAccessTokenKey? is true
+      tweetFlg = true
+    else
+      tweetFlg = false
+
+      
+    tweetSwitch = Ti.UI.createSwitch
+      value:tweetFlg
+      top:195
+      left:200
+      
+    tweetSwitch.addEventListener('change',(e)  ->
+      tweetFlg = e.source.value
+    )
+    tweetLabel = Ti.UI.createLabel
+      text :"tweetする"
+      textAlign:'left'
+      font:
+        fontSize:16
+        fontFamily :'Rounded M+ 1p'
+      color:"#222"
+      top:195
+      left:50
+      widht:100
+      height:20
+      backgroundColor: 'transparent'
     
     _view.add qiitaIcon
     _view.add qiitaPostSwitch
@@ -274,6 +309,12 @@ class detailWindow
     _view.add hatenaIcon
     _view.add hatenaPostSwitch
     _view.add hatenaPostLabel
+    _view.add twitterIcon
+    _view.add tweetSwitch    
+    _view.add tweetLabel
+
+
+    
     _view.add textArea
     _view.add registMemoBtn
     _view.add cancelleBtn
