@@ -1,4 +1,4 @@
-var Config, ListView, MainContoroller, MainWindow, QiitaLoginID, QiitaLoginPassword, analytics, config, configMenu, gaKey, gaModule, mainListView, mainWindow, maincontroller, menu, osname, testsEnabled;
+var Config, ListView, MainContoroller, MainWindow, QiitaLoginID, QiitaLoginPassword, analytics, config, configMenu, gaKey, gaModule, mainListView, mainWindow, maincontroller, menu, menuTable, osname, testsEnabled;
 
 Config = require("model/loadConfig");
 
@@ -65,6 +65,9 @@ if (testsEnabled === true) {
   ListView = require("ui/" + this.osname + "/listView");
   MainWindow = require("ui/" + osname + "/mainWindow");
   configMenu = require("ui/" + osname + "/configMenu");
+  menuTable = require("ui/iphone/menuTable");
+  menuTable = new menuTable();
+  this.window.add(menuTable);
   mainListView = new ListView();
   MainWindow = new MainWindow();
   configMenu = new configMenu();

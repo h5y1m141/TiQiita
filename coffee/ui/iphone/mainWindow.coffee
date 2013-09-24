@@ -14,10 +14,6 @@ class mainWindow
       tabBarHidden:true
       navBarHidden:true
       
-    
-    menuTable = require("ui/iphone/menuTable")
-    menuTable = new menuTable()
-    @window.add menuTable
 
     @slideState = false
     

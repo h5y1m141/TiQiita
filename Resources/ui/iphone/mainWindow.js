@@ -3,7 +3,7 @@ var mainWindow;
 mainWindow = (function() {
 
   function mainWindow() {
-    var menuBtn, menuTable,
+    var menuBtn,
       _this = this;
     this.baseColor = {
       barColor: "#f9f9f9",
@@ -20,9 +20,6 @@ mainWindow = (function() {
       tabBarHidden: true,
       navBarHidden: true
     });
-    menuTable = require("ui/iphone/menuTable");
-    menuTable = new menuTable();
-    this.window.add(menuTable);
     this.slideState = false;
     menuBtn = Ti.UI.createLabel({
       backgroundColor: "transparent",
