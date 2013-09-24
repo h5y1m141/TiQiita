@@ -23,12 +23,6 @@ class Hatena
           if e.success
             json = JSON.parse(e.result.text)
             Ti.App.Properties.setString "hatenaProfileImageURL", json.profile_image_url
-            iconImage = Ti.UI.createImageView
-              width:40
-              height:40
-              top:5
-              left:5
-              image:json.profile_image_url
             
           else
             switchFlg = false

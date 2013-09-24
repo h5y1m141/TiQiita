@@ -23,17 +23,10 @@ Hatena = (function() {
         Ti.App.Properties.setString("hatenaAccessTokenKey", e.accessTokenKey);
         Ti.App.Properties.setString("hatenaAccessTokenSecret", e.accessTokenSecret);
         return _this.hatena.request("applications/my.json", {}, {}, "POST", function(e) {
-          var iconImage, json, switchFlg;
+          var json, switchFlg;
           if (e.success) {
             json = JSON.parse(e.result.text);
-            Ti.App.Properties.setString("hatenaProfileImageURL", json.profile_image_url);
-            return iconImage = Ti.UI.createImageView({
-              width: 40,
-              height: 40,
-              top: 5,
-              left: 5,
-              image: json.profile_image_url
-            });
+            return Ti.App.Properties.setString("hatenaProfileImageURL", json.profile_image_url);
           } else {
             return switchFlg = false;
           }
