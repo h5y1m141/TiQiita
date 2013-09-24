@@ -74,7 +74,9 @@ class menuTable
     @refreshMenu()
 
     @menuTable.setData rows
-
+    return
+    
+  getMenuTable:() ->
     return @menuTable
     
   makeAllLabelRow:() ->

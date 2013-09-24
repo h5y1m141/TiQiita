@@ -71,8 +71,12 @@ menuTable = (function() {
     rows.push(this.makeAllLabelRow());
     this.refreshMenu();
     this.menuTable.setData(rows);
-    return this.menuTable;
+    return;
   }
+
+  menuTable.prototype.getMenuTable = function() {
+    return this.menuTable;
+  };
 
   menuTable.prototype.makeAllLabelRow = function() {
     var allLabel, allLabelRow, allStockBtn,
