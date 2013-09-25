@@ -343,41 +343,50 @@ mainContoroller = (function() {
     qiitaPostResult = null;
     hatenaPostResult = null;
     tweetResult = null;
+    if (qiitaPostFlg === true) {
+      qiita.putStock(uuid, function(qiitaresult) {
+        if (qiitaresult === 'success') {
+          return qiitaPostResult = true;
+        } else {
+          return qiitaPostResult = false;
+        }
+      });
+    } else {
+      qiitaPostResult = false;
+    }
+    if (hatenaPostFlg === true) {
+      hatena.postBookmark(url, contents, function(hatenaresult) {
+        if (hatenaresult.success) {
+          return hatenaPostResult = true;
+        } else {
+          return hatenaPostResult = false;
+        }
+      });
+    } else {
+      hatenaPostResult = false;
+    }
+    if (tweetFlg === true) {
+      twitter.postTweet(url, contents, function(result) {
+        if (result.success) {
+          return tweetResult = true;
+        } else {
+          return tweetResult = false;
+        }
+      });
+    } else {
+      tweetResult = false;
+    }
     return postCheck = setInterval(function() {
       var result;
-      if (qiitaPostFlg === true) {
-        qiita.putStock(uuid, function(qiitaresult) {
-          if (qiitaresult === 'success') {
-            return qiitaPostResult = true;
-          } else {
-            return qiitaPostResult = false;
-          }
-        });
-      } else {
-        qiitaPostResult = false;
-      }
-      if (hatenaPostFlg === true) {
-        hatena.postBookmark(url, contents, function(hatenaresult) {
-          if (hatenaresult.success) {
-            return hatenaPostResult = true;
-          } else {
-            return hatenaPostResult = false;
-          }
-        });
-      } else {
-        hatenaPostResult = false;
-      }
-      if (tweetFlg === true) {
-        tweetResult = true;
-      } else {
-        tweetResult = false;
-      }
+      Ti.API.info("PostResult is " + qiitaPostResult + " and " + hatenaPostResult + " and " + tweetResult);
       if (qiitaPostResult !== null && hatenaPostResult !== null && tweetResult !== null) {
         clearInterval(postCheck);
         result = [qiitaPostResult, hatenaPostResult, tweetResult];
         return callback(result);
+      } else {
+        return Ti.API.info("continue to postCheck");
       }
-    }, 1000);
+    }, 5000);
   };
 
   mainContoroller.prototype.sessionItem = function(json) {

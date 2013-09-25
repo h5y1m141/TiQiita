@@ -43,14 +43,15 @@ Twitter = (function() {
   };
 
   Twitter.prototype.postTweet = function(url, contents, callback) {
-    var alertDialog, hatenaAccessTokenKey, xml;
-    Ti.API.info("hanate postBookmark start. url is " + url + " and contents is " + contents);
-    xml = "<entry xmlns='http://purl.org/atom/ns#'>\n  <title>dummy</title>\n  <link rel='related' type='text/html' href='" + url + "' />\n  <summary type='text/plain'>" + contents + "</summary>        \n</entry>";
-    hatenaAccessTokenKey = Ti.App.Properties.getString("hatenaAccessTokenKey");
-    if ((hatenaAccessTokenKey != null) === true) {
-      return this.hatena.request('http://b.hatena.ne.jp/atom/post', xml, {
-        'Content-Type': 'application/x.atom+xml'
-      }, "POST", function(result) {
+    var alertDialog, headers, params, twitterAccessTokenKey;
+    twitterAccessTokenKey = Ti.App.Properties.getString('twitterAccessTokenKey');
+    if ((twitterAccessTokenKey != null) === true) {
+      params = {
+        status: contents + " " + url
+      };
+      headers = {};
+      return this.twitter.request('https://api.twitter.com/1.1/statuses/update.json', params, headers, "POST", function(result) {
+        Ti.API.info("postTweet done result is " + result);
         return callback(result);
       });
     } else {

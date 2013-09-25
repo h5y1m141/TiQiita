@@ -292,70 +292,51 @@ class mainContoroller
     qiitaPostResult = null
     hatenaPostResult = null
     tweetResult = null
-    # 1秒ごとにそれぞれのPOST結果をチェック
+    # qiitaへのストック処理
+    if qiitaPostFlg is true
+      qiita.putStock(uuid,(qiitaresult) ->
+        if qiitaresult is 'success'
+          qiitaPostResult = true
+        else
+          qiitaPostResult = false
+      )
+    else
+      qiitaPostResult = false
+      
+    # はてブ処理
+    if hatenaPostFlg is true
+      hatena.postBookmark(url,contents,(hatenaresult) ->
+        if hatenaresult.success
+          hatenaPostResult = true
+        else  
+          hatenaPostResult = false
+      )
+    else
+      hatenaPostResult = false
+      
+    # Tweet処理
+    if tweetFlg is true
+      twitter.postTweet(url,contents,(result) ->
+        if result.success
+          tweetResult = true
+        else
+          tweetResult = false
+      )  
+    else
+      tweetResult = false
+    
+    # 5秒ごとにそれぞれのPOST結果をチェック
     postCheck = setInterval(->
-      # qiitaへのストック処理
-      if qiitaPostFlg is true
-        qiita.putStock(uuid,(qiitaresult) ->
-          if qiitaresult is 'success'
-            qiitaPostResult = true
-          else
-            qiitaPostResult = false
-        )
-      else
-        qiitaPostResult = false
-        
-      # はてブ処理
-      if hatenaPostFlg is true
-        hatena.postBookmark(url,contents,(hatenaresult) ->
-          if hatenaresult.success
-            hatenaPostResult = true
-          else  
-            hatenaPostResult = false
-        )
-      else
-        hatenaPostResult = false
-        
-      # Tweet処理
-      if tweetFlg is true
-        tweetResult = true
-      else
-        tweetResult = false
+      Ti.API.info "PostResult is #{qiitaPostResult} and #{hatenaPostResult} and #{tweetResult}"
       if qiitaPostResult isnt null and hatenaPostResult isnt null and tweetResult isnt null 
         clearInterval(postCheck)
         result = [qiitaPostResult,hatenaPostResult,tweetResult]
-        return callback(result)  
+        callback(result)
+      else
+        Ti.API.info "continue to postCheck"
+        
+    , 5000)
 
-    , 1000)
-
-    # if qiitaPostFlg is true
-    #   @qiita.putStock(uuid,(qiitaresult) ->
-    #     if qiitaresult is 'success'
-    #       qiitaPostResult = true
-
-    #     if hatenaPostFlg is true  
-    #       hatena.postBookmark(url,contents,(hatenaresult) ->
-    #         Ti.API.info "postBookmark result is #{hatenaresult}"
-    #         if hatenaresult.success
-    #           hatenaPostResult = true
-    #         Ti.API.info "Qiitaとはてブ同時投稿終了。結果は#{qiitaPostResult}と#{hatenaPostResult}です"
-    #         result = [qiitaPostResult,hatenaPostResult]
-    #         return callback(result)  
-    #       )
-    #     else
-    #       result = [qiitaPostResult,hatenaPostResult]
-    #       return callback(result)  
-    #   )
-    # else
-    #   if hatenaPostFlg is true  
-    #     hatena.postBookmark(url,contents,(hatenaresult) ->
-    #       Ti.API.info "postBookmark result is #{hatenaresult}"
-    #       if hatenaresult.success
-    #         hatenaPostResult = true
-    #       Ti.API.info "はてブ投稿終了。結果は#{qiitaPostResult}と#{hatenaPostResult}です"  
-    #       result = [qiitaPostResult,hatenaPostResult]
-    #       return callback(result)    
-    #     )
     
 
 

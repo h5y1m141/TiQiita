@@ -43,21 +43,17 @@ class Twitter
     return true
 
   postTweet:(url,contents,callback) ->
-      
-    Ti.API.info "hanate postBookmark start. url is #{url} and contents is #{contents}"
-    xml = """
-    <entry xmlns='http://purl.org/atom/ns#'>
-      <title>dummy</title>
-      <link rel='related' type='text/html' href='#{url}' />
-      <summary type='text/plain'>#{contents}</summary>        
-    </entry>
-    """
-    # 念のためaccesstokenの存在を確認した上でポスト処理する
-    hatenaAccessTokenKey  = Ti.App.Properties.getString("hatenaAccessTokenKey")
 
-    if hatenaAccessTokenKey? is true
-      
-      @hatena.request('http://b.hatena.ne.jp/atom/post', xml, {'Content-Type':'application/x.atom+xml'}, "POST", (result) ->
+    # 念のためaccesstokenの存在を確認した上でポスト処理する
+    twitterAccessTokenKey = Ti.App.Properties.getString('twitterAccessTokenKey')
+
+    if twitterAccessTokenKey? is true
+      params =
+        status:contents + " " + url
+        
+      headers = {}
+      @twitter.request('https://api.twitter.com/1.1/statuses/update.json',params,headers, "POST", (result) ->
+        Ti.API.info "postTweet done result is #{result}"
         return callback(result)
 
       )
