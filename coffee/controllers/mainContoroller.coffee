@@ -4,7 +4,7 @@ class mainContoroller
     @hatena = new Hatena()
     Qiita = require("model/qiita")
     @qiita = new Qiita()
-    Twitter = require("model/Twitter")
+    Twitter = require("model/twitter")
     @twitter = new Twitter()
         
     @tabSetting =

@@ -11,7 +11,7 @@ mainContoroller = (function() {
     this.hatena = new Hatena();
     Qiita = require("model/qiita");
     this.qiita = new Qiita();
-    Twitter = require("model/Twitter");
+    Twitter = require("model/twitter");
     this.twitter = new Twitter();
     this.tabSetting = {
       "iphone": {
