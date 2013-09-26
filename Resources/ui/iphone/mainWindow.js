@@ -9,9 +9,7 @@ mainWindow = (function() {
       barColor: "#f9f9f9",
       backgroundColor: "#f9f9f9",
       keyColor: '#59BB0C',
-      textColor: "#333",
-      contentsColor: "#666",
-      grayTextColor: "#999"
+      textColor: "#f9f9f9"
     };
     this.window = Ti.UI.createWindow({
       title: "Qiita",
@@ -23,7 +21,7 @@ mainWindow = (function() {
     this.slideState = false;
     menuBtn = Ti.UI.createLabel({
       backgroundColor: "transparent",
-      color: "#f9f9f9",
+      color: this.baseColor.textColor,
       width: 40,
       height: 40,
       top: 0,
@@ -42,6 +40,16 @@ mainWindow = (function() {
         return _this.slideWindow();
       }
     });
+    this.title = Ti.UI.createLabel({
+      width: 240,
+      textAlign: 'center',
+      left: 40,
+      font: {
+        fontSize: 16
+      },
+      text: 'Qiita',
+      color: this.baseColor.textColor
+    });
     this.navView = Ti.UI.createView({
       width: Ti.UI.FULL,
       height: 40,
@@ -51,11 +59,16 @@ mainWindow = (function() {
       zIndex: 25
     });
     this.navView.add(menuBtn);
+    this.navView.add(this.title);
     this.window.add(this.navView);
   }
 
   mainWindow.prototype.getWindow = function() {
     return this.window;
+  };
+
+  mainWindow.prototype.setWindowTitle = function(title) {
+    this.title.text = title;
   };
 
   mainWindow.prototype.resetSlide = function() {

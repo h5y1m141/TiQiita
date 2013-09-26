@@ -4,9 +4,8 @@ class mainWindow
       barColor:"#f9f9f9"
       backgroundColor:"#f9f9f9"
       keyColor:'#59BB0C'
-      textColor:"#333"
-      contentsColor:"#666"      
-      grayTextColor:"#999"
+      textColor:"#f9f9f9"
+
     @window = Ti.UI.createWindow
       title:"Qiita"
       barColor:@baseColor.barColor
@@ -19,7 +18,7 @@ class mainWindow
     
     menuBtn = Ti.UI.createLabel
       backgroundColor:"transparent"
-      color:"#f9f9f9"
+      color:@baseColor.textColor
       width:40
       height:40
       top:0
@@ -37,7 +36,15 @@ class mainWindow
         @slideWindow()
 
     ) 
-    
+    @title = Ti.UI.createLabel
+      width:240
+      textAlign:'center'
+      left:40
+      font:
+        fontSize:16
+      text:'Qiita'
+      color:@baseColor.textColor
+      
     @navView = Ti.UI.createView
       width:Ti.UI.FULL
       height:40
@@ -48,11 +55,16 @@ class mainWindow
       zIndex:25
             
     @navView.add menuBtn
+    @navView.add @title
     @window.add @navView
       
   getWindow:() ->
     return @window
-      
+    
+  setWindowTitle:(title) ->
+    @title.text = title
+    return
+    
   resetSlide:() ->  
     transform = Titanium.UI.create2DMatrix()
     animation = Titanium.UI.createAnimation()
