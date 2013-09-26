@@ -70,7 +70,7 @@ class Twitter
             Ti.API.info "postTweet done result is #{result}"
             return callback(result)
           
-          
+          )
       )
 
     else

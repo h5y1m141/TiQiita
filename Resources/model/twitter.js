@@ -58,6 +58,15 @@ Twitter = (function() {
             Ti.API.info("postTweet done result is " + result);
             return callback(result);
           });
+        } else {
+          params = {
+            status: "「" + title + "」 " + contents + " " + url
+          };
+          headers = {};
+          return _this.twitter.request('https://api.twitter.com/1.1/statuses/update.json', params, headers, "POST", function(result) {
+            Ti.API.info("postTweet done result is " + result);
+            return callback(result);
+          });
         }
       });
     } else {
@@ -68,12 +77,14 @@ Twitter = (function() {
   };
 
   Twitter.prototype.shortenURL = function(url, callback) {
-    var apiKey, baseURL, login, longUrl, path, xhr;
+    var Config, apiKey, baseURL, config, login, longUrl, path, xhr;
     xhr = Ti.Network.createHTTPClient();
     baseURL = "http://api.bit.ly/v3/shorten?";
     login = "h5y1m141";
     longUrl = url;
-    apiKey = "R_dfe8c131517b6f4798a4044d8f6aa2d4";
+    Config = require("model/loadConfig");
+    config = new Config();
+    apiKey = config.getbitlyAPIKey();
     path = "" + baseURL + "login=" + login + "&longUrl=" + longUrl + "&apiKey=" + apiKey;
     Ti.API.info(path);
     xhr.open('GET', path);
