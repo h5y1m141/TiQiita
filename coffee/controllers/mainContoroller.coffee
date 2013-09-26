@@ -17,33 +17,6 @@ class mainContoroller
           "windowName":"mainWindow"      
 
 
-  createTabGroup:() ->
-    tabGroup = Ti.UI.createTabGroup
-      tabsBackgroundColor:"#f9f9f9"
-      shadowImage:"ui/image/shadowimage.png"
-      tabsBackgroundImage:"ui/image/tabbar.png"
-      activeTabBackgroundImage:"ui/image/activetab.png"  
-      activeTabIconTint:"#fffBD5"
-      
-    tabGroup.addEventListener('focus',(e) ->
-      tabGroup._activeTab = e.tab
-      tabGroup._activeTabIndex = e.index
-      if tabGroup._activeTabIndex is -1
-        return
-
-      Ti.API._activeTab = tabGroup._activeTab;
-
-    )
-    osname = Ti.Platform.osname
-
-    MainWindow = require("ui/#{osname}/mainWindow")
-    mainWindow = new MainWindow()
-    mainTab = Titanium.UI.createTab
-      window:mainWindow
-      windowName:@tabSetting[osname].main.windowName
-
-    tabGroup.addTab mainTab
-    tabGroup.open()
     
   qiitaLogin:() ->
     param =
