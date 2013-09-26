@@ -4,6 +4,8 @@ class mainContoroller
     @hatena = new Hatena()
     Qiita = require("model/qiita")
     @qiita = new Qiita()
+    Twitter = require("model/twitter")
+    @twitter = new Twitter()
         
     @tabSetting =
       "iphone":
@@ -60,6 +62,14 @@ class mainContoroller
         Ti.App.Properties.setString 'QiitaLoginID', param.url_name
         Ti.App.Properties.setString 'QiitaLoginPassword', param.password
         Ti.App.Properties.setString 'QiitaToken', token
+        #  認証済とわかるように、Qiitaのユーザ情報からアイコン画像のパスを取得しておく
+        @qiita.getUserInfo(param.url_name,(json) ->
+          Ti.API.info "getUserInfo done userInfo is #{json.profile_image_url}"
+          Ti.App.Properties.setString "qiitaProfileImageURL", json.profile_image_url
+          # メニューをリフレッシュしてアイコン画像を反映させる
+
+          MenuTable.refreshMenu()
+        )
         
     )
     
@@ -219,7 +229,7 @@ class mainContoroller
     sections.push section
     # app.jsでmainListView = new ListView()としている
     # ListViewにアイテムをセット
-    Ti.API.info mainListView
+
     return mainListView.setSections sections
     
   createItems:(data) ->
@@ -227,6 +237,12 @@ class mainContoroller
 
     for _items in data
       rawData = _items
+      _tags = []
+      for tag in _items.tags
+        Ti.API.info tag.name
+        _tags.push(tag.name)
+        
+      Ti.API.info _tags
       layout =
         properties:
           height:120
@@ -245,7 +261,7 @@ class mainContoroller
           text: _items.body.replace(/<\/?[^>]+>/gi, "")
           # text: _items.raw_body
         tags:
-          text: 'javascript,ruby,Titanium'
+          text:_tags.join(", ")
         tagIcon:
           text:String.fromCharCode("0xe128")
       dataSet.push(layout)
@@ -271,43 +287,62 @@ class mainContoroller
     
 
     
-  stockItem: (uuid,url,contents,qiitaPostFlg,hatenaPostFlg,callback) =>
-    hatena = @hatena    
+  stockItem: (uuid,url,contents,title,qiitaPostFlg,hatenaPostFlg,tweetFlg,callback) =>
+    hatena = @hatena
+    twitter = @twitter
+    qiita = @qiita
     # 最初にQiitaへの投稿処理を必要に応じて実施して
     # それが終わったらはてブした上でそれぞれの投稿処理が
     # 成功失敗の情報をcallback関数に渡す
 
-    qiitaPostResult = false
-    hatenaPostResult = false
-    
+    qiitaPostResult = null
+    hatenaPostResult = null
+    tweetResult = null
+    # qiitaへのストック処理
     if qiitaPostFlg is true
-      @qiita.putStock(uuid,(qiitaresult) ->
+      qiita.putStock(uuid,(qiitaresult) ->
         if qiitaresult is 'success'
           qiitaPostResult = true
-
-        if hatenaPostFlg is true  
-          hatena.postBookmark(url,contents,(hatenaresult) ->
-            Ti.API.info "postBookmark result is #{hatenaresult}"
-            if hatenaresult.success
-              hatenaPostResult = true
-            Ti.API.info "Qiitaとはてブ同時投稿終了。結果は#{qiitaPostResult}と#{hatenaPostResult}です"
-            result = [qiitaPostResult,hatenaPostResult]
-            return callback(result)  
-          )
         else
-          result = [qiitaPostResult,hatenaPostResult]
-          return callback(result)  
+          qiitaPostResult = false
       )
     else
-      if hatenaPostFlg is true  
-        hatena.postBookmark(url,contents,(hatenaresult) ->
-          Ti.API.info "postBookmark result is #{hatenaresult}"
-          if hatenaresult.success
-            hatenaPostResult = true
-          Ti.API.info "はてブ投稿終了。結果は#{qiitaPostResult}と#{hatenaPostResult}です"  
-          result = [qiitaPostResult,hatenaPostResult]
-          return callback(result)    
-        )
+      qiitaPostResult = false
+      
+    # はてブ処理
+    if hatenaPostFlg is true
+      hatena.postBookmark(url,contents,(hatenaresult) ->
+        if hatenaresult.success
+          hatenaPostResult = true
+        else  
+          hatenaPostResult = false
+      )
+    else
+      hatenaPostResult = false
+      
+    # Tweet処理
+    if tweetFlg is true
+      twitter.postTweet(url,contents,title,(result) ->
+        if result.success
+          tweetResult = true
+        else
+          tweetResult = false
+      )  
+    else
+      tweetResult = false
+    
+    # 5秒ごとにそれぞれのPOST結果をチェック
+    postCheck = setInterval(->
+      Ti.API.info "PostResult is #{qiitaPostResult} and #{hatenaPostResult} and #{tweetResult}"
+      if qiitaPostResult isnt null and hatenaPostResult isnt null and tweetResult isnt null 
+        clearInterval(postCheck)
+        result = [qiitaPostResult,hatenaPostResult,tweetResult]
+        callback(result)
+      else
+        Ti.API.info "continue to postCheck"
+        
+    , 5000)
+
     
 
 

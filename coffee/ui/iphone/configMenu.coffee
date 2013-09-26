@@ -151,7 +151,7 @@ class configMenu
       textAlign:'center'
     
     cancelBtn.addEventListener('click',(e) =>
-      Ti.API.info @
+
       return @hide()
             
     )
@@ -164,50 +164,6 @@ class configMenu
     return _view
 
     
-  _createSocialAccountSection:() ->
-    _view = Ti.UI.createView
-      width:200
-      height:180
-      top:0
-      left:0
-      backgroundColor:@baseColor.backgroundColor
-      zIndex:20
-    hatenaIconImage = Ti.UI.createImageView
-      width:35
-      height:35
-      top:5
-      left:5
-      image:"ui/image/hatena.png"
-      
-    if Ti.App.Properties.getBool("hatenaAccessTokenKey")?
-      hatenaSwitch = Ti.UI.createSwitch
-        left:50
-        top:5
-        value:true
-
-    else
-      hatenaSwitch = Ti.UI.createSwitch
-        top:5
-        left:50
-        value:false
-
-      
-    
-    hatenaSwitch.addEventListener("change", (e) ->
-      if e.value is true
-
-        Hatena = require("model/hatena")
-        hatena = new Hatena()
-        hatena.login()
-      else
-        Ti.App.Properties.removeProperty("hatenaAccessTokenKey")
-        Ti.App.Properties.removeProperty("hatenaAccessTokenSecret")
-    )
-         
-    _view.add hatenaIconImage
-    _view.add hatenaSwitch
-    
-    return _view
 
 
 module.exports = configMenu

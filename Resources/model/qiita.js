@@ -131,8 +131,8 @@ Qiita = (function() {
     xhr.onload = function() {
       var json, relLink, responseHeaders;
       json = JSON.parse(this.responseText);
-      if (storedTo === "followingTags") {
-        Ti.API.debug("フォローしてるタグの情報取得する際には何も行わない");
+      if (storedTo === "followingTags" || storedTo === false) {
+        Ti.API.debug("キャッシュ処理は実施しませんでした");
       } else {
         Ti.API.info("start _storedStocks " + storedTo);
         self._storedStocks(storedTo, this.responseText);
@@ -149,7 +149,7 @@ Qiita = (function() {
     xhr.onerror = function(e) {
       var error;
       error = JSON.parse(this.responseText);
-      return Ti.API.debug("_request method error." + error.error);
+      return Ti.API.debug("_request method error." + error);
     };
     xhr.timeout = 5000;
     return xhr.send();
@@ -244,6 +244,16 @@ Qiita = (function() {
       "method": 'GET'
     };
     return this._request(param, storedTo, callback);
+  };
+
+  Qiita.prototype.getUserInfo = function(userName, callback) {
+    var param, url;
+    url = "https://qiita.com/api/v1/users/" + userName;
+    param = {
+      "url": url,
+      "method": 'GET'
+    };
+    return this._request(param, false, callback);
   };
 
   Qiita.prototype.getMyStocks = function(callback) {

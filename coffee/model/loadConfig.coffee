@@ -6,11 +6,14 @@ class loadConfig
     
   getNendData:() ->
     return @json.nend
+    
   getAdMobData:() ->
     return @json.admob
 
   getGoogleAnalyticsKey:() ->
     return @json.GoogleAnalytics.key
-        
-
+    
+  getbitlyAPIKey:() ->            
+    return @json.bitly.apiKey
+    
 module.exports = loadConfig 

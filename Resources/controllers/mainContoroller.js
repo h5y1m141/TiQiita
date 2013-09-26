@@ -6,11 +6,13 @@ mainContoroller = (function() {
   function mainContoroller() {
     this.stockItem = __bind(this.stockItem, this);
 
-    var Hatena, Qiita;
+    var Hatena, Qiita, Twitter;
     Hatena = require("model/hatena");
     this.hatena = new Hatena();
     Qiita = require("model/qiita");
     this.qiita = new Qiita();
+    Twitter = require("model/twitter");
+    this.twitter = new Twitter();
     this.tabSetting = {
       "iphone": {
         "main": {
@@ -71,7 +73,12 @@ mainContoroller = (function() {
         configMenu.hide();
         Ti.App.Properties.setString('QiitaLoginID', param.url_name);
         Ti.App.Properties.setString('QiitaLoginPassword', param.password);
-        return Ti.App.Properties.setString('QiitaToken', token);
+        Ti.App.Properties.setString('QiitaToken', token);
+        return _this.qiita.getUserInfo(param.url_name, function(json) {
+          Ti.API.info("getUserInfo done userInfo is " + json.profile_image_url);
+          Ti.App.Properties.setString("qiitaProfileImageURL", json.profile_image_url);
+          return MenuTable.refreshMenu();
+        });
       }
     });
   };
@@ -264,16 +271,23 @@ mainContoroller = (function() {
     dataSet.push(loadOld);
     section.setItems(dataSet);
     sections.push(section);
-    Ti.API.info(mainListView);
     return mainListView.setSections(sections);
   };
 
   mainContoroller.prototype.createItems = function(data) {
-    var dataSet, layout, rawData, _i, _items, _len;
+    var dataSet, layout, rawData, tag, _i, _items, _j, _len, _len1, _ref, _tags;
     dataSet = [];
     for (_i = 0, _len = data.length; _i < _len; _i++) {
       _items = data[_i];
       rawData = _items;
+      _tags = [];
+      _ref = _items.tags;
+      for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+        tag = _ref[_j];
+        Ti.API.info(tag.name);
+        _tags.push(tag.name);
+      }
+      Ti.API.info(_tags);
       layout = {
         properties: {
           height: 120,
@@ -296,7 +310,7 @@ mainContoroller = (function() {
           text: _items.body.replace(/<\/?[^>]+>/gi, "")
         },
         tags: {
-          text: 'javascript,ruby,Titanium'
+          text: _tags.join(", ")
         },
         tagIcon: {
           text: String.fromCharCode("0xe128")
@@ -328,47 +342,58 @@ mainContoroller = (function() {
     }
   };
 
-  mainContoroller.prototype.stockItem = function(uuid, url, contents, qiitaPostFlg, hatenaPostFlg, callback) {
-    var hatena, hatenaPostResult, qiitaPostResult;
+  mainContoroller.prototype.stockItem = function(uuid, url, contents, title, qiitaPostFlg, hatenaPostFlg, tweetFlg, callback) {
+    var hatena, hatenaPostResult, postCheck, qiita, qiitaPostResult, tweetResult, twitter;
     hatena = this.hatena;
-    qiitaPostResult = false;
-    hatenaPostResult = false;
+    twitter = this.twitter;
+    qiita = this.qiita;
+    qiitaPostResult = null;
+    hatenaPostResult = null;
+    tweetResult = null;
     if (qiitaPostFlg === true) {
-      return this.qiita.putStock(uuid, function(qiitaresult) {
-        var result;
+      qiita.putStock(uuid, function(qiitaresult) {
         if (qiitaresult === 'success') {
-          qiitaPostResult = true;
-        }
-        if (hatenaPostFlg === true) {
-          return hatena.postBookmark(url, contents, function(hatenaresult) {
-            var result;
-            Ti.API.info("postBookmark result is " + hatenaresult);
-            if (hatenaresult.success) {
-              hatenaPostResult = true;
-            }
-            Ti.API.info("Qiitaとはてブ同時投稿終了。結果は" + qiitaPostResult + "と" + hatenaPostResult + "です");
-            result = [qiitaPostResult, hatenaPostResult];
-            return callback(result);
-          });
+          return qiitaPostResult = true;
         } else {
-          result = [qiitaPostResult, hatenaPostResult];
-          return callback(result);
+          return qiitaPostResult = false;
         }
       });
     } else {
-      if (hatenaPostFlg === true) {
-        return hatena.postBookmark(url, contents, function(hatenaresult) {
-          var result;
-          Ti.API.info("postBookmark result is " + hatenaresult);
-          if (hatenaresult.success) {
-            hatenaPostResult = true;
-          }
-          Ti.API.info("はてブ投稿終了。結果は" + qiitaPostResult + "と" + hatenaPostResult + "です");
-          result = [qiitaPostResult, hatenaPostResult];
-          return callback(result);
-        });
-      }
+      qiitaPostResult = false;
     }
+    if (hatenaPostFlg === true) {
+      hatena.postBookmark(url, contents, function(hatenaresult) {
+        if (hatenaresult.success) {
+          return hatenaPostResult = true;
+        } else {
+          return hatenaPostResult = false;
+        }
+      });
+    } else {
+      hatenaPostResult = false;
+    }
+    if (tweetFlg === true) {
+      twitter.postTweet(url, contents, title, function(result) {
+        if (result.success) {
+          return tweetResult = true;
+        } else {
+          return tweetResult = false;
+        }
+      });
+    } else {
+      tweetResult = false;
+    }
+    return postCheck = setInterval(function() {
+      var result;
+      Ti.API.info("PostResult is " + qiitaPostResult + " and " + hatenaPostResult + " and " + tweetResult);
+      if (qiitaPostResult !== null && hatenaPostResult !== null && tweetResult !== null) {
+        clearInterval(postCheck);
+        result = [qiitaPostResult, hatenaPostResult, tweetResult];
+        return callback(result);
+      } else {
+        return Ti.API.info("continue to postCheck");
+      }
+    }, 5000);
   };
 
   mainContoroller.prototype.sessionItem = function(json) {
