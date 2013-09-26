@@ -48,21 +48,54 @@ class Twitter
     twitterAccessTokenKey = Ti.App.Properties.getString('twitterAccessTokenKey')
 
     if twitterAccessTokenKey? is true
+      @shortenURL(url,(result) =>
+        if result.status_txt
+          params =
+            status:"「#{title}」 #{contents} #{result.data.url}"
+            
+          headers = {}
+          @twitter.request('https://api.twitter.com/1.1/statuses/update.json',params,headers, "POST", (result) ->
+            Ti.API.info "postTweet done result is #{result}"
+            return callback(result)
 
-      params =
-        status:"「#{title}」 #{contents} #{url}"
-        
-      headers = {}
-      @twitter.request('https://api.twitter.com/1.1/statuses/update.json',params,headers, "POST", (result) ->
-        Ti.API.info "postTweet done result is #{result}"
-        return callback(result)
-
+          )
+        else
+          # bit.lyから短縮URLが取得できない場合があるかもしれないため
+          # その場合には通常のURLをtweetする
+          params =
+            status:"「#{title}」 #{contents} #{url}"
+            
+          headers = {}
+          @twitter.request('https://api.twitter.com/1.1/statuses/update.json',params,headers, "POST", (result) ->
+            Ti.API.info "postTweet done result is #{result}"
+            return callback(result)
+          
+          
       )
+
     else
       alertDialog = Ti.UI.createAlertDialog()
       alertDialog.setTitle "Twitterアカウント認証に失敗してるようです。\nこのアプリの設定画面のアカウントの設定を念のためご確認ください"
       alertDialog.show()
       
-
+  shortenURL:(url,callback) ->
+    xhr = Ti.Network.createHTTPClient()
+    baseURL = "http://api.bit.ly/v3/shorten?"
+    login = "h5y1m141"
+    longUrl = url
+    apiKey = "R_dfe8c131517b6f4798a4044d8f6aa2d4"
+    path = "#{baseURL}login=#{login}&longUrl=#{longUrl}&apiKey=#{apiKey}"
+    Ti.API.info path
+    xhr.open('GET',path)
+    xhr.onload = ->
+      body = JSON.parse(@responseText)
+      if @status is 200
+        Ti.API.info body
+        callback(body)
+    xhr.onerror = (e) ->
+      Ti.API.info "bitly shorten fail"
+    xhr.send()
+    
+    
 
 module.exports = Twitter

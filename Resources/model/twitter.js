@@ -43,22 +43,52 @@ Twitter = (function() {
   };
 
   Twitter.prototype.postTweet = function(url, contents, title, callback) {
-    var alertDialog, headers, params, twitterAccessTokenKey;
+    var alertDialog, twitterAccessTokenKey,
+      _this = this;
     twitterAccessTokenKey = Ti.App.Properties.getString('twitterAccessTokenKey');
     if ((twitterAccessTokenKey != null) === true) {
-      params = {
-        status: "「" + title + "」 " + contents + " " + url
-      };
-      headers = {};
-      return this.twitter.request('https://api.twitter.com/1.1/statuses/update.json', params, headers, "POST", function(result) {
-        Ti.API.info("postTweet done result is " + result);
-        return callback(result);
+      return this.shortenURL(url, function(result) {
+        var headers, params;
+        if (result.status_txt) {
+          params = {
+            status: "「" + title + "」 " + contents + " " + result.data.url
+          };
+          headers = {};
+          return _this.twitter.request('https://api.twitter.com/1.1/statuses/update.json', params, headers, "POST", function(result) {
+            Ti.API.info("postTweet done result is " + result);
+            return callback(result);
+          });
+        }
       });
     } else {
       alertDialog = Ti.UI.createAlertDialog();
       alertDialog.setTitle("Twitterアカウント認証に失敗してるようです。\nこのアプリの設定画面のアカウントの設定を念のためご確認ください");
       return alertDialog.show();
     }
+  };
+
+  Twitter.prototype.shortenURL = function(url, callback) {
+    var apiKey, baseURL, login, longUrl, path, xhr;
+    xhr = Ti.Network.createHTTPClient();
+    baseURL = "http://api.bit.ly/v3/shorten?";
+    login = "h5y1m141";
+    longUrl = url;
+    apiKey = "R_dfe8c131517b6f4798a4044d8f6aa2d4";
+    path = "" + baseURL + "login=" + login + "&longUrl=" + longUrl + "&apiKey=" + apiKey;
+    Ti.API.info(path);
+    xhr.open('GET', path);
+    xhr.onload = function() {
+      var body;
+      body = JSON.parse(this.responseText);
+      if (this.status === 200) {
+        Ti.API.info(body);
+        return callback(body);
+      }
+    };
+    xhr.onerror = function(e) {
+      return Ti.API.info("bitly shorten fail");
+    };
+    return xhr.send();
   };
 
   return Twitter;
