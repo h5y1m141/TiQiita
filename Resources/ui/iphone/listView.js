@@ -125,6 +125,7 @@ listView = (function() {
       that = _this;
       index = e.itemIndex;
       if (e.section.items[index].loadOld === true) {
+        MainWindow.actInd.show();
         Qiita = require('model/qiita');
         qiita = new Qiita();
         currentPage = Ti.App.Properties.getString("currentPage");
@@ -135,6 +136,7 @@ listView = (function() {
           items = maincontroller.createItems(result);
           lastIndex = _this._getLastItemIndex();
           currentSection = _this.listView.sections[0];
+          MainWindow.actInd.hide();
           return currentSection.insertItemsAt(lastIndex, items);
         });
       } else {

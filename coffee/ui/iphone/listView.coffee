@@ -110,6 +110,7 @@ class listView
       that = @
       index = e.itemIndex
       if e.section.items[index].loadOld is true
+        MainWindow.actInd.show()        
         Qiita = require('model/qiita')
         qiita = new Qiita()
         currentPage = Ti.App.Properties.getString "currentPage"
@@ -120,6 +121,7 @@ class listView
           items = maincontroller.createItems(result)
           lastIndex = @_getLastItemIndex()
           currentSection = @listView.sections[0]
+          MainWindow.actInd.hide()
           return currentSection.insertItemsAt(lastIndex,items)
 
         )
