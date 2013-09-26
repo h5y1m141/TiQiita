@@ -111,6 +111,17 @@ class mainContoroller
     moment = require('lib/moment.min')
     momentja = require('lib/momentja')
     if items? is false or items is ""
+      @qiita.getMyStocks( (result,links) =>
+        result.sort( (a, b) ->
+          (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
+        )
+        
+        if result.length isnt MAXITEMCOUNT
+          Ti.API.info "loadOldEntry hide"
+        else
+          @refresData(result)
+
+      )
       
     else
       items.sort( (a, b) ->
@@ -212,10 +223,9 @@ class mainContoroller
       rawData = _items
       _tags = []
       for tag in _items.tags
-        Ti.API.info tag.name
         _tags.push(tag.name)
         
-      Ti.API.info _tags
+
       layout =
         properties:
           height:120

@@ -127,13 +127,27 @@ mainContoroller = (function() {
   };
 
   mainContoroller.prototype.getMyStocks = function() {
-    var MAXITEMCOUNT, items, moment, momentja;
+    var MAXITEMCOUNT, items, moment, momentja,
+      _this = this;
     MAXITEMCOUNT = 20;
     items = JSON.parse(Ti.App.Properties.getString('storedMyStocks'));
     moment = require('lib/moment.min');
     momentja = require('lib/momentja');
     if ((items != null) === false || items === "") {
-
+      return this.qiita.getMyStocks(function(result, links) {
+        result.sort(function(a, b) {
+          if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
+            return -1;
+          } else {
+            return 1;
+          }
+        });
+        if (result.length !== MAXITEMCOUNT) {
+          return Ti.API.info("loadOldEntry hide");
+        } else {
+          return _this.refresData(result);
+        }
+      });
     } else {
       items.sort(function(a, b) {
         if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
@@ -256,10 +270,8 @@ mainContoroller = (function() {
       _ref = _items.tags;
       for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
         tag = _ref[_j];
-        Ti.API.info(tag.name);
         _tags.push(tag.name);
       }
-      Ti.API.info(_tags);
       layout = {
         properties: {
           height: 120,
