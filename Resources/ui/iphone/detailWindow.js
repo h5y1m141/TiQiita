@@ -376,8 +376,8 @@ detailWindow = (function() {
     backBtn = Ti.UI.createLabel({
       backgroundColor: "transparent",
       color: this.baseColor.textColor,
-      width: 28,
-      height: 28,
+      width: 40,
+      height: 40,
       left: 10,
       font: {
         fontSize: 32,

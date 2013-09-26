@@ -24,9 +24,9 @@ mainWindow = (function() {
     menuBtn = Ti.UI.createLabel({
       backgroundColor: "transparent",
       color: "#f9f9f9",
-      width: 28,
-      height: 28,
-      top: 5,
+      width: 40,
+      height: 40,
+      top: 0,
       left: 10,
       font: {
         fontSize: 32,
