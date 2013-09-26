@@ -8,7 +8,7 @@ detailWindow = (function() {
       barColor: "#f9f9f9",
       backgroundColor: "#f9f9f9",
       barBackgroundColor: "#222",
-      keyColor: '#4BA503',
+      keyColor: '#59BB0C',
       textColor: "#f9f9f9"
     };
     this.detailWindow = Ti.UI.createWindow({
@@ -19,9 +19,11 @@ detailWindow = (function() {
       tabBarHidden: false
     });
     this.hatenaAccessTokenKey = Ti.App.Properties.getString("hatenaAccessTokenKey");
+    this.twitterAccessTokenKey = Ti.App.Properties.getString('twitterAccessTokenKey');
     this.QiitaToken = Ti.App.Properties.getString('QiitaToken');
     this.uuid = data.uuid;
     this.url = data.url;
+    this.title = data.title;
     this._createTitleView(data.title, data.icon);
     qiitaCSS = 'ui/css/qiitaColor.css';
     htmlHeaderElement = "<html><head><meta name='viewport' content='width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1'><link rel='stylesheet' href='" + qiitaCSS + "' type='text/css'></link></head>";
@@ -46,11 +48,12 @@ detailWindow = (function() {
   }
 
   detailWindow.prototype._createDialog = function() {
-    var cancelleBtn, contents, hatenaIcon, hatenaPostFlg, hatenaPostLabel, hatenaPostSwitch, hintLabel, qiitaIcon, qiitaPostFlg, qiitaPostLabel, qiitaPostSwitch, registMemoBtn, selectedValue, textArea, textCounter, _view,
+    var cancelleBtn, contents, hatenaIcon, hatenaPostFlg, hatenaPostLabel, hatenaPostSwitch, hintLabel, qiitaIcon, qiitaPostFlg, qiitaPostLabel, qiitaPostSwitch, registMemoBtn, selectedValue, textArea, textCounter, tweetFlg, tweetLabel, tweetSwitch, twitterIcon, _view,
       _this = this;
     selectedValue = false;
     qiitaPostFlg = false;
     hatenaPostFlg = false;
+    tweetFlg = false;
     _view = Ti.UI.createView({
       width: Ti.UI.FULL,
       height: Ti.Platform.displayCaps.platformHeight - 40,
@@ -75,8 +78,7 @@ detailWindow = (function() {
     hintLabel = Ti.UI.createLabel({
       text: "(任意)はてブ時登録時のコメント",
       font: {
-        fontSize: 12,
-        fontFamily: 'Rounded M+ 1p'
+        fontSize: 12
       },
       color: "#222",
       top: 5,
@@ -89,8 +91,7 @@ detailWindow = (function() {
     textCounter = Ti.UI.createLabel({
       text: "0文字",
       font: {
-        fontSize: 16,
-        fontFamily: 'Rounded M+ 1p'
+        fontSize: 16
       },
       color: '#4BA503',
       bottom: 5,
@@ -143,8 +144,7 @@ detailWindow = (function() {
       color: "#f9f9f9",
       backgroundColor: "#4cda64",
       font: {
-        fontSize: 18,
-        fontFamily: 'Rounded M+ 1p'
+        fontSize: 18
       },
       text: "登録する",
       textAlign: 'center'
@@ -157,11 +157,9 @@ detailWindow = (function() {
       actInd = new ActivityIndicator();
       that.detailWindow.add(actInd);
       actInd.show();
-      Ti.API.info(qiitaPostFlg);
-      Ti.API.info(hatenaPostFlg);
       mainController = require("controllers/mainContoroller");
       mainController = new mainController();
-      return mainController.stockItem(that.uuid, that.url, contents, qiitaPostFlg, hatenaPostFlg, function(result) {
+      return mainController.stockItem(that.uuid, that.url, contents, that.title, qiitaPostFlg, hatenaPostFlg, tweetFlg, function(result) {
         if (result) {
           actInd.hide();
           that._hideDialog(_view, Ti.API.info("投稿処理が完了"));
@@ -179,8 +177,7 @@ detailWindow = (function() {
       backgroundColor: "#d8514b",
       color: "#f9f9f9",
       font: {
-        fontSize: 18,
-        fontFamily: 'Rounded M+ 1p'
+        fontSize: 18
       },
       text: '中止する',
       textAlign: "center"
@@ -213,8 +210,7 @@ detailWindow = (function() {
       text: "Qiitaへストック",
       textAlign: 'left',
       font: {
-        fontSize: 16,
-        fontFamily: 'Rounded M+ 1p'
+        fontSize: 16
       },
       color: "#222",
       top: 120,
@@ -247,11 +243,43 @@ detailWindow = (function() {
       text: "はてブする",
       textAlign: 'left',
       font: {
-        fontSize: 16,
-        fontFamily: 'Rounded M+ 1p'
+        fontSize: 16
       },
       color: "#222",
       top: 160,
+      left: 50,
+      widht: 100,
+      height: 20,
+      backgroundColor: 'transparent'
+    });
+    twitterIcon = Ti.UI.createImageView({
+      image: "ui/image/twitter.png",
+      top: 190,
+      left: 10,
+      width: 35,
+      height: 35
+    });
+    if ((this.twitterAccessTokenKey != null) === true) {
+      tweetFlg = true;
+    } else {
+      tweetFlg = false;
+    }
+    tweetSwitch = Ti.UI.createSwitch({
+      value: tweetFlg,
+      top: 195,
+      left: 200
+    });
+    tweetSwitch.addEventListener('change', function(e) {
+      return tweetFlg = e.source.value;
+    });
+    tweetLabel = Ti.UI.createLabel({
+      text: "tweetする",
+      textAlign: 'left',
+      font: {
+        fontSize: 16
+      },
+      color: "#222",
+      top: 195,
       left: 50,
       widht: 100,
       height: 20,
@@ -263,6 +291,9 @@ detailWindow = (function() {
     _view.add(hatenaIcon);
     _view.add(hatenaPostSwitch);
     _view.add(hatenaPostLabel);
+    _view.add(twitterIcon);
+    _view.add(tweetSwitch);
+    _view.add(tweetLabel);
     _view.add(textArea);
     _view.add(registMemoBtn);
     _view.add(cancelleBtn);

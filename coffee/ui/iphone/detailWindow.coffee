@@ -4,7 +4,7 @@ class detailWindow
       barColor:"#f9f9f9"
       backgroundColor:"#f9f9f9"
       barBackgroundColor:"#222"
-      keyColor:'#4BA503'
+      keyColor:'#59BB0C'      
       textColor:"#f9f9f9"    
 
     @detailWindow = Ti.UI.createWindow
@@ -14,12 +14,13 @@ class detailWindow
       navBarHidden: false
       tabBarHidden: false
 
-    # Qiita へのストックやはてブする時に必要となるTokenと
-    # uuid，URLを設定 
+    # Qiita へのストック、はてブ、Tweetする時に必要となるTokenとuuid，URLを設定 
     @hatenaAccessTokenKey  = Ti.App.Properties.getString("hatenaAccessTokenKey")
+    @twitterAccessTokenKey = Ti.App.Properties.getString('twitterAccessTokenKey')
     @QiitaToken = Ti.App.Properties.getString('QiitaToken')
     @uuid = data.uuid
-    @url  = data.url        
+    @url  = data.url
+    @title = data.title
 
     @_createTitleView(data.title,data.icon)
 
@@ -58,6 +59,7 @@ class detailWindow
     selectedValue = false
     qiitaPostFlg = false
     hatenaPostFlg = false
+    tweetFlg = false
         
     _view = Ti.UI.createView
       width:Ti.UI.FULL
@@ -85,7 +87,6 @@ class detailWindow
       text :"(任意)はてブ時登録時のコメント"
       font:
         fontSize:12
-        fontFamily :'Rounded M+ 1p'
       color:"#222"
       top:5
       left:7
@@ -99,7 +100,6 @@ class detailWindow
       text :"0文字"
       font:
         fontSize:16
-        fontFamily :'Rounded M+ 1p'
       color:'#4BA503'
       bottom:5
       right:5
@@ -157,7 +157,6 @@ class detailWindow
       backgroundColor:"#4cda64"
       font:
         fontSize:18
-        fontFamily :'Rounded M+ 1p'
       text:"登録する"
       textAlign:'center'
     
@@ -169,12 +168,9 @@ class detailWindow
       that.detailWindow.add actInd
       actInd.show()
       
-      
-      Ti.API.info qiitaPostFlg
-      Ti.API.info hatenaPostFlg
       mainController = require("controllers/mainContoroller")
       mainController = new mainController()
-      mainController.stockItem(that.uuid,that.url,contents,qiitaPostFlg,hatenaPostFlg,(result) ->
+      mainController.stockItem(that.uuid,that.url,contents,that.title,qiitaPostFlg,hatenaPostFlg,tweetFlg,(result) ->
         ## result = [qiitaPostResult,hatenaPostResult]となってる
         if result
           actInd.hide()
@@ -194,7 +190,6 @@ class detailWindow
       color:"#f9f9f9"
       font:
         fontSize:18
-        fontFamily :'Rounded M+ 1p'
       text:'中止する'
       textAlign:"center"
       
@@ -228,7 +223,6 @@ class detailWindow
       textAlign:'left'
       font:
         fontSize:16
-        fontFamily :'Rounded M+ 1p'
       color:"#222"
       top:120
       left:50
@@ -260,9 +254,41 @@ class detailWindow
       textAlign:'left'
       font:
         fontSize:16
-        fontFamily :'Rounded M+ 1p'
       color:"#222"
       top:160
+      left:50
+      widht:100
+      height:20
+      backgroundColor: 'transparent'
+      
+    twitterIcon = Ti.UI.createImageView
+      image:"ui/image/twitter.png"
+      top:190
+      left:10
+      width:35
+      height:35
+      
+    if @twitterAccessTokenKey? is true
+      tweetFlg = true
+    else
+      tweetFlg = false
+
+      
+    tweetSwitch = Ti.UI.createSwitch
+      value:tweetFlg
+      top:195
+      left:200
+      
+    tweetSwitch.addEventListener('change',(e)  ->
+      tweetFlg = e.source.value
+    )
+    tweetLabel = Ti.UI.createLabel
+      text :"tweetする"
+      textAlign:'left'
+      font:
+        fontSize:16
+      color:"#222"
+      top:195
       left:50
       widht:100
       height:20
@@ -274,6 +300,12 @@ class detailWindow
     _view.add hatenaIcon
     _view.add hatenaPostSwitch
     _view.add hatenaPostLabel
+    _view.add twitterIcon
+    _view.add tweetSwitch    
+    _view.add tweetLabel
+
+
+    
     _view.add textArea
     _view.add registMemoBtn
     _view.add cancelleBtn

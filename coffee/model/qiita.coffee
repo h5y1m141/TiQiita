@@ -170,7 +170,7 @@ class Qiita
 
     xhr.onerror = (e) ->
       error = JSON.parse(@.responseText)
-      Ti.API.debug "_request method error.#{error.error}"
+      Ti.API.debug "_request method error.#{error}"
             
       
       

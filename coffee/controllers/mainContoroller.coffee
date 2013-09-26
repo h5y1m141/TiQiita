@@ -4,6 +4,8 @@ class mainContoroller
     @hatena = new Hatena()
     Qiita = require("model/qiita")
     @qiita = new Qiita()
+    Twitter = require("model/twitter")
+    @twitter = new Twitter()
         
     @tabSetting =
       "iphone":
@@ -279,43 +281,62 @@ class mainContoroller
     
 
     
-  stockItem: (uuid,url,contents,qiitaPostFlg,hatenaPostFlg,callback) =>
-    hatena = @hatena    
+  stockItem: (uuid,url,contents,title,qiitaPostFlg,hatenaPostFlg,tweetFlg,callback) =>
+    hatena = @hatena
+    twitter = @twitter
+    qiita = @qiita
     # 最初にQiitaへの投稿処理を必要に応じて実施して
     # それが終わったらはてブした上でそれぞれの投稿処理が
     # 成功失敗の情報をcallback関数に渡す
 
-    qiitaPostResult = false
-    hatenaPostResult = false
-    
+    qiitaPostResult = null
+    hatenaPostResult = null
+    tweetResult = null
+    # qiitaへのストック処理
     if qiitaPostFlg is true
-      @qiita.putStock(uuid,(qiitaresult) ->
+      qiita.putStock(uuid,(qiitaresult) ->
         if qiitaresult is 'success'
           qiitaPostResult = true
-
-        if hatenaPostFlg is true  
-          hatena.postBookmark(url,contents,(hatenaresult) ->
-            Ti.API.info "postBookmark result is #{hatenaresult}"
-            if hatenaresult.success
-              hatenaPostResult = true
-            Ti.API.info "Qiitaとはてブ同時投稿終了。結果は#{qiitaPostResult}と#{hatenaPostResult}です"
-            result = [qiitaPostResult,hatenaPostResult]
-            return callback(result)  
-          )
         else
-          result = [qiitaPostResult,hatenaPostResult]
-          return callback(result)  
+          qiitaPostResult = false
       )
     else
-      if hatenaPostFlg is true  
-        hatena.postBookmark(url,contents,(hatenaresult) ->
-          Ti.API.info "postBookmark result is #{hatenaresult}"
-          if hatenaresult.success
-            hatenaPostResult = true
-          Ti.API.info "はてブ投稿終了。結果は#{qiitaPostResult}と#{hatenaPostResult}です"  
-          result = [qiitaPostResult,hatenaPostResult]
-          return callback(result)    
-        )
+      qiitaPostResult = false
+      
+    # はてブ処理
+    if hatenaPostFlg is true
+      hatena.postBookmark(url,contents,(hatenaresult) ->
+        if hatenaresult.success
+          hatenaPostResult = true
+        else  
+          hatenaPostResult = false
+      )
+    else
+      hatenaPostResult = false
+      
+    # Tweet処理
+    if tweetFlg is true
+      twitter.postTweet(url,contents,title,(result) ->
+        if result.success
+          tweetResult = true
+        else
+          tweetResult = false
+      )  
+    else
+      tweetResult = false
+    
+    # 5秒ごとにそれぞれのPOST結果をチェック
+    postCheck = setInterval(->
+      Ti.API.info "PostResult is #{qiitaPostResult} and #{hatenaPostResult} and #{tweetResult}"
+      if qiitaPostResult isnt null and hatenaPostResult isnt null and tweetResult isnt null 
+        clearInterval(postCheck)
+        result = [qiitaPostResult,hatenaPostResult,tweetResult]
+        callback(result)
+      else
+        Ti.API.info "continue to postCheck"
+        
+    , 5000)
+
     
 
 

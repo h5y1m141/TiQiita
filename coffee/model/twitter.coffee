@@ -42,30 +42,64 @@ class Twitter
 
     return true
 
-  postTweet:(url,contents,callback) ->
-      
-    Ti.API.info "hanate postBookmark start. url is #{url} and contents is #{contents}"
-    xml = """
-    <entry xmlns='http://purl.org/atom/ns#'>
-      <title>dummy</title>
-      <link rel='related' type='text/html' href='#{url}' />
-      <summary type='text/plain'>#{contents}</summary>        
-    </entry>
-    """
+  postTweet:(url,contents,title,callback) ->
+
     # 念のためaccesstokenの存在を確認した上でポスト処理する
-    hatenaAccessTokenKey  = Ti.App.Properties.getString("hatenaAccessTokenKey")
+    twitterAccessTokenKey = Ti.App.Properties.getString('twitterAccessTokenKey')
 
-    if hatenaAccessTokenKey? is true
-      
-      @hatena.request('http://b.hatena.ne.jp/atom/post', xml, {'Content-Type':'application/x.atom+xml'}, "POST", (result) ->
-        return callback(result)
+    if twitterAccessTokenKey? is true
+      @shortenURL(url,(result) =>
+        if result.status_txt
+          params =
+            status:"「#{title}」 #{contents} #{result.data.url}"
+            
+          headers = {}
+          @twitter.request('https://api.twitter.com/1.1/statuses/update.json',params,headers, "POST", (result) ->
+            Ti.API.info "postTweet done result is #{result}"
+            return callback(result)
 
+          )
+        else
+          # bit.lyから短縮URLが取得できない場合があるかもしれないため
+          # その場合には通常のURLをtweetする
+          params =
+            status:"「#{title}」 #{contents} #{url}"
+            
+          headers = {}
+          @twitter.request('https://api.twitter.com/1.1/statuses/update.json',params,headers, "POST", (result) ->
+            Ti.API.info "postTweet done result is #{result}"
+            return callback(result)
+          
+          
       )
+
     else
       alertDialog = Ti.UI.createAlertDialog()
       alertDialog.setTitle "Twitterアカウント認証に失敗してるようです。\nこのアプリの設定画面のアカウントの設定を念のためご確認ください"
       alertDialog.show()
       
-
+  shortenURL:(url,callback) ->
+    xhr = Ti.Network.createHTTPClient()
+    baseURL = "http://api.bit.ly/v3/shorten?"
+    login = "h5y1m141"
+    longUrl = url
+    
+    Config = require("model/loadConfig")
+    config = new Config()
+    apiKey = config.getbitlyAPIKey()
+    
+    path = "#{baseURL}login=#{login}&longUrl=#{longUrl}&apiKey=#{apiKey}"
+    Ti.API.info path
+    xhr.open('GET',path)
+    xhr.onload = ->
+      body = JSON.parse(@responseText)
+      if @status is 200
+        Ti.API.info body
+        callback(body)
+    xhr.onerror = (e) ->
+      Ti.API.info "bitly shorten fail"
+    xhr.send()
+    
+    
 
 module.exports = Twitter
