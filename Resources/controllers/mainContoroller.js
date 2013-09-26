@@ -335,7 +335,7 @@ mainContoroller = (function() {
     }
   };
 
-  mainContoroller.prototype.stockItem = function(uuid, url, contents, qiitaPostFlg, hatenaPostFlg, tweetFlg, callback) {
+  mainContoroller.prototype.stockItem = function(uuid, url, contents, title, qiitaPostFlg, hatenaPostFlg, tweetFlg, callback) {
     var hatena, hatenaPostResult, postCheck, qiita, qiitaPostResult, tweetResult, twitter;
     hatena = this.hatena;
     twitter = this.twitter;
@@ -366,7 +366,7 @@ mainContoroller = (function() {
       hatenaPostResult = false;
     }
     if (tweetFlg === true) {
-      twitter.postTweet(url, contents, function(result) {
+      twitter.postTweet(url, contents, title, function(result) {
         if (result.success) {
           return tweetResult = true;
         } else {

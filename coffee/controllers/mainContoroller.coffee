@@ -281,7 +281,7 @@ class mainContoroller
     
 
     
-  stockItem: (uuid,url,contents,qiitaPostFlg,hatenaPostFlg,tweetFlg,callback) =>
+  stockItem: (uuid,url,contents,title,qiitaPostFlg,hatenaPostFlg,tweetFlg,callback) =>
     hatena = @hatena
     twitter = @twitter
     qiita = @qiita
@@ -316,7 +316,7 @@ class mainContoroller
       
     # Tweet処理
     if tweetFlg is true
-      twitter.postTweet(url,contents,(result) ->
+      twitter.postTweet(url,contents,title,(result) ->
         if result.success
           tweetResult = true
         else

@@ -23,6 +23,7 @@ detailWindow = (function() {
     this.QiitaToken = Ti.App.Properties.getString('QiitaToken');
     this.uuid = data.uuid;
     this.url = data.url;
+    this.title = data.title;
     this._createTitleView(data.title, data.icon);
     qiitaCSS = 'ui/css/qiitaColor.css';
     htmlHeaderElement = "<html><head><meta name='viewport' content='width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1'><link rel='stylesheet' href='" + qiitaCSS + "' type='text/css'></link></head>";
@@ -77,8 +78,7 @@ detailWindow = (function() {
     hintLabel = Ti.UI.createLabel({
       text: "(任意)はてブ時登録時のコメント",
       font: {
-        fontSize: 12,
-        fontFamily: 'Rounded M+ 1p'
+        fontSize: 12
       },
       color: "#222",
       top: 5,
@@ -91,8 +91,7 @@ detailWindow = (function() {
     textCounter = Ti.UI.createLabel({
       text: "0文字",
       font: {
-        fontSize: 16,
-        fontFamily: 'Rounded M+ 1p'
+        fontSize: 16
       },
       color: '#4BA503',
       bottom: 5,
@@ -145,8 +144,7 @@ detailWindow = (function() {
       color: "#f9f9f9",
       backgroundColor: "#4cda64",
       font: {
-        fontSize: 18,
-        fontFamily: 'Rounded M+ 1p'
+        fontSize: 18
       },
       text: "登録する",
       textAlign: 'center'
@@ -159,11 +157,9 @@ detailWindow = (function() {
       actInd = new ActivityIndicator();
       that.detailWindow.add(actInd);
       actInd.show();
-      Ti.API.info(qiitaPostFlg);
-      Ti.API.info(hatenaPostFlg);
       mainController = require("controllers/mainContoroller");
       mainController = new mainController();
-      return mainController.stockItem(that.uuid, that.url, contents, qiitaPostFlg, hatenaPostFlg, tweetFlg, function(result) {
+      return mainController.stockItem(that.uuid, that.url, contents, that.title, qiitaPostFlg, hatenaPostFlg, tweetFlg, function(result) {
         if (result) {
           actInd.hide();
           that._hideDialog(_view, Ti.API.info("投稿処理が完了"));
@@ -181,8 +177,7 @@ detailWindow = (function() {
       backgroundColor: "#d8514b",
       color: "#f9f9f9",
       font: {
-        fontSize: 18,
-        fontFamily: 'Rounded M+ 1p'
+        fontSize: 18
       },
       text: '中止する',
       textAlign: "center"
@@ -215,8 +210,7 @@ detailWindow = (function() {
       text: "Qiitaへストック",
       textAlign: 'left',
       font: {
-        fontSize: 16,
-        fontFamily: 'Rounded M+ 1p'
+        fontSize: 16
       },
       color: "#222",
       top: 120,
@@ -249,8 +243,7 @@ detailWindow = (function() {
       text: "はてブする",
       textAlign: 'left',
       font: {
-        fontSize: 16,
-        fontFamily: 'Rounded M+ 1p'
+        fontSize: 16
       },
       color: "#222",
       top: 160,
@@ -283,8 +276,7 @@ detailWindow = (function() {
       text: "tweetする",
       textAlign: 'left',
       font: {
-        fontSize: 16,
-        fontFamily: 'Rounded M+ 1p'
+        fontSize: 16
       },
       color: "#222",
       top: 195,

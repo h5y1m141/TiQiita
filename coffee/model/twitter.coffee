@@ -42,14 +42,15 @@ class Twitter
 
     return true
 
-  postTweet:(url,contents,callback) ->
+  postTweet:(url,contents,title,callback) ->
 
     # 念のためaccesstokenの存在を確認した上でポスト処理する
     twitterAccessTokenKey = Ti.App.Properties.getString('twitterAccessTokenKey')
 
     if twitterAccessTokenKey? is true
+
       params =
-        status:contents + " " + url
+        status:"「#{title}」 #{contents} #{url}"
         
       headers = {}
       @twitter.request('https://api.twitter.com/1.1/statuses/update.json',params,headers, "POST", (result) ->

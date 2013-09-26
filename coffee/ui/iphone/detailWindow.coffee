@@ -19,7 +19,8 @@ class detailWindow
     @twitterAccessTokenKey = Ti.App.Properties.getString('twitterAccessTokenKey')
     @QiitaToken = Ti.App.Properties.getString('QiitaToken')
     @uuid = data.uuid
-    @url  = data.url        
+    @url  = data.url
+    @title = data.title
 
     @_createTitleView(data.title,data.icon)
 
@@ -86,7 +87,6 @@ class detailWindow
       text :"(任意)はてブ時登録時のコメント"
       font:
         fontSize:12
-        fontFamily :'Rounded M+ 1p'
       color:"#222"
       top:5
       left:7
@@ -100,7 +100,6 @@ class detailWindow
       text :"0文字"
       font:
         fontSize:16
-        fontFamily :'Rounded M+ 1p'
       color:'#4BA503'
       bottom:5
       right:5
@@ -158,7 +157,6 @@ class detailWindow
       backgroundColor:"#4cda64"
       font:
         fontSize:18
-        fontFamily :'Rounded M+ 1p'
       text:"登録する"
       textAlign:'center'
     
@@ -170,12 +168,9 @@ class detailWindow
       that.detailWindow.add actInd
       actInd.show()
       
-      
-      Ti.API.info qiitaPostFlg
-      Ti.API.info hatenaPostFlg
       mainController = require("controllers/mainContoroller")
       mainController = new mainController()
-      mainController.stockItem(that.uuid,that.url,contents,qiitaPostFlg,hatenaPostFlg,tweetFlg,(result) ->
+      mainController.stockItem(that.uuid,that.url,contents,that.title,qiitaPostFlg,hatenaPostFlg,tweetFlg,(result) ->
         ## result = [qiitaPostResult,hatenaPostResult]となってる
         if result
           actInd.hide()
@@ -195,7 +190,6 @@ class detailWindow
       color:"#f9f9f9"
       font:
         fontSize:18
-        fontFamily :'Rounded M+ 1p'
       text:'中止する'
       textAlign:"center"
       
@@ -229,7 +223,6 @@ class detailWindow
       textAlign:'left'
       font:
         fontSize:16
-        fontFamily :'Rounded M+ 1p'
       color:"#222"
       top:120
       left:50
@@ -261,7 +254,6 @@ class detailWindow
       textAlign:'left'
       font:
         fontSize:16
-        fontFamily :'Rounded M+ 1p'
       color:"#222"
       top:160
       left:50
@@ -295,7 +287,6 @@ class detailWindow
       textAlign:'left'
       font:
         fontSize:16
-        fontFamily :'Rounded M+ 1p'
       color:"#222"
       top:195
       left:50

@@ -42,12 +42,12 @@ Twitter = (function() {
     return true;
   };
 
-  Twitter.prototype.postTweet = function(url, contents, callback) {
+  Twitter.prototype.postTweet = function(url, contents, title, callback) {
     var alertDialog, headers, params, twitterAccessTokenKey;
     twitterAccessTokenKey = Ti.App.Properties.getString('twitterAccessTokenKey');
     if ((twitterAccessTokenKey != null) === true) {
       params = {
-        status: contents + " " + url
+        status: "「" + title + "」 " + contents + " " + url
       };
       headers = {};
       return this.twitter.request('https://api.twitter.com/1.1/statuses/update.json', params, headers, "POST", function(result) {
