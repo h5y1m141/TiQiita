@@ -132,7 +132,7 @@ listView = (function() {
         Ti.API.info("currentPage is " + currentPage + " and nextURL is " + nextURL);
         return qiita.getNextFeed(nextURL, currentPage, function(result) {
           var currentSection, items, lastIndex;
-          items = _this.createItems(result);
+          items = maincontroller.createItems(result);
           lastIndex = _this._getLastItemIndex();
           currentSection = _this.listView.sections[0];
           return currentSection.insertItemsAt(lastIndex, items);
@@ -157,45 +157,6 @@ listView = (function() {
     });
     return this.listView;
   }
-
-  listView.prototype.createItems = function(data) {
-    var dataSet, layout, rawData, _i, _items, _len;
-    dataSet = [];
-    for (_i = 0, _len = data.length; _i < _len; _i++) {
-      _items = data[_i];
-      rawData = _items;
-      layout = {
-        properties: {
-          height: 120,
-          selectionStyle: Titanium.UI.iPhone.ListViewCellSelectionStyle.NONE,
-          data: rawData
-        },
-        title: {
-          text: _items.title
-        },
-        icon: {
-          image: _items.user.profile_image_url
-        },
-        updateTime: {
-          text: _items.updated_at_in_words
-        },
-        handleName: {
-          text: _items.user.url_name
-        },
-        contents: {
-          text: _items.body.replace(/<\/?[^>]+>/gi, "")
-        },
-        tags: {
-          text: 'javascript,ruby,Titanium'
-        },
-        tagIcon: {
-          text: String.fromCharCode("0xe128")
-        }
-      };
-      dataSet.push(layout);
-    }
-    return dataSet;
-  };
 
   listView.prototype.refresData = function(data) {
     var dataSet, loadOld, section, sections;
