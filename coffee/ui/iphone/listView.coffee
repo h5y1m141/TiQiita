@@ -117,7 +117,7 @@ class listView
         Ti.API.info "currentPage is #{currentPage} and nextURL is #{nextURL}"
 
         qiita.getNextFeed(nextURL,currentPage,(result) =>
-          items = @createItems(result)
+          items = maincontroller.createItems(result)
           lastIndex = @_getLastItemIndex()
           currentSection = @listView.sections[0]
           return currentSection.insertItemsAt(lastIndex,items)
@@ -148,35 +148,7 @@ class listView
     )
     return @listView
     
-  createItems:(data) ->
-    dataSet = []
 
-    for _items in data
-      rawData = _items
-      layout =
-        properties:
-          height:120
-          selectionStyle: Titanium.UI.iPhone.ListViewCellSelectionStyle.NONE
-          data:rawData
-          
-        title:
-          text: _items.title
-        icon:
-          image: _items.user.profile_image_url
-        updateTime:
-          text: _items.updated_at_in_words
-        handleName:
-          text: _items.user.url_name
-        contents:
-          text: _items.body.replace(/<\/?[^>]+>/gi, "")
-          # text: _items.raw_body
-        tags:
-          text: 'javascript,ruby,Titanium'
-        tagIcon:
-          text:String.fromCharCode("0xe128")
-      dataSet.push(layout)
-                
-    return dataSet
     
   refresData: (data) =>
     sections = []

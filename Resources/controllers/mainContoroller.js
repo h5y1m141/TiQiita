@@ -271,16 +271,23 @@ mainContoroller = (function() {
     dataSet.push(loadOld);
     section.setItems(dataSet);
     sections.push(section);
-    Ti.API.info(mainListView);
     return mainListView.setSections(sections);
   };
 
   mainContoroller.prototype.createItems = function(data) {
-    var dataSet, layout, rawData, _i, _items, _len;
+    var dataSet, layout, rawData, tag, _i, _items, _j, _len, _len1, _ref, _tags;
     dataSet = [];
     for (_i = 0, _len = data.length; _i < _len; _i++) {
       _items = data[_i];
       rawData = _items;
+      _tags = [];
+      _ref = _items.tags;
+      for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+        tag = _ref[_j];
+        Ti.API.info(tag.name);
+        _tags.push(tag.name);
+      }
+      Ti.API.info(_tags);
       layout = {
         properties: {
           height: 120,
@@ -303,7 +310,7 @@ mainContoroller = (function() {
           text: _items.body.replace(/<\/?[^>]+>/gi, "")
         },
         tags: {
-          text: 'javascript,ruby,Titanium'
+          text: _tags.join(", ")
         },
         tagIcon: {
           text: String.fromCharCode("0xe128")
