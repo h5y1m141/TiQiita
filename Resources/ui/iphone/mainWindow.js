@@ -19,6 +19,21 @@ mainWindow = (function() {
       navBarHidden: true
     });
     this.slideState = false;
+    this.actInd = Ti.UI.createActivityIndicator({
+      zIndex: 30,
+      backgroundColor: "#222",
+      top: 150,
+      left: 120,
+      height: 40,
+      width: 'auto',
+      font: {
+        fontFamily: 'Helvetica Neue',
+        fontSize: 15,
+        fontWeight: 'bold'
+      },
+      color: '#fff',
+      message: 'loading...'
+    });
     menuBtn = Ti.UI.createLabel({
       backgroundColor: "transparent",
       color: this.baseColor.textColor,
@@ -47,7 +62,7 @@ mainWindow = (function() {
       font: {
         fontSize: 16
       },
-      text: 'Qiita',
+      text: "Qiita:投稿一覧",
       color: this.baseColor.textColor
     });
     this.navView = Ti.UI.createView({
@@ -61,6 +76,8 @@ mainWindow = (function() {
     this.navView.add(menuBtn);
     this.navView.add(this.title);
     this.window.add(this.navView);
+    this.actInd.hide();
+    this.window.add(this.actInd);
   }
 
   mainWindow.prototype.getWindow = function() {

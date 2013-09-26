@@ -15,7 +15,19 @@ class mainWindow
       
 
     @slideState = false
-    
+    @actInd = Ti.UI.createActivityIndicator
+      zIndex:30
+      backgroundColor:"#222"
+      top:150
+      left: 120
+      height: 40
+      width: 'auto'
+      font: 
+        fontFamily:'Helvetica Neue'
+        fontSize:15
+        fontWeight:'bold'
+      color: '#fff'
+      message: 'loading...'    
     menuBtn = Ti.UI.createLabel
       backgroundColor:"transparent"
       color:@baseColor.textColor
@@ -42,7 +54,7 @@ class mainWindow
       left:40
       font:
         fontSize:16
-      text:'Qiita'
+      text:"Qiita:投稿一覧"
       color:@baseColor.textColor
       
     @navView = Ti.UI.createView
@@ -57,6 +69,8 @@ class mainWindow
     @navView.add menuBtn
     @navView.add @title
     @window.add @navView
+    @actInd.hide()
+    @window.add @actInd
       
   getWindow:() ->
     return @window

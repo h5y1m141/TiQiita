@@ -76,7 +76,7 @@ mainContoroller = (function() {
         if (result.length !== MAXITEMCOUNT) {
           return Ti.API.info("loadOldEntry hide");
         } else {
-          Ti.API.info(storedTo);
+          MainWindow.actInd.hide();
           return _this.refresData(result);
         }
       });
@@ -88,6 +88,7 @@ mainContoroller = (function() {
           return 1;
         }
       });
+      MainWindow.actInd.hide();
       return this.refresData(items);
     }
   };
@@ -111,6 +112,7 @@ mainContoroller = (function() {
         if (result.length !== MAXITEMCOUNT) {
           return Ti.API.info("loadOldEntry hide");
         } else {
+          MainWindow.actInd.hide();
           return _this.refresData(result);
         }
       });
@@ -122,6 +124,7 @@ mainContoroller = (function() {
           return 1;
         }
       });
+      MainWindow.actInd.hide();
       return this.refresData(items);
     }
   };
@@ -145,6 +148,7 @@ mainContoroller = (function() {
         if (result.length !== MAXITEMCOUNT) {
           return Ti.API.info("loadOldEntry hide");
         } else {
+          MainWindow.actInd.hide();
           return _this.refresData(result);
         }
       });
@@ -156,6 +160,7 @@ mainContoroller = (function() {
           return 1;
         }
       });
+      MainWindow.actInd.hide();
       return this.refresData(items);
     }
   };
@@ -207,6 +212,7 @@ mainContoroller = (function() {
               return 1;
             }
           });
+          MainWindow.actInd.hide();
           Ti.App.Properties.setString("followerItems", JSON.stringify(_items));
           return _this.refresData(_items);
         }), 10000);
@@ -219,6 +225,7 @@ mainContoroller = (function() {
           return 1;
         }
       });
+      MainWindow.actInd.hide();
       return this.refresData(items);
     }
   };

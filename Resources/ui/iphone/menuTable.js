@@ -44,21 +44,25 @@ menuTable = (function() {
       mainController = new mainController();
       if (className === "storedStocks") {
         Ti.App.Properties.setString("currentPage", "storedStocks");
+        MainWindow.actInd.show();
         MainWindow.resetSlide();
         MainWindow.setWindowTitle("Qiita:投稿一覧");
         return mainController.getFeed();
       } else if (className === "storedMyStocks") {
         Ti.App.Properties.setString("currentPage", "storedMyStocks");
+        MainWindow.actInd.show();
         MainWindow.resetSlide();
         MainWindow.setWindowTitle("Qiita:ストック一覧");
         return mainController.getMyStocks();
       } else if (className === "followerItems") {
         Ti.App.Properties.setString("currentPage", "followerItems");
+        MainWindow.actInd.show();
         MainWindow.resetSlide();
         MainWindow.setWindowTitle("Qiita:フォロワー投稿");
         return mainController.getFollowerItems();
       } else if (className === "tags") {
         Ti.App.Properties.setString("currentPage", "followingTag" + tagName);
+        MainWindow.actInd.show();
         MainWindow.resetSlide();
         MainWindow.setWindowTitle("Qiita:Tag:" + tagName);
         return mainController.getFeedByTag(tagName);
