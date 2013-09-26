@@ -229,7 +229,7 @@ class mainContoroller
     sections.push section
     # app.jsでmainListView = new ListView()としている
     # ListViewにアイテムをセット
-    Ti.API.info mainListView
+
     return mainListView.setSections sections
     
   createItems:(data) ->
@@ -237,6 +237,12 @@ class mainContoroller
 
     for _items in data
       rawData = _items
+      _tags = []
+      for tag in _items.tags
+        Ti.API.info tag.name
+        _tags.push(tag.name)
+        
+      Ti.API.info _tags
       layout =
         properties:
           height:120
@@ -255,7 +261,7 @@ class mainContoroller
           text: _items.body.replace(/<\/?[^>]+>/gi, "")
           # text: _items.raw_body
         tags:
-          text: 'javascript,ruby,Titanium'
+          text:_tags.join(", ")
         tagIcon:
           text:String.fromCharCode("0xe128")
       dataSet.push(layout)
