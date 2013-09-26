@@ -83,7 +83,11 @@ class Twitter
     baseURL = "http://api.bit.ly/v3/shorten?"
     login = "h5y1m141"
     longUrl = url
-    apiKey = "R_dfe8c131517b6f4798a4044d8f6aa2d4"
+    
+    Config = require("model/loadConfig")
+    config = new Config()
+    apiKey = config.getbitlyAPIKey()
+    
     path = "#{baseURL}login=#{login}&longUrl=#{longUrl}&apiKey=#{apiKey}"
     Ti.API.info path
     xhr.open('GET',path)

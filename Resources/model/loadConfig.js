@@ -21,6 +21,10 @@ loadConfig = (function() {
     return this.json.GoogleAnalytics.key;
   };
 
+  loadConfig.prototype.getbitlyAPIKey = function() {
+    return this.json.bitly.apiKey;
+  };
+
   return loadConfig;
 
 })();
