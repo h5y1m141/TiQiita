@@ -76,7 +76,7 @@ mainContoroller = (function() {
         if (result.length !== MAXITEMCOUNT) {
           return Ti.API.info("loadOldEntry hide");
         } else {
-          Ti.API.info(storedTo);
+          MainWindow.actInd.hide();
           return _this.refresData(result);
         }
       });
@@ -88,6 +88,7 @@ mainContoroller = (function() {
           return 1;
         }
       });
+      MainWindow.actInd.hide();
       return this.refresData(items);
     }
   };
@@ -111,6 +112,7 @@ mainContoroller = (function() {
         if (result.length !== MAXITEMCOUNT) {
           return Ti.API.info("loadOldEntry hide");
         } else {
+          MainWindow.actInd.hide();
           return _this.refresData(result);
         }
       });
@@ -122,18 +124,34 @@ mainContoroller = (function() {
           return 1;
         }
       });
+      MainWindow.actInd.hide();
       return this.refresData(items);
     }
   };
 
   mainContoroller.prototype.getMyStocks = function() {
-    var MAXITEMCOUNT, items, moment, momentja;
+    var MAXITEMCOUNT, items, moment, momentja,
+      _this = this;
     MAXITEMCOUNT = 20;
     items = JSON.parse(Ti.App.Properties.getString('storedMyStocks'));
     moment = require('lib/moment.min');
     momentja = require('lib/momentja');
     if ((items != null) === false || items === "") {
-
+      return this.qiita.getMyStocks(function(result, links) {
+        result.sort(function(a, b) {
+          if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
+            return -1;
+          } else {
+            return 1;
+          }
+        });
+        if (result.length !== MAXITEMCOUNT) {
+          return Ti.API.info("loadOldEntry hide");
+        } else {
+          MainWindow.actInd.hide();
+          return _this.refresData(result);
+        }
+      });
     } else {
       items.sort(function(a, b) {
         if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
@@ -142,6 +160,7 @@ mainContoroller = (function() {
           return 1;
         }
       });
+      MainWindow.actInd.hide();
       return this.refresData(items);
     }
   };
@@ -193,6 +212,7 @@ mainContoroller = (function() {
               return 1;
             }
           });
+          MainWindow.actInd.hide();
           Ti.App.Properties.setString("followerItems", JSON.stringify(_items));
           return _this.refresData(_items);
         }), 10000);
@@ -205,6 +225,7 @@ mainContoroller = (function() {
           return 1;
         }
       });
+      MainWindow.actInd.hide();
       return this.refresData(items);
     }
   };
@@ -230,14 +251,13 @@ mainContoroller = (function() {
     sections = [];
     section = Ti.UI.createListSection();
     dataSet = this.createItems(data);
-    section = Ti.UI.createListSection();
     loadOld = {
       loadOld: true,
       properties: {
         selectionStyle: Titanium.UI.iPhone.ListViewCellSelectionStyle.NONE
       },
-      title: {
-        text: 'load old'
+      loadBtn: {
+        text: String.fromCharCode("0xe108")
       }
     };
     dataSet.push(loadOld);
@@ -256,10 +276,8 @@ mainContoroller = (function() {
       _ref = _items.tags;
       for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
         tag = _ref[_j];
-        Ti.API.info(tag.name);
         _tags.push(tag.name);
       }
-      Ti.API.info(_tags);
       layout = {
         properties: {
           height: 120,

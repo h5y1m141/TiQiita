@@ -68,7 +68,8 @@ class mainContoroller
         if result.length isnt MAXITEMCOUNT
           Ti.API.info "loadOldEntry hide"  
         else
-          Ti.API.info storedTo
+
+          MainWindow.actInd.hide()
           @refresData(result)
 
       )
@@ -78,6 +79,7 @@ class mainContoroller
 
         (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
       )
+      MainWindow.actInd.hide()
       @refresData(items)
   getFeed:() ->
     items = JSON.parse(Ti.App.Properties.getString("storedStocks"))
@@ -94,6 +96,7 @@ class mainContoroller
         if result.length isnt MAXITEMCOUNT
           Ti.API.info "loadOldEntry hide"
         else
+          MainWindow.actInd.hide()
           @refresData(result)
 
       )
@@ -103,6 +106,7 @@ class mainContoroller
 
         (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
       )
+      MainWindow.actInd.hide()
       @refresData(items)    
             
   getMyStocks:() ->
@@ -111,12 +115,27 @@ class mainContoroller
     moment = require('lib/moment.min')
     momentja = require('lib/momentja')
     if items? is false or items is ""
+      @qiita.getMyStocks( (result,links) =>
+        
+        result.sort( (a, b) ->
+          (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
+        )
+        
+        if result.length isnt MAXITEMCOUNT
+          Ti.API.info "loadOldEntry hide"
+        else
+          MainWindow.actInd.hide()
+          @refresData(result)
+
+      )
       
     else
+      
       items.sort( (a, b) ->
 
         (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
       )
+      MainWindow.actInd.hide()
       @refresData(items)
       
   # フォロワー投稿を取得するメソッド
@@ -156,6 +175,7 @@ class mainContoroller
           _items.sort( (a, b) ->
             (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
           )
+          MainWindow.actInd.hide()
           # フォローしてるユーザの投稿情報をローカルにキャッシュ
           Ti.App.Properties.setString("followerItems",JSON.stringify(_items))
           @refresData(_items)
@@ -166,6 +186,7 @@ class mainContoroller
 
         (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
       )
+      MainWindow.actInd.hide()
       @refresData(items)      
               
   setItems:() ->
@@ -188,14 +209,14 @@ class mainContoroller
     dataSet = @createItems(data)
       
     # 過去の投稿を読み込むためのもの
-    section = Ti.UI.createListSection()
+
     loadOld =
       loadOld:true
       properties:
         selectionStyle: Titanium.UI.iPhone.ListViewCellSelectionStyle.NONE
-      title:
-        text: 'load old'
-      
+      loadBtn:
+        text:String.fromCharCode("0xe108")
+        
     dataSet.push(loadOld)
     
     section.setItems dataSet
@@ -212,10 +233,9 @@ class mainContoroller
       rawData = _items
       _tags = []
       for tag in _items.tags
-        Ti.API.info tag.name
         _tags.push(tag.name)
         
-      Ti.API.info _tags
+
       layout =
         properties:
           height:120

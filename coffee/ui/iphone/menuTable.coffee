@@ -39,19 +39,27 @@ class menuTable
       
       if className is "storedStocks"
         Ti.App.Properties.setString "currentPage","storedStocks"
+        MainWindow.actInd.show()
         MainWindow.resetSlide()
+        MainWindow.setWindowTitle("Qiita:投稿一覧")
         mainController.getFeed()
       else if className is "storedMyStocks"
         Ti.App.Properties.setString "currentPage","storedMyStocks"
+        MainWindow.actInd.show()        
         MainWindow.resetSlide()
+        MainWindow.setWindowTitle("Qiita:ストック一覧")        
         mainController.getMyStocks()
       else if className is "followerItems"
         Ti.App.Properties.setString "currentPage","followerItems"
+        MainWindow.actInd.show()        
         MainWindow.resetSlide()
+        MainWindow.setWindowTitle("Qiita:フォロワー投稿")        
         mainController.getFollowerItems()
       else if className is "tags"
         Ti.App.Properties.setString "currentPage","followingTag#{tagName}"
+        MainWindow.actInd.show()        
         MainWindow.resetSlide()
+        MainWindow.setWindowTitle("Qiita:Tag:#{tagName}")        
         mainController.getFeedByTag(tagName)
       else if className is "accountSetting"
 

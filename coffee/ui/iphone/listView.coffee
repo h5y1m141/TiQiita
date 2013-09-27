@@ -91,11 +91,24 @@ class listView
         color: @baseColor.contentsColor
         font:
           fontSize:12
-          # fontFamily : 'Rounded M+ 1p'
         width:240
         height:50
         left:60
         top:45
+    ,
+      # loadBtn
+      type: "Ti.UI.Label"
+      bindId:"loadBtn"
+      properties:
+        color: @baseColor.contentsColor
+        font:
+          fontSize:32
+          fontFamily:'LigatureSymbols'
+        width:320
+        height:50
+        textAlign:"center"
+        left:0
+        top:0
           
         
     ]            
@@ -110,6 +123,7 @@ class listView
       that = @
       index = e.itemIndex
       if e.section.items[index].loadOld is true
+        MainWindow.actInd.show()        
         Qiita = require('model/qiita')
         qiita = new Qiita()
         currentPage = Ti.App.Properties.getString "currentPage"
@@ -120,6 +134,7 @@ class listView
           items = maincontroller.createItems(result)
           lastIndex = @_getLastItemIndex()
           currentSection = @listView.sections[0]
+          MainWindow.actInd.hide()
           return currentSection.insertItemsAt(lastIndex,items)
 
         )
@@ -150,27 +165,6 @@ class listView
     
 
     
-  refresData: (data) =>
-    sections = []
-    section = Ti.UI.createListSection()
-    
-    dataSet = @createItems(data)
-      
-    # 過去の投稿を読み込むためのもの
-    section = Ti.UI.createListSection()
-    loadOld =
-      loadOld:true
-      properties:
-        selectionStyle: Titanium.UI.iPhone.ListViewCellSelectionStyle.NONE
-      title:
-        text: 'load old'
-      
-    dataSet.push(loadOld)
-    
-    section.setItems dataSet
-    sections.push section
-
-    return @listView.setSections sections
     
   _getLastItemIndex: () ->
     # -1 するのは、過去の投稿を読み込むためのitemが存在するため

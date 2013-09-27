@@ -1,11 +1,8 @@
-var listView,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+var listView;
 
 listView = (function() {
 
   function listView() {
-    this.refresData = __bind(this.refresData, this);
-
     var myTemplate,
       _this = this;
     this.baseColor = {
@@ -108,6 +105,21 @@ listView = (function() {
             left: 60,
             top: 45
           }
+        }, {
+          type: "Ti.UI.Label",
+          bindId: "loadBtn",
+          properties: {
+            color: this.baseColor.contentsColor,
+            font: {
+              fontSize: 32,
+              fontFamily: 'LigatureSymbols'
+            },
+            width: 320,
+            height: 50,
+            textAlign: "center",
+            left: 0,
+            top: 0
+          }
         }
       ]
     };
@@ -125,6 +137,7 @@ listView = (function() {
       that = _this;
       index = e.itemIndex;
       if (e.section.items[index].loadOld === true) {
+        MainWindow.actInd.show();
         Qiita = require('model/qiita');
         qiita = new Qiita();
         currentPage = Ti.App.Properties.getString("currentPage");
@@ -135,6 +148,7 @@ listView = (function() {
           items = maincontroller.createItems(result);
           lastIndex = _this._getLastItemIndex();
           currentSection = _this.listView.sections[0];
+          MainWindow.actInd.hide();
           return currentSection.insertItemsAt(lastIndex, items);
         });
       } else {
@@ -157,27 +171,6 @@ listView = (function() {
     });
     return this.listView;
   }
-
-  listView.prototype.refresData = function(data) {
-    var dataSet, loadOld, section, sections;
-    sections = [];
-    section = Ti.UI.createListSection();
-    dataSet = this.createItems(data);
-    section = Ti.UI.createListSection();
-    loadOld = {
-      loadOld: true,
-      properties: {
-        selectionStyle: Titanium.UI.iPhone.ListViewCellSelectionStyle.NONE
-      },
-      title: {
-        text: 'load old'
-      }
-    };
-    dataSet.push(loadOld);
-    section.setItems(dataSet);
-    sections.push(section);
-    return this.listView.setSections(sections);
-  };
 
   listView.prototype._getLastItemIndex = function() {
     return this.listView.sections[0].items.length - 1;
