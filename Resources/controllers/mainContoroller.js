@@ -251,14 +251,13 @@ mainContoroller = (function() {
     sections = [];
     section = Ti.UI.createListSection();
     dataSet = this.createItems(data);
-    section = Ti.UI.createListSection();
     loadOld = {
       loadOld: true,
       properties: {
         selectionStyle: Titanium.UI.iPhone.ListViewCellSelectionStyle.NONE
       },
-      title: {
-        text: 'load old'
+      loadBtn: {
+        text: String.fromCharCode("0xe108")
       }
     };
     dataSet.push(loadOld);

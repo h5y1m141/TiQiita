@@ -209,14 +209,14 @@ class mainContoroller
     dataSet = @createItems(data)
       
     # 過去の投稿を読み込むためのもの
-    section = Ti.UI.createListSection()
+
     loadOld =
       loadOld:true
       properties:
         selectionStyle: Titanium.UI.iPhone.ListViewCellSelectionStyle.NONE
-      title:
-        text: 'load old'
-      
+      loadBtn:
+        text:String.fromCharCode("0xe108")
+        
     dataSet.push(loadOld)
     
     section.setItems dataSet

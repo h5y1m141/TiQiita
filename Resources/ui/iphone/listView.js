@@ -107,16 +107,18 @@ listView = (function() {
           }
         }, {
           type: "Ti.UI.Label",
-          bindId: "loadOld",
+          bindId: "loadBtn",
           properties: {
             color: this.baseColor.contentsColor,
             font: {
-              fontSize: 18
+              fontSize: 32,
+              fontFamily: 'LigatureSymbols'
             },
-            width: 240,
+            width: 320,
             height: 50,
-            left: 60,
-            top: 10
+            textAlign: "center",
+            left: 0,
+            top: 0
           }
         }
       ]

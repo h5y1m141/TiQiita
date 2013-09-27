@@ -91,24 +91,24 @@ class listView
         color: @baseColor.contentsColor
         font:
           fontSize:12
-          # fontFamily : 'Rounded M+ 1p'
         width:240
         height:50
         left:60
         top:45
     ,
-      # loadOld
+      # loadBtn
       type: "Ti.UI.Label"
-      bindId:"loadOld"
+      bindId:"loadBtn"
       properties:
         color: @baseColor.contentsColor
         font:
-          fontSize:18
-          # fontFamily : 'Rounded M+ 1p'
-        width:240
+          fontSize:32
+          fontFamily:'LigatureSymbols'
+        width:320
         height:50
-        left:60
-        top:10
+        textAlign:"center"
+        left:0
+        top:0
           
         
     ]            
