@@ -96,6 +96,19 @@ class listView
         height:50
         left:60
         top:45
+    ,
+      # loadOld
+      type: "Ti.UI.Label"
+      bindId:"loadOld"
+      properties:
+        color: @baseColor.contentsColor
+        font:
+          fontSize:18
+          # fontFamily : 'Rounded M+ 1p'
+        width:240
+        height:50
+        left:60
+        top:10
           
         
     ]            
@@ -152,27 +165,6 @@ class listView
     
 
     
-  refresData: (data) =>
-    sections = []
-    section = Ti.UI.createListSection()
-    
-    dataSet = @createItems(data)
-      
-    # 過去の投稿を読み込むためのもの
-    section = Ti.UI.createListSection()
-    loadOld =
-      loadOld:true
-      properties:
-        selectionStyle: Titanium.UI.iPhone.ListViewCellSelectionStyle.NONE
-      title:
-        text: 'load old'
-      
-    dataSet.push(loadOld)
-    
-    section.setItems dataSet
-    sections.push section
-
-    return @listView.setSections sections
     
   _getLastItemIndex: () ->
     # -1 するのは、過去の投稿を読み込むためのitemが存在するため

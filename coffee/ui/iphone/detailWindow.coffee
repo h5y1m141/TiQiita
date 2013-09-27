@@ -404,7 +404,7 @@ class detailWindow
     backBtn = Ti.UI.createLabel
       backgroundColor:"transparent"
       color:@baseColor.textColor
-      width:40
+      width:80
       height:40
       left:10
       font:
