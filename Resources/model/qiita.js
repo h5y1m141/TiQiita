@@ -16,24 +16,6 @@ Qiita = (function() {
     } else {
       this.user_name = QiitaLoginID;
     }
-    this.parameter = {
-      stocks: {
-        url: "https://qiita.com/api/v1/users/" + this.user_name + "/stocks",
-        method: 'GET'
-      },
-      myStocks: {
-        url: "https://qiita.com/api/v1/stocks",
-        method: 'GET'
-      },
-      feed: {
-        url: "https://qiita.com/api/v1/items",
-        method: 'GET'
-      },
-      followingTags: {
-        url: "https://qiita.com/api/v1/users/" + this.user_name + "/following_tags?per_page=100",
-        method: 'GET'
-      }
-    };
   }
 
   Qiita.prototype._auth = function(param, callback) {
@@ -223,9 +205,13 @@ Qiita = (function() {
   };
 
   Qiita.prototype.getFeed = function(callback) {
-    var param;
-    param = this.parameter.feed;
-    return this._request(param, 'items', callback);
+    var param, url;
+    url = "https://qiita.com/api/v1/items";
+    param = {
+      "url": url,
+      "method": 'GET'
+    };
+    return this._request(param, 'qiitaItems', callback);
   };
 
   Qiita.prototype.getNextFeed = function(url, storedTo, callback) {

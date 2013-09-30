@@ -11,21 +11,6 @@ class Qiita
     else
       @user_name = QiitaLoginID
 
-    @parameter =
-      stocks:
-        url:"https://qiita.com/api/v1/users/#{@user_name}/stocks"
-        method:'GET'
-      myStocks:
-        url:"https://qiita.com/api/v1/stocks"
-        method:'GET'
-      feed:
-        url:"https://qiita.com/api/v1/items"
-        method:'GET'
-
-      followingTags:
-        url:"https://qiita.com/api/v1/users/#{@user_name}/following_tags?per_page=100"
-        method:'GET'
-
 
   _auth:(param,callback) ->
 
@@ -242,8 +227,12 @@ class Qiita
     @._request(param,"followingTags",callback)
     # @._mockObject("followingTags",false,callback)
   getFeed:(callback) ->
-    param = @parameter.feed
-    @._request(param,'items',callback)
+    url = "https://qiita.com/api/v1/items"
+    param =
+      "url": url
+      "method":'GET'
+
+    @._request(param,'qiitaItems',callback)
     # @._mockObject("items",'storedStocks',callback)
 
         
