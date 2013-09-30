@@ -172,11 +172,13 @@ Qiita = (function() {
   };
 
   Qiita.prototype._parsedResponseHeader = function(header, storedTo) {
-    var lastURL, link, nextURL, _i, _len;
+    var baseURL, firstURL, lastURL, link, nextURL, _i, _len;
     for (_i = 0, _len = header.length; _i < _len; _i++) {
       link = header[_i];
       if (link["rel"] === 'next') {
         nextURL = link["url"];
+        baseURL = link["url"].split("?");
+        firstURL = baseURL[0];
       } else if (link["rel"] === 'last') {
         lastURL = link["url"];
       } else {
@@ -184,7 +186,7 @@ Qiita = (function() {
       }
     }
     if (storedTo !== "followingTags") {
-      Ti.App.Properties.setString("" + storedTo + "nextURL", nextURL);
+      Ti.API.info("first url is: " + firstURL + " next url is :" + nextURL);
     }
     return true;
   };
@@ -223,7 +225,7 @@ Qiita = (function() {
   Qiita.prototype.getFeed = function(callback) {
     var param;
     param = this.parameter.feed;
-    return this._request(param, 'storedStocks', callback);
+    return this._request(param, 'items', callback);
   };
 
   Qiita.prototype.getNextFeed = function(url, storedTo, callback) {
@@ -236,14 +238,13 @@ Qiita = (function() {
   };
 
   Qiita.prototype.getFeedByTag = function(tagName, callback) {
-    var param, storedTo, url;
+    var param, url;
     url = "https://qiita.com/api/v1/tags/" + tagName + "/items";
-    storedTo = "followingTag" + tagName;
     param = {
       "url": url,
       "method": 'GET'
     };
-    return this._request(param, storedTo, callback);
+    return this._request(param, tagName, callback);
   };
 
   Qiita.prototype.getUserInfo = function(userName, callback) {
@@ -274,7 +275,7 @@ Qiita = (function() {
         url: "https://qiita.com/api/v1/stocks?token=" + token,
         method: 'GET'
       };
-      return _this._request(requestParam, "storedMyStocks", callback);
+      return _this._request(requestParam, "myStocks", callback);
     });
   };
 

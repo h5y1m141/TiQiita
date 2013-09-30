@@ -200,20 +200,22 @@ class Qiita
     
 
   _parsedResponseHeader:(header,storedTo) ->
-
+    
     for link in header
+
       if link["rel"] is 'next'
         nextURL = link["url"]
+        baseURL = link["url"].split("?")
+        firstURL = baseURL[0]
       else if link["rel"] is 'last'
         lastURL = link["url"]
+
       else
         Ti.API.info "done"
         
     if storedTo isnt "followingTags"
-      Ti.App.Properties.setString "#{storedTo}nextURL", nextURL
-      # Ti.API.info "#{storedTo}nextURL is #{nextURL} and storedTo is #{storedTo}"
+      Ti.API.info "first url is: #{firstURL} next url is :#{nextURL}"
 
-      
     return true
   
   isConnected:() ->
@@ -241,7 +243,7 @@ class Qiita
     # @._mockObject("followingTags",false,callback)
   getFeed:(callback) ->
     param = @parameter.feed
-    @._request(param,'storedStocks',callback)
+    @._request(param,'items',callback)
     # @._mockObject("items",'storedStocks',callback)
 
         
@@ -255,11 +257,10 @@ class Qiita
 
   getFeedByTag:(tagName,callback) ->
     url = "https://qiita.com/api/v1/tags/#{tagName}/items"
-    storedTo = "followingTag#{tagName}"
     param =
       "url": url
       "method":'GET'
-    @._request(param,storedTo,callback)
+    @._request(param,tagName,callback)
 
   getUserInfo:(userName,callback) ->
     url = "https://qiita.com/api/v1/users/#{userName}"
@@ -283,7 +284,7 @@ class Qiita
         url:"https://qiita.com/api/v1/stocks?token=#{token}"
         method:'GET'
         
-      @._request(requestParam,"storedMyStocks",callback)
+      @._request(requestParam,"myStocks",callback)
     )
     
   getMyFeed:(callback) ->
