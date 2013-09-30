@@ -13,6 +13,8 @@ mainContoroller = (function() {
     this.qiita = new Qiita();
     Twitter = require("model/twitter");
     this.twitter = new Twitter();
+    this.paginationObj = {};
+    this.currentPage = "items";
     this.tabSetting = {
       "iphone": {
         "main": {
@@ -56,15 +58,19 @@ mainContoroller = (function() {
   };
 
   mainContoroller.prototype.getFeedByTag = function(tagName) {
-    var MAXITEMCOUNT, items, moment, momentja, storedTo,
-      _this = this;
-    storedTo = "followingTag" + tagName;
-    items = JSON.parse(Ti.App.Properties.getString(storedTo));
+    var MAXITEMCOUNT, items, moment, momentja, that;
+    items = JSON.parse(Ti.App.Properties.getString(tagName));
+    that = this;
     moment = require('lib/moment.min');
     momentja = require('lib/momentja');
     MAXITEMCOUNT = 20;
     if ((items != null) === false || items === "") {
       return this.qiita.getFeedByTag(tagName, function(result, links) {
+        that.paginationObj[tagName] = {};
+        that.paginationObj[tagName].next = links[0].url;
+        that.paginationObj[tagName].last = links[1].url;
+        Ti.API.info(that.currentPage);
+        Ti.API.info(that.paginationObj[tagName].next);
         result.sort(function(a, b) {
           if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
             return -1;
@@ -72,31 +78,22 @@ mainContoroller = (function() {
             return 1;
           }
         });
-        Ti.API.info(result.length);
         if (result.length !== MAXITEMCOUNT) {
           return Ti.API.info("loadOldEntry hide");
         } else {
           MainWindow.actInd.hide();
-          return _this.refresData(result);
+          return that.refresData(result);
         }
       });
     } else {
-      items.sort(function(a, b) {
-        if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
-          return -1;
-        } else {
-          return 1;
-        }
-      });
-      MainWindow.actInd.hide();
-      return this.refresData(items);
+      return this._loadDataFromCache(items);
     }
   };
 
   mainContoroller.prototype.getFeed = function() {
     var MAXITEMCOUNT, items, moment, momentja,
       _this = this;
-    items = JSON.parse(Ti.App.Properties.getString("storedStocks"));
+    items = JSON.parse(Ti.App.Properties.getString("items"));
     moment = require('lib/moment.min');
     momentja = require('lib/momentja');
     MAXITEMCOUNT = 20;
@@ -117,15 +114,7 @@ mainContoroller = (function() {
         }
       });
     } else {
-      items.sort(function(a, b) {
-        if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
-          return -1;
-        } else {
-          return 1;
-        }
-      });
-      MainWindow.actInd.hide();
-      return this.refresData(items);
+      return this._loadDataFromCache(items);
     }
   };
 
@@ -133,7 +122,7 @@ mainContoroller = (function() {
     var MAXITEMCOUNT, items, moment, momentja,
       _this = this;
     MAXITEMCOUNT = 20;
-    items = JSON.parse(Ti.App.Properties.getString('storedMyStocks'));
+    items = JSON.parse(Ti.App.Properties.getString('myStocks'));
     moment = require('lib/moment.min');
     momentja = require('lib/momentja');
     if ((items != null) === false || items === "") {
@@ -153,15 +142,7 @@ mainContoroller = (function() {
         }
       });
     } else {
-      items.sort(function(a, b) {
-        if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
-          return -1;
-        } else {
-          return 1;
-        }
-      });
-      MainWindow.actInd.hide();
-      return this.refresData(items);
+      return this._loadDataFromCache(items);
     }
   };
 
@@ -218,16 +199,34 @@ mainContoroller = (function() {
         }), 10000);
       });
     } else {
-      items.sort(function(a, b) {
-        if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
-          return -1;
-        } else {
-          return 1;
-        }
-      });
-      MainWindow.actInd.hide();
-      return this.refresData(items);
+      return this._loadDataFromCache(items);
     }
+  };
+
+  mainContoroller.prototype._loadDataFromCache = function(items) {
+    items.sort(function(a, b) {
+      if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
+        return -1;
+      } else {
+        return 1;
+      }
+    });
+    MainWindow.actInd.hide();
+    return this.refresData(items);
+  };
+
+  mainContoroller.prototype.getNextFeed = function(callback) {
+    var nextURL, page,
+      _this = this;
+    page = this.currentPage;
+    nextURL = this.paginationObj[page].next;
+    return this.qiita.getNextFeed(nextURL, page, function(result) {
+      var items;
+      _this.paginationObj[page].loadedPage = nextURL;
+      callback(result);
+      items = _this.createItems(result);
+      return callback(items);
+    });
   };
 
   mainContoroller.prototype.setItems = function() {
