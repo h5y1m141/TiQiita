@@ -124,14 +124,12 @@ class listView
       index = e.itemIndex
       if e.section.items[index].loadOld is true
         MainWindow.actInd.show()        
-        Qiita = require('model/qiita')
-        qiita = new Qiita()
-        currentPage = Ti.App.Properties.getString "currentPage"
-        nextURL = Ti.App.Properties.getString "#{currentPage}nextURL"
-        Ti.API.info "currentPage is #{currentPage} and nextURL is #{nextURL}"
-
-        qiita.getNextFeed(nextURL,currentPage,(result) =>
-          items = maincontroller.createItems(result)
+        # Qiita = require('model/qiita')
+        # qiita = new Qiita()
+        # Ti.API.info "currentPage is #{maincontroller.currentPage}"
+        page = maincontroller.currentPage
+        nextURL = maincontroller.paginationObj[page].next
+        maincontroller.getNextFeed((items) =>
           lastIndex = @_getLastItemIndex()
           currentSection = @listView.sections[0]
           MainWindow.actInd.hide()

@@ -133,19 +133,15 @@ listView = (function() {
       defaultItemTemplate: "template"
     });
     this.listView.addEventListener('itemclick', function(e) {
-      var Qiita, animation, currentPage, data, detailWindow, index, nextURL, qiita, that;
+      var animation, data, detailWindow, index, nextURL, page, that;
       that = _this;
       index = e.itemIndex;
       if (e.section.items[index].loadOld === true) {
         MainWindow.actInd.show();
-        Qiita = require('model/qiita');
-        qiita = new Qiita();
-        currentPage = Ti.App.Properties.getString("currentPage");
-        nextURL = Ti.App.Properties.getString("" + currentPage + "nextURL");
-        Ti.API.info("currentPage is " + currentPage + " and nextURL is " + nextURL);
-        return qiita.getNextFeed(nextURL, currentPage, function(result) {
-          var currentSection, items, lastIndex;
-          items = maincontroller.createItems(result);
+        page = maincontroller.currentPage;
+        nextURL = maincontroller.paginationObj[page].next;
+        return maincontroller.getNextFeed(function(items) {
+          var currentSection, lastIndex;
           lastIndex = _this._getLastItemIndex();
           currentSection = _this.listView.sections[0];
           MainWindow.actInd.hide();
