@@ -38,15 +38,9 @@ Ti.App.Analytics = {
 
 analytics.start(10, true);
 
-Ti.App.Properties.setString("storedStocks", null);
-
-Ti.App.Properties.setString("storedMyStocks", null);
-
 Ti.App.Properties.getBool("followingTagsError", false);
 
 Ti.App.Properties.setList("followingTags", null);
-
-Ti.App.Properties.setString("currentPage", "storedStocks");
 
 testsEnabled = false;
 
