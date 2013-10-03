@@ -133,17 +133,16 @@ listView = (function() {
       defaultItemTemplate: "template"
     });
     this.listView.addEventListener('itemclick', function(e) {
-      var animation, data, detailWindow, index, nextURL, page, that;
+      var animation, data, detailWindow, index, that;
       that = _this;
       index = e.itemIndex;
       if (e.section.items[index].loadOld === true) {
         MainWindow.actInd.show();
-        page = maincontroller.currentPage;
-        nextURL = maincontroller.paginationObj[page].next;
         return maincontroller.getNextFeed(function(items) {
           var currentSection, lastIndex;
-          lastIndex = _this._getLastItemIndex();
-          currentSection = _this.listView.sections[0];
+          lastIndex = that._getLastItemIndex();
+          Ti.API.info("lastIndex is " + lastIndex);
+          currentSection = that.listView.sections[0];
           MainWindow.actInd.hide();
           return currentSection.insertItemsAt(lastIndex, items);
         });

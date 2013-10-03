@@ -6,15 +6,16 @@ mainContoroller = (function() {
   function mainContoroller() {
     this.stockItem = __bind(this.stockItem, this);
 
-    var Hatena, Qiita, Twitter;
+    var Cache, Hatena, Qiita, Twitter;
     Hatena = require("model/hatena");
     this.hatena = new Hatena();
     Qiita = require("model/qiita");
     this.qiita = new Qiita();
     Twitter = require("model/twitter");
     this.twitter = new Twitter();
-    this.paginationObj = {};
-    this.currentPage = "items";
+    Cache = require("model/cache");
+    this.cache = new Cache();
+    this.currentPage = "qiitaItems";
     this.tabSetting = {
       "iphone": {
         "main": {
@@ -66,11 +67,12 @@ mainContoroller = (function() {
     MAXITEMCOUNT = 20;
     if ((items != null) === false || items === "") {
       return this.qiita.getFeedByTag(tagName, function(result, links) {
-        that.paginationObj[tagName] = {};
-        that.paginationObj[tagName].next = links[0].url;
-        that.paginationObj[tagName].last = links[1].url;
-        Ti.API.info(that.currentPage);
-        Ti.API.info(that.paginationObj[tagName].next);
+        var lastURL, loadedPageURL, nextURL;
+        nextURL = links[0].url;
+        lastURL = links[1].url;
+        loadedPageURL = links[0].url;
+        that.cache.setPageState(tagName, nextURL, lastURL, loadedPageURL);
+        Ti.API.info(that.cache.showPageState(tagName));
         result.sort(function(a, b) {
           if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
             return -1;
@@ -91,14 +93,20 @@ mainContoroller = (function() {
   };
 
   mainContoroller.prototype.getFeed = function() {
-    var MAXITEMCOUNT, items, moment, momentja,
-      _this = this;
-    items = JSON.parse(Ti.App.Properties.getString("items"));
+    var MAXITEMCOUNT, items, moment, momentja, that;
+    items = JSON.parse(Ti.App.Properties.getString("qiitaItems"));
     moment = require('lib/moment.min');
     momentja = require('lib/momentja');
     MAXITEMCOUNT = 20;
+    that = this;
     if ((items != null) === false || items === "") {
-      return this.qiita.getFeed(function(result, links) {
+      return that.qiita.getFeed(function(result, links) {
+        var lastURL, loadedPageURL, nextURL;
+        nextURL = links[0].url;
+        lastURL = links[1].url;
+        loadedPageURL = links[0].url;
+        that.cache.setPageState("qiitaitems", nextURL, lastURL, loadedPageURL);
+        Ti.API.info(that.cache.showPageState("qiitaitems"));
         result.sort(function(a, b) {
           if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
             return -1;
@@ -110,7 +118,7 @@ mainContoroller = (function() {
           return Ti.API.info("loadOldEntry hide");
         } else {
           MainWindow.actInd.hide();
-          return _this.refresData(result);
+          return that.refresData(result);
         }
       });
     } else {
@@ -119,14 +127,19 @@ mainContoroller = (function() {
   };
 
   mainContoroller.prototype.getMyStocks = function() {
-    var MAXITEMCOUNT, items, moment, momentja,
-      _this = this;
+    var MAXITEMCOUNT, items, moment, momentja, that;
     MAXITEMCOUNT = 20;
     items = JSON.parse(Ti.App.Properties.getString('myStocks'));
     moment = require('lib/moment.min');
     momentja = require('lib/momentja');
+    that = this;
     if ((items != null) === false || items === "") {
       return this.qiita.getMyStocks(function(result, links) {
+        that.paginationObj.myStocks = {
+          next: links[0].url,
+          last: links[1].url,
+          loadedPage: links[0].url
+        };
         result.sort(function(a, b) {
           if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
             return -1;
@@ -138,7 +151,7 @@ mainContoroller = (function() {
           return Ti.API.info("loadOldEntry hide");
         } else {
           MainWindow.actInd.hide();
-          return _this.refresData(result);
+          return that.refresData(result);
         }
       });
     } else {
@@ -147,11 +160,11 @@ mainContoroller = (function() {
   };
 
   mainContoroller.prototype.getFollowerItems = function() {
-    var items, moment, momentja, qiitaUser,
-      _this = this;
+    var items, moment, momentja, qiitaUser, that;
     items = JSON.parse(Ti.App.Properties.getString("followerItems"));
     moment = require('lib/moment.min');
     momentja = require('lib/momentja');
+    that = this;
     if ((items != null) === false || items === "") {
       qiitaUser = require("model/qiitaUser");
       qiitaUser = new qiitaUser();
@@ -186,6 +199,11 @@ mainContoroller = (function() {
           xhr.send();
         }
         return setTimeout((function() {
+          that.paginationObj.followerItems = {
+            next: links[0].url,
+            last: links[1].url,
+            loadedPage: links[0].url
+          };
           _items.sort(function(a, b) {
             if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
               return -1;
@@ -195,7 +213,7 @@ mainContoroller = (function() {
           });
           MainWindow.actInd.hide();
           Ti.App.Properties.setString("followerItems", JSON.stringify(_items));
-          return _this.refresData(_items);
+          return that.refresData(_items);
         }), 10000);
       });
     } else {
@@ -204,6 +222,7 @@ mainContoroller = (function() {
   };
 
   mainContoroller.prototype._loadDataFromCache = function(items) {
+    Ti.API.info("currentPage is " + this.currentPage + " and loadedPage is " + this.loadedPage);
     items.sort(function(a, b) {
       if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
         return -1;
@@ -219,25 +238,18 @@ mainContoroller = (function() {
     var nextURL, page,
       _this = this;
     page = this.currentPage;
+    Ti.API.info("currentPage is " + page);
+    Ti.API.info(this.paginationObj);
     nextURL = this.paginationObj[page].next;
     return this.qiita.getNextFeed(nextURL, page, function(result) {
       var items;
       _this.paginationObj[page].loadedPage = nextURL;
-      callback(result);
       items = _this.createItems(result);
       return callback(items);
     });
   };
 
   mainContoroller.prototype.setItems = function() {
-    var that;
-    that = this;
-    return this.qiita.getFeed(function(result) {
-      return that.refresData(result);
-    });
-  };
-
-  mainContoroller.prototype.getFeed = function() {
     var that;
     that = this;
     return this.qiita.getFeed(function(result) {

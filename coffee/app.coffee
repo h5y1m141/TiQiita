@@ -68,7 +68,6 @@ if testsEnabled is true
 else
   # maincontroller.createTabGroup()
   
-
   osname = Ti.Platform.osname
   ListView = require("ui/#{@osname}/listView")
   MainWindow = require("ui/#{osname}/mainWindow")
@@ -87,7 +86,7 @@ else
   mainWindow.add mainListView
   mainWindow.add configmenu
   mainWindow.add menu
-  
+
   maincontroller.getFeed()
   mainWindow.open()
 
