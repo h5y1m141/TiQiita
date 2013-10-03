@@ -111,7 +111,7 @@ Qiita = (function() {
     Ti.API.info(parameter.method + ":" + parameter.url);
     xhr.open(parameter.method, parameter.url);
     xhr.onload = function() {
-      var json, relLink, responseHeaders;
+      var json, links, responseHeaders;
       json = JSON.parse(this.responseText);
       if (storedTo === "followingTags" || storedTo === false) {
         Ti.API.debug("キャッシュ処理は実施しませんでした");
@@ -120,13 +120,18 @@ Qiita = (function() {
         self._storedStocks(storedTo, this.responseText);
         responseHeaders = this.responseHeaders;
         if (responseHeaders.Link) {
-          relLink = self._convertLinkHeaderToJSON(responseHeaders.Link);
-          self._parsedResponseHeader(relLink, storedTo);
+          links = self._convertLinkHeaderToJSON(responseHeaders.Link);
+          self._parsedResponseHeader(links, storedTo);
         } else {
-          relLink = null;
+          links = null;
         }
+        links.push({
+          "rel": "current",
+          "url": parameter.url
+        });
       }
-      return callback(json, relLink);
+      Ti.API.info(links);
+      return callback(json, links);
     };
     xhr.onerror = function(e) {
       var error;

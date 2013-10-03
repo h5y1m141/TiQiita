@@ -145,13 +145,15 @@ class Qiita
         # 次ページと最終ページのURLのハンドリング処理
         responseHeaders = @.responseHeaders
         if responseHeaders.Link
-          relLink = self._convertLinkHeaderToJSON(responseHeaders.Link)
+          links = self._convertLinkHeaderToJSON(responseHeaders.Link)
           # Ti.API.info "start self._parsedResponseHeader. storedTo is #{storedTo}"
-          self._parsedResponseHeader(relLink,storedTo)
+          self._parsedResponseHeader(links,storedTo)
         else
-          relLink = null
+          links = null
 
-      callback(json,relLink)
+        links.push({"rel":"current","url":parameter.url} )
+      Ti.API.info links
+      callback(json,links)
 
     xhr.onerror = (e) ->
       error = JSON.parse(@.responseText)
