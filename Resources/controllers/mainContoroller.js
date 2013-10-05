@@ -6,13 +6,16 @@ mainContoroller = (function() {
   function mainContoroller() {
     this.stockItem = __bind(this.stockItem, this);
 
-    var Hatena, Qiita, Twitter;
+    var Cache, Hatena, Qiita, Twitter;
     Hatena = require("model/hatena");
     this.hatena = new Hatena();
     Qiita = require("model/qiita");
     this.qiita = new Qiita();
     Twitter = require("model/twitter");
     this.twitter = new Twitter();
+    Cache = require("model/cache");
+    this.cache = new Cache();
+    this.currentPage = "qiitaItems";
     this.tabSetting = {
       "iphone": {
         "main": {
@@ -26,34 +29,6 @@ mainContoroller = (function() {
       }
     };
   }
-
-  mainContoroller.prototype.createTabGroup = function() {
-    var MainWindow, mainTab, mainWindow, osname, tabGroup;
-    tabGroup = Ti.UI.createTabGroup({
-      tabsBackgroundColor: "#f9f9f9",
-      shadowImage: "ui/image/shadowimage.png",
-      tabsBackgroundImage: "ui/image/tabbar.png",
-      activeTabBackgroundImage: "ui/image/activetab.png",
-      activeTabIconTint: "#fffBD5"
-    });
-    tabGroup.addEventListener('focus', function(e) {
-      tabGroup._activeTab = e.tab;
-      tabGroup._activeTabIndex = e.index;
-      if (tabGroup._activeTabIndex === -1) {
-        return;
-      }
-      return Ti.API._activeTab = tabGroup._activeTab;
-    });
-    osname = Ti.Platform.osname;
-    MainWindow = require("ui/" + osname + "/mainWindow");
-    mainWindow = new MainWindow();
-    mainTab = Titanium.UI.createTab({
-      window: mainWindow,
-      windowName: this.tabSetting[osname].main.windowName
-    });
-    tabGroup.addTab(mainTab);
-    return tabGroup.open();
-  };
 
   mainContoroller.prototype.qiitaLogin = function() {
     var param,
@@ -84,15 +59,20 @@ mainContoroller = (function() {
   };
 
   mainContoroller.prototype.getFeedByTag = function(tagName) {
-    var MAXITEMCOUNT, items, moment, momentja, storedTo,
-      _this = this;
-    storedTo = "followingTag" + tagName;
-    items = JSON.parse(Ti.App.Properties.getString(storedTo));
+    var MAXITEMCOUNT, items, moment, momentja, that;
+    items = JSON.parse(Ti.App.Properties.getString(tagName));
+    that = this;
     moment = require('lib/moment.min');
     momentja = require('lib/momentja');
     MAXITEMCOUNT = 20;
     if ((items != null) === false || items === "") {
       return this.qiita.getFeedByTag(tagName, function(result, links) {
+        var lastURL, loadedPageURL, nextURL;
+        nextURL = links.next;
+        lastURL = links.last;
+        loadedPageURL = links.current;
+        that.cache.setPageState(this.currentPage, nextURL, lastURL, loadedPageURL);
+        Ti.API.info(that.cache.showPageState(tagName));
         result.sort(function(a, b) {
           if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
             return -1;
@@ -100,35 +80,32 @@ mainContoroller = (function() {
             return 1;
           }
         });
-        Ti.API.info(result.length);
         if (result.length !== MAXITEMCOUNT) {
           return Ti.API.info("loadOldEntry hide");
         } else {
-          Ti.API.info(storedTo);
-          return _this.refresData(result);
+          MainWindow.actInd.hide();
+          return that.refresData(result);
         }
       });
     } else {
-      items.sort(function(a, b) {
-        if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
-          return -1;
-        } else {
-          return 1;
-        }
-      });
-      return this.refresData(items);
+      return this._loadDataFromCache(items);
     }
   };
 
   mainContoroller.prototype.getFeed = function() {
-    var MAXITEMCOUNT, items, moment, momentja,
-      _this = this;
-    items = JSON.parse(Ti.App.Properties.getString("storedStocks"));
+    var MAXITEMCOUNT, items, moment, momentja, that;
+    items = JSON.parse(Ti.App.Properties.getString("qiitaItems"));
     moment = require('lib/moment.min');
     momentja = require('lib/momentja');
     MAXITEMCOUNT = 20;
+    that = this;
     if ((items != null) === false || items === "") {
-      return this.qiita.getFeed(function(result, links) {
+      return that.qiita.getFeed(function(result, links) {
+        var lastURL, loadedPageURL, nextURL;
+        nextURL = links.next;
+        lastURL = links.last;
+        loadedPageURL = links.current;
+        that.cache.setPageState(that.currentPage, nextURL, lastURL, loadedPageURL);
         result.sort(function(a, b) {
           if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
             return -1;
@@ -139,47 +116,54 @@ mainContoroller = (function() {
         if (result.length !== MAXITEMCOUNT) {
           return Ti.API.info("loadOldEntry hide");
         } else {
-          return _this.refresData(result);
+          MainWindow.actInd.hide();
+          return that.refresData(result);
         }
       });
     } else {
-      items.sort(function(a, b) {
-        if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
-          return -1;
-        } else {
-          return 1;
-        }
-      });
-      return this.refresData(items);
+      return that._loadDataFromCache(items);
     }
   };
 
   mainContoroller.prototype.getMyStocks = function() {
-    var MAXITEMCOUNT, items, moment, momentja;
+    var MAXITEMCOUNT, items, moment, momentja, that;
     MAXITEMCOUNT = 20;
-    items = JSON.parse(Ti.App.Properties.getString('storedMyStocks'));
+    items = JSON.parse(Ti.App.Properties.getString('myStocks'));
     moment = require('lib/moment.min');
     momentja = require('lib/momentja');
+    that = this;
     if ((items != null) === false || items === "") {
-
-    } else {
-      items.sort(function(a, b) {
-        if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
-          return -1;
+      return this.qiita.getMyStocks(function(result, links) {
+        var lastURL, loadedPageURL, nextURL;
+        nextURL = links.next;
+        lastURL = links.last;
+        loadedPageURL = links.current;
+        that.cache.setPageState(that.currentPage, nextURL, lastURL, loadedPageURL);
+        result.sort(function(a, b) {
+          if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
+            return -1;
+          } else {
+            return 1;
+          }
+        });
+        if (result.length !== MAXITEMCOUNT) {
+          return Ti.API.info("loadOldEntry hide");
         } else {
-          return 1;
+          MainWindow.actInd.hide();
+          return that.refresData(result);
         }
       });
-      return this.refresData(items);
+    } else {
+      return this._loadDataFromCache(items);
     }
   };
 
   mainContoroller.prototype.getFollowerItems = function() {
-    var items, moment, momentja, qiitaUser,
-      _this = this;
+    var items, moment, momentja, qiitaUser, that;
     items = JSON.parse(Ti.App.Properties.getString("followerItems"));
     moment = require('lib/moment.min');
     momentja = require('lib/momentja');
+    that = this;
     if ((items != null) === false || items === "") {
       qiitaUser = require("model/qiitaUser");
       qiitaUser = new qiitaUser();
@@ -214,6 +198,11 @@ mainContoroller = (function() {
           xhr.send();
         }
         return setTimeout((function() {
+          var lastURL, loadedPageURL, nextURL;
+          nextURL = links.next;
+          lastURL = links.last;
+          loadedPageURL = links.current;
+          that.cache.setPageState(that.currentPage, nextURL, lastURL, loadedPageURL);
           _items.sort(function(a, b) {
             if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
               return -1;
@@ -221,35 +210,50 @@ mainContoroller = (function() {
               return 1;
             }
           });
+          MainWindow.actInd.hide();
           Ti.App.Properties.setString("followerItems", JSON.stringify(_items));
-          return _this.refresData(_items);
+          return that.refresData(_items);
         }), 10000);
       });
     } else {
-      items.sort(function(a, b) {
-        if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
-          return -1;
-        } else {
-          return 1;
-        }
-      });
-      return this.refresData(items);
+      return this._loadDataFromCache(items);
     }
   };
 
-  mainContoroller.prototype.setItems = function() {
-    var that;
-    that = this;
-    return this.qiita.getFeed(function(result) {
-      return that.refresData(result);
+  mainContoroller.prototype._loadDataFromCache = function(items) {
+    var page;
+    page = this.cache.showPageState(this.currentPage);
+    Ti.API.info("_loadDataFromCache start. current Page is " + page.category + " and loadedPageURL is " + page.loadedPageURL);
+    items.sort(function(a, b) {
+      if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
+        return -1;
+      } else {
+        return 1;
+      }
+    });
+    MainWindow.actInd.hide();
+    return this.refresData(items);
+  };
+
+  mainContoroller.prototype.getNextFeed = function(callback) {
+    var links,
+      _this = this;
+    links = this.cache.showPageState(this.currentPage);
+    return this.qiita.getNextFeed(links.nextURL, links.category, function(result, links) {
+      var items, lastURL, loadedPageURL, nextURL;
+      nextURL = links.next;
+      lastURL = links.last;
+      loadedPageURL = links.current;
+      _this.cache.setPageState(_this.currentPage, nextURL, lastURL, loadedPageURL);
+      items = _this.createItems(result);
+      return callback(items);
     });
   };
 
-  mainContoroller.prototype.getFeed = function() {
-    var that;
-    that = this;
+  mainContoroller.prototype.setItems = function() {
+    var _this = this;
     return this.qiita.getFeed(function(result) {
-      return that.refresData(result);
+      return _this.refresData(result);
     });
   };
 
@@ -258,14 +262,13 @@ mainContoroller = (function() {
     sections = [];
     section = Ti.UI.createListSection();
     dataSet = this.createItems(data);
-    section = Ti.UI.createListSection();
     loadOld = {
       loadOld: true,
       properties: {
         selectionStyle: Titanium.UI.iPhone.ListViewCellSelectionStyle.NONE
       },
-      title: {
-        text: 'load old'
+      loadBtn: {
+        text: String.fromCharCode("0xe108")
       }
     };
     dataSet.push(loadOld);
@@ -284,10 +287,8 @@ mainContoroller = (function() {
       _ref = _items.tags;
       for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
         tag = _ref[_j];
-        Ti.API.info(tag.name);
         _tags.push(tag.name);
       }
-      Ti.API.info(_tags);
       layout = {
         properties: {
           height: 120,

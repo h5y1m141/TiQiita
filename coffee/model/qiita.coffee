@@ -11,21 +11,6 @@ class Qiita
     else
       @user_name = QiitaLoginID
 
-    @parameter =
-      stocks:
-        url:"https://qiita.com/api/v1/users/#{@user_name}/stocks"
-        method:'GET'
-      myStocks:
-        url:"https://qiita.com/api/v1/stocks"
-        method:'GET'
-      feed:
-        url:"https://qiita.com/api/v1/items"
-        method:'GET'
-
-      followingTags:
-        url:"https://qiita.com/api/v1/users/#{@user_name}/following_tags?per_page=100"
-        method:'GET'
-
 
   _auth:(param,callback) ->
 
@@ -160,13 +145,14 @@ class Qiita
         # 次ページと最終ページのURLのハンドリング処理
         responseHeaders = @.responseHeaders
         if responseHeaders.Link
-          relLink = self._convertLinkHeaderToJSON(responseHeaders.Link)
-          # Ti.API.info "start self._parsedResponseHeader. storedTo is #{storedTo}"
-          self._parsedResponseHeader(relLink,storedTo)
-        else
-          relLink = null
+          links = self._convertLinkHeaderToJSON(responseHeaders.Link)
+          links.current = parameter.url
 
-      callback(json,relLink)
+        else
+          links = null
+
+
+      callback(json,links)
 
     xhr.onerror = (e) ->
       error = JSON.parse(@.responseText)
@@ -185,36 +171,19 @@ class Qiita
 
   _convertLinkHeaderToJSON:(value)->
     json = []
+    _obj = {}
     links = value.match(/https?:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+/g)
     relValues = value.match(/first|prev|next|last/g)
     length = links.length-1
 
     for i in [0..length]
-      _obj =
-        "rel":relValues[i]
-        "url":links[i]
 
-      json.push(_obj)
+      _obj[relValues[i]] = links[i]
 
-    return json
+
+    return _obj
     
 
-  _parsedResponseHeader:(header,storedTo) ->
-
-    for link in header
-      if link["rel"] is 'next'
-        nextURL = link["url"]
-      else if link["rel"] is 'last'
-        lastURL = link["url"]
-      else
-        Ti.API.info "done"
-        
-    if storedTo isnt "followingTags"
-      Ti.App.Properties.setString "#{storedTo}nextURL", nextURL
-      # Ti.API.info "#{storedTo}nextURL is #{nextURL} and storedTo is #{storedTo}"
-
-      
-    return true
   
   isConnected:() ->
     
@@ -240,8 +209,12 @@ class Qiita
     @._request(param,"followingTags",callback)
     # @._mockObject("followingTags",false,callback)
   getFeed:(callback) ->
-    param = @parameter.feed
-    @._request(param,'storedStocks',callback)
+    url = "https://qiita.com/api/v1/items"
+    param =
+      "url": url
+      "method":'GET'
+
+    @._request(param,'qiitaItems',callback)
     # @._mockObject("items",'storedStocks',callback)
 
         
@@ -255,11 +228,10 @@ class Qiita
 
   getFeedByTag:(tagName,callback) ->
     url = "https://qiita.com/api/v1/tags/#{tagName}/items"
-    storedTo = "followingTag#{tagName}"
     param =
       "url": url
       "method":'GET'
-    @._request(param,storedTo,callback)
+    @._request(param,tagName,callback)
 
   getUserInfo:(userName,callback) ->
     url = "https://qiita.com/api/v1/users/#{userName}"
@@ -283,7 +255,7 @@ class Qiita
         url:"https://qiita.com/api/v1/stocks?token=#{token}"
         method:'GET'
         
-      @._request(requestParam,"storedMyStocks",callback)
+      @._request(requestParam,"myStocks",callback)
     )
     
   getMyFeed:(callback) ->

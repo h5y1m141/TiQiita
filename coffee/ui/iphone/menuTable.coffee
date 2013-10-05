@@ -34,25 +34,34 @@ class menuTable
       className = @menuTable.data[0].rows[curretRowIndex].className
       tagName = @menuTable.data[0].rows[curretRowIndex].tagName
       accountName = @menuTable.data[0].rows[curretRowIndex].accountName
-      mainController = require("controllers/mainContoroller")
-      mainController = new mainController()
       
-      if className is "storedStocks"
-        Ti.App.Properties.setString "currentPage","storedStocks"
+      if className is "items"
+        MainWindow.actInd.show()
         MainWindow.resetSlide()
-        mainController.getFeed()
-      else if className is "storedMyStocks"
-        Ti.App.Properties.setString "currentPage","storedMyStocks"
+        MainWindow.setWindowTitle("Qiita:投稿一覧")
+        maincontroller.currentPage = "items"        
+        maincontroller.getFeed()
+
+      else if className is "myStocks"
+        MainWindow.actInd.show()        
         MainWindow.resetSlide()
-        mainController.getMyStocks()
+        MainWindow.setWindowTitle("Qiita:ストック一覧")
+        maincontroller.currentPage = "myStocks"        
+        maincontroller.getMyStocks()
+        
       else if className is "followerItems"
-        Ti.App.Properties.setString "currentPage","followerItems"
+
+        MainWindow.actInd.show()        
         MainWindow.resetSlide()
-        mainController.getFollowerItems()
+        MainWindow.setWindowTitle("Qiita:フォロワー投稿")
+        maincontroller.currentPage = "followerItems"
+        maincontroller.getFollowerItems()
       else if className is "tags"
-        Ti.App.Properties.setString "currentPage","followingTag#{tagName}"
+        MainWindow.actInd.show()        
         MainWindow.resetSlide()
-        mainController.getFeedByTag(tagName)
+        MainWindow.setWindowTitle("Qiita:Tag:#{tagName}")
+        maincontroller.currentPage = tagName
+        maincontroller.getFeedByTag(tagName)
       else if className is "accountSetting"
 
         configMenu.show(accountName)
@@ -102,7 +111,7 @@ class menuTable
       text:"投稿一覧"
       
       
-    allLabelRow.className = "storedStocks"
+    allLabelRow.className = "items"
     allLabelRow.add allStockBtn
     allLabelRow.add allLabel
     return allLabelRow
@@ -196,7 +205,7 @@ class menuTable
     stockRow.addEventListener('click',(e) =>
       
     )
-    stockRow.className = "storedMyStocks"
+    stockRow.className = "myStocks"
     stockRow.add stockBtn
     stockRow.add stockLabel
 

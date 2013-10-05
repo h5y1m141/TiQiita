@@ -35,29 +35,35 @@ menuTable = (function() {
       top: 0
     });
     this.menuTable.addEventListener('click', function(e) {
-      var accountName, className, curretRowIndex, mainController, tagName;
+      var accountName, className, curretRowIndex, tagName;
       curretRowIndex = e.index;
       className = _this.menuTable.data[0].rows[curretRowIndex].className;
       tagName = _this.menuTable.data[0].rows[curretRowIndex].tagName;
       accountName = _this.menuTable.data[0].rows[curretRowIndex].accountName;
-      mainController = require("controllers/mainContoroller");
-      mainController = new mainController();
-      if (className === "storedStocks") {
-        Ti.App.Properties.setString("currentPage", "storedStocks");
+      if (className === "items") {
+        MainWindow.actInd.show();
         MainWindow.resetSlide();
-        return mainController.getFeed();
-      } else if (className === "storedMyStocks") {
-        Ti.App.Properties.setString("currentPage", "storedMyStocks");
+        MainWindow.setWindowTitle("Qiita:投稿一覧");
+        maincontroller.currentPage = "items";
+        return maincontroller.getFeed();
+      } else if (className === "myStocks") {
+        MainWindow.actInd.show();
         MainWindow.resetSlide();
-        return mainController.getMyStocks();
+        MainWindow.setWindowTitle("Qiita:ストック一覧");
+        maincontroller.currentPage = "myStocks";
+        return maincontroller.getMyStocks();
       } else if (className === "followerItems") {
-        Ti.App.Properties.setString("currentPage", "followerItems");
+        MainWindow.actInd.show();
         MainWindow.resetSlide();
-        return mainController.getFollowerItems();
+        MainWindow.setWindowTitle("Qiita:フォロワー投稿");
+        maincontroller.currentPage = "followerItems";
+        return maincontroller.getFollowerItems();
       } else if (className === "tags") {
-        Ti.App.Properties.setString("currentPage", "followingTag" + tagName);
+        MainWindow.actInd.show();
         MainWindow.resetSlide();
-        return mainController.getFeedByTag(tagName);
+        MainWindow.setWindowTitle("Qiita:Tag:" + tagName);
+        maincontroller.currentPage = tagName;
+        return maincontroller.getFeedByTag(tagName);
       } else if (className === "accountSetting") {
         return configMenu.show(accountName);
       } else if (className === "noevent") {
@@ -103,7 +109,7 @@ menuTable = (function() {
       },
       text: "投稿一覧"
     });
-    allLabelRow.className = "storedStocks";
+    allLabelRow.className = "items";
     allLabelRow.add(allStockBtn);
     allLabelRow.add(allLabel);
     return allLabelRow;
@@ -195,7 +201,7 @@ menuTable = (function() {
     stockLabel.left = 35;
     stockRow = Ti.UI.createTableViewRow(this.rowColorTheme);
     stockRow.addEventListener('click', function(e) {});
-    stockRow.className = "storedMyStocks";
+    stockRow.className = "myStocks";
     stockRow.add(stockBtn);
     stockRow.add(stockLabel);
     return stockRow;

@@ -1,11 +1,8 @@
-var listView,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+var listView;
 
 listView = (function() {
 
   function listView() {
-    this.refresData = __bind(this.refresData, this);
-
     var myTemplate,
       _this = this;
     this.baseColor = {
@@ -108,6 +105,21 @@ listView = (function() {
             left: 60,
             top: 45
           }
+        }, {
+          type: "Ti.UI.Label",
+          bindId: "loadBtn",
+          properties: {
+            color: this.baseColor.contentsColor,
+            font: {
+              fontSize: 32,
+              fontFamily: 'LigatureSymbols'
+            },
+            width: 320,
+            height: 50,
+            textAlign: "center",
+            left: 0,
+            top: 0
+          }
         }
       ]
     };
@@ -121,20 +133,17 @@ listView = (function() {
       defaultItemTemplate: "template"
     });
     this.listView.addEventListener('itemclick', function(e) {
-      var Qiita, animation, currentPage, data, detailWindow, index, nextURL, qiita, that;
+      var animation, data, detailWindow, index, that;
       that = _this;
       index = e.itemIndex;
       if (e.section.items[index].loadOld === true) {
-        Qiita = require('model/qiita');
-        qiita = new Qiita();
-        currentPage = Ti.App.Properties.getString("currentPage");
-        nextURL = Ti.App.Properties.getString("" + currentPage + "nextURL");
-        Ti.API.info("currentPage is " + currentPage + " and nextURL is " + nextURL);
-        return qiita.getNextFeed(nextURL, currentPage, function(result) {
-          var currentSection, items, lastIndex;
-          items = maincontroller.createItems(result);
-          lastIndex = _this._getLastItemIndex();
-          currentSection = _this.listView.sections[0];
+        MainWindow.actInd.show();
+        return maincontroller.getNextFeed(function(items) {
+          var currentSection, lastIndex;
+          lastIndex = that._getLastItemIndex();
+          Ti.API.info("lastIndex is " + lastIndex);
+          currentSection = that.listView.sections[0];
+          MainWindow.actInd.hide();
           return currentSection.insertItemsAt(lastIndex, items);
         });
       } else {
@@ -157,27 +166,6 @@ listView = (function() {
     });
     return this.listView;
   }
-
-  listView.prototype.refresData = function(data) {
-    var dataSet, loadOld, section, sections;
-    sections = [];
-    section = Ti.UI.createListSection();
-    dataSet = this.createItems(data);
-    section = Ti.UI.createListSection();
-    loadOld = {
-      loadOld: true,
-      properties: {
-        selectionStyle: Titanium.UI.iPhone.ListViewCellSelectionStyle.NONE
-      },
-      title: {
-        text: 'load old'
-      }
-    };
-    dataSet.push(loadOld);
-    section.setItems(dataSet);
-    sections.push(section);
-    return this.listView.setSections(sections);
-  };
 
   listView.prototype._getLastItemIndex = function() {
     return this.listView.sections[0].items.length - 1;

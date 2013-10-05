@@ -4,9 +4,8 @@ class mainWindow
       barColor:"#f9f9f9"
       backgroundColor:"#f9f9f9"
       keyColor:'#59BB0C'
-      textColor:"#333"
-      contentsColor:"#666"      
-      grayTextColor:"#999"
+      textColor:"#f9f9f9"
+
     @window = Ti.UI.createWindow
       title:"Qiita"
       barColor:@baseColor.barColor
@@ -16,13 +15,25 @@ class mainWindow
       
 
     @slideState = false
-    
+    @actInd = Ti.UI.createActivityIndicator
+      zIndex:30
+      backgroundColor:"#222"
+      top:150
+      left: 120
+      height: 40
+      width: 'auto'
+      font: 
+        fontFamily:'Helvetica Neue'
+        fontSize:15
+        fontWeight:'bold'
+      color: '#fff'
+      message: 'loading...'    
     menuBtn = Ti.UI.createLabel
       backgroundColor:"transparent"
-      color:"#f9f9f9"
-      width:28
-      height:28
-      top:5
+      color:@baseColor.textColor
+      width:80
+      height:40
+      top:0
       left:10
       font:
         fontSize: 32
@@ -37,7 +48,15 @@ class mainWindow
         @slideWindow()
 
     ) 
-    
+    @title = Ti.UI.createLabel
+      width:240
+      textAlign:'center'
+      left:40
+      font:
+        fontSize:16
+      text:"Qiita:投稿一覧"
+      color:@baseColor.textColor
+      
     @navView = Ti.UI.createView
       width:Ti.UI.FULL
       height:40
@@ -48,11 +67,18 @@ class mainWindow
       zIndex:25
             
     @navView.add menuBtn
+    @navView.add @title
     @window.add @navView
+    @actInd.hide()
+    @window.add @actInd
       
   getWindow:() ->
     return @window
-      
+    
+  setWindowTitle:(title) ->
+    @title.text = title
+    return
+    
   resetSlide:() ->  
     transform = Titanium.UI.create2DMatrix()
     animation = Titanium.UI.createAnimation()
