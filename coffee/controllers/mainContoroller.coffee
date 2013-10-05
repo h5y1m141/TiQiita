@@ -57,10 +57,10 @@ class mainContoroller
     MAXITEMCOUNT = 20 # 1リクエスト辺りに読み込まれる最大件数
     if items? is false or items is ""
       @qiita.getFeedByTag(tagName, (result,links) ->
-        nextURL = links[0].url
-        lastURL = links[1].url
-        loadedPageURL = links[0].url                
-        that.cache.setPageState(tagName,nextURL,lastURL,loadedPageURL)
+        nextURL = links.next
+        lastURL = links.last
+        loadedPageURL = links.current
+        that.cache.setPageState(@currentPage,nextURL,lastURL,loadedPageURL)
 
         Ti.API.info that.cache.showPageState(tagName)
 
@@ -96,13 +96,11 @@ class mainContoroller
 
     if items? is false or items is ""
       that.qiita.getFeed( (result,links) ->
+        nextURL = links.next
+        lastURL = links.last
+        loadedPageURL = links.current
+        that.cache.setPageState(that.currentPage,nextURL,lastURL,loadedPageURL)
 
-        nextURL = links[0].url
-        lastURL = links[1].url
-        loadedPageURL = links[0].url                
-        that.cache.setPageState("qiitaitems",nextURL,lastURL,loadedPageURL)
-
-        Ti.API.info that.cache.showPageState("qiitaitems")
         
         result.sort( (a, b) ->
           (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
@@ -114,10 +112,9 @@ class mainContoroller
           MainWindow.actInd.hide()
           that.refresData(result)
 
-      )
-      
+      )      
     else
-      @_loadDataFromCache(items)          
+      that._loadDataFromCache(items)          
             
   getMyStocks:() ->
     MAXITEMCOUNT = 20 # 1リクエスト辺りに読み込まれる最大件数
@@ -127,11 +124,10 @@ class mainContoroller
     that = @    
     if items? is false or items is ""
       @qiita.getMyStocks( (result,links) ->
-        that.paginationObj.myStocks =
-          next:links[0].url
-          last:links[1].url
-          loadedPage:links[0].url          
-        
+        nextURL = links.next
+        lastURL = links.last
+        loadedPageURL = links.current
+        that.cache.setPageState(that.currentPage,nextURL,lastURL,loadedPageURL)
         result.sort( (a, b) ->
           (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
         )
@@ -181,10 +177,10 @@ class mainContoroller
         # 全部のユーザの投稿情報を取得するのに時間がかかるため
         # ひとまず10秒間まってから取得した投稿情報のローカルへのキャッシュを実施
         setTimeout (->
-          that.paginationObj.followerItems =
-            next:links[0].url
-            last:links[1].url
-            loadedPage:links[0].url
+          nextURL = links.next
+          lastURL = links.last
+          loadedPageURL = links.current
+          that.cache.setPageState(that.currentPage,nextURL,lastURL,loadedPageURL)
                       
           _items.sort( (a, b) ->
             (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
@@ -199,8 +195,8 @@ class mainContoroller
       @_loadDataFromCache(items)
       
   _loadDataFromCache:(items)->
-    Ti.API.info "currentPage is #{@currentPage} and loadedPage is #{@loadedPage}"
-    
+    page = @cache.showPageState(@currentPage)
+    Ti.API.info "_loadDataFromCache start. current Page is #{page.category} and loadedPageURL is #{page.loadedPageURL}"    
     items.sort( (a, b) ->
 
       (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
@@ -209,28 +205,27 @@ class mainContoroller
     return @refresData(items)
 
   getNextFeed:(callback) ->
-    page = @currentPage
-    Ti.API.info "currentPage is #{page}"
-    Ti.API.info @paginationObj    
-    nextURL = @paginationObj[page].next
+    links = @cache.showPageState(@currentPage)
 
 
     # 引数に取ったnextURLを読み込んだ結果をListViewに値をセット出来るように
     # @createItemsを呼び出してデータ生成してコールバック関数に渡す
-    @qiita.getNextFeed(nextURL,page,(result) =>
+    @qiita.getNextFeed(links.nextURL,links.category,(result,links) =>
       # それぞれの投稿情報でどこまで読み込み完了してるのかを管理する必要あるので
       # そのための値を設定する
-      @paginationObj[page].loadedPage =  nextURL
-      items = @createItems(result)
-      return callback(items)
-    )
-                
-  setItems:() ->
-    that = @
-    @qiita.getFeed( (result) ->
-      that.refresData(result)
-    )
+      nextURL = links.next
+      lastURL = links.last
+      loadedPageURL = links.current
 
+      @cache.setPageState(@currentPage,nextURL,lastURL,loadedPageURL)
+      items = @createItems(result)
+      callback(items)
+    )
+    
+  setItems:() ->
+    @qiita.getFeed( (result) =>
+      @refresData(result)
+    )
 
     
   refresData: (data) ->

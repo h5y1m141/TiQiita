@@ -146,13 +146,12 @@ class Qiita
         responseHeaders = @.responseHeaders
         if responseHeaders.Link
           links = self._convertLinkHeaderToJSON(responseHeaders.Link)
-          # Ti.API.info "start self._parsedResponseHeader. storedTo is #{storedTo}"
-          self._parsedResponseHeader(links,storedTo)
+          links.current = parameter.url
+
         else
           links = null
 
-        links.push({"rel":"current","url":parameter.url} )
-      Ti.API.info links
+
       callback(json,links)
 
     xhr.onerror = (e) ->
@@ -172,38 +171,19 @@ class Qiita
 
   _convertLinkHeaderToJSON:(value)->
     json = []
+    _obj = {}
     links = value.match(/https?:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+/g)
     relValues = value.match(/first|prev|next|last/g)
     length = links.length-1
 
     for i in [0..length]
-      _obj =
-        "rel":relValues[i]
-        "url":links[i]
 
-      json.push(_obj)
+      _obj[relValues[i]] = links[i]
 
-    return json
+
+    return _obj
     
 
-  _parsedResponseHeader:(header,storedTo) ->
-    
-    for link in header
-
-      if link["rel"] is 'next'
-        nextURL = link["url"]
-        baseURL = link["url"].split("?")
-        firstURL = baseURL[0]
-      else if link["rel"] is 'last'
-        lastURL = link["url"]
-
-      else
-        Ti.API.info "done"
-        
-    if storedTo isnt "followingTags"
-      Ti.API.info "first url is: #{firstURL} next url is :#{nextURL}"
-
-    return true
   
   isConnected:() ->
     

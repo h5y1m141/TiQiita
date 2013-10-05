@@ -1,7 +1,7 @@
 class Cache
   constructor:() ->
     db = Ti.Database.open('tiqiita')
-    
+
     # アプリ内で利用するキャッシュという位置づけでiCloudへのバックアップは不要なので
     # 以下オプションを設定
     # http://docs.appcelerator.com/titanium/latest/#!/guide/Working_with_a_SQLite_Database

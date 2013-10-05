@@ -68,10 +68,10 @@ mainContoroller = (function() {
     if ((items != null) === false || items === "") {
       return this.qiita.getFeedByTag(tagName, function(result, links) {
         var lastURL, loadedPageURL, nextURL;
-        nextURL = links[0].url;
-        lastURL = links[1].url;
-        loadedPageURL = links[0].url;
-        that.cache.setPageState(tagName, nextURL, lastURL, loadedPageURL);
+        nextURL = links.next;
+        lastURL = links.last;
+        loadedPageURL = links.current;
+        that.cache.setPageState(this.currentPage, nextURL, lastURL, loadedPageURL);
         Ti.API.info(that.cache.showPageState(tagName));
         result.sort(function(a, b) {
           if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
@@ -102,11 +102,10 @@ mainContoroller = (function() {
     if ((items != null) === false || items === "") {
       return that.qiita.getFeed(function(result, links) {
         var lastURL, loadedPageURL, nextURL;
-        nextURL = links[0].url;
-        lastURL = links[1].url;
-        loadedPageURL = links[0].url;
-        that.cache.setPageState("qiitaitems", nextURL, lastURL, loadedPageURL);
-        Ti.API.info(that.cache.showPageState("qiitaitems"));
+        nextURL = links.next;
+        lastURL = links.last;
+        loadedPageURL = links.current;
+        that.cache.setPageState(that.currentPage, nextURL, lastURL, loadedPageURL);
         result.sort(function(a, b) {
           if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
             return -1;
@@ -122,7 +121,7 @@ mainContoroller = (function() {
         }
       });
     } else {
-      return this._loadDataFromCache(items);
+      return that._loadDataFromCache(items);
     }
   };
 
@@ -135,11 +134,11 @@ mainContoroller = (function() {
     that = this;
     if ((items != null) === false || items === "") {
       return this.qiita.getMyStocks(function(result, links) {
-        that.paginationObj.myStocks = {
-          next: links[0].url,
-          last: links[1].url,
-          loadedPage: links[0].url
-        };
+        var lastURL, loadedPageURL, nextURL;
+        nextURL = links.next;
+        lastURL = links.last;
+        loadedPageURL = links.current;
+        that.cache.setPageState(that.currentPage, nextURL, lastURL, loadedPageURL);
         result.sort(function(a, b) {
           if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
             return -1;
@@ -199,11 +198,11 @@ mainContoroller = (function() {
           xhr.send();
         }
         return setTimeout((function() {
-          that.paginationObj.followerItems = {
-            next: links[0].url,
-            last: links[1].url,
-            loadedPage: links[0].url
-          };
+          var lastURL, loadedPageURL, nextURL;
+          nextURL = links.next;
+          lastURL = links.last;
+          loadedPageURL = links.current;
+          that.cache.setPageState(that.currentPage, nextURL, lastURL, loadedPageURL);
           _items.sort(function(a, b) {
             if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
               return -1;
@@ -222,7 +221,9 @@ mainContoroller = (function() {
   };
 
   mainContoroller.prototype._loadDataFromCache = function(items) {
-    Ti.API.info("currentPage is " + this.currentPage + " and loadedPage is " + this.loadedPage);
+    var page;
+    page = this.cache.showPageState(this.currentPage);
+    Ti.API.info("_loadDataFromCache start. current Page is " + page.category + " and loadedPageURL is " + page.loadedPageURL);
     items.sort(function(a, b) {
       if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
         return -1;
@@ -235,25 +236,24 @@ mainContoroller = (function() {
   };
 
   mainContoroller.prototype.getNextFeed = function(callback) {
-    var nextURL, page,
+    var links,
       _this = this;
-    page = this.currentPage;
-    Ti.API.info("currentPage is " + page);
-    Ti.API.info(this.paginationObj);
-    nextURL = this.paginationObj[page].next;
-    return this.qiita.getNextFeed(nextURL, page, function(result) {
-      var items;
-      _this.paginationObj[page].loadedPage = nextURL;
+    links = this.cache.showPageState(this.currentPage);
+    return this.qiita.getNextFeed(links.nextURL, links.category, function(result, links) {
+      var items, lastURL, loadedPageURL, nextURL;
+      nextURL = links.next;
+      lastURL = links.last;
+      loadedPageURL = links.current;
+      _this.cache.setPageState(_this.currentPage, nextURL, lastURL, loadedPageURL);
       items = _this.createItems(result);
       return callback(items);
     });
   };
 
   mainContoroller.prototype.setItems = function() {
-    var that;
-    that = this;
+    var _this = this;
     return this.qiita.getFeed(function(result) {
-      return that.refresData(result);
+      return _this.refresData(result);
     });
   };
 

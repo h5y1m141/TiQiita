@@ -121,16 +121,11 @@ Qiita = (function() {
         responseHeaders = this.responseHeaders;
         if (responseHeaders.Link) {
           links = self._convertLinkHeaderToJSON(responseHeaders.Link);
-          self._parsedResponseHeader(links, storedTo);
+          links.current = parameter.url;
         } else {
           links = null;
         }
-        links.push({
-          "rel": "current",
-          "url": parameter.url
-        });
       }
-      Ti.API.info(links);
       return callback(json, links);
     };
     xhr.onerror = function(e) {
@@ -145,37 +140,14 @@ Qiita = (function() {
   Qiita.prototype._convertLinkHeaderToJSON = function(value) {
     var i, json, length, links, relValues, _i, _obj;
     json = [];
+    _obj = {};
     links = value.match(/https?:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+/g);
     relValues = value.match(/first|prev|next|last/g);
     length = links.length - 1;
     for (i = _i = 0; 0 <= length ? _i <= length : _i >= length; i = 0 <= length ? ++_i : --_i) {
-      _obj = {
-        "rel": relValues[i],
-        "url": links[i]
-      };
-      json.push(_obj);
+      _obj[relValues[i]] = links[i];
     }
-    return json;
-  };
-
-  Qiita.prototype._parsedResponseHeader = function(header, storedTo) {
-    var baseURL, firstURL, lastURL, link, nextURL, _i, _len;
-    for (_i = 0, _len = header.length; _i < _len; _i++) {
-      link = header[_i];
-      if (link["rel"] === 'next') {
-        nextURL = link["url"];
-        baseURL = link["url"].split("?");
-        firstURL = baseURL[0];
-      } else if (link["rel"] === 'last') {
-        lastURL = link["url"];
-      } else {
-        Ti.API.info("done");
-      }
-    }
-    if (storedTo !== "followingTags") {
-      Ti.API.info("first url is: " + firstURL + " next url is :" + nextURL);
-    }
-    return true;
+    return _obj;
   };
 
   Qiita.prototype.isConnected = function() {
