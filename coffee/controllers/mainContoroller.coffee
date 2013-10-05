@@ -6,7 +6,9 @@ class mainContoroller
     @qiita = new Qiita()
     Twitter = require("model/twitter")
     @twitter = new Twitter()
-        
+    Cache = require("model/cache")
+    @cache = new Cache()
+    @currentPage = "qiitaItems" # defaultはQiitaのパブリックな投稿情報一覧のitemsを設定
     @tabSetting =
       "iphone":
         "main":
@@ -47,14 +49,22 @@ class mainContoroller
     )
     
   getFeedByTag:(tagName) ->
-    storedTo = "followingTag#{tagName}"
-    items = JSON.parse(Ti.App.Properties.getString(storedTo))
+    items = JSON.parse(Ti.App.Properties.getString(tagName))
+    that = @
     moment = require('lib/moment.min')
     momentja = require('lib/momentja')
     
     MAXITEMCOUNT = 20 # 1リクエスト辺りに読み込まれる最大件数
     if items? is false or items is ""
-      @qiita.getFeedByTag(tagName, (result,links) =>
+      @qiita.getFeedByTag(tagName, (result,links) ->
+        nextURL = links.next
+        lastURL = links.last
+        loadedPageURL = links.current
+        that.cache.setPageState(@currentPage,nextURL,lastURL,loadedPageURL)
+
+        Ti.API.info that.cache.showPageState(tagName)
+
+        
         # http://d.hatena.ne.jp/yatemmma/20110723/1311534794を参考に実装
         # なお比較した結果、1を最初に返すと更新日古い順番にソートされる
         result.sort( (a, b) ->
@@ -63,60 +73,61 @@ class mainContoroller
         )
         
         # rows.push(mainTableView.createRow(json)) for json in result
-        Ti.API.info result.length
+        # Ti.API.info result.lengthg
         
         if result.length isnt MAXITEMCOUNT
           Ti.API.info "loadOldEntry hide"  
         else
 
           MainWindow.actInd.hide()
-          @refresData(result)
+          that.refresData(result)
 
       )
 
     else
-      items.sort( (a, b) ->
+      @_loadDataFromCache(items)              
 
-        (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
-      )
-      MainWindow.actInd.hide()
-      @refresData(items)
   getFeed:() ->
-    items = JSON.parse(Ti.App.Properties.getString("storedStocks"))
+    items = JSON.parse(Ti.App.Properties.getString("qiitaItems"))
     moment = require('lib/moment.min')
     momentja = require('lib/momentja')
     MAXITEMCOUNT = 20 # 1リクエスト辺りに読み込まれる最大件数
-    
+    that = @
+
     if items? is false or items is ""
-      @qiita.getFeed( (result,links) =>
+      that.qiita.getFeed( (result,links) ->
+        nextURL = links.next
+        lastURL = links.last
+        loadedPageURL = links.current
+        that.cache.setPageState(that.currentPage,nextURL,lastURL,loadedPageURL)
+
+        
         result.sort( (a, b) ->
           (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
         )
-        
+
         if result.length isnt MAXITEMCOUNT
           Ti.API.info "loadOldEntry hide"
         else
           MainWindow.actInd.hide()
-          @refresData(result)
+          that.refresData(result)
 
-      )
-      
+      )      
     else
-      items.sort( (a, b) ->
-
-        (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
-      )
-      MainWindow.actInd.hide()
-      @refresData(items)    
+      that._loadDataFromCache(items)          
             
   getMyStocks:() ->
     MAXITEMCOUNT = 20 # 1リクエスト辺りに読み込まれる最大件数
-    items = JSON.parse(Ti.App.Properties.getString('storedMyStocks'))
+    items = JSON.parse(Ti.App.Properties.getString('myStocks'))
     moment = require('lib/moment.min')
     momentja = require('lib/momentja')
+    that = @    
     if items? is false or items is ""
-      @qiita.getMyStocks( (result,links) =>
-        
+      @qiita.getMyStocks( (result,links) ->
+        nextURL = links.next
+        lastURL = links.last
+        loadedPageURL = links.current
+        that.cache.setPageState(that.currentPage,nextURL,lastURL,loadedPageURL)
         result.sort( (a, b) ->
           (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
         )
@@ -125,29 +136,23 @@ class mainContoroller
           Ti.API.info "loadOldEntry hide"
         else
           MainWindow.actInd.hide()
-          @refresData(result)
+          that.refresData(result)
 
       )
       
     else
-      
-      items.sort( (a, b) ->
-
-        (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
-      )
-      MainWindow.actInd.hide()
-      @refresData(items)
+      @_loadDataFromCache(items)      
       
   # フォロワー投稿を取得するメソッド
   getFollowerItems:() ->
     items = JSON.parse(Ti.App.Properties.getString("followerItems"))
     moment = require('lib/moment.min')
     momentja = require('lib/momentja')
-    
+    that = @
     if items? is false or items is ""
       qiitaUser = require("model/qiitaUser")
       qiitaUser = new qiitaUser()
-      qiitaUser.getfollowingUserList( (userList) =>
+      qiitaUser.getfollowingUserList( (userList) ->
         # 1)フォローしてるユーザ情報のuserListを
         # 順番にループして個々のユーザの投稿情報を取得
         for item in userList
@@ -171,34 +176,55 @@ class mainContoroller
         # 1)の処理は非同期で実施されるため、最終的に
         # 全部のユーザの投稿情報を取得するのに時間がかかるため
         # ひとまず10秒間まってから取得した投稿情報のローカルへのキャッシュを実施
-        setTimeout (=>
+        setTimeout (->
+          nextURL = links.next
+          lastURL = links.last
+          loadedPageURL = links.current
+          that.cache.setPageState(that.currentPage,nextURL,lastURL,loadedPageURL)
+                      
           _items.sort( (a, b) ->
             (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
           )
           MainWindow.actInd.hide()
           # フォローしてるユーザの投稿情報をローカルにキャッシュ
           Ti.App.Properties.setString("followerItems",JSON.stringify(_items))
-          @refresData(_items)
+          that.refresData(_items)
         ),10000          
       )
     else
-      items.sort( (a, b) ->
+      @_loadDataFromCache(items)
+      
+  _loadDataFromCache:(items)->
+    page = @cache.showPageState(@currentPage)
+    Ti.API.info "_loadDataFromCache start. current Page is #{page.category} and loadedPageURL is #{page.loadedPageURL}"    
+    items.sort( (a, b) ->
 
-        (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
-      )
-      MainWindow.actInd.hide()
-      @refresData(items)      
-              
-  setItems:() ->
-    that = @
-    @qiita.getFeed( (result) ->
-      that.refresData(result)
+      (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
     )
+    MainWindow.actInd.hide()
+    return @refresData(items)
 
-  getFeed:() ->
-    that = @
-    @qiita.getFeed( (result) ->
-      that.refresData(result)
+  getNextFeed:(callback) ->
+    links = @cache.showPageState(@currentPage)
+
+
+    # 引数に取ったnextURLを読み込んだ結果をListViewに値をセット出来るように
+    # @createItemsを呼び出してデータ生成してコールバック関数に渡す
+    @qiita.getNextFeed(links.nextURL,links.category,(result,links) =>
+      # それぞれの投稿情報でどこまで読み込み完了してるのかを管理する必要あるので
+      # そのための値を設定する
+      nextURL = links.next
+      lastURL = links.last
+      loadedPageURL = links.current
+
+      @cache.setPageState(@currentPage,nextURL,lastURL,loadedPageURL)
+      items = @createItems(result)
+      callback(items)
+    )
+    
+  setItems:() ->
+    @qiita.getFeed( (result) =>
+      @refresData(result)
     )
 
     
@@ -336,17 +362,11 @@ class mainContoroller
         
     , 5000)
 
-    
-
-
   sessionItem: (json) ->
     Ti.API.info "start sessionItem. url is #{json.url}. uuid is #{json.uuid}"
     if json
       Ti.App.Properties.setString('stockURL',json.url)
       Ti.App.Properties.setString('stockUUID',json.uuid)
       Ti.App.Properties.setString('stockID',json.id)
-  
-
-
 
 module.exports = mainContoroller  

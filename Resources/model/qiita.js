@@ -16,24 +16,6 @@ Qiita = (function() {
     } else {
       this.user_name = QiitaLoginID;
     }
-    this.parameter = {
-      stocks: {
-        url: "https://qiita.com/api/v1/users/" + this.user_name + "/stocks",
-        method: 'GET'
-      },
-      myStocks: {
-        url: "https://qiita.com/api/v1/stocks",
-        method: 'GET'
-      },
-      feed: {
-        url: "https://qiita.com/api/v1/items",
-        method: 'GET'
-      },
-      followingTags: {
-        url: "https://qiita.com/api/v1/users/" + this.user_name + "/following_tags?per_page=100",
-        method: 'GET'
-      }
-    };
   }
 
   Qiita.prototype._auth = function(param, callback) {
@@ -129,7 +111,7 @@ Qiita = (function() {
     Ti.API.info(parameter.method + ":" + parameter.url);
     xhr.open(parameter.method, parameter.url);
     xhr.onload = function() {
-      var json, relLink, responseHeaders;
+      var json, links, responseHeaders;
       json = JSON.parse(this.responseText);
       if (storedTo === "followingTags" || storedTo === false) {
         Ti.API.debug("キャッシュ処理は実施しませんでした");
@@ -138,13 +120,13 @@ Qiita = (function() {
         self._storedStocks(storedTo, this.responseText);
         responseHeaders = this.responseHeaders;
         if (responseHeaders.Link) {
-          relLink = self._convertLinkHeaderToJSON(responseHeaders.Link);
-          self._parsedResponseHeader(relLink, storedTo);
+          links = self._convertLinkHeaderToJSON(responseHeaders.Link);
+          links.current = parameter.url;
         } else {
-          relLink = null;
+          links = null;
         }
       }
-      return callback(json, relLink);
+      return callback(json, links);
     };
     xhr.onerror = function(e) {
       var error;
@@ -158,35 +140,14 @@ Qiita = (function() {
   Qiita.prototype._convertLinkHeaderToJSON = function(value) {
     var i, json, length, links, relValues, _i, _obj;
     json = [];
+    _obj = {};
     links = value.match(/https?:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+/g);
     relValues = value.match(/first|prev|next|last/g);
     length = links.length - 1;
     for (i = _i = 0; 0 <= length ? _i <= length : _i >= length; i = 0 <= length ? ++_i : --_i) {
-      _obj = {
-        "rel": relValues[i],
-        "url": links[i]
-      };
-      json.push(_obj);
+      _obj[relValues[i]] = links[i];
     }
-    return json;
-  };
-
-  Qiita.prototype._parsedResponseHeader = function(header, storedTo) {
-    var lastURL, link, nextURL, _i, _len;
-    for (_i = 0, _len = header.length; _i < _len; _i++) {
-      link = header[_i];
-      if (link["rel"] === 'next') {
-        nextURL = link["url"];
-      } else if (link["rel"] === 'last') {
-        lastURL = link["url"];
-      } else {
-        Ti.API.info("done");
-      }
-    }
-    if (storedTo !== "followingTags") {
-      Ti.App.Properties.setString("" + storedTo + "nextURL", nextURL);
-    }
-    return true;
+    return _obj;
   };
 
   Qiita.prototype.isConnected = function() {
@@ -221,9 +182,13 @@ Qiita = (function() {
   };
 
   Qiita.prototype.getFeed = function(callback) {
-    var param;
-    param = this.parameter.feed;
-    return this._request(param, 'storedStocks', callback);
+    var param, url;
+    url = "https://qiita.com/api/v1/items";
+    param = {
+      "url": url,
+      "method": 'GET'
+    };
+    return this._request(param, 'qiitaItems', callback);
   };
 
   Qiita.prototype.getNextFeed = function(url, storedTo, callback) {
@@ -236,14 +201,13 @@ Qiita = (function() {
   };
 
   Qiita.prototype.getFeedByTag = function(tagName, callback) {
-    var param, storedTo, url;
+    var param, url;
     url = "https://qiita.com/api/v1/tags/" + tagName + "/items";
-    storedTo = "followingTag" + tagName;
     param = {
       "url": url,
       "method": 'GET'
     };
-    return this._request(param, storedTo, callback);
+    return this._request(param, tagName, callback);
   };
 
   Qiita.prototype.getUserInfo = function(userName, callback) {
@@ -274,7 +238,7 @@ Qiita = (function() {
         url: "https://qiita.com/api/v1/stocks?token=" + token,
         method: 'GET'
       };
-      return _this._request(requestParam, "storedMyStocks", callback);
+      return _this._request(requestParam, "myStocks", callback);
     });
   };
 
