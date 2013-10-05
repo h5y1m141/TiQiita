@@ -84,26 +84,6 @@ Qiita = (function() {
     return true;
   };
 
-  Qiita.prototype._storedStocks = function(_storedTo, strItems) {
-    var cachedItems, length, merge, result, stocks;
-    cachedItems = Ti.App.Properties.getString(_storedTo);
-    stocks = JSON.parse(cachedItems);
-    if (stocks !== null) {
-      Ti.API.info(stocks.length);
-    }
-    if (stocks === null) {
-      length = JSON.parse(strItems);
-      Ti.API.info("_storedStocks start");
-      Ti.App.Properties.setString(_storedTo, strItems);
-    } else {
-      Ti.API.info("_storedStocks merge start");
-      merge = stocks.concat(JSON.parse(strItems));
-      Ti.App.Properties.setString(_storedTo, JSON.stringify(merge));
-    }
-    result = JSON.parse(Ti.App.Properties.getString(_storedTo));
-    return Ti.API.info("_storedStocks finish : " + result.length);
-  };
-
   Qiita.prototype._request = function(parameter, storedTo, callback) {
     var self, xhr;
     self = this;
@@ -113,18 +93,12 @@ Qiita = (function() {
     xhr.onload = function() {
       var json, links, responseHeaders;
       json = JSON.parse(this.responseText);
-      if (storedTo === "followingTags" || storedTo === false) {
-        Ti.API.debug("キャッシュ処理は実施しませんでした");
+      responseHeaders = this.responseHeaders;
+      if (responseHeaders.Link) {
+        links = self._convertLinkHeaderToJSON(responseHeaders.Link);
+        links.current = parameter.url;
       } else {
-        Ti.API.info("start _storedStocks " + storedTo);
-        self._storedStocks(storedTo, this.responseText);
-        responseHeaders = this.responseHeaders;
-        if (responseHeaders.Link) {
-          links = self._convertLinkHeaderToJSON(responseHeaders.Link);
-          links.current = parameter.url;
-        } else {
-          links = null;
-        }
+        links = null;
       }
       return callback(json, links);
     };
