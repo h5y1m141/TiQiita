@@ -59,20 +59,22 @@ mainContoroller = (function() {
   };
 
   mainContoroller.prototype.getFeedByTag = function(tagName) {
-    var MAXITEMCOUNT, items, moment, momentja, that;
-    items = JSON.parse(Ti.App.Properties.getString(tagName));
-    that = this;
+    var MAXITEMCOUNT, moment, momentja,
+      _this = this;
     moment = require('lib/moment.min');
     momentja = require('lib/momentja');
     MAXITEMCOUNT = 20;
-    if ((items != null) === false || items === "") {
+    if (this.cache.hasCached(tagName) === true) {
+      return this._loadDataFromCache();
+    } else {
       return this.qiita.getFeedByTag(tagName, function(result, links) {
         var lastURL, loadedPageURL, nextURL;
         nextURL = links.next;
         lastURL = links.last;
         loadedPageURL = links.current;
-        that.cache.setPageState(this.currentPage, nextURL, lastURL, loadedPageURL);
-        Ti.API.info(that.cache.showPageState(tagName));
+        _this.cache.setPageState(_this.currentPage, nextURL, lastURL, loadedPageURL);
+        _this.cache.save(result, _this.currentPage);
+        Ti.API.info(_this.cache.showPageState(tagName));
         result.sort(function(a, b) {
           if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
             return -1;
@@ -84,28 +86,29 @@ mainContoroller = (function() {
           return Ti.API.info("loadOldEntry hide");
         } else {
           MainWindow.actInd.hide();
-          return that.refresData(result);
+          return _this.refresData(result);
         }
       });
-    } else {
-      return this._loadDataFromCache(items);
     }
   };
 
   mainContoroller.prototype.getFeed = function() {
-    var MAXITEMCOUNT, items, moment, momentja, that;
-    items = JSON.parse(Ti.App.Properties.getString("qiitaItems"));
+    var MAXITEMCOUNT, moment, momentja,
+      _this = this;
     moment = require('lib/moment.min');
     momentja = require('lib/momentja');
     MAXITEMCOUNT = 20;
-    that = this;
-    if ((items != null) === false || items === "") {
-      return that.qiita.getFeed(function(result, links) {
+    if (this.cache.hasCached("qiitaItems") === true) {
+      Ti.API.info("@_loadDataFromCache()");
+      return this._loadDataFromCache();
+    } else {
+      return this.qiita.getFeed(function(result, links) {
         var lastURL, loadedPageURL, nextURL;
         nextURL = links.next;
         lastURL = links.last;
         loadedPageURL = links.current;
-        that.cache.setPageState(that.currentPage, nextURL, lastURL, loadedPageURL);
+        _this.cache.setPageState(_this.currentPage, nextURL, lastURL, loadedPageURL);
+        _this.cache.save(result, _this.currentPage);
         result.sort(function(a, b) {
           if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
             return -1;
@@ -117,28 +120,27 @@ mainContoroller = (function() {
           return Ti.API.info("loadOldEntry hide");
         } else {
           MainWindow.actInd.hide();
-          return that.refresData(result);
+          return _this.refresData(result);
         }
       });
-    } else {
-      return that._loadDataFromCache(items);
     }
   };
 
   mainContoroller.prototype.getMyStocks = function() {
-    var MAXITEMCOUNT, items, moment, momentja, that;
+    var MAXITEMCOUNT, moment, momentja,
+      _this = this;
     MAXITEMCOUNT = 20;
-    items = JSON.parse(Ti.App.Properties.getString('myStocks'));
     moment = require('lib/moment.min');
     momentja = require('lib/momentja');
-    that = this;
-    if ((items != null) === false || items === "") {
+    if (this.cache.hasCached('myStocks') === true) {
+      return this._loadDataFromCache();
+    } else {
       return this.qiita.getMyStocks(function(result, links) {
         var lastURL, loadedPageURL, nextURL;
         nextURL = links.next;
         lastURL = links.last;
         loadedPageURL = links.current;
-        that.cache.setPageState(that.currentPage, nextURL, lastURL, loadedPageURL);
+        _this.cache.setPageState(_this.currentPage, nextURL, lastURL, loadedPageURL);
         result.sort(function(a, b) {
           if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
             return -1;
@@ -150,11 +152,9 @@ mainContoroller = (function() {
           return Ti.API.info("loadOldEntry hide");
         } else {
           MainWindow.actInd.hide();
-          return that.refresData(result);
+          return _this.refresData(result);
         }
       });
-    } else {
-      return this._loadDataFromCache(items);
     }
   };
 
@@ -216,21 +216,13 @@ mainContoroller = (function() {
         }), 10000);
       });
     } else {
-      return this._loadDataFromCache(items);
+      return this._loadDataFromCache();
     }
   };
 
-  mainContoroller.prototype._loadDataFromCache = function(items) {
-    var page;
-    page = this.cache.showPageState(this.currentPage);
-    Ti.API.info("_loadDataFromCache start. current Page is " + page.category + " and loadedPageURL is " + page.loadedPageURL);
-    items.sort(function(a, b) {
-      if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
-        return -1;
-      } else {
-        return 1;
-      }
-    });
+  mainContoroller.prototype._loadDataFromCache = function() {
+    var items;
+    items = this.cache.find(this.currentPage);
     MainWindow.actInd.hide();
     return this.refresData(items);
   };

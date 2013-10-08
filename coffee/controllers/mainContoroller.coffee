@@ -49,20 +49,20 @@ class mainContoroller
     )
     
   getFeedByTag:(tagName) ->
-    items = JSON.parse(Ti.App.Properties.getString(tagName))
-    that = @
     moment = require('lib/moment.min')
     momentja = require('lib/momentja')
     
     MAXITEMCOUNT = 20 # 1リクエスト辺りに読み込まれる最大件数
-    if items? is false or items is ""
-      @qiita.getFeedByTag(tagName, (result,links) ->
+    if @cache.hasCached(tagName) is true
+      @_loadDataFromCache()                    
+    else
+      @qiita.getFeedByTag(tagName, (result,links) =>
         nextURL = links.next
         lastURL = links.last
         loadedPageURL = links.current
-        that.cache.setPageState(@currentPage,nextURL,lastURL,loadedPageURL)
-
-        Ti.API.info that.cache.showPageState(tagName)
+        @cache.setPageState(@currentPage,nextURL,lastURL,loadedPageURL)
+        @cache.save(result,@currentPage)
+        Ti.API.info @cache.showPageState(tagName)
 
         
         # http://d.hatena.ne.jp/yatemmma/20110723/1311534794を参考に実装
@@ -80,28 +80,23 @@ class mainContoroller
         else
 
           MainWindow.actInd.hide()
-          that.refresData(result)
-
+          @refresData(result)
       )
 
-    else
-      @_loadDataFromCache(items)              
-
   getFeed:() ->
-    items = JSON.parse(Ti.App.Properties.getString("qiitaItems"))
     moment = require('lib/moment.min')
     momentja = require('lib/momentja')
     MAXITEMCOUNT = 20 # 1リクエスト辺りに読み込まれる最大件数
-    that = @
-
-    if items? is false or items is ""
-      that.qiita.getFeed( (result,links) ->
+    if @cache.hasCached("qiitaItems") is true
+      Ti.API.info "@_loadDataFromCache()"
+      @_loadDataFromCache()
+    else  
+      @qiita.getFeed( (result,links) =>
         nextURL = links.next
         lastURL = links.last
         loadedPageURL = links.current
-        that.cache.setPageState(that.currentPage,nextURL,lastURL,loadedPageURL)
-
-        
+        @cache.setPageState(@currentPage,nextURL,lastURL,loadedPageURL)
+        @cache.save(result,@currentPage)
         result.sort( (a, b) ->
           (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
         )
@@ -110,38 +105,32 @@ class mainContoroller
           Ti.API.info "loadOldEntry hide"
         else
           MainWindow.actInd.hide()
-          that.refresData(result)
+          @refresData(result)
 
       )      
-    else
-      that._loadDataFromCache(items)          
             
   getMyStocks:() ->
     MAXITEMCOUNT = 20 # 1リクエスト辺りに読み込まれる最大件数
-    items = JSON.parse(Ti.App.Properties.getString('myStocks'))
     moment = require('lib/moment.min')
     momentja = require('lib/momentja')
-    that = @    
-    if items? is false or items is ""
-      @qiita.getMyStocks( (result,links) ->
+
+    if @cache.hasCached('myStocks') is true
+      @_loadDataFromCache()                
+    else  
+      @qiita.getMyStocks( (result,links) =>
         nextURL = links.next
         lastURL = links.last
         loadedPageURL = links.current
-        that.cache.setPageState(that.currentPage,nextURL,lastURL,loadedPageURL)
+        @cache.setPageState(@currentPage,nextURL,lastURL,loadedPageURL)
         result.sort( (a, b) ->
           (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
         )
-        
         if result.length isnt MAXITEMCOUNT
           Ti.API.info "loadOldEntry hide"
         else
           MainWindow.actInd.hide()
-          that.refresData(result)
-
+          @refresData(result)
       )
-      
-    else
-      @_loadDataFromCache(items)      
       
   # フォロワー投稿を取得するメソッド
   getFollowerItems:() ->
@@ -192,15 +181,11 @@ class mainContoroller
         ),10000          
       )
     else
-      @_loadDataFromCache(items)
+      @_loadDataFromCache()
       
-  _loadDataFromCache:(items)->
-    page = @cache.showPageState(@currentPage)
-    Ti.API.info "_loadDataFromCache start. current Page is #{page.category} and loadedPageURL is #{page.loadedPageURL}"    
-    items.sort( (a, b) ->
+  _loadDataFromCache:()->
+    items = @cache.find(@currentPage)
 
-      (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
-    )
     MainWindow.actInd.hide()
     return @refresData(items)
 
