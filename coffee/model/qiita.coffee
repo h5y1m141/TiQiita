@@ -84,30 +84,6 @@ class Qiita
     
     return true
         
-  _storedStocks:(_storedTo,strItems)->
-    # JSONが含まれた配列をそのままTi.App.Properties.setList()
-    # することが出来ないようなので、setStringを利用してキャッシュする
-    cachedItems = Ti.App.Properties.getString(_storedTo)
-
-    stocks = JSON.parse(cachedItems)
-
-    Ti.API.info stocks.length if stocks isnt null
-    if stocks is null
-      length = JSON.parse(strItems)
-      Ti.API.info "_storedStocks start"
-      Ti.App.Properties.setString(_storedTo,strItems)
-
-    else
-      Ti.API.info "_storedStocks merge start"
-      merge = stocks.concat JSON.parse(strItems)
-      Ti.App.Properties.setString(_storedTo,JSON.stringify(merge))
-      
-    ## debug
-    result = JSON.parse(Ti.App.Properties.getString(_storedTo))
-    Ti.API.info "_storedStocks finish : #{result.length}"
-    
-
-
 
   # Qiita APIにアクセスする一番肝となるメソッド
   #
@@ -129,27 +105,15 @@ class Qiita
     xhr.onload = ->
       json = JSON.parse(@.responseText)
 
-      # アプリ起動中にキャッシュしたい情報かどうかをこのstoredToパラメータ
-      # にて行う。
-      if storedTo is "followingTags" or storedTo is false
-        Ti.API.debug "キャッシュ処理は実施しませんでした"
+      # ページネーションに必要となる
+      # 次ページと最終ページのURLのハンドリング処理
+      responseHeaders = @.responseHeaders
+      if responseHeaders.Link
+        links = self._convertLinkHeaderToJSON(responseHeaders.Link)
+        links.current = parameter.url
+
       else
-
-        Ti.API.info "start _storedStocks #{storedTo}"
-        # QiitaAPIから取得した投稿情報をTi.App.Propertiesに都度突っ込み
-        # これをローカルDB的に活用する
-        
-        self._storedStocks(storedTo,@.responseText)
-
-        # ページネーションに必要となる
-        # 次ページと最終ページのURLのハンドリング処理
-        responseHeaders = @.responseHeaders
-        if responseHeaders.Link
-          links = self._convertLinkHeaderToJSON(responseHeaders.Link)
-          links.current = parameter.url
-
-        else
-          links = null
+        links = null
 
 
       callback(json,links)

@@ -35,11 +35,11 @@ class menuTable
       tagName = @menuTable.data[0].rows[curretRowIndex].tagName
       accountName = @menuTable.data[0].rows[curretRowIndex].accountName
       
-      if className is "items"
+      if className is "qiitaItems"
         MainWindow.actInd.show()
         MainWindow.resetSlide()
         MainWindow.setWindowTitle("Qiita:投稿一覧")
-        maincontroller.currentPage = "items"        
+        maincontroller.currentPage = "qiitaItems"        
         maincontroller.getFeed()
 
       else if className is "myStocks"
@@ -111,7 +111,7 @@ class menuTable
       text:"投稿一覧"
       
       
-    allLabelRow.className = "items"
+    allLabelRow.className = "qiitaItems"
     allLabelRow.add allStockBtn
     allLabelRow.add allLabel
     return allLabelRow
