@@ -40,11 +40,11 @@ menuTable = (function() {
       className = _this.menuTable.data[0].rows[curretRowIndex].className;
       tagName = _this.menuTable.data[0].rows[curretRowIndex].tagName;
       accountName = _this.menuTable.data[0].rows[curretRowIndex].accountName;
-      if (className === "items") {
+      if (className === "qiitaItems") {
         MainWindow.actInd.show();
         MainWindow.resetSlide();
         MainWindow.setWindowTitle("Qiita:投稿一覧");
-        maincontroller.currentPage = "items";
+        maincontroller.currentPage = "qiitaItems";
         return maincontroller.getFeed();
       } else if (className === "myStocks") {
         MainWindow.actInd.show();
@@ -109,7 +109,7 @@ menuTable = (function() {
       },
       text: "投稿一覧"
     });
-    allLabelRow.className = "items";
+    allLabelRow.className = "qiitaItems";
     allLabelRow.add(allStockBtn);
     allLabelRow.add(allLabel);
     return allLabelRow;
