@@ -47,12 +47,30 @@ class Twitter
     # 念のためaccesstokenの存在を確認した上でポスト処理する
     twitterAccessTokenKey = Ti.App.Properties.getString('twitterAccessTokenKey')
 
+    # 140文字を超えてtweet出来ない。contentsは100文字以内で、短縮URLで21文字つかってるが
+    # URL、title、contentsの間に空白文字を入れてるのと、titleの文字をカッコで括ってるため
+    # titleの文字を15文字以下にするようにしてしまう
+    # contentsも念のため100文字以下にしてしまう
+
+    bitlyURLLength = 21
+    tweetLimitLength = 140
+    
+    _len = contents.length + title.length
+
+    if _len > tweetLimitLength - bitlyURLLength
+      postTitle = title.substring(0,10)+ '..'
+      postContents = contents.substring(0,100)
+    else
+      postTitle = title
+      postContents = contents
+      
     if twitterAccessTokenKey? is true
       @shortenURL(url,(result) =>
         if result.status_txt
+          Ti.API.info title.length
           params =
-            status:"「#{title}」 #{contents} #{result.data.url}"
-            
+            status:"「#{postTitle}」#{result.data.url}\n#{postContents}"
+
           headers = {}
           @twitter.request('https://api.twitter.com/1.1/statuses/update.json',params,headers, "POST", (result) ->
             Ti.API.info "postTweet done result is #{result}"
@@ -63,7 +81,7 @@ class Twitter
           # bit.lyから短縮URLが取得できない場合があるかもしれないため
           # その場合には通常のURLをtweetする
           params =
-            status:"「#{title}」 #{contents} #{url}"
+            status:"「#{postTitle}」 #{postContents} #{url}"
             
           headers = {}
           @twitter.request('https://api.twitter.com/1.1/statuses/update.json',params,headers, "POST", (result) ->

@@ -43,15 +43,26 @@ Twitter = (function() {
   };
 
   Twitter.prototype.postTweet = function(url, contents, title, callback) {
-    var alertDialog, twitterAccessTokenKey,
+    var alertDialog, bitlyURLLength, postContents, postTitle, tweetLimitLength, twitterAccessTokenKey, _len,
       _this = this;
     twitterAccessTokenKey = Ti.App.Properties.getString('twitterAccessTokenKey');
+    bitlyURLLength = 21;
+    tweetLimitLength = 140;
+    _len = contents.length + title.length;
+    if (_len > tweetLimitLength - bitlyURLLength) {
+      postTitle = title.substring(0, 10) + '..';
+      postContents = contents.substring(0, 100);
+    } else {
+      postTitle = title;
+      postContents = contents;
+    }
     if ((twitterAccessTokenKey != null) === true) {
       return this.shortenURL(url, function(result) {
         var headers, params;
         if (result.status_txt) {
+          Ti.API.info(title.length);
           params = {
-            status: "「" + title + "」 " + contents + " " + result.data.url
+            status: "「" + postTitle + "」" + result.data.url + "\n" + postContents
           };
           headers = {};
           return _this.twitter.request('https://api.twitter.com/1.1/statuses/update.json', params, headers, "POST", function(result) {
@@ -60,7 +71,7 @@ Twitter = (function() {
           });
         } else {
           params = {
-            status: "「" + title + "」 " + contents + " " + url
+            status: "「" + postTitle + "」 " + postContents + " " + url
           };
           headers = {};
           return _this.twitter.request('https://api.twitter.com/1.1/statuses/update.json', params, headers, "POST", function(result) {
