@@ -55,5 +55,6 @@
     <modules>
 	<module platform="iphone" version="1.0.2">net.nend</module>
 	<module platform="iphone" version="1.4.0">ti.admob</module>
+	<module platform="iphone" version="0.1">be.k0suke.tiisrefreshcontrol</module>
     </modules>
 </ti:app>
