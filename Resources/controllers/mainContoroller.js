@@ -237,6 +237,7 @@ mainContoroller = (function() {
       lastURL = links.last;
       loadedPageURL = links.current;
       _this.cache.setPageState(_this.currentPage, nextURL, lastURL, loadedPageURL);
+      _this.cache.save(result, _this.currentPage);
       items = _this.createItems(result);
       return callback(items);
     });

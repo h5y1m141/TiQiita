@@ -203,6 +203,7 @@ class mainContoroller
       loadedPageURL = links.current
 
       @cache.setPageState(@currentPage,nextURL,lastURL,loadedPageURL)
+      @cache.save(result,@currentPage)      
       items = @createItems(result)
       callback(items)
     )
