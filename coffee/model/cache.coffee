@@ -10,6 +10,10 @@ class Cache
     # ページ遷移状態を管理するためのTableを生成
     db.execute "CREATE TABLE IF NOT EXISTS pagination(category TEXT, lastURL TEXT, loadedPageURL TEXT, nextURL TEXT);"
     db.execute "CREATE TABLE IF NOT EXISTS items(category TEXT,uuid TEXT, title TEXT, body TEXT,user TEXT, tags TEXT, updated_at DATE, updated_at_in_words TEXT);"
+    # キャッシュを初期化
+    db.execute "DELETE from pagination;"
+    db.execute "DELETE from items;"
+    
     db.close()
     db = null
     return

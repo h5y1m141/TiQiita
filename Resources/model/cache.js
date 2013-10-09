@@ -8,6 +8,8 @@ Cache = (function() {
     db.file.setRemoteBackup(false);
     db.execute("CREATE TABLE IF NOT EXISTS pagination(category TEXT, lastURL TEXT, loadedPageURL TEXT, nextURL TEXT);");
     db.execute("CREATE TABLE IF NOT EXISTS items(category TEXT,uuid TEXT, title TEXT, body TEXT,user TEXT, tags TEXT, updated_at DATE, updated_at_in_words TEXT);");
+    db.execute("DELETE from pagination;");
+    db.execute("DELETE from items;");
     db.close();
     db = null;
     return;
