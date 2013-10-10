@@ -272,25 +272,26 @@ class mainContoroller
       dataSet.push(layout)
                 
     return dataSet
-
-  networkConnectionCheck:(callback) ->
-
-    if @qiita.isConnected() is false
-      @_alertViewShow @networkDisconnectedMessage
-      currentPage = Ti.App.Properties.getString "currentPage"
-      Ti.API.info "networkConnectionCheck #{currentPage}"
-      return
-    else
-      return callback()
-      
-  authenticationCheck:(callback)->
-    token = Ti.App.Properties.getString 'QiitaToken'
-    if token is null
-      @_alertViewShow @authenticationFailMessage
-    else
-      return callback()
     
+  getLatest:(callback) ->
+    pageObj = @cache.showPageState(@currentPage)
+    url = pageObj.lastURL.split("?")
+    Ti.API.info "get latest data. url is : #{url[0]}"
+    @qiita.getLatest(url[0], (result,links) =>
+      
+      nextURL = links.next
+      lastURL = links.last
+      loadedPageURL = links.current
+      @cache.setPageState(@currentPage,nextURL,lastURL,loadedPageURL)
+      @cache.save(result,@currentPage)
+      result.sort( (a, b) ->
+        (if moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm") then -1 else 1)
+      )
 
+      @refresData(result)
+      callback()
+
+    )
     
   stockItem: (uuid,url,contents,title,qiitaPostFlg,hatenaPostFlg,tweetFlg,callback) =>
     hatena = @hatena
