@@ -136,10 +136,11 @@ listView = (function() {
       refreshControlEnabled: true
     });
     this.listView.addEventListener("refreshstart", function(e) {
-      _this.listView.isRefreshing();
-      return setTimeout((function() {
+      var url;
+      url = _this.listView.isRefreshing();
+      return maincontroller.getLatest(function() {
         return _this.listView.refreshFinish();
-      }), 5000);
+      });
     });
     this.listView.addEventListener('itemclick', function(e) {
       var animation, data, detailWindow, index, that;

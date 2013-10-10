@@ -123,12 +123,15 @@ class listView
       defaultItemTemplate: "template"
       refreshControlEnabled:true
     @listView.addEventListener("refreshstart",(e) =>
+      url = 
       @listView.isRefreshing()
-
-      setTimeout (=>
+      maincontroller.getLatest( () =>
         @listView.refreshFinish()
+      )
+      # setTimeout (=>
+      #   @listView.refreshFinish()
 
-      ), 5000
+      # ), 5000
     )
 
 
