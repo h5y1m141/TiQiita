@@ -316,12 +316,18 @@ mainContoroller = (function() {
   };
 
   mainContoroller.prototype.getLatest = function(callback) {
-    var pageObj, url,
+    var pageObj, requestURL, token, url,
       _this = this;
     pageObj = this.cache.showPageState(this.currentPage);
     url = pageObj.lastURL.split("?");
-    Ti.API.info("get latest data. url is : " + url[0]);
-    return this.qiita.getLatest(url[0], function(result, links) {
+    if (this.currentPage === "myStocks") {
+      token = Ti.App.Properties.getString('QiitaToken');
+      requestURL = url[0] + ("?token=" + token);
+    } else {
+      requestURL = url[0];
+    }
+    Ti.API.info("get latest data. url is : " + requestURL);
+    return this.qiita.getLatest(requestURL, function(result, links) {
       var lastURL, loadedPageURL, nextURL;
       nextURL = links.next;
       lastURL = links.last;

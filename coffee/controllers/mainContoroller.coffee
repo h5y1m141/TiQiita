@@ -276,8 +276,14 @@ class mainContoroller
   getLatest:(callback) ->
     pageObj = @cache.showPageState(@currentPage)
     url = pageObj.lastURL.split("?")
-    Ti.API.info "get latest data. url is : #{url[0]}"
-    @qiita.getLatest(url[0], (result,links) =>
+    # 自分のストックを取得する際にはtokneが必要になるのでその処理
+    if @currentPage is "myStocks"
+      token = Ti.App.Properties.getString('QiitaToken')
+      requestURL = url[0]+"?token=#{token}"
+    else  
+      requestURL = url[0]
+    Ti.API.info "get latest data. url is : #{requestURL}"
+    @qiita.getLatest(requestURL, (result,links) =>
       
       nextURL = links.next
       lastURL = links.last
