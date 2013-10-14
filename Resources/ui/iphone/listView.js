@@ -3,8 +3,10 @@ var listView;
 listView = (function() {
 
   function listView() {
-    var myTemplate,
+    var TiISRefreshControl, myTemplate,
       _this = this;
+    TiISRefreshControl = require('be.k0suke.tiisrefreshcontrol');
+    Ti.API.info("module is => " + TiISRefreshControl);
     this.baseColor = {
       barColor: "#f9f9f9",
       backgroundColor: "#f9f9f9",
@@ -130,7 +132,15 @@ listView = (function() {
       templates: {
         template: myTemplate
       },
-      defaultItemTemplate: "template"
+      defaultItemTemplate: "template",
+      refreshControlEnabled: true
+    });
+    this.listView.addEventListener("refreshstart", function(e) {
+      var url;
+      url = _this.listView.isRefreshing();
+      return maincontroller.getLatest(function() {
+        return _this.listView.refreshFinish();
+      });
     });
     this.listView.addEventListener('itemclick', function(e) {
       var animation, data, detailWindow, index, that;

@@ -174,6 +174,16 @@ Qiita = (function() {
     return this._request(param, storedTo, callback);
   };
 
+  Qiita.prototype.getLatest = function(url, callback) {
+    var param, storedTo;
+    param = {
+      "url": url,
+      "method": 'GET'
+    };
+    storedTo = false;
+    return this._request(param, storedTo, callback);
+  };
+
   Qiita.prototype.getFeedByTag = function(tagName, callback) {
     var param, url;
     url = "https://qiita.com/api/v1/tags/" + tagName + "/items";
