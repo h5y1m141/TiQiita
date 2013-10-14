@@ -315,25 +315,35 @@ mainContoroller = (function() {
     return dataSet;
   };
 
-  mainContoroller.prototype.networkConnectionCheck = function(callback) {
-    var currentPage;
-    if (this.qiita.isConnected() === false) {
-      this._alertViewShow(this.networkDisconnectedMessage);
-      currentPage = Ti.App.Properties.getString("currentPage");
-      Ti.API.info("networkConnectionCheck " + currentPage);
+  mainContoroller.prototype.getLatest = function(callback) {
+    var pageObj, requestURL, token, url,
+      _this = this;
+    pageObj = this.cache.showPageState(this.currentPage);
+    url = pageObj.lastURL.split("?");
+    if (this.currentPage === "myStocks") {
+      token = Ti.App.Properties.getString('QiitaToken');
+      requestURL = url[0] + ("?token=" + token);
     } else {
-      return callback();
+      requestURL = url[0];
     }
-  };
-
-  mainContoroller.prototype.authenticationCheck = function(callback) {
-    var token;
-    token = Ti.App.Properties.getString('QiitaToken');
-    if (token === null) {
-      return this._alertViewShow(this.authenticationFailMessage);
-    } else {
+    Ti.API.info("get latest data. url is : " + requestURL);
+    return this.qiita.getLatest(requestURL, function(result, links) {
+      var lastURL, loadedPageURL, nextURL;
+      nextURL = links.next;
+      lastURL = links.last;
+      loadedPageURL = links.current;
+      _this.cache.setPageState(_this.currentPage, nextURL, lastURL, loadedPageURL);
+      _this.cache.save(result, _this.currentPage);
+      result.sort(function(a, b) {
+        if (moment(a.created_at).format("YYYYMMDDHHmm") > moment(b.created_at).format("YYYYMMDDHHmm")) {
+          return -1;
+        } else {
+          return 1;
+        }
+      });
+      _this.refresData(result);
       return callback();
-    }
+    });
   };
 
   mainContoroller.prototype.stockItem = function(uuid, url, contents, title, qiitaPostFlg, hatenaPostFlg, tweetFlg, callback) {

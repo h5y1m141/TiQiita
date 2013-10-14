@@ -1,5 +1,7 @@
 class listView
   constructor:()->
+    TiISRefreshControl = require('be.k0suke.tiisrefreshcontrol')
+    Ti.API.info("module is => " + TiISRefreshControl)
     @baseColor =
       barColor:"#f9f9f9"
       backgroundColor:"#f9f9f9"
@@ -118,7 +120,22 @@ class listView
       zIndex:20
       templates:
         template: myTemplate
-      defaultItemTemplate: "template"      
+      defaultItemTemplate: "template"
+      refreshControlEnabled:true
+    @listView.addEventListener("refreshstart",(e) =>
+      url = 
+      @listView.isRefreshing()
+      maincontroller.getLatest( () =>
+        @listView.refreshFinish()
+      )
+      # setTimeout (=>
+      #   @listView.refreshFinish()
+
+      # ), 5000
+    )
+
+
+    
     @listView.addEventListener('itemclick',(e) =>
       that = @
       index = e.itemIndex

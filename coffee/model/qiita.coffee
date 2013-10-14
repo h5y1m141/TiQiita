@@ -189,7 +189,14 @@ class Qiita
     
     @._request(param,storedTo,callback)
     # @._mockObject("items",'storedStocks',callback)
-
+    # 
+  getLatest:(url,callback) ->
+    param =
+      "url": url
+      "method":'GET'
+    storedTo = false    
+    @._request(param,storedTo,callback)
+    
   getFeedByTag:(tagName,callback) ->
     url = "https://qiita.com/api/v1/tags/#{tagName}/items"
     param =
